@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Unified Marketing Dashboard — Mozaik Insights</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/style.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="/"><span class="brand-mark"></span><span class="brand-name">Mozaik Insights</span><span class="brand-sub">analytics hub</span></a>
+    <ul>
+      <li><a class="link" href="/">Home</a></li>
+      <li><a class="link active" href="/marketing/">Marketing</a></li>
+      <li><a class="link" href="/sales/">Sales</a></li>
+      <li><a class="link" href="/operations/">Operations</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="container">
+  <section class="hero" style="padding:32px 0 18px">
+    <span class="eyebrow">Marketing · Overview</span>
+    <h1 style="font-size:32px">Unified Marketing <span>Dashboard</span></h1>
+    <p class="lede">Embedded below from the <code>mozaik-analytics</code> repo. Replace this file with the real dashboard HTML when deploying, or keep it as an iframe wrapper.</p>
+  </section>
+
+  <div class="frame-wrap">
+    <!--
+      EASIEST: replace this entire file with the contents of mozaik-unified-dashboard.html
+      (keep the nav + footer if you want). Or leave the iframe below and it will load the
+      existing GitHub Pages version.
+    -->
+    <iframe src="https://balamirnazlica-tech.github.io/mozaik-analytics/mozaik-unified-dashboard.html" title="Unified Marketing Dashboard" loading="lazy"></iframe>
+  </div>
+</main>
+
+<footer><div class="foot-inner"><div>© <span id="y"></span> Mozaik Design</div><div>mozaikinsights.com</div></div></footer>
+<script>document.getElementById('y').textContent=new Date().getFullYear();</script>
+</body>
+</html>
+
