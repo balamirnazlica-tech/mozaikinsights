@@ -1,1 +1,42 @@
-<!DOCTYPE html><meta http-equiv="refresh" content="0;url=sales-dashboard.html"><title>Sales</title><a href="sales-dashboard.html">Sales Dashboard</a>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sales Dashboards — Mozaik Insights</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="../"><span class="brand-mark"></span><span class="brand-name">Mozaik Insights</span><span class="brand-sub">analytics hub</span></a>
+    <ul>
+      <li><a class="link" href="../">Home</a></li>
+      <li><a class="link" href="../marketing/">Marketing</a></li>
+      <li><a class="link active" href="./">Sales</a></li>
+      <li><a class="link" href="../operations/">Operations</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="container">
+  <section class="hero">
+    <span class="eyebrow">Sales</span>
+    <h1>Sales <span>dashboards</span></h1>
+    <p class="lede">Pipeline, revenue and rep performance across Mozaik's sales org.</p>
+  </section>
+
+  <div class="grid">
+    <a class="card" href="./crm/"><span class="tag">Live</span><h3>CRM Dashboard</h3><p>Pipeline, opportunities and sales activity from the Mozaik CRM.</p></a>
+    <a class="card" href="./build-vs-buy/"><span class="tag">Live</span><h3>CRM Build vs Buy</h3><p>Analysis comparing in-house CRM build versus commercial options.</p></a>
+    <div class="card empty"><span class="tag">Team</span><h3>Rep Leaderboard</h3><p>Activity, win rate and quota attainment by rep. Coming soon.</p></div>
+  </div>
+</main>
+
+<footer><div class="foot-inner"><div>© <span id="y"></span> Mozaik Design</div><div>mozaikinsights.com</div></div></footer>
+<script>document.getElementById('y').textContent=new Date().getFullYear();</script>
+</body>
+</html>
