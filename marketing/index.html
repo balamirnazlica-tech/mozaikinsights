@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Marketing Dashboards — Mozaik Insights</title>
+<title>Marketing — Mozaik Insights</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
 </head>
-<body>
+<body class="viewer">
 <nav class="nav">
   <div class="nav-inner">
     <a class="brand" href="../"><span class="brand-mark"></span><span class="brand-name">Mozaik Insights</span><span class="brand-sub">analytics hub</span></a>
@@ -22,37 +22,23 @@
   </div>
 </nav>
 
-<main class="container">
-  <section class="hero">
-    <span class="eyebrow">Marketing</span>
-    <h1>Marketing <span>dashboards</span></h1>
-    <p class="lede">Performance across campaigns, channels and content. Pick a dashboard below.</p>
-  </section>
-
-  <div class="grid">
-    <a class="card" href="unified/">
-      <span class="arrow">→</span>
-      <span class="tag">Overview</span>
-      <h3>Unified Marketing Dashboard</h3>
-      <p>Cross-channel KPIs, campaign performance, traffic and lead generation in one view.</p>
-      <div class="meta"><span>live</span><span>updated daily</span></div>
-    </a>
-
-    <div class="card empty">
-      <span class="tag">Paid Media</span>
-      <h3>Paid Media Performance</h3>
-      <p>Spend, CPA, ROAS and creative performance across Google, Meta and LinkedIn.</p>
-    </div>
-
-    <div class="card empty">
-      <span class="tag">Web</span>
-      <h3>Website & SEO</h3>
-      <p>Organic traffic, rankings, conversion and funnel drop-off.</p>
-    </div>
-  </div>
+<main class="viewer-main">
+  <div class="tabbar" id="tabs"></div>
+  <div class="frame-host"><iframe id="frame" title="Marketing dashboard" loading="eager" allow="fullscreen"></iframe></div>
 </main>
 
-<footer><div class="foot-inner"><div>© <span id="y"></span> Mozaik Design</div><div>mozaikinsights.com</div></div></footer>
-<script>document.getElementById('y').textContent=new Date().getFullYear();</script>
+<script>
+const DASHBOARDS=[
+  {id:'unified',label:'Unified Analytics',url:'https://balamirnazlica-tech.github.io/mozaik-analytics/mozaik-unified-dashboard.html'},
+  {id:'unified-full',label:'Unified (Full)',url:'https://balamirnazlica-tech.github.io/mozaik-analytics/mozaik-unified-dashboard-full.html'},
+  {id:'customer',label:'Customer Intelligence',url:'https://balamirnazlica-tech.github.io/mozaik-analytics/mozaik-customer-intelligence.html'},
+  {id:'product',label:'Product Intelligence',url:'https://balamirnazlica-tech.github.io/mozaik-analytics/mozaik-product-intelligence.html'},
+  {id:'orders',label:'Orders',url:'https://balamirnazlica-tech.github.io/mozaik-analytics/mozaik-orders-dashboard.html'}
+];
+const frame=document.getElementById('frame'),tabs=document.getElementById('tabs');
+function activate(id){const d=DASHBOARDS.find(x=>x.id===id)||DASHBOARDS[0];frame.src=d.url;[...tabs.children].forEach(b=>b.classList.toggle('active',b.dataset.id===d.id));history.replaceState(null,'','#'+d.id);}
+DASHBOARDS.forEach(d=>{const b=document.createElement('button');b.textContent=d.label;b.dataset.id=d.id;b.onclick=()=>activate(d.id);tabs.appendChild(b);});
+activate(location.hash.replace('#','')||'unified');
+</script>
 </body>
 </html>
