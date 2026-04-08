@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Luxury Furniture — Sales Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;background:#070b17;color:#e5e7eb;margin:0}
+.card{background:linear-gradient(180deg,#0f1830,#0c1426);border:1px solid #1f2a44;border-radius:14px}
+.kpi{transition:all .2s}.kpi:hover{transform:translateY(-2px);border-color:#3b82f6;box-shadow:0 8px 24px rgba(59,130,246,.15)}
+.tab{cursor:pointer;padding:10px 18px;border-radius:10px;font-weight:600;font-size:13px;transition:all .2s;user-select:none}
+.tab.active{background:#3b82f6;color:#fff;box-shadow:0 6px 20px rgba(59,130,246,.4)}
+.tab:not(.active){background:#111a2e;border:1px solid #1f2a44}
+.tab:not(.active):hover{background:#1a2540;border-color:#3b82f6}
+.row{transition:background .15s;cursor:pointer}.row:hover{background:#162039}
+.row.selected{background:#1e2b4d;border-left:3px solid #3b82f6}
+.chip{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600}
+.chip-retail{background:#1e3a8a;color:#bfdbfe}
+.chip-enterprise{background:#065f46;color:#a7f3d0}
+.chip-lighting{background:#7c2d12;color:#fed7aa}
+.chip-marketing{background:#581c87;color:#e9d5ff}
+select,input{background:#0f1729;border:1px solid #1f2a44;color:#e5e7eb;border-radius:8px;padding:8px 12px;font-size:13px}
+.bar{height:6px;border-radius:999px;background:#1f2a44;overflow:hidden}
+.bar>div{height:100%;background:linear-gradient(90deg,#3b82f6,#60a5fa)}
+.pulse{animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;font-weight:700;color:white}
+table{border-collapse:collapse;width:100%}
+th,td{padding:10px 8px;font-size:13px;white-space:nowrap}
+@media(max-width:768px){
+ th,td{padding:8px 4px;font-size:11px}
+ .tab{padding:8px 12px;font-size:12px}
+ h1{font-size:18px!important}
+ .logo{width:32px;height:32px;font-size:12px}
+ .card{border-radius:10px}
+ select{font-size:12px;padding:6px 8px}
+ .scroll-x{overflow-x:auto;-webkit-overflow-scrolling:touch}
+}
+thead th{text-align:left;color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid #1f2a44}
+tbody td{border-bottom:1px solid #121c34}
+</style>
+</head>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+<body class="p-3 md:p-6">
+<div class="max-w-[1500px] mx-auto">
+  <header class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-5">
+    <div class="flex items-center gap-3">
+      <div class="logo">MZ</div>
+      <div>
+        <div class="text-[10px] uppercase tracking-widest text-blue-400">Mozaik Design · Sales Platform</div>
+        <h1 class="text-2xl font-bold leading-tight">Luxury Furniture — Sales Dashboard</h1>
+        <p class="text-gray-500 text-xs">Jan 2025 – Mar 2026 · Live interactive analytics</p>
+      </div>
+    </div>
+    <div class="flex gap-2 items-center flex-wrap">
+      <span class="text-xs text-green-400 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-400 pulse"></span>Live</span>
+      <select id="metricSel"><option value="revenue">Revenue (₺)</option><option value="units">Units Sold</option></select>
+      <select id="rangeSel">
+        <option value="all">All Time (15 mo)</option>
+        <option value="fy25">FY 2025</option>
+        <option value="fy26">FY 2026 (YTD)</option>
+        <option value="q1_26">Q1 2026</option>
+        <option value="last6">Last 6 months</option>
+      </select>
+    </div>
+  </header>
+
+  <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-5" id="kpis"></div>
+
+  <div class="flex gap-2 mb-5 overflow-x-auto pb-1" id="tabs">
+    <div class="tab active" data-tab="overview">📊 Overview</div>
+    <div class="tab" data-tab="departments">🏢 Departments</div>
+    <div class="tab" data-tab="reps">👤 Sales Reps</div>
+    <div class="tab" data-tab="customers">🧑‍🤝‍🧑 Customers</div>
+    <div class="tab" data-tab="analysis">🔍 Deep Analysis</div>
+  </div>
+
+  <div id="panels"></div>
+
+  <footer class="text-center text-gray-600 text-xs mt-10 pb-4">Source: Sales Data (1).xlsx · Click any department, rep, or row for drill-down</footer>
+</div>
+
+<script>
+const DATA = {"months":["Jan 25","Feb 25","Mar 25","Apr 25","May 25","Jun 25","Jul 25","Aug 25","Sep 25","Oct 25","Nov 25","Dec 25","Jan 26","Feb 26","Mar 26"],"departments":{"Retail":{"revenue":[1452181.0,1508709.0,1190281.0,1868402.0,1807220.0,1485332.0,2203964.0,1395066.0,1979165.0,1754966.0,1576529.0,2068053.0,3179580.0,1790827.0,0],"units":[56.0,63.0,71.0,67.0,122.0,57.0,89.0,65.0,63.0,70.0,73.0,87.0,94.0,76.0,0],"customers":[54.0,50.0,69.0,49.0,69.0,62.0,62.0,62.0,74.0,60.0,69.0,73.0,58.0,48.0,0],"new":[30.0,23.0,32.0,20.0,33.0,31.0,32.0,31.0,40.0,27.0,24.0,26.0,21.0,15.0,0],"old":[24.0,27.0,37.0,29.0,36.0,31.0,30.0,31.0,34.0,33.0,45.0,47.0,37.0,33.0,0],"headcount":[8.0,8.0,8.0,8.0,7.0,7.0,7.0,7.0,7.0,7.0,7.0,7.0,7.0,7.0,0]},"Enterprise":{"revenue":[1459275.0,781163.93,732093.0,1166503.0,643089.0,473637.0,1981194.0,323951.0,313366.0,319627.0,672745.0,3048543.78,1322759.0,1436048.0,0],"units":[22.0,18.0,24.0,23.0,24.0,17.0,28.0,15.0,15.0,18.0,23.0,27.0,29.0,21.0,0],"customers":[21.0,18.0,23.0,21.0,20.0,16.0,27.0,15.0,15.0,15.0,27.0,28.0,28.0,14.0,0],"new":[7.0,7.0,11.0,13.0,11.0,10.0,14.0,9.0,6.0,6.0,5.0,6.0,9.0,4.0,0],"old":[14.0,11.0,12.0,8.0,9.0,6.0,13.0,6.0,9.0,9.0,22.0,22.0,19.0,10.0,0],"headcount":[4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,0]},"Lighting":{"revenue":[491879.34,790041.89,374298.77,427805.55,501227.45,439259.98,379764.73,813659.04,519257.15,407776.75,361735.0,548875.8,407393.5,426049.25,0],"units":[25.0,22.0,28.0,31.0,45.0,40.0,34.0,27.0,43.0,58.0,46.0,79.0,60.0,58.0,0],"customers":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"new":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"old":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"headcount":[5.0,5.0,5.0,5.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,0]},"Marketing":{"revenue":[5437.6,11299.02222,9431.288889,11935.84444,11558.06667,5857.755556,15793.46667,6991.622222,8664.511111,12086.13333,10320.0,62043.0,26986.0,24868.0,35247.0],"units":[19.0,27.0,26.0,25.0,20.0,15.0,24.0,18.0,17.0,29.0,29.0,29.0,85.0,42.0,49.0],"customers":[19.0,27.0,26.0,25.0,20.0,15.0,24.0,18.0,17.0,29.0,29.0,85.0,75.0,38.0,45.0],"new":[3.0,18.0,21.0,18.0,13.0,6.0,15.0,13.0,7.0,22.0,16.0,67.0,62.0,28.0,33.0],"old":[10.0,5.0,3.0,7.0,3.0,3.0,12.0,1.0,1.0,0.0,12.0,18.0,13.0,10.0,12.0],"headcount":[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0]}},"reps":[{"name":"Banu","dept":"Retail","revenue":[275998.0,347957.0,320520.0,140258.0,447101.0,9956.0,143847.0,188529.0,99095.0,54039.0,20227.0,40250.0,332126.0,135106.0,276134.0],"units":[5.0,8.0,7.0,6.0,13.0,4.0,7.0,7.0,10.0,3.0,3.0,4.0,6.0,7.0,0],"stock":1006057.0,"order":1505016.0},{"name":"\u0130dil","dept":"Retail","revenue":[522966.0,304624.0,75429.0,156705.0,259843.0,408895.0,283717.0,169125.0,318317.0,383228.0,406592.0,419397.0,498432.0,480044.0,276134.0],"units":[20.0,17.0,11.0,6.0,11.0,12.0,8.0,13.0,12.0,8.0,11.0,6.0,12.0,15.0,0],"stock":1004225.0,"order":3639363.0},{"name":"Sena","dept":"Retail","revenue":[60320.0,357261.0,176517.0,102906.0,245968.0,315728.0,218636.0,346359.0,924088.0,360096.0,348498.0,566363.0,373167.0,332320.0,276134.0],"units":[3.0,10.0,9.0,7.0,11.0,9.0,16.0,13.0,0.0,17.0,20.0,24.0,19.0,16.0,0],"stock":1276024.0,"order":3452203.0},{"name":"Ceren","dept":"Retail","revenue":[136212.0,93099.0,22553.0,1010670.0,314717.0,341146.0,506888.0,350933.0,125485.0,480896.0,328400.0,251995.0,378677.0,262491.0,276134.0],"units":[9.0,5.0,3.0,7.0,8.0,4.0,4.0,5.0,5.0,8.0,3.0,9.0,9.0,8.0,0],"stock":476889.0,"order":4128024.0},{"name":"Derin","dept":"Retail","revenue":[144936.0,79265.0,435502.0,255024.0,137107.0,234543.0,367933.0,115932.0,256340.0,255090.0,115599.0,343552.0,1081749.0,232218.0,276134.0],"units":[7.0,8.0,16.0,10.0,12.0,13.0,8.0,9.0,17.0,15.0,12.0,0.0,11.0,0,0],"stock":2288611.0,"order":1730857.0},{"name":"Bener","dept":"Retail","revenue":[311631.0,322382.0,140879.0,136808.0,187451.0,165919.0,527731.0,218220.0,249626.0,158706.0,338578.0,334197.0,312593.0,74063.0,276134.0],"units":[11.0,8.0,12.0,7.0,13.0,9.0,15.0,16.0,17.0,11.0,14.0,15.0,19.0,8.0,0],"stock":1175104.0,"order":2303410.0},{"name":"Bet\u00fcl","dept":"Retail","revenue":[118.0,4121.0,18881.0,66031.0,215033.0,9145.0,155212.0,5968.0,6214.0,62911.0,18635.0,112299.0,29777.0,99654.0,80455.0],"units":[1.0,7.0,13.0,24.0,54.0,6.0,31.0,2.0,2.0,8.0,10.0,29.0,18.0,22.0,23.0],"stock":153920.0,"order":684653.0},{"name":"Aleyna","dept":"Retail","revenue":[0,0,0,0,0,0,0,0,0,0,0,19876.0,75876.0,119411.0,276134.0],"units":[0,0,0,0,0,0,0,0,0,0,0,4.0,2.0,3.0,0],"stock":87564.0,"order":125617.0},{"name":"Simge","dept":"Retail","revenue":[0,0,0,0,0,0,0,0,0,0,0,0,97183.0,55520.0,276134.0],"units":[0,0,0,0,0,0,0,0,0,0,0,0,15.0,9.0,0],"stock":152703.0,"order":0},{"name":"Bur\u00e7in","dept":"Enterprise","revenue":[341978.0,375052.93,149700.0,227156.0,94553.0,77205.0,592301.0,4000.0,0.0,0.0,6555.0,2250667.0,33757.0,738038.0,44722.0],"units":[5.0,3.0,2.0,5.0,3.0,4.0,3.0,1.0,0.0,0.0,2.0,4.0,3.0,2.0,3.0],"stock":63771.8,"order":4478796.905},{"name":"Zeynep","dept":"Enterprise","revenue":[1058109.0,169751.0,430168.0,524520.0,473116.0,286875.0,675992.0,91662.0,174298.0,16375.0,483057.0,579974.78,978556.0,586639.0,0],"units":[9.0,5.0,11.0,12.0,10.0,7.0,6.0,4.0,4.0,4.0,9.0,8.0,11.0,8.0,0],"stock":354597.0,"order":6612103.78},{"name":"Elif","dept":"Enterprise","revenue":[59188.0,186141.0,127005.0,391400.0,50454.0,97532.0,201538.0,108276.0,118695.0,199506.0,52825.0,168394.0,76850.0,34035.0,232370.0],"units":[8.0,6.0,6.0,6.0,7.0,3.0,6.0,5.0,5.0,7.0,3.0,8.0,7.0,4.0,9.0],"stock":757613.0,"order":1412468.0},{"name":"\u0130rem","dept":"Enterprise","revenue":[0.0,50219.0,25220.0,23427.0,24966.0,12025.0,511363.0,120013.0,20373.0,103746.0,130308.0,49508.0,233596.0,77336.0,0],"units":[0,4.0,5.0,0,4.0,3.0,13.0,5.0,6.0,7.0,9.0,7.0,8.0,7.0,0],"stock":247815.0,"order":1143239.0},{"name":"Biricik","dept":"Lighting","revenue":[296172.95,663026.74,217688.27,320731.3,305782.2,185328.23,145553.23,565084.96,207034.15,293202.0,151930.0,271854.0,242476.0,115012.0,0],"units":[36.0,24.0,39.0,25.0,25.0,24.0,16.0,34.0,28.0,24.0,18.0,31.0,29.0,17.0,0],"stock":443342.0,"order":3537534.4499999997},{"name":"Artun","dept":"Lighting","revenue":[152939.39,48249.15,114163.5,29917.25,61464.25,160052.75,59228.5,97094.08,116938.0,38971.75,103210.0,118260.8,88721.25,220009.0,0],"units":[11.0,7.0,16.0,10.0,10.0,12.0,11.0,11.0,18.0,7.0,12.0,14.0,10.0,18.0,0],"stock":148800.5,"order":1260419.12},{"name":"Ecem","dept":"Lighting","revenue":[22934.0,47549.0,39910.0,57487.0,81126.0,69172.0,110132.0,76688.0,164730.0,38798.0,66690.0,121793.0,40158.0,51272.0,0],"units":[6.0,10.0,11.0,12.0,22.0,18.0,17.0,9.0,17.0,10.0,11.0,25.0,9.0,7.0,0],"stock":320959.0,"order":666085.0},{"name":"Beliz","dept":"Lighting","revenue":[19833.0,31217.0,2537.0,19670.0,52855.0,24707.0,64851.0,74792.0,30555.0,36805.0,39905.0,36968.0,36038.25,39756.25,0],"units":[8.0,5.0,1.0,9.0,14.0,10.0,6.0,7.0,8.0,17.0,5.0,9.0,12.0,16.0,0],"stock":78858.0,"order":431631.75},{"name":"Ceren M.","dept":"Marketing","revenue":[5437.6,11299.02222,9431.288889,11935.84444,11558.06667,5857.755556,15793.46667,6991.622222,8664.511111,12086.13333,10320.0,62043.0,26986.0,24868.0,35247.0],"units":[19.0,27.0,26.0,25.0,20.0,15.0,24.0,18.0,17.0,29.0,28.0,90.0,85.0,73.0,0],"stock":0,"order":0}],"yearlyTotals":{"2015":13882589.0,"2016":7111065.0,"2017":10060317.0,"2018":9817554.0,"2019":8035913.0,"2020":12854873.0,"2021":11246016.0,"2022":15938774.0,"2023":19580773.0,"2024":28260753.0,"2025":38432055.471108004,"2026":8649757.75}};
+const FMT = new Intl.NumberFormat('en-US',{maximumFractionDigits:0});
+const CUR='₺';
+const money = v => CUR+FMT.format(Math.round(v||0));
+const moneyK = v => { v=v||0; if(Math.abs(v)>=1e6) return CUR+(v/1e6).toFixed(2)+'M'; if(Math.abs(v)>=1e3) return CUR+(v/1e3).toFixed(0)+'k'; return CUR+Math.round(v); };
+const DEPT_COLOR = {Retail:'#3b82f6',Enterprise:'#10b981',Lighting:'#f59e0b',Marketing:'#a855f7'};
+
+let state = {metric:'revenue', range:'all', tab:'overview', selectedRep:null, repSort:'revenue', deptFilter:'all'};
+
+function monthIdx(){
+  if(state.range==='all') return [...Array(15).keys()];
+  if(state.range==='fy25') return [...Array(12).keys()];
+  if(state.range==='fy26') return [12,13,14];
+  if(state.range==='q1_26') return [12,13,14];
+  if(state.range==='last6') return [9,10,11,12,13,14];
+  return [...Array(15).keys()];
+}
+const sumIdx = (arr) => monthIdx().reduce((s,i)=>s+(arr[i]||0),0);
+
+function computeKpis(){
+  const depts = Object.entries(DATA.departments);
+  const totalRev = depts.reduce((s,[,d])=>s+sumIdx(d.revenue),0);
+  const totalUnits = depts.reduce((s,[,d])=>s+sumIdx(d.units),0);
+  const totalNew = depts.reduce((s,[,d])=>s+sumIdx(d.new||[]),0);
+  const totalCust = depts.reduce((s,[,d])=>s+sumIdx(d.customers||[]),0);
+  const aov = totalUnits? totalRev/totalUnits : 0;
+  return {totalRev,totalUnits,totalNew,totalCust,aov};
+}
+
+function renderKpis(){
+  const k=computeKpis();
+  const items=[
+    ['Total Revenue',moneyK(k.totalRev),'#3b82f6','💰'],
+    ['Units Sold',FMT.format(k.totalUnits),'#10b981','📦'],
+    ['Total Customers',FMT.format(k.totalCust),'#a855f7','👥'],
+    ['Net New Customers',FMT.format(k.totalNew),'#f59e0b','✨'],
+    ['Avg Order Value',moneyK(k.aov),'#ef4444','📈'],
+  ];
+  document.getElementById('kpis').innerHTML = items.map(([l,v,c,ic])=>
+    `<div class="card kpi p-4"><div class="flex justify-between items-start"><div class="text-[10px] text-gray-400 uppercase tracking-wider">${l}</div><span>${ic}</span></div>
+     <div class="text-2xl font-bold mt-2" style="color:${c}">${v}</div></div>`).join('');
+}
+
+function deptTotals(){
+  return Object.entries(DATA.departments).map(([n,d])=>({
+    name:n, revenue:sumIdx(d.revenue), units:sumIdx(d.units),
+    customers:sumIdx(d.customers||[]), new:sumIdx(d.new||[]), old:sumIdx(d.old||[])
+  })).sort((a,b)=>b[state.metric]-a[state.metric]);
+}
+function repTotals(){
+  return DATA.reps.map(r=>({name:r.name,dept:r.dept,revenue:sumIdx(r.revenue),units:sumIdx(r.units)}))
+    .sort((a,b)=>b[state.metric]-a[state.metric]);
+}
+
+let charts=[];
+function destroyCharts(){charts.forEach(c=>c.destroy());charts=[];}
+
+function renderOverview(){
+  const dt=deptTotals(); const rt=repTotals().slice(0,10);
+  const total=dt.reduce((s,d)=>s+d[state.metric],0);
+  return `
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="card p-5 md:col-span-2">
+      <div class="flex justify-between mb-3"><h3 class="font-semibold">Monthly Trend by Department</h3><span class="text-xs text-gray-400 uppercase">${state.metric}</span></div>
+      <canvas id="trendChart" height="110"></canvas>
+    </div>
+    <div class="card p-5">
+      <h3 class="font-semibold mb-3">Department Mix</h3>
+      <canvas id="mixChart"></canvas>
+    </div>
+    <div class="card p-5">
+      <h3 class="font-semibold mb-3">🏆 Top Reps by Revenue</h3>
+      ${[...DATA.reps].map(r=>({name:r.name,dept:r.dept,revenue:sumIdx(r.revenue),units:sumIdx(r.units)})).sort((a,b)=>b.revenue-a.revenue).slice(0,10).map((r,i,arr)=>{const pct=(r.revenue/(arr[0].revenue||1)*100).toFixed(0);return `
+        <div class="mb-2">
+          <div class="flex justify-between text-xs mb-1">
+            <span><span class="text-gray-500 mr-1">#${i+1}</span>${r.name} <span class="chip chip-${r.dept.toLowerCase()} ml-1">${r.dept}</span></span>
+            <span class="font-bold">${moneyK(r.revenue)}</span>
+          </div>
+          <div class="bar"><div style="width:${pct}%"></div></div>
+        </div>`}).join('')}
+    </div>
+    <div class="card p-5">
+      <h3 class="font-semibold mb-3">📦 Top Reps by Orders (Units)</h3>
+      ${[...DATA.reps].map(r=>({name:r.name,dept:r.dept,revenue:sumIdx(r.revenue),units:sumIdx(r.units)})).sort((a,b)=>b.units-a.units).slice(0,10).map((r,i,arr)=>{const pct=(r.units/(arr[0].units||1)*100).toFixed(0);return `
+        <div class="mb-2">
+          <div class="flex justify-between text-xs mb-1">
+            <span><span class="text-gray-500 mr-1">#${i+1}</span>${r.name} <span class="chip chip-${r.dept.toLowerCase()} ml-1">${r.dept}</span></span>
+            <span class="font-bold">${FMT.format(r.units)} orders</span>
+          </div>
+          <div class="bar"><div style="width:${pct}%;background:linear-gradient(90deg,#10b981,#34d399)"></div></div>
+        </div>`}).join('')}
+    </div>
+    <div class="card p-5">
+      <h3 class="font-semibold mb-3">Department Leaderboard</h3>
+      ${dt.map((d,i)=>`<div class="flex justify-between items-center py-2 border-b border-gray-800">
+        <div><span class="text-gray-500 mr-2">#${i+1}</span><span class="chip chip-${d.name.toLowerCase()}">${d.name}</span></div>
+        <div class="font-bold">${state.metric==='revenue'?moneyK(d.revenue):FMT.format(d.units)}</div></div>`).join('')}
+      <div class="mt-3 pt-3 border-t border-gray-600 flex justify-between">
+        <span class="font-semibold text-gray-400">TOTAL</span>
+        <span class="font-bold text-blue-400">${state.metric==='revenue'?moneyK(total):FMT.format(total)}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function drawOverviewCharts(){
+  const mIdx=monthIdx(); const labels=mIdx.map(i=>DATA.months[i]);
+  const datasets=Object.entries(DATA.departments).map(([n,d])=>({
+    label:n,data:mIdx.map(i=>d[state.metric][i]||0),
+    borderColor:DEPT_COLOR[n],backgroundColor:DEPT_COLOR[n]+'22',tension:.35,fill:true,borderWidth:2,pointRadius:3
+  }));
+  charts.push(new Chart(document.getElementById('trendChart'),{type:'line',data:{labels,datasets},
+    options:{responsive:true,plugins:{legend:{labels:{color:'#cbd5e1',font:{size:11}}}},
+    scales:{x:{ticks:{color:'#64748b',font:{size:10}},grid:{color:'#1f2a44'}},
+    y:{ticks:{color:'#64748b',callback:v=>state.metric==='revenue'?moneyK(v):v},grid:{color:'#1f2a44'}}}}}));
+  const dt=deptTotals();
+  charts.push(new Chart(document.getElementById('mixChart'),{type:'doughnut',
+    data:{labels:dt.map(d=>d.name),datasets:[{data:dt.map(d=>d[state.metric]),backgroundColor:dt.map(d=>DEPT_COLOR[d.name]),borderWidth:0}]},
+    options:{plugins:{legend:{position:'bottom',labels:{color:'#cbd5e1',font:{size:11},padding:10}}}}}));
+}
+
+function renderDepartments(){
+  const dt=deptTotals();
+  return `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    ${dt.map(d=>{
+      const reps=DATA.reps.filter(r=>r.dept===d.name).map(r=>({...r,total:sumIdx(r[state.metric])})).sort((a,b)=>b.total-a.total);
+      const aov=d.units?d.revenue/d.units:0;
+      const newPct=d.customers?(d.new/d.customers*100).toFixed(0):0;
+      return `<div class="card p-5">
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <span class="chip chip-${d.name.toLowerCase()}">${d.name}</span>
+            <h3 class="text-2xl font-bold mt-2">${moneyK(d.revenue)}</h3>
+            <div class="text-gray-400 text-sm mt-1">${FMT.format(d.units)} units · ${FMT.format(d.customers||0)} customers</div>
+          </div>
+          <div class="text-right space-y-2">
+            <div><div class="text-[10px] text-gray-500 uppercase">AOV</div><div class="text-sm font-bold text-blue-400">${moneyK(aov)}</div></div>
+            <div><div class="text-[10px] text-gray-500 uppercase">Net New</div><div class="text-sm font-bold text-amber-400">${FMT.format(d.new||0)}</div></div>
+            ${d.customers?`<div><div class="text-[10px] text-gray-500 uppercase">New %</div><div class="text-sm font-bold text-emerald-400">${newPct}%</div></div>`:''}
+          </div>
+        </div>
+        <div class="border-t border-gray-800 pt-3">
+          <div class="text-[10px] text-gray-500 uppercase mb-2">Team · ${reps.length} reps</div>
+          ${reps.map(r=>{const p=(r.total/(reps[0].total||1)*100).toFixed(0);return `
+            <div class="mb-2">
+              <div class="flex justify-between text-xs mb-1"><span>${r.name}</span><span class="font-semibold">${state.metric==='revenue'?moneyK(r.total):FMT.format(r.total)}</span></div>
+              <div class="bar"><div style="width:${p}%;background:${DEPT_COLOR[d.name]}"></div></div>
+            </div>`}).join('')}
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function renderReps(){
+  let rt=DATA.reps.map(r=>({name:r.name,dept:r.dept,revenue:sumIdx(r.revenue),units:sumIdx(r.units),deals:sumIdx(r.units)}));
+  if(state.deptFilter && state.deptFilter!=='all') rt=rt.filter(r=>r.dept===state.deptFilter);
+  const sortKey=state.repSort||'revenue';
+  rt.sort((a,b)=> sortKey==='aov' ? ((b.units?b.revenue/b.units:0)-(a.units?a.revenue/a.units:0)) : (b[sortKey]-a[sortKey]));
+  const sel = state.selectedRep;
+  const selData = sel?DATA.reps.find(r=>r.name===sel):null;
+  return `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="card p-4 md:col-span-2">
+      <div class="flex justify-between items-center mb-3 flex-wrap gap-2">
+        <h3 class="font-semibold">Sales Representatives <span class="text-xs text-gray-500 font-normal">· click row for details</span></h3>
+        <div class="flex gap-2">
+          <select onchange="state.deptFilter=this.value;render();">
+            <option value="all" ${state.deptFilter==='all'||!state.deptFilter?'selected':''}>All Departments</option>
+            <option value="Retail" ${state.deptFilter==='Retail'?'selected':''}>Retail</option>
+            <option value="Enterprise" ${state.deptFilter==='Enterprise'?'selected':''}>Enterprise</option>
+            <option value="Lighting" ${state.deptFilter==='Lighting'?'selected':''}>Lighting</option>
+            <option value="Marketing" ${state.deptFilter==='Marketing'?'selected':''}>Marketing</option>
+          </select>
+          <select onchange="state.repSort=this.value;render();">
+            <option value="revenue" ${sortKey==='revenue'?'selected':''}>Sort: Revenue (Volume ₺)</option>
+            <option value="deals" ${sortKey==='deals'?'selected':''}>Sort: Deals / Orders</option>
+            <option value="units" ${sortKey==='units'?'selected':''}>Sort: Units Sold</option>
+            <option value="aov" ${sortKey==='aov'?'selected':''}>Sort: Avg Order Value</option>
+          </select>
+        </div>
+      </div>
+      <div class="scroll-x"><table><thead><tr><th>#</th><th>Rep</th><th>Dept</th><th class="text-right">Revenue</th><th class="text-right">Deals</th><th class="text-right">Units</th><th class="text-right">AOV</th><th class="text-right">Share</th></tr></thead><tbody>
+      ${rt.map((r,i)=>{const tot=rt.reduce((s,x)=>s+x.revenue,0)||1;const share=(r.revenue/tot*100).toFixed(1);return `
+        <tr class="row ${sel===r.name?'selected':''}" onclick="selectRep('${r.name}')">
+          <td class="text-gray-500">${i+1}</td>
+          <td class="font-semibold">${r.name}</td>
+          <td><span class="chip chip-${r.dept.toLowerCase()}">${r.dept}</span></td>
+          <td class="text-right font-semibold ${sortKey==='revenue'?'text-blue-400':''}">${moneyK(r.revenue)}</td>
+          <td class="text-right ${sortKey==='deals'?'text-emerald-400 font-semibold':''}">${FMT.format(r.deals)}</td>
+          <td class="text-right ${sortKey==='units'?'text-emerald-400 font-semibold':''}">${FMT.format(r.units)}</td>
+          <td class="text-right ${sortKey==='aov'?'text-amber-400 font-semibold':'text-gray-400'}">${r.units?moneyK(r.revenue/r.units):'—'}</td>
+          <td class="text-right text-gray-500">${share}%</td>
+        </tr>`}).join('')}
+      </tbody></table></div>
+    </div>
+    <div class="card p-5">
+      ${sel?`
+        <div class="flex justify-between items-start mb-3">
+          <div><h3 class="font-bold text-lg">${sel}</h3><span class="chip chip-${selData.dept.toLowerCase()}">${selData.dept}</span></div>
+          <button onclick="selectRep(null)" class="text-gray-500 hover:text-white text-xl">×</button>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mt-4">
+          <div class="bg-blue-900/20 p-3 rounded-lg"><div class="text-[10px] text-gray-400 uppercase">Revenue</div><div class="text-xl font-bold text-blue-400">${moneyK(sumIdx(selData.revenue))}</div></div>
+          <div class="bg-emerald-900/20 p-3 rounded-lg"><div class="text-[10px] text-gray-400 uppercase">Units</div><div class="text-xl font-bold text-emerald-400">${FMT.format(sumIdx(selData.units))}</div></div>
+          <div class="bg-amber-900/20 p-3 rounded-lg"><div class="text-[10px] text-gray-400 uppercase">AOV</div><div class="text-xl font-bold text-amber-400">${sumIdx(selData.units)?moneyK(sumIdx(selData.revenue)/sumIdx(selData.units)):'—'}</div></div>
+          <div class="bg-purple-900/20 p-3 rounded-lg"><div class="text-[10px] text-gray-400 uppercase">Best Month</div><div class="text-sm font-bold text-purple-400">${DATA.months[selData.revenue.indexOf(Math.max(...selData.revenue))]}</div></div>
+        </div>
+        <div class="mt-4"><canvas id="repChart" height="160"></canvas></div>
+      `:`<div class="text-gray-500 text-sm text-center py-12">👈 Click a rep to see their details, monthly performance, and KPIs</div>`}
+    </div>
+  </div>`;
+}
+function drawRepChart(){
+  if(!state.selectedRep) return;
+  const r=DATA.reps.find(x=>x.name===state.selectedRep);
+  const mIdx=monthIdx();
+  charts.push(new Chart(document.getElementById('repChart'),{type:'bar',
+    data:{labels:mIdx.map(i=>DATA.months[i]),datasets:[{label:state.metric,data:mIdx.map(i=>r[state.metric][i]),backgroundColor:'#3b82f6',borderRadius:4}]},
+    options:{plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#64748b',font:{size:9}},grid:{display:false}},
+    y:{ticks:{color:'#64748b',callback:v=>state.metric==='revenue'?moneyK(v):v},grid:{color:'#1f2a44'}}}}}));
+}
+
+function renderCustomers(){
+  const dt=deptTotals().filter(d=>d.customers>0);
+  const totalNew=dt.reduce((s,d)=>s+d.new,0);
+  const totalOld=dt.reduce((s,d)=>s+d.old,0);
+  return `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="card p-5">
+      <h3 class="font-semibold mb-3">New vs Repeat Customers</h3>
+      <canvas id="custPie"></canvas>
+      <div class="mt-4 space-y-2 text-sm">
+        <div class="flex justify-between p-2 bg-amber-900/20 rounded"><span>✨ Net New</span><span class="font-bold text-amber-400">${FMT.format(totalNew)}</span></div>
+        <div class="flex justify-between p-2 bg-blue-900/20 rounded"><span>🔁 Repeat</span><span class="font-bold text-blue-400">${FMT.format(totalOld)}</span></div>
+        <div class="flex justify-between p-2 bg-gray-800/50 rounded"><span>Total</span><span class="font-bold">${FMT.format(totalNew+totalOld)}</span></div>
+        <div class="flex justify-between p-2 bg-gray-800/50 rounded"><span>New Rate</span><span class="font-bold text-emerald-400">${((totalNew/(totalNew+totalOld))*100).toFixed(1)}%</span></div>
+      </div>
+    </div>
+    <div class="card p-5 md:col-span-2">
+      <h3 class="font-semibold mb-3">Customer Breakdown by Department</h3>
+      <div class="scroll-x"><table><thead><tr><th>Department</th><th class="text-right">Total</th><th class="text-right">New</th><th class="text-right">Repeat</th><th class="text-right">New %</th><th class="text-right">AOV</th></tr></thead><tbody>
+      ${dt.map(d=>`<tr class="row"><td><span class="chip chip-${d.name.toLowerCase()}">${d.name}</span></td>
+        <td class="text-right font-semibold">${FMT.format(d.customers)}</td>
+        <td class="text-right text-amber-400">${FMT.format(d.new)}</td>
+        <td class="text-right text-blue-400">${FMT.format(d.old)}</td>
+        <td class="text-right">${d.customers?(d.new/d.customers*100).toFixed(0):0}%</td>
+        <td class="text-right text-gray-400">${d.units?moneyK(d.revenue/d.units):'—'}</td></tr>`).join('')}
+      </tbody></table></div>
+      <h3 class="font-semibold mb-2 mt-6">Monthly New vs Repeat Trend</h3>
+      <canvas id="custTrend" height="100"></canvas>
+    </div>
+  </div>`;
+}
+function drawCustCharts(){
+  const dt=deptTotals().filter(d=>d.customers>0);
+  const tN=dt.reduce((s,d)=>s+d.new,0), tO=dt.reduce((s,d)=>s+d.old,0);
+  charts.push(new Chart(document.getElementById('custPie'),{type:'doughnut',
+    data:{labels:['Net New','Repeat'],datasets:[{data:[tN,tO],backgroundColor:['#f59e0b','#3b82f6'],borderWidth:0}]},
+    options:{plugins:{legend:{position:'bottom',labels:{color:'#cbd5e1'}}}}}));
+  const mIdx=monthIdx();
+  charts.push(new Chart(document.getElementById('custTrend'),{type:'line',
+    data:{labels:mIdx.map(i=>DATA.months[i]),datasets:[
+      {label:'Net New',data:mIdx.map(i=>Object.values(DATA.departments).reduce((s,d)=>s+(d.new?.[i]||0),0)),borderColor:'#f59e0b',backgroundColor:'#f59e0b22',tension:.3,fill:true},
+      {label:'Repeat',data:mIdx.map(i=>Object.values(DATA.departments).reduce((s,d)=>s+(d.old?.[i]||0),0)),borderColor:'#3b82f6',backgroundColor:'#3b82f622',tension:.3,fill:true}]},
+    options:{plugins:{legend:{labels:{color:'#cbd5e1'}}},scales:{x:{ticks:{color:'#64748b',font:{size:9}},grid:{color:'#1f2a44'}},y:{ticks:{color:'#64748b'},grid:{color:'#1f2a44'}}}}}));
+}
+
+function renderAnalysis(){
+  const dt=deptTotals(); const rt=repTotals();
+  const totalRev=dt.reduce((s,d)=>s+d.revenue,0);
+  const topDept=dt[0];
+  const topRep=[...rt].sort((a,b)=>b.revenue-a.revenue)[0];
+  const aov={};dt.forEach(d=>{aov[d.name]=d.units?d.revenue/d.units:0});
+  const aovSorted=Object.entries(aov).sort((a,b)=>b[1]-a[1]);
+  const mIdx=monthIdx();
+  const monthlyTotals=mIdx.map(i=>Object.values(DATA.departments).reduce((s,d)=>s+d.revenue[i],0));
+  const bestMonth=DATA.months[mIdx[monthlyTotals.indexOf(Math.max(...monthlyTotals))]];
+  const worstMonth=DATA.months[mIdx[monthlyTotals.indexOf(Math.min(...monthlyTotals))]];
+  return `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="card p-6">
+      <h3 class="font-semibold mb-4 text-lg">🔎 Key Findings</h3>
+      <div class="space-y-3 text-sm">
+        <div class="p-3 bg-blue-900/20 border-l-2 border-blue-500 rounded">
+          <b>#1 Department: ${topDept.name}</b> — ${moneyK(topDept.revenue)}, ${(topDept.revenue/totalRev*100).toFixed(1)}% of total revenue. Drives the volume engine.
+        </div>
+        <div class="p-3 bg-emerald-900/20 border-l-2 border-emerald-500 rounded">
+          <b>#1 Rep: ${topRep.name} (${topRep.dept})</b> — ${moneyK(topRep.revenue)} across ${FMT.format(topRep.units)} units. AOV ${moneyK(topRep.revenue/topRep.units)}.
+        </div>
+        <div class="p-3 bg-amber-900/20 border-l-2 border-amber-500 rounded">
+          <b>Highest-value dept: ${aovSorted[0][0]}</b> — AOV of ${moneyK(aovSorted[0][1])}/order. Low volume, high margin.
+        </div>
+        <div class="p-3 bg-purple-900/20 border-l-2 border-purple-500 rounded">
+          <b>Best month: ${bestMonth}</b> (${moneyK(Math.max(...monthlyTotals))}) · <b>Weakest: ${worstMonth}</b> (${moneyK(Math.min(...monthlyTotals))})
+        </div>
+        <div class="p-3 bg-red-900/20 border-l-2 border-red-500 rounded">
+          <b>YTD vs Target:</b> YTD revenue $27.59M vs $33.0M target → −16.4% variance. Gap concentrated outside Retail.
+        </div>
+        <div class="p-3 bg-cyan-900/20 border-l-2 border-cyan-500 rounded">
+          <b>Customer mix:</b> Retail 55%/45% repeat/new, Enterprise 59%/41% (sticky contracts), Marketing 30%/70% (acquisition engine).
+        </div>
+      </div>
+    </div>
+    <div class="card p-6">
+      <h3 class="font-semibold mb-3">Avg Order Value by Department</h3>
+      <canvas id="aovChart" height="140"></canvas>
+      <h3 class="font-semibold mb-3 mt-6">All Reps · Revenue Distribution</h3>
+      <canvas id="repDist" height="140"></canvas>
+    </div>
+    <div class="card p-6 md:col-span-2">
+      <h3 class="font-semibold mb-1">📅 Revenue by Year (2015–2026)</h3>
+      <p class="text-xs text-gray-500 mb-3">Company-wide yearly totals. 2026 is YTD (Q1 only).</p>
+      <canvas id="yearChart" height="80"></canvas>
+    </div>
+    <div class="card p-6 md:col-span-2">
+      <h3 class="font-semibold mb-1">📦 Stock vs Orders — by Rep</h3>
+      <p class="text-xs text-gray-500 mb-3">Stock = sales from existing inventory · Orders (Sipariş) = custom orders placed. Reveals who's selling what they have vs who's driving new orders.</p>
+      <canvas id="stockOrderChart" height="90"></canvas>
+    </div>
+  </div>`;
+}
+function drawAnalysis(){
+  const dt=deptTotals();
+  const aov=dt.map(d=>d.units?d.revenue/d.units:0);
+  charts.push(new Chart(document.getElementById('aovChart'),{type:'bar',
+    data:{labels:dt.map(d=>d.name),datasets:[{data:aov,backgroundColor:dt.map(d=>DEPT_COLOR[d.name]),borderRadius:6}]},
+    options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#64748b',callback:v=>moneyK(v)},grid:{color:'#1f2a44'}},y:{ticks:{color:'#cbd5e1'},grid:{display:false}}}}}));
+  const rt=repTotals();
+  charts.push(new Chart(document.getElementById('repDist'),{type:'bar',
+    data:{labels:rt.map(r=>r.name),datasets:[{data:rt.map(r=>r.revenue),backgroundColor:rt.map(r=>DEPT_COLOR[r.dept]),borderRadius:4}]},
+    options:{plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#64748b',font:{size:9}},grid:{display:false}},y:{ticks:{color:'#64748b',callback:v=>moneyK(v)},grid:{color:'#1f2a44'}}}}}));
+  const yrs=Object.keys(DATA.yearlyTotals||{});const yvals=yrs.map(y=>DATA.yearlyTotals[y]);
+  charts.push(new Chart(document.getElementById('yearChart'),{type:'bar',
+    data:{labels:yrs,datasets:[{data:yvals,backgroundColor:yrs.map((y,i)=>i===yrs.length-1?'#f59e0b':'#3b82f6'),borderRadius:6}]},
+    options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>moneyK(c.parsed.y)}}},scales:{x:{ticks:{color:'#64748b'},grid:{display:false}},y:{ticks:{color:'#64748b',callback:v=>moneyK(v)},grid:{color:'#1f2a44'}}}}}));
+  const soReps=DATA.reps.filter(r=>(r.stock||0)+(r.order||0)>0).sort((a,b)=>((b.stock||0)+(b.order||0))-((a.stock||0)+(a.order||0)));
+  charts.push(new Chart(document.getElementById('stockOrderChart'),{type:'bar',
+    data:{labels:soReps.map(r=>r.name),datasets:[
+      {label:'Stock (existing inventory)',data:soReps.map(r=>r.stock||0),backgroundColor:'#f59e0b',borderRadius:4},
+      {label:'Orders / Sipariş (custom)',data:soReps.map(r=>r.order||0),backgroundColor:'#3b82f6',borderRadius:4}
+    ]},
+    options:{plugins:{legend:{labels:{color:'#cbd5e1'}}},scales:{x:{stacked:true,ticks:{color:'#64748b',font:{size:10}},grid:{display:false}},y:{stacked:true,ticks:{color:'#64748b',callback:v=>moneyK(v)},grid:{color:'#1f2a44'}}}}}));
+}
+
+function render(){
+  destroyCharts();
+  renderKpis();
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===state.tab));
+  const panels=document.getElementById('panels');
+  if(state.tab==='overview'){panels.innerHTML=renderOverview();setTimeout(drawOverviewCharts,0);}
+  else if(state.tab==='departments'){panels.innerHTML=renderDepartments();}
+  else if(state.tab==='reps'){panels.innerHTML=renderReps();setTimeout(drawRepChart,0);}
+  else if(state.tab==='customers'){panels.innerHTML=renderCustomers();setTimeout(drawCustCharts,0);}
+  else if(state.tab==='analysis'){panels.innerHTML=renderAnalysis();setTimeout(drawAnalysis,0);}
+}
+function selectRep(n){state.selectedRep=(state.selectedRep===n||n===null)?null:n;render();}
+
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{state.tab=t.dataset.tab;state.selectedRep=null;render();});
+document.getElementById('metricSel').onchange=e=>{state.metric=e.target.value;render();};
+document.getElementById('rangeSel').onchange=e=>{state.range=e.target.value;render();};
+render();
+</script>
+</body>
+</html>
