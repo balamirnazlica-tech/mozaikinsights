@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sales Dashboards — Mozaik Insights</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="/"><span class="brand-mark"></span><span class="brand-name">Mozaik Insights</span><span class="brand-sub">analytics hub</span></a>
+    <ul>
+      <li><a class="link" href="/">Home</a></li>
+      <li><a class="link" href="/marketing/">Marketing</a></li>
+      <li><a class="link active" href="/sales/">Sales</a></li>
+      <li><a class="link" href="/operations/">Operations</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="container">
+  <section class="hero">
+    <span class="eyebrow">Sales</span>
+    <h1>Sales <span>dashboards</span></h1>
+    <p class="lede">Pipeline, revenue, and rep performance. Dashboards coming soon.</p>
+  </section>
+
+  <div class="grid">
+    <div class="card empty"><span class="tag">Pipeline</span><h3>Pipeline & Forecast</h3><p>Opportunities by stage, expected close, and forecast vs. quota.</p></div>
+    <div class="card empty"><span class="tag">Revenue</span><h3>Revenue & Bookings</h3><p>Monthly recurring revenue, new vs. expansion, churn.</p></div>
+    <div class="card empty"><span class="tag">Team</span><h3>Rep Leaderboard</h3><p>Activity, win rate and quota attainment by rep.</p></div>
+  </div>
+</main>
+
+<footer><div class="foot-inner"><div>© <span id="y"></span> Mozaik Design</div><div>mozaikinsights.com</div></div></footer>
+<script>document.getElementById('y').textContent=new Date().getFullYear();</script>
+</body>
+</html>
+
