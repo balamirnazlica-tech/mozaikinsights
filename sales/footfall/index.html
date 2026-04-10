@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mozaik Showroom — Trafik Analizi</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh}
+.page{max-width:1480px;margin:0 auto;padding:22px}
+.hdr{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-bottom:20px;padding-bottom:18px;border-bottom:1px solid rgba(129,140,248,.2)}
+.hdr h1{font-size:28px;font-weight:800;background:linear-gradient(135deg,#818cf8,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr p{color:#94a3b8;font-size:14px;margin-top:4px}
+.hdr-right{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.pill{background:rgba(129,140,248,.14);color:#a5b4fc;padding:7px 18px;border-radius:999px;font-size:13px;font-weight:600;border:1px solid rgba(129,140,248,.3)}
+.sel{background:#1e293b;color:#e2e8f0;border:1px solid rgba(129,140,248,.35);padding:9px 14px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;min-width:220px}
+.sel:focus{outline:none;border-color:#818cf8}
+.rep-badge{background:linear-gradient(135deg,#818cf8,#38bdf8);color:#0f172a;padding:7px 16px;border-radius:999px;font-size:13px;font-weight:800}
+.tabs{display:flex;gap:6px;margin-bottom:20px;border-bottom:1px solid rgba(129,140,248,.15);flex-wrap:wrap}
+.tab{background:transparent;border:none;color:#64748b;padding:14px 22px;cursor:pointer;font-size:14.5px;font-weight:600;border-bottom:3px solid transparent;transition:all .2s}
+.tab:hover{color:#a5b4fc}
+.tab.on{color:#818cf8;border-bottom-color:#818cf8}
+.pnl{display:none}
+.pnl.on{display:block}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:18px}
+.kpi{background:#1e293b;border:1px solid rgba(148,163,184,.08);border-radius:14px;padding:18px;border-left:4px solid var(--c,#818cf8)}
+.kpi-l{color:#94a3b8;font-size:12px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.kpi-v{font-size:34px;font-weight:800;color:#f1f5f9}
+.kpi-n{color:#64748b;font-size:13px;margin-top:4px}
+.cd{background:#1e293b;border:1px solid rgba(148,163,184,.08);border-radius:14px;padding:18px;margin-bottom:16px}
+.ct{font-size:13.5px;font-weight:700;color:#e2e8f0;margin-bottom:4px}
+.cs{font-size:12.5px;color:#64748b;margin-bottom:12px}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+@media(max-width:900px){.r2{grid-template-columns:1fr}}
+.h260{height:260px;position:relative}
+.h320{height:320px;position:relative}
+table{width:100%;border-collapse:collapse}
+thead th{color:#94a3b8;font-size:12px;font-weight:600;text-align:left;padding:10px 8px;border-bottom:1px solid rgba(148,163,184,.12);text-transform:uppercase;letter-spacing:.05em}
+tbody td{padding:10px 8px;font-size:14.5px;color:#cbd5e1;border-bottom:1px solid rgba(148,163,184,.06)}
+td.big{font-weight:700;color:#f1f5f9;font-size:15px}
+td.num{text-align:right;color:#a5b4fc;font-variant-numeric:tabular-nums}
+.rank{color:#64748b;font-weight:700;font-size:13px;width:32px}
+.b{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600}
+.bg{background:rgba(52,211,153,.15);color:#34d399}
+.bv{background:rgba(129,140,248,.15);color:#a5b4fc}
+.bo{background:rgba(251,146,60,.15);color:#fb923c}
+.br{background:rgba(100,116,139,.2);color:#94a3b8}
+.ins{background:linear-gradient(135deg,rgba(129,140,248,.08),rgba(56,189,248,.05));border:1px solid rgba(129,140,248,.2);border-radius:14px;padding:20px;margin-bottom:18px}
+.ins h3{color:#a5b4fc;font-size:14.5px;margin-bottom:10px;font-weight:700}
+.ins ul{list-style:none;padding:0}
+.ins li{color:#cbd5e1;font-size:14px;padding:7px 0;padding-left:22px;position:relative;line-height:1.55}
+.ins li:before{content:"▸";color:#818cf8;position:absolute;left:4px;font-weight:900}
+.empty{text-align:center;padding:40px;color:#64748b;font-size:14px}
+</style></head><body><div class="page">
+
+<div class="hdr">
+  <div><h1>MOZAIK SHOWROOM</h1><p>Trafik & Personel Analizi · 15 Yıllık Veri · 2012–2026</p></div>
+  <div class="hdr-right">
+    <span class="pill">Toplam <span id="hdrTotal">—</span></span>
+    <select id="repSel" class="sel"></select>
+    <span id="repBadge" class="rep-badge">Tüm Personel</span>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab on" data-p="ov" onclick="sw(this)">Genel Bakış</button>
+  <button class="tab" data-p="tr" onclick="sw(this)">Trafik</button>
+  <button class="tab" data-p="tp" onclick="sw(this)">Ulaşım & Araç</button>
+  <button class="tab" data-p="vi" onclick="sw(this)">Ziyaretçiler</button>
+  <button class="tab" data-p="in" onclick="sw(this)">Öngörüler</button>
+</div>
+
+<div class="pnl on" id="p-ov">
+  <div class="kpis" id="ovKpis"></div>
+  <div class="r2">
+    <div class="cd"><div class="ct">Yıllık Trafik</div><div class="cs" id="ovYSub"></div><div class="h260"><canvas id="cOvY"></canvas></div></div>
+    <div class="cd"><div class="ct">Aylık Dağılım</div><div class="cs">12 ay toplam</div><div class="h260"><canvas id="cOvM"></canvas></div></div>
+  </div>
+  <div class="r2">
+    <div class="cd"><div class="ct">Ulaşım Türü</div><div class="cs">Araç / yaya / motor / bilinmiyor</div><div class="h260"><canvas id="cOvT"></canvas></div></div>
+    <div class="cd"><div class="ct">Gün Dağılımı</div><div class="cs">Hafta içi vs hafta sonu</div><div class="h260"><canvas id="cOvD"></canvas></div></div>
+  </div>
+</div>
+
+<div class="pnl" id="p-tr">
+  <div class="kpis" id="trKpis"></div>
+  <div class="cd"><div class="ct">Yıllık Trend</div><div class="cs">2012–2026</div><div class="h320"><canvas id="cTrY"></canvas></div></div>
+  <div class="r2">
+    <div class="cd"><div class="ct">Aylık Mevsimsellik</div><div class="cs">Tüm yıllar toplamı</div><div class="h260"><canvas id="cTrM"></canvas></div></div>
+    <div class="cd"><div class="ct">Günlük Dağılım</div><div class="cs">Pzt–Paz</div><div class="h260"><canvas id="cTrD"></canvas></div></div>
+  </div>
+</div>
+
+<div class="pnl" id="p-tp">
+  <div class="kpis" id="tpKpis"></div>
+  <div class="r2">
+    <div class="cd"><div class="ct">Ulaşım Türü</div><div class="cs">Dağılım</div><div class="h260"><canvas id="cTpU"></canvas></div></div>
+    <div class="cd"><div class="ct">Araç Markaları — Top 11</div><div class="cs">Marka kayıtları</div><div class="h260"><canvas id="cTpB"></canvas></div></div>
+  </div>
+  <div class="cd"><div class="ct">Marka Detay</div><div class="cs">Premium müşteri profili</div>
+    <table><thead><tr><th>#</th><th>Marka</th><th style="text-align:right">Ziyaret</th><th style="text-align:right">Pay</th></tr></thead><tbody id="tpBrandTbl"></tbody></table>
+  </div>
+</div>
+
+<div class="pnl" id="p-vi">
+  <div class="kpis" id="viKpis"></div>
+  <div class="cd"><div class="ct">Top 20 Ziyaretçi</div><div class="cs">En sadık müşteriler — tekrar ziyaret sayısı</div>
+    <table><thead><tr><th>#</th><th>İsim</th><th style="text-align:right">Ziyaret</th><th>Profil</th></tr></thead><tbody id="viTbl"></tbody></table>
+  </div>
+</div>
+
+<div class="pnl" id="p-in">
+  <div class="ins"><h3>Öngörüler</h3><ul id="insList"></ul></div>
+  <div class="r2">
+    <div class="cd"><div class="ct">Büyüme Eğrisi</div><div class="cs">Yıllık trend</div><div class="h260"><canvas id="cInG"></canvas></div></div>
+    <div class="cd"><div class="ct">Peak Analizi</div><div class="cs">En yoğun ay & gün</div><div class="h260"><canvas id="cInP"></canvas></div></div>
+  </div>
+</div>
+
+</div>
+<script>
+let DATA;
+let YR;=DATA.YR;
+const MO=['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+const DA=['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'];
+const P=['#818cf8','#38bdf8','#34d399','#fb923c','#f472b6','#facc15','#a78bfa','#22d3ee','#86efac','#fda4af','#c084fc'];
+Chart.defaults.color='#94a3b8';
+Chart.defaults.borderColor='rgba(255,255,255,0.05)';
+const G={color:'rgba(255,255,255,0.04)'};
+const fmt=n=>n.toLocaleString('tr-TR');
+const charts={};
+function mk(id,cfg){if(charts[id])charts[id].destroy();charts[id]=new Chart(id,cfg)}
+
+function sw(btn){document.querySelectorAll('.pnl').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));document.getElementById('p-'+btn.dataset.p).classList.add('on');btn.classList.add('on')}
+
+function init(){
+  const sel=document.getElementById('repSel');
+  sel.innerHTML='<option value="">— Tüm Personel —</option>'+DATA.rep_order.map(r=>`<option value="${r}">${r} (${fmt(DATA.reps[r].total)})</option>`).join('');
+  sel.onchange=()=>render(sel.value);}
+
+function render(repKey){
+  const d = repKey ? DATA.reps[repKey] : DATA.all;
+  const label = repKey || 'Tüm Personel';
+  document.getElementById('hdrTotal').textContent = fmt(d.total);
+  document.getElementById('repBadge').textContent = label;
+
+  // KPIs shared
+  const maxY = Math.max(...d.YC);
+  const peakYear = YR[d.YC.indexOf(maxY)];
+  const prev2025 = d.YC[YR.indexOf(2025)]||0;
+  const ytd = d.ytd_2026||0;
+  const tr = d.transport;
+  const araPct = d.arac_pct;
+
+  const ovKpis = `
+    <div class="kpi" style="--c:#818cf8"><div class="kpi-l">Toplam Ziyaret</div><div class="kpi-v">${fmt(d.total)}</div><div class="kpi-n">2012–2026</div></div>
+    <div class="kpi" style="--c:#34d399"><div class="kpi-l">Zirve Yılı</div><div class="kpi-v">${peakYear||'—'}</div><div class="kpi-n">${fmt(maxY)} ziyaret</div></div>
+    <div class="kpi" style="--c:#38bdf8"><div class="kpi-l">2025</div><div class="kpi-v">${fmt(prev2025)}</div><div class="kpi-n">Geçen yıl</div></div>
+    <div class="kpi" style="--c:#facc15"><div class="kpi-l">2026 YTD</div><div class="kpi-v">${fmt(ytd)}</div><div class="kpi-n">Nisan itibariyle</div></div>
+    <div class="kpi" style="--c:#fb923c"><div class="kpi-l">Benzersiz Ziyaretçi</div><div class="kpi-v">${fmt(d.unique_visitors)}</div><div class="kpi-n">Tekil isim</div></div>
+    <div class="kpi" style="--c:#f472b6"><div class="kpi-l">Araçla Gelen</div><div class="kpi-v">${araPct}%</div><div class="kpi-n">${fmt(tr.arac)} kayıt</div></div>`;
+  document.getElementById('ovKpis').innerHTML = ovKpis;
+  document.getElementById('trKpis').innerHTML = ovKpis;
+  document.getElementById('ovYSub').textContent = label+' · zirve '+peakYear;
+
+  // Overview charts
+  mk('cOvY',{type:'line',data:{labels:YR,datasets:[{data:d.YC,borderColor:'#818cf8',backgroundColor:'rgba(129,140,248,.12)',tension:.4,fill:true,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:G},y:{grid:G}}}});
+  mk('cOvM',{type:'bar',data:{labels:MO,datasets:[{data:d.MC,backgroundColor:'#818cf8cc',borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:G}}}});
+  mk('cOvT',{type:'doughnut',data:{labels:['Araçla','Yaya','Motor','Bilinmiyor'],datasets:[{data:[tr.arac,tr.yaya,tr.motor,tr.unk],backgroundColor:['#818cf8','#34d399','#fb923c','#334155'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:11}}}}}});
+  mk('cOvD',{type:'bar',data:{labels:DA,datasets:[{data:d.DC,backgroundColor:d.DC.map((v,i)=>i===5?'#34d399cc':i===6?'#f87171cc':'#818cf899'),borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:G}}}});
+
+  // Trafik
+  mk('cTrY',{type:'bar',data:{labels:YR,datasets:[{data:d.YC,backgroundColor:d.YC.map(v=>v===maxY?'#34d399cc':'#818cf899'),borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:G}}}});
+  mk('cTrM',{type:'line',data:{labels:MO,datasets:[{data:d.MC,borderColor:'#38bdf8',backgroundColor:'rgba(56,189,248,.12)',tension:.4,fill:true,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:G},y:{grid:G}}}});
+  mk('cTrD',{type:'bar',data:{labels:DA,datasets:[{data:d.DC,backgroundColor:'#a78bfacc',borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:G}}}});
+
+  // Ulasim
+  const tpTotal = tr.arac+tr.yaya+tr.motor+tr.unk;
+  document.getElementById('tpKpis').innerHTML = `
+    <div class="kpi" style="--c:#818cf8"><div class="kpi-l">Araçla</div><div class="kpi-v">${fmt(tr.arac)}</div><div class="kpi-n">${tpTotal?((tr.arac/tpTotal*100).toFixed(1)):0}%</div></div>
+    <div class="kpi" style="--c:#34d399"><div class="kpi-l">Yaya</div><div class="kpi-v">${fmt(tr.yaya)}</div><div class="kpi-n">${tpTotal?((tr.yaya/tpTotal*100).toFixed(1)):0}%</div></div>
+    <div class="kpi" style="--c:#fb923c"><div class="kpi-l">Kayıt Yok</div><div class="kpi-v">${fmt(tr.unk)}</div><div class="kpi-n">${tpTotal?((tr.unk/tpTotal*100).toFixed(1)):0}%</div></div>
+    <div class="kpi" style="--c:#38bdf8"><div class="kpi-l">Motor</div><div class="kpi-v">${fmt(tr.motor)}</div><div class="kpi-n">${tpTotal?((tr.motor/tpTotal*100).toFixed(1)):0}%</div></div>`;
+  mk('cTpU',{type:'doughnut',data:{labels:['Araçla','Yaya','Motor','Bilinmiyor'],datasets:[{data:[tr.arac,tr.yaya,tr.motor,tr.unk],backgroundColor:['#818cf8','#34d399','#fb923c','#334155'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'right',labels:{boxWidth:10,font:{size:11}}}}}});
+  const tb = d.top_brands||[];
+  mk('cTpB',{type:'bar',data:{labels:tb.map(x=>x[0]),datasets:[{data:tb.map(x=>x[1]),backgroundColor:P.map(c=>c+'cc'),borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{grid:G},y:{grid:{display:false}}}}});
+  const bTot = tb.reduce((a,b)=>a+b[1],0);
+  document.getElementById('tpBrandTbl').innerHTML = tb.length?tb.map((b,i)=>{
+    const pct = bTot?((b[1]/bTot*100).toFixed(1)):0;
+    const cls = ['Mercedes','BMW','Audi','Porsche','Land Rover','Volvo'].includes(b[0])?'bg':'bv';
+    return `<tr><td class="rank">${i+1}</td><td class="big">${b[0]}</td><td class="num">${fmt(b[1])}</td><td class="num">${pct}%</td></tr>`;
+  }).join(''):'<tr><td colspan="4" class="empty">Marka kaydı yok</td></tr>';
+
+  // Ziyaretciler
+  document.getElementById('viKpis').innerHTML = `
+    <div class="kpi" style="--c:#818cf8"><div class="kpi-l">Benzersiz</div><div class="kpi-v">${fmt(d.unique_visitors)}</div><div class="kpi-n">Tekil ziyaretçi</div></div>
+    <div class="kpi" style="--c:#34d399"><div class="kpi-l">Toplam Ziyaret</div><div class="kpi-v">${fmt(d.total)}</div><div class="kpi-n">Tüm dönem</div></div>
+    <div class="kpi" style="--c:#facc15"><div class="kpi-l">#1 VIP</div><div class="kpi-v" style="font-size:20px">${d.top_visitors[0]?d.top_visitors[0][0]:'—'}</div><div class="kpi-n">${d.top_visitors[0]?fmt(d.top_visitors[0][1])+' ziyaret':''}</div></div>`;
+  const tv = d.top_visitors||[];
+  document.getElementById('viTbl').innerHTML = tv.length?tv.map((v,i)=>{
+    const lbl = v[1]>=40?'VIP ⭐':v[1]>=10?'Sadık':'Tekrarlayan';
+    const cls = v[1]>=40?'bg':v[1]>=10?'bv':'bo';
+    return `<tr><td class="rank">${i+1}</td><td class="big">${v[0]}</td><td class="num">${fmt(v[1])}</td><td><span class="b ${cls}">${lbl}</span></td></tr>`;
+  }).join(''):'<tr><td colspan="4" class="empty">Ziyaretçi kaydı yok</td></tr>';
+
+  // Ongoruler
+  const peakMo = MO[d.peak_mo_idx];
+  const peakDay = DA[d.peak_day_idx];
+  const growth = d.YC[0]>0 ? Math.round((d.YC[d.YC.length-2]-d.YC[0])/d.YC[0]*100) : null;
+  const topBrand = tb[0]?tb[0][0]:'—';
+  const topVisitor = tv[0]?tv[0][0]:'—';
+  document.getElementById('insList').innerHTML = `
+    <li><strong>${label}</strong> toplam ${fmt(d.total)} ziyaretçi etkileşimi — ${fmt(d.unique_visitors)} benzersiz kişi.</li>
+    <li>Zirve yılı: <strong>${peakYear}</strong> (${fmt(maxY)} ziyaret). 2026 YTD: <strong>${fmt(ytd)}</strong>.</li>
+    <li>En yoğun ay: <strong>${peakMo}</strong> — en yoğun gün: <strong>${peakDay}</strong>.</li>
+    <li>Ulaşım profili: %${araPct} araçla (${fmt(tr.arac)} kayıt). ${topBrand!=='—'?'En popüler marka: <strong>'+topBrand+'</strong>.':''}</li>
+    ${topVisitor!=='—'?'<li>#1 VIP: <strong>'+topVisitor+'</strong> ('+fmt(tv[0][1])+' ziyaret).</li>':''}
+    ${growth!==null?'<li>2012→2025 büyüme: <strong>'+growth+'%</strong>.</li>':''}`;
+  mk('cInG',{type:'line',data:{labels:YR,datasets:[{data:d.YC,borderColor:'#34d399',backgroundColor:'rgba(52,211,153,.12)',tension:.4,fill:true,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:G},y:{grid:G}}}});
+  mk('cInP',{type:'bar',data:{labels:MO,datasets:[{label:'Ay',data:d.MC,backgroundColor:d.MC.map((v,i)=>i===d.peak_mo_idx?'#facc15cc':'#818cf866'),borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:G}}}});
+}
+
+fetch('data.json').then(r=>r.json()).then(d=>{DATA=d;YR=d.YR;init();render('');});
+</script></body></html>
+
