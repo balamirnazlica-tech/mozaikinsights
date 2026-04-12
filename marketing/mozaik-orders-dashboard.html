@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mozaik — Order & Sales Intelligence Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0b0d13;--card:#131620;--card2:#191d2b;--border:#252a3a;--text:#e8eaf0;--dim:#747b95;--blue:#4f8ff7;--purple:#9b6dff;--green:#22c997;--red:#f2555a;--orange:#f7a94f;--pink:#f06292;--cyan:#26c6da;--gold:#ffd54f}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);padding:28px;min-height:100vh}
+
+.header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:36px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+.header h1{font-size:30px;font-weight:900;letter-spacing:-0.7px}
+.header h1 span{background:linear-gradient(135deg,#4f8ff7,#9b6dff,#f06292);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header .meta{color:var(--dim);font-size:13px;margin-top:6px}
+.badge-row{display:flex;gap:8px;align-items:center}
+.badge{padding:6px 14px;border-radius:16px;font-size:12px;font-weight:700;border:1px solid}
+.badge.blue{background:rgba(79,143,247,0.12);color:var(--blue);border-color:rgba(79,143,247,0.3)}
+.badge.green{background:rgba(34,201,151,0.12);color:var(--green);border-color:rgba(34,201,151,0.3)}
+
+/* Hero KPIs */
+.hero-row{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:28px}
+.hero{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;position:relative;overflow:hidden;transition:transform .2s}
+.hero:hover{transform:translateY(-2px)}
+.hero::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.hero:nth-child(1)::after{background:var(--blue)}.hero:nth-child(2)::after{background:var(--green)}.hero:nth-child(3)::after{background:var(--purple)}.hero:nth-child(4)::after{background:var(--orange)}.hero:nth-child(5)::after{background:var(--pink)}.hero:nth-child(6)::after{background:var(--cyan)}
+.hero-label{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--dim);font-weight:700;margin-bottom:6px}
+.hero-val{font-size:26px;font-weight:900;letter-spacing:-1px}
+.hero-sub{font-size:11px;color:var(--dim);margin-top:4px}
+.hero-sub .up{color:var(--green);font-weight:700}.hero-sub .down{color:var(--red);font-weight:700}
+
+.section{font-size:17px;font-weight:800;margin:28px 0 14px;display:flex;align-items:center;gap:10px}
+.section::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px}
+.card-title{font-size:14px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+
+.chart-box{position:relative;height:280px}
+
+/* Tables */
+table.data{width:100%;border-collapse:collapse}
+table.data th{text-align:left;padding:8px 10px;font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--dim);border-bottom:1px solid var(--border);font-weight:700}
+table.data th:not(:first-child){text-align:right}
+table.data td{padding:10px;font-size:13px;border-bottom:1px solid rgba(37,42,58,.4)}
+table.data td:not(:first-child){text-align:right;font-variant-numeric:tabular-nums}
+table.data tr:hover td{background:rgba(79,143,247,.04)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+
+/* Product bars */
+.prod-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;margin-bottom:6px;background:rgba(255,255,255,.015);transition:background .15s}
+.prod-item:hover{background:rgba(255,255,255,.04)}
+.prod-rank{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+.prod-rank.r1{background:rgba(255,213,79,.15);color:var(--gold)}
+.prod-rank.r2{background:rgba(155,109,255,.15);color:var(--purple)}
+.prod-rank.r3{background:rgba(240,98,146,.15);color:var(--pink)}
+.prod-rank.rn{background:rgba(79,143,247,.1);color:var(--blue)}
+.prod-name{flex:1;font-size:12px;font-weight:500}
+.prod-val{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.prod-pct{font-size:10px;color:var(--dim);width:40px;text-align:right}
+
+/* Insight */
+.insight{border-radius:10px;padding:14px 18px;margin-top:14px;font-size:12px;line-height:1.65;border:1px solid}
+.insight.blue{background:rgba(79,143,247,.07);border-color:rgba(79,143,247,.2)}
+.insight.green{background:rgba(34,201,151,.07);border-color:rgba(34,201,151,.2)}
+.insight.red{background:rgba(242,85,90,.07);border-color:rgba(242,85,90,.2)}
+.insight.orange{background:rgba(247,169,79,.07);border-color:rgba(247,169,79,.2)}
+.insight strong{font-weight:700}
+.insight strong.blue{color:var(--blue)}.insight strong.green{color:var(--green)}.insight strong.red{color:var(--red)}.insight strong.orange{color:var(--orange)}
+
+/* Stat blocks */
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.stat-block{background:var(--card2);border-radius:10px;padding:14px;text-align:center}
+.stat-block .val{font-size:22px;font-weight:800}
+.stat-block .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--dim);margin-top:4px}
+
+@media(max-width:1200px){.hero-row{grid-template-columns:repeat(3,1fr)}.grid-2,.grid-3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1><span>Mozaik</span> — Order & Sales Intelligence</h1>
+    <div class="meta">WooCommerce Transaction Data · 843 Completed Orders · Marketing Director View</div>
+  </div>
+  <div class="badge-row">
+    <div class="badge blue">Jun 2023 – Mar 2026</div>
+    <div class="badge green">1€ ≈ 37₺</div>
+  </div>
+</div>
+
+<!-- HERO KPIs -->
+<div class="hero-row">
+  <div class="hero">
+    <div class="hero-label">Total Revenue</div>
+    <div class="hero-val">€520K</div>
+    <div class="hero-sub">Net: €443K after tax</div>
+  </div>
+  <div class="hero">
+    <div class="hero-label">Total Orders</div>
+    <div class="hero-val">843</div>
+    <div class="hero-sub">1,583 items · 1.88 avg/order</div>
+  </div>
+  <div class="hero">
+    <div class="hero-label">Avg Order Value</div>
+    <div class="hero-val">€617</div>
+    <div class="hero-sub">2025 AOV: <span class="up">€751 (+50% YoY)</span></div>
+  </div>
+  <div class="hero">
+    <div class="hero-label">Unique Customers</div>
+    <div class="hero-val">620</div>
+    <div class="hero-sub">Repeat: <span class="up">20% → 44% of rev</span></div>
+  </div>
+  <div class="hero">
+    <div class="hero-label">2025 vs 2024</div>
+    <div class="hero-val"><span class="up">+102%</span></div>
+    <div class="hero-sub">€249K vs €123K revenue</div>
+  </div>
+  <div class="hero">
+    <div class="hero-label">Lost Revenue</div>
+    <div class="hero-val" style="color:var(--red)">€291K</div>
+    <div class="hero-sub">242 cancelled/failed orders</div>
+  </div>
+</div>
+
+<!-- DIRECTOR'S BRIEFING -->
+<div class="section">Marketing Director's Briefing</div>
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:rgba(34,201,151,.12);color:var(--green)">📈</div> What's Working</div>
+    <div class="insight green">
+      <strong class="green">Revenue doubled year-over-year.</strong> 2025 hit €249K vs €123K in 2024 — a clean 102% growth with AOV jumping from €499 to €751. December 2025 alone did €95K (87 orders), making it the single strongest month in company history.<br><br>
+      <strong class="green">Repeat customers are your hidden engine.</strong> Just 20% of customers generate 44% of all revenue. These loyalists have significantly higher AOV and buy premium products. This is a major retention asset to double down on.<br><br>
+      <strong class="green">Panton Sandalye is the franchise product.</strong> Three color variants (Siyah, Beyaz, Bordo) together account for 300 units sold and €123K+ in revenue — roughly 24% of total sales from a single chair line.
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:rgba(242,85,90,.12);color:var(--red)">⚠️</div> Where to Focus</div>
+    <div class="insight red">
+      <strong class="red">€291K in abandoned orders.</strong> 242 cancelled or failed transactions — that's 56% of your successful revenue sitting on the table. Payment failures (iyzico rejections) and cart abandonment are the biggest leaks in the funnel.<br><br>
+      <strong class="red">Instagram traffic converts poorly.</strong> Only 7.4% of orders come from IG despite heavy ad spend. Revenue share is just 3.8%. The channel works for awareness but the conversion path from IG to purchase needs serious optimization.<br><br>
+      <strong class="red">February 2026 dropped hard.</strong> After a monster Dec-Jan, Feb pulled back to 40 orders (€39.7K). While AOV remained strong at €993, the volume drop suggests seasonal normalization or budget fatigue. March is tracking even lower.
+    </div>
+  </div>
+</div>
+
+<!-- MONTHLY REVENUE CHART -->
+<div class="section">Monthly Revenue Trend</div>
+<div class="card" style="margin-bottom:16px">
+  <div class="card-title"><div class="icon" style="background:rgba(79,143,247,.12);color:var(--blue)">📊</div> Revenue by Month (€) — Last 18 Months</div>
+  <div class="chart-box"><canvas id="monthlyChart"></canvas></div>
+  <div class="insight blue" style="margin-top:16px">
+    <strong class="blue">The December Effect:</strong> Dec 2025 revenue (€94.9K) was 6x the monthly average — driven by holiday gifting and likely year-end corporate purchasing. January held strong at €44.6K as a carryover. The challenge now is sustaining momentum into spring.
+  </div>
+</div>
+
+<!-- TRAFFIC + CATEGORIES -->
+<div class="section">Revenue Breakdown</div>
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:rgba(155,109,255,.12);color:var(--purple)">🔀</div> Revenue by Traffic Source</div>
+    <div class="chart-box" style="height:260px"><canvas id="sourceChart"></canvas></div>
+    <div class="insight blue" style="margin-top:14px">
+      <strong class="blue">Google (Organic + Ads) drives 43%</strong> of order revenue — making search your most valuable acquisition channel. Direct at 53% likely includes brand-aware and repeat buyers. Instagram's 3.8% share needs attention given the ad spend allocated.
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:rgba(247,169,79,.12);color:var(--orange)">🏷️</div> Revenue by Category</div>
+    <div class="chart-box" style="height:260px"><canvas id="categoryChart"></canvas></div>
+    <div class="insight orange" style="margin-top:14px">
+      <strong class="orange">Chairs & Seating = 42% of revenue (€220K)</strong>. With Sofas & Armchairs adding another 20%, furniture accounts for 62% of all sales. Kitchen & Home (€42.5K) and Decor (€41.4K) provide steady mid-range volume.
+    </div>
+  </div>
+</div>
+
+<!-- TOP PRODUCTS -->
+<div class="section">Best Sellers — What Customers Actually Buy</div>
+<div class="grid-3">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:rgba(34,201,151,.12);color:var(--green)">💰</div> Top by Revenue</div>
+    <div class="prod-item"><div class="prod-rank r1">1</div><div class="prod-name">Eames Tekli Koltuk & Puf</div><div class="prod-val">€57.7K</div><div class="prod-pct">11.1%</div></div>
+    <div class="prod-item"><div class="prod-rank r2">2</div><div class="prod-name">Panton Sandalye - Siyah</div><div class="prod-val">€51.0K</div><div class="prod-pct">9.8%</div></div>
+    <div class="prod-item"><div class="prod-rank r3">3</div><div class="prod-name">Panton Sandalye - Beyaz</div><div class="prod-val">€39.1K</div><div class="prod-pct">7.5%</div></div>
+    <div class="prod-item"><div class="prod-rank rn">4</div><div class="prod-name">Panton Sandalye - Bordo</div><div class="prod-val">€33.2K</div><div class="prod-pct">6.4%</div></div>
+    <div class="prod-item"><div class="prod-rank rn">5</div><div class="prod-name">Eames Koltuk - Walnut</div><div class="prod-val">€19.6K</div><div class="prod-pct">3.8%</div></div>
+    <div class="prod-item"><div class="prod-rank rn">6</div><div class="prod-name">Panton Sandalye - Pembe</div><div class="prod-val">€9.1K</div><div class="prod-pct">1.7%</div></div>
+    <div class="prod-item"><div class="prod-rank rn">7</div><div class="prod-name">Soft Pad EA 219 Ofis</div><div class="prod-val">€8.2K</div><div class="prod-pct">1.6%</div></div>
+    <div class="prod-item"><div class="prod-rank rn">8</div><div class="prod-name">Wiggle Sandalye</div><div class="prod-val">€7.8K</div><div class="prod-pct">1.5%</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:rgba(79,143,247,.12);color:var(--blue)">📦</div> Top by Volume</div>
+    <div class="prod-item"><div class="prod-rank r1">1</div><div class="prod-name">Panton Sandalye - Siyah</div><div class="prod-val">121</div><div class="prod-pct">7.6%</div></div>
+    <div class="prod-item"><div class="prod-rank r2">2</div><div class="prod-name">Panton Sandalye - Beyaz</div><div class="prod-val">101</div><div class="prod-pct">6.4%</div></div>
+    <div class="prod-item"><div class="prod-rank r3">3</div><div class="prod-name">Panton Sandalye - Bordo</div><div class="prod-val">78</div><div class="prod-pct">4.9%</div></div>
+    <div class="prod-item"><div class="prod-rank rn">4</div><div class="prod-name">AJ Döner Küllük - Küçük</div><div class="prod-val">43</div><div class="prod-pct">2.7%</div></div>
+    <div class="prod-item"><div class="prod-rank rn">5</div><div class="prod-name">AJ Döner Küllük - Büyük</div><div class="prod-val">32</div><div class="prod-pct">2.0%</div></div>
+    <div class="prod-item"><div class="prod-rank rn">6</div><div class="prod-name">Juicy Salif Sıkacağı</div><div class="prod-val">30</div><div class="prod-pct">1.9%</div></div>
+    <div class="prod-item"><div class="prod-rank rn">7</div><div class="prod-name">Eames House Bird</div><div class="prod-val">25</div><div class="prod-pct">1.6%</div></div>
+    <div class="prod-item"><div class="prod-rank rn">8</div><div class="prod-name">Panton Sandalye - Pembe</div><div class="prod-val">24</div><div class="prod-pct">1.5%</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:rgba(240,98,146,.12);color:var(--pink)">🎯</div> Highest AOV Products</div>
+    <div class="prod-item"><div class="prod-rank r1">1</div><div class="prod-name">Eames Tekli Koltuk & Puf</div><div class="prod-val">€11,548</div><div class="prod-pct">5 sold</div></div>
+    <div class="prod-item"><div class="prod-rank r2">2</div><div class="prod-name">Eames Walnut Black</div><div class="prod-val">€9,796</div><div class="prod-pct">2 sold</div></div>
+    <div class="prod-item"><div class="prod-rank r3">3</div><div class="prod-name">Eames Walnut Snow</div><div class="prod-val">€9,213</div><div class="prod-pct">1 sold</div></div>
+    <div class="prod-item"><div class="prod-rank rn">4</div><div class="prod-name">Soft Pad EA 219</div><div class="prod-val">€8,218</div><div class="prod-pct">1 sold</div></div>
+    <div class="prod-item"><div class="prod-rank rn">5</div><div class="prod-name">Wiggle Sandalye</div><div class="prod-val">€1,554</div><div class="prod-pct">5 sold</div></div>
+    <div class="prod-item"><div class="prod-rank rn">6</div><div class="prod-name">Eames Stools Tabure</div><div class="prod-val">€2,062</div><div class="prod-pct">2 sold</div></div>
+    <div class="prod-item"><div class="prod-rank rn">7</div><div class="prod-name">Wiggle Stool Tabure</div><div class="prod-val">€868</div><div class="prod-pct">5 sold</div></div>
+    <div class="prod-item"><div class="prod-rank rn">8</div><div class="prod-name">Panton Sandalye (avg)</div><div class="prod-val">€486</div><div class="prod-pct">300 sold</div></div>
+  </div>
+</div>
+
+<!-- CUSTOMER & GEO -->
+<div class="section">Customer Intelligence & Geography</div>
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:rgba(38,198,218,.12);color:var(--cyan)">👥</div> Customer Segments</div>
+    <div class="stat-grid" style="margin-bottom:16px">
+      <div class="stat-block"><div class="val">620</div><div class="lbl">Unique Customers</div></div>
+      <div class="stat-block"><div class="val" style="color:var(--green)">124</div><div class="lbl">Repeat Buyers</div></div>
+      <div class="stat-block"><div class="val" style="color:var(--gold)">44.1%</div><div class="lbl">Rev from Repeats</div></div>
+    </div>
+    <div class="chart-box" style="height:200px"><canvas id="customerChart"></canvas></div>
+    <div class="insight green" style="margin-top:14px">
+      <strong class="green">Your repeat customers are 3.5x more valuable</strong> than one-time buyers on a per-customer basis. A loyalty program or VIP tier could convert more of your 496 one-time buyers into repeats — each conversion is worth ~€1,850 in lifetime value.
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:rgba(155,109,255,.12);color:var(--purple)">📍</div> Geographic Distribution</div>
+    <table class="data">
+      <thead><tr><th>City</th><th>Orders</th><th>Revenue</th><th>Share</th></tr></thead>
+      <tbody>
+        <tr><td><span class="dot" style="background:var(--blue)"></span>Istanbul</td><td>555</td><td>€345K</td><td>66.3%</td></tr>
+        <tr><td><span class="dot" style="background:var(--purple)"></span>Ankara</td><td>68</td><td>€50.3K</td><td>9.7%</td></tr>
+        <tr><td><span class="dot" style="background:var(--green)"></span>Bodrum/Muğla</td><td>15</td><td>€10.1K</td><td>1.9%</td></tr>
+        <tr><td><span class="dot" style="background:var(--orange)"></span>Bursa</td><td>23</td><td>€9.6K</td><td>1.8%</td></tr>
+        <tr><td><span class="dot" style="background:var(--pink)"></span>Izmir</td><td>15</td><td>€9.5K</td><td>1.8%</td></tr>
+        <tr><td><span class="dot" style="background:var(--cyan)"></span>Ümraniye</td><td>7</td><td>€7.4K</td><td>1.4%</td></tr>
+        <tr><td><span class="dot" style="background:var(--dim)"></span>Other Cities</td><td>160</td><td>€88K</td><td>16.9%</td></tr>
+      </tbody>
+    </table>
+    <div class="insight blue" style="margin-top:14px">
+      <strong class="blue">Istanbul is 66% of your business</strong> with €345K, followed by Ankara at 10%. Bodrum shows summer-seasonal potential. Consider geo-targeted campaigns for Izmir & Bursa — both under-indexed relative to their population.
+    </div>
+  </div>
+</div>
+
+<!-- OPERATIONAL INSIGHTS -->
+<div class="section">Operational Patterns</div>
+<div class="grid-3">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:rgba(247,169,79,.12);color:var(--orange)">📅</div> Best Sales Days</div>
+    <div class="chart-box" style="height:220px"><canvas id="dowChart"></canvas></div>
+    <div class="insight orange" style="margin-top:10px">
+      <strong class="orange">Mon-Tue are peak days</strong> — generating €97.9K and €96K respectively. Sunday is weakest at €49.7K. Consider launching campaigns Sunday evening to capture Monday buyers.
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:rgba(79,143,247,.12);color:var(--blue)">🚚</div> Shipping Breakdown</div>
+    <div class="chart-box" style="height:220px"><canvas id="shippingChart"></canvas></div>
+    <div class="insight blue" style="margin-top:10px">
+      <strong class="blue">71% get free shipping</strong> — only 22% pay for delivery. 6.4% pick up in-store at Ortaköy, suggesting local customers value the physical experience.
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:rgba(242,85,90,.12);color:var(--red)">❌</div> Lost Revenue Breakdown</div>
+    <div class="stat-grid" style="grid-template-columns:1fr 1fr;margin-bottom:12px">
+      <div class="stat-block"><div class="val" style="color:var(--red)">224</div><div class="lbl">Cancelled</div></div>
+      <div class="stat-block"><div class="val" style="color:var(--orange)">18</div><div class="lbl">Failed Payments</div></div>
+    </div>
+    <div class="stat-grid" style="grid-template-columns:1fr 1fr">
+      <div class="stat-block"><div class="val" style="color:var(--pink)">19</div><div class="lbl">Refunded</div></div>
+      <div class="stat-block"><div class="val" style="color:var(--red)">€291K</div><div class="lbl">Total Lost</div></div>
+    </div>
+    <div class="insight red" style="margin-top:10px">
+      <strong class="red">Cancellation rate is 22%</strong> of all orders. Investigate why — price shock at checkout? Slow delivery estimates? Payment friction? Each 5% reduction = ~€73K recovered.
+    </div>
+  </div>
+</div>
+
+<!-- YoY + Katapult -->
+<div class="section">Year-over-Year & Katapult Impact</div>
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:rgba(34,201,151,.12);color:var(--green)">📈</div> YoY Growth</div>
+    <div class="chart-box" style="height:250px"><canvas id="yoyChart"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:rgba(155,109,255,.12);color:var(--purple)">🚀</div> Katapult Period Impact</div>
+    <div class="stat-grid" style="margin-bottom:16px">
+      <div class="stat-block"><div class="val" style="color:var(--dim)">€109K</div><div class="lbl">Jan-Aug 2025 (8mo)</div></div>
+      <div class="stat-block"><div class="val" style="color:var(--green)">€140K</div><div class="lbl">Sep-Dec 2025 (4mo)</div></div>
+      <div class="stat-block"><div class="val" style="color:var(--green)">+29%</div><div class="lbl">More in half the time</div></div>
+    </div>
+    <div class="insight green">
+      <strong class="green">The Katapult period (Sep–Dec 2025) generated 29% more revenue than the entire first 8 months of 2025</strong> — in just 4 months. Even excluding the Dec holiday spike, Sep-Nov averaged €15.2K/month vs €13.6K/month pre-Katapult. The growth acceleration is real.
+    </div>
+  </div>
+</div>
+
+<!-- STRATEGIC RECOMMENDATIONS -->
+<div class="section">Strategic Recommendations</div>
+<div class="card" style="margin-bottom:40px">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="insight green">
+      <strong class="green">1. Fix the Cancellation Funnel</strong><br>
+      €291K in lost orders is your #1 opportunity. Implement abandoned cart emails, simplify checkout, and test payment alternatives beyond iyzico. Target: reduce cancellations by 30% = ~€87K recovered.
+    </div>
+    <div class="insight blue">
+      <strong class="blue">2. Build a Panton Campaign</strong><br>
+      With 300 units sold across colors, Panton is your hero product. Create a dedicated landing page, bundle deals (buy 2+ save X%), and seasonal color launches to keep momentum.
+    </div>
+    <div class="insight orange">
+      <strong class="orange">3. Activate Repeat Customers</strong><br>
+      124 repeat customers drive 44% of revenue. Launch a VIP program with early access, exclusive colors, or loyalty discounts. Convert even 10% of one-time buyers = ~€91K potential.
+    </div>
+    <div class="insight blue">
+      <strong class="blue">4. Rethink Instagram Strategy</strong><br>
+      IG drives only 3.8% of order revenue despite significant ad spend. Either optimize the IG-to-purchase funnel (better landing pages, retargeting) or reallocate budget toward Google where ROAS is stronger.
+    </div>
+  </div>
+</div>
+
+<script>
+Chart.defaults.color='#747b95';Chart.defaults.borderColor='rgba(37,42,58,.4)';Chart.defaults.font.family="'Inter',sans-serif";
+
+// Monthly Revenue
+new Chart(document.getElementById('monthlyChart'),{type:'bar',data:{
+  labels:['Oct 24','Nov 24','Dec 24','Jan 25','Feb 25','Mar 25','Apr 25','May 25','Jun 25','Jul 25','Aug 25','Sep 25','Oct 25','Nov 25','Dec 25','Jan 26','Feb 26','Mar 26'],
+  datasets:[{label:'Revenue (€)',data:[9879,7496,17006,7884,16236,11580,17433,16033,7846,22178,9661,12043,17353,16127,94930,44568,39727,4009],
+    backgroundColor:function(ctx){return ctx.dataIndex===14?'rgba(34,201,151,.7)':'rgba(79,143,247,.5)'},borderRadius:5}]
+},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'€'+ctx.raw.toLocaleString()}}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{ticks:{callback:v=>'€'+(v/1000).toFixed(0)+'K'}}}}});
+
+// Source Doughnut
+new Chart(document.getElementById('sourceChart'),{type:'doughnut',data:{
+  labels:['Direct','Google Organic','Google Ads','Instagram','Other'],
+  datasets:[{data:[273801,141086,83836,19593,2053],backgroundColor:['#4f8ff7','#22c997','#f7a94f','#f06292','#747b95'],borderWidth:0,hoverOffset:6}]
+},options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{position:'right',labels:{padding:12,usePointStyle:true,font:{size:11}}},tooltip:{callbacks:{label:ctx=>ctx.label+': €'+(ctx.raw/1000).toFixed(1)+'K'}}}}});
+
+// Category Doughnut
+new Chart(document.getElementById('categoryChart'),{type:'doughnut',data:{
+  labels:['Chairs & Seating','Sofas & Armchairs','Kitchen & Home','Decor & Accessories','Lighting','Wall Hooks','Other'],
+  datasets:[{data:[219690,101576,42520,41435,33874,12841,68451],backgroundColor:['#4f8ff7','#9b6dff','#f7a94f','#f06292','#26c6da','#22c997','#747b95'],borderWidth:0,hoverOffset:6}]
+},options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{position:'right',labels:{padding:10,usePointStyle:true,font:{size:10}}},tooltip:{callbacks:{label:ctx=>ctx.label+': €'+(ctx.raw/1000).toFixed(1)+'K'}}}}});
+
+// Customer segments
+new Chart(document.getElementById('customerChart'),{type:'bar',data:{
+  labels:['One-Time Buyers','Repeat Buyers'],
+  datasets:[{label:'Customers',data:[496,124],backgroundColor:['rgba(79,143,247,.5)','rgba(34,201,151,.5)'],borderRadius:6},{label:'Revenue (€K)',data:[291,229],backgroundColor:['rgba(79,143,247,.2)','rgba(34,201,151,.2)'],borderColor:['#4f8ff7','#22c997'],borderWidth:2,borderRadius:6}]
+},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{usePointStyle:true,font:{size:11}}}},scales:{x:{grid:{display:false}},y:{display:false}}}});
+
+// Day of week
+new Chart(document.getElementById('dowChart'),{type:'bar',data:{
+  labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+  datasets:[{data:[97909,95968,85918,58602,64432,67888,49652],backgroundColor:function(ctx){return ctx.dataIndex<2?'rgba(34,201,151,.6)':'rgba(79,143,247,.4)'},borderRadius:5}]
+},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'€'+ctx.raw.toLocaleString()}}},scales:{x:{grid:{display:false}},y:{ticks:{callback:v=>'€'+(v/1000).toFixed(0)+'K'},grid:{color:'rgba(37,42,58,.3)'}}}}});
+
+// Shipping
+new Chart(document.getElementById('shippingChart'),{type:'doughnut',data:{
+  labels:['Free Shipping','Paid Shipping','Store Pickup'],
+  datasets:[{data:[598,185,54],backgroundColor:['#22c997','#f7a94f','#9b6dff'],borderWidth:0}]
+},options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{position:'bottom',labels:{padding:10,usePointStyle:true,font:{size:11}}}}}});
+
+// YoY
+new Chart(document.getElementById('yoyChart'),{type:'bar',data:{
+  labels:['2023 (Jul-Dec)','2024','2025','2026 (Jan-Mar)'],
+  datasets:[{label:'Revenue (€)',data:[59472,123287,249305,88304],backgroundColor:['rgba(116,123,149,.4)','rgba(79,143,247,.5)','rgba(34,201,151,.6)','rgba(155,109,255,.5)'],borderRadius:6},{label:'Orders',data:[131,247,332,133],backgroundColor:['rgba(116,123,149,.15)','rgba(79,143,247,.15)','rgba(34,201,151,.15)','rgba(155,109,255,.15)'],borderColor:['#747b95','#4f8ff7','#22c997','#9b6dff'],borderWidth:2,borderRadius:6}]
+},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{usePointStyle:true,font:{size:11}}}},scales:{x:{grid:{display:false}},y:{display:false}}}});
+</script>
+</body>
+</html>
