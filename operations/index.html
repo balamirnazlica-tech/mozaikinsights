@@ -1,27 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Operations — Mozaik Insights</title>
-<link rel="stylesheet" href="../assets/style.css?v=6">
-<script src="/assets/auth.js"></script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect rx='18' width='100' height='100' fill='%234f8cff'/><text x='50' y='68' text-anchor='middle' font-size='50' fill='white' font-family='system-ui' font-weight='700'>MZ</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css?v=11">
+<script src="../assets/auth.js"></script>
 </head>
 <body class="viewer">
-<nav class="nav"><div class="nav-inner"><a href="/" class="logo">🟣 <strong>Mozaik Insights</strong> <span class="tagline">analytics hub</span></a><div class="nav-links"><a href="/">Home</a><a href="/marketing/">Marketing</a><a href="/sales/">Sales</a><a href="/operations/" class="active">Operations</a></div></div></nav>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="../"><span class="brand-mark"></span><span class="brand-name">Mozaik Insights</span><span class="brand-sub">analytics hub</span></a>
+    <ul>
+      <li><a class="link" href="../">Home</a></li>
+      <li><a class="link" href="../marketing/">Marketing</a></li>
+      <li><a class="link" href="../sales/">Sales</a></li>
+      <li><a class="link active" href="./">Operations</a></li>
+    </ul>
+  </div>
+</nav>
+
 <main class="viewer-main">
-<div class="tabbar" id="tabs"></div>
-<div class="frame-host"><iframe id="frame" allowfullscreen></iframe></div>
+  <div class="tabbar" id="tabs"></div>
+  <div class="frame-host"><iframe id="frame" title="Operations dashboard" loading="eager" allow="fullscreen"></iframe></div>
 </main>
+
 <script>
-const DASHBOARDS=[
-{id:'footfall',label:'Showroom Footfall',url:'./footfall.html'}
-];
-const tabs=document.getElementById('tabs'),frame=document.getElementById('frame');
-function activate(id){const d=DASHBOARDS.find(x=>x.id===id)||DASHBOARDS[0];frame.src=d.url;tabs.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.id===d.id));location.hash=d.id;}
-DASHBOARDS.forEach(d=>{const b=document.createElement('button');b.textContent=d.label;b.dataset.id=d.id;b.onclick=()=>activate(d.id);tabs.appendChild(b);});
-activate(location.hash.replace('#','')||'footfall');
-window.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();location.reload();}});
+const tabs=[{label:"Showroom Footfall",src:"./footfall.html"}];
+const bar=document.getElementById("tabs"),frame=document.getElementById("frame");
+let cur=0;
+tabs.forEach((t,i)=>{const b=document.createElement("button");b.textContent=t.label;b.onclick=()=>activate(i);bar.appendChild(b)});
+function activate(i){cur=i;frame.src=tabs[i].src;bar.querySelectorAll("button").forEach((b,j)=>b.classList.toggle("active",j===i))}
+activate(0);
+window.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();activate(cur)}});
 </script>
 </body>
 </html>
