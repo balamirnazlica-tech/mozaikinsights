@@ -1,42 +1,26 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Operations Dashboards â Mozaik Insights</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/style.css?v=3">
+<title>Operations — Mozaik Insights</title>
+<link rel="stylesheet" href="../assets/style.css?v=6">
 </head>
-<body>
-<nav class="nav">
-  <div class="nav-inner">
-    <a class="brand" href="../"><span class="brand-mark"></span><span class="brand-name">Mozaik Insights</span><span class="brand-sub">analytics hub</span></a>
-    <ul>
-      <li><a class="link" href="../">Home</a></li>
-      <li><a class="link" href="../marketing/">Marketing</a></li>
-      <li><a class="link" href="../sales/">Sales</a></li>
-      <li><a class="link active" href="./">Operations</a></li>
-    </ul>
-  </div>
-</nav>
-
-<main class="container">
-  <section class="hero">
-    <span class="eyebrow">Operations</span>
-    <h1>Operations <span>dashboards</span></h1>
-    <p class="lede">Delivery, utilization and internal KPIs. Dashboards coming soon.</p>
-  </section>
-
-  <div class="grid">
-    <div class="card empty"><span class="tag">Delivery</span><h3>Project Delivery</h3><p>On-time delivery, milestone health, and risks by project.</p></div>
-    <div class="card empty"><span class="tag">People</span><h3>Utilization</h3><p>Billable utilization, capacity and staffing across teams.</p></div>
-    <div class="card empty"><span class="tag">Finance Ops</span><h3>Operational KPIs</h3><p>Core operating metrics rolled up across the company.</p></div>
-  </div>
+<body class="viewer">
+<nav class="nav"><div class="nav-inner"><a href="/" class="logo">🟣 <strong>Mozaik Insights</strong> <span class="tagline">analytics hub</span></a><div class="nav-links"><a href="/">Home</a><a href="/marketing/">Marketing</a><a href="/sales/">Sales</a><a href="/operations/" class="active">Operations</a></div></div></nav>
+<main class="viewer-main">
+<div class="tabbar" id="tabs"></div>
+<div class="frame-host"><iframe id="frame" allowfullscreen></iframe></div>
 </main>
-
-<footer><div class="foot-inner"><div>Â© <span id="y"></span> Mozaik Design</div><div>mozaikinsights.com</div></div></footer>
-<script>document.getElementById('y').textContent=new Date().getFullYear();</script>
+<script>
+const DASHBOARDS=[
+{id:'footfall',label:'Showroom Footfall',url:'https://balamirnazlica-tech.github.io/mozaik-footfall-dashboard/'}
+];
+const tabs=document.getElementById('tabs'),frame=document.getElementById('frame');
+function activate(id){const d=DASHBOARDS.find(x=>x.id===id)||DASHBOARDS[0];frame.src=d.url;tabs.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.id===d.id));location.hash=d.id;}
+DASHBOARDS.forEach(d=>{const b=document.createElement('button');b.textContent=d.label;b.dataset.id=d.id;b.onclick=()=>activate(d.id);tabs.appendChild(b);});
+activate(location.hash.replace('#','')||'footfall');
+window.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();location.reload();}});
+</script>
 </body>
 </html>
