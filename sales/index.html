@@ -30,9 +30,9 @@
 <script>
 const DASHBOARDS=[
   {id:'sales',label:'Sales Dashboard',url:'./sales-dashboard.html'},
-  {id:'crm',label:'CRM Dashboard',url:'https://balamirnazlica-tech.github.io/mozaik-dashboards/Dashboards/Mozaik_CRM_Dashboard.html'},
-  {id:'bvb',label:'Build vs Buy',url:'https://balamirnazlica-tech.github.io/mozaik-dashboards/Dashboards/Mozaik_CRM_Build_vs_Buy_Dashboard.html'},
-  {id:'bvbt',label:'Build vs Buy (Team)',url:'https://balamirnazlica-tech.github.io/mozaik-dashboards/Dashboards/Mozaik_CRM_Build_vs_Buy_Dashboard_Team.html'}
+  {id:'crm',label:'CRM Dashboard',url:'./crm-dashboard.html'},
+  {id:'bvb',label:'Build vs Buy',url:'./crm-build-vs-buy-dashboard.html'},
+  {id:'bvbt',label:'Build vs Buy (Team)',url:'./crm-build-vs-buy-dashboard-team.html'}
 ];
 const frame=document.getElementById('frame'),tabs=document.getElementById('tabs');
 function activate(id){const d=DASHBOARDS.find(x=>x.id===id)||DASHBOARDS[0];frame.src=d.url;[...tabs.children].forEach(b=>b.classList.toggle('active',b.dataset.id===d.id));history.replaceState(null,'','#'+d.id);}
