@@ -1,0 +1,2131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mozaik CRM Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1B4F72;
+            --primary-light: #2E86C1;
+            --accent: #E67E22;
+            --success: #27AE60;
+            --danger: #E74C3C;
+            --bg: #F0F3F5;
+            --card: #FFFFFF;
+            --text: #2C3E50;
+            --text-light: #7F8C8D;
+            --border: #E5E8EB;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            height: 100vh;
+            background: var(--primary);
+            color: white;
+            overflow-y: auto;
+            z-index: 1000;
+            padding: 20px 0;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            font-size: 18px;
+            font-weight: 700;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .nav-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.15);
+            border-left-color: var(--accent);
+            color: white;
+            font-weight: 600;
+        }
+
+        .nav-item.hidden {
+            display: none;
+        }
+
+        /* Topbar */
+        .topbar {
+            position: fixed;
+            top: 0;
+            left: 240px;
+            right: 0;
+            height: 70px;
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            gap: 30px;
+            z-index: 999;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            flex: 1;
+        }
+
+        .selector-group {
+            display: flex;
+            gap: 15px;
+        }
+
+        .selector {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .selector select {
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--text);
+            background: white;
+            cursor: pointer;
+            min-width: 150px;
+        }
+
+        .date-display {
+            color: var(--text-light);
+            font-size: 13px;
+            min-width: 100px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 240px;
+            margin-top: 70px;
+            padding: 30px;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Page Views */
+        .page-view {
+            display: none;
+        }
+
+        .page-view.active {
+            display: block;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 30px;
+            background: var(--card);
+            border-radius: 4px 4px 0 0;
+            padding: 0 20px;
+        }
+
+        .tab {
+            padding: 15px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            color: var(--text-light);
+            font-weight: 500;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .tab:hover {
+            color: var(--primary);
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .card-subtitle {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        /* KPI Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        /* Charts */
+        .chart-container {
+            position: relative;
+            height: 350px;
+            margin-bottom: 30px;
+        }
+
+        .chart-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        /* Tables */
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        thead {
+            background: var(--bg);
+            border-bottom: 2px solid var(--border);
+        }
+
+        th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tbody tr:hover {
+            background: var(--bg);
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-indoor {
+            background: #EBF5FB;
+            color: #2E86C1;
+        }
+
+        .badge-outdoor {
+            background: #E8F8F5;
+            color: #1ABC9C;
+        }
+
+        .badge-lighting {
+            background: #FEF9E7;
+            color: #F39C12;
+        }
+
+        .badge-contract {
+            background: #F4ECF7;
+            color: #8E44AD;
+        }
+
+        .badge-accessories {
+            background: #FDEDEC;
+            color: #E74C3C;
+        }
+
+        .badge-retail {
+            background: #FEF5E7;
+            color: #E67E22;
+        }
+
+        .badge-success {
+            background: #D5F4E6;
+            color: #27AE60;
+        }
+
+        .badge-warning {
+            background: #FEF5E7;
+            color: #F39C12;
+        }
+
+        .badge-danger {
+            background: #FADBD8;
+            color: #E74C3C;
+        }
+
+        /* Timeline */
+        .timeline {
+            margin: 20px 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .timeline-item:last-child {
+            border-bottom: none;
+        }
+
+        .timeline-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .timeline-time {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        /* Kanban */
+        .kanban {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .kanban-column {
+            background: var(--bg);
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 200px;
+        }
+
+        .kanban-header {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+
+        .kanban-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .kanban-card {
+            background: white;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-size: 12px;
+            border-left: 3px solid var(--primary);
+        }
+
+        /* Search & Filters */
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-bar input {
+            padding: 10px 15px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 13px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-btn {
+            padding: 10px 15px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Export */
+        .export-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .export-btn {
+            padding: 8px 15px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 0.3s;
+        }
+
+        .export-btn:hover {
+            background: var(--primary-light);
+        }
+
+        .export-menu {
+            display: none;
+            position: absolute;
+            top: 35px;
+            right: 0;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+        }
+
+        .export-menu.active {
+            display: block;
+        }
+
+        .export-menu button {
+            display: block;
+            width: 100%;
+            padding: 10px 20px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            text-align: left;
+            font-size: 13px;
+            transition: background 0.2s;
+        }
+
+        .export-menu button:hover {
+            background: var(--bg);
+        }
+
+        /* Product Grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .product-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .product-card:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            transform: translateY(-4px);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 150px;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .product-info {
+            padding: 15px;
+        }
+
+        .product-name {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .product-category {
+            font-size: 11px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+
+        .product-price {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            overflow-x: auto;
+            padding: 15px;
+            background: var(--card);
+            border-radius: 8px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-light);
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Modal/Settings */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .settings-item {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .settings-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .settings-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .topbar {
+                left: 200px;
+            }
+
+            .main-content {
+                margin-left: 200px;
+            }
+
+            .chart-row {
+                grid-template-columns: 1fr;
+            }
+
+            .selector-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+            }
+
+            .topbar {
+                left: 0;
+                flex-wrap: wrap;
+                height: auto;
+                padding: 15px;
+            }
+
+            .main-content {
+                margin-left: 0;
+                margin-top: 0;
+                padding: 15px;
+            }
+
+            .kanban {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">MOZAIK CRM</div>
+        <div class="nav-item active" data-page="dashboard" onclick="navigateTo('dashboard')">Dashboard</div>
+        <div class="nav-item" data-page="pipeline" onclick="navigateTo('pipeline')">Pipeline</div>
+        <div class="nav-item" data-page="contacts" onclick="navigateTo('contacts')">Contacts</div>
+        <div class="nav-item" data-page="accounts" onclick="navigateTo('accounts')">Accounts</div>
+        <div class="nav-item" data-page="products" onclick="navigateTo('products')">Products</div>
+        <div class="nav-item" data-page="activities" onclick="navigateTo('activities')">Activities</div>
+        <div class="nav-item" data-page="proposals" onclick="navigateTo('proposals')">Proposals</div>
+        <div class="nav-item" data-page="projects" onclick="navigateTo('projects')">Projects</div>
+        <div class="nav-item" data-page="reports" onclick="navigateTo('reports')">Reports</div>
+        <div class="nav-item" data-page="settings" onclick="navigateTo('settings')">Settings</div>
+    </div>
+
+    <!-- Topbar -->
+    <div class="topbar">
+        <div class="page-title" id="page-title">Dashboard</div>
+        <div class="selector-group">
+            <div class="selector">
+                <label>Department</label>
+                <select id="dept-filter" onchange="filterByDept()">
+                    <option value="">All Departments</option>
+                    <option value="indoor">Indoor Furniture</option>
+                    <option value="outdoor">Outdoor Furniture</option>
+                    <option value="lighting">Lighting</option>
+                    <option value="accessories">Accessories</option>
+                    <option value="retail">Retail/Showroom</option>
+                    <option value="contract">Contract/Projects</option>
+                </select>
+            </div>
+            <div class="selector">
+                <label>Role</label>
+                <select id="role-filter" onchange="filterByRole()">
+                    <option value="">All Roles</option>
+                    <option value="ceo">CEO/GM</option>
+                    <option value="director">Department Director</option>
+                    <option value="manager">Sales Manager</option>
+                    <option value="sales_rep">Sales Rep</option>
+                    <option value="marketing">Marketing</option>
+                    <option value="finance">Finance</option>
+                </select>
+            </div>
+        </div>
+        <div class="date-display" id="current-date"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Dashboard Page -->
+        <div id="page-dashboard" class="page-view active">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('overview', this)">Overview</div>
+                <div class="tab" onclick="switchTab('pipeline', this)">Pipeline</div>
+                <div class="tab" onclick="switchTab('reps', this)">Rep Performance</div>
+                <div class="tab" onclick="switchTab('customers', this)">Top Customers</div>
+            </div>
+
+            <!-- Overview Tab -->
+            <div id="tab-overview" class="tab-content active">
+                <div class="kpi-grid">
+                    <div class="card">
+                        <div class="card-title">Total Revenue</div>
+                        <div class="card-value">₺1.45B</div>
+                        <div class="card-subtitle">Jan - Dec 2025</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Active Customers</div>
+                        <div class="card-value">6,542</div>
+                        <div class="card-subtitle">Total accounts</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Avg Monthly Revenue</div>
+                        <div class="card-value">₺121M</div>
+                        <div class="card-subtitle">2025 Average</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Pipeline Value</div>
+                        <div class="card-value">₺48.2M</div>
+                        <div class="card-subtitle">24 deals</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Monthly Revenue Trend</div>
+                    <div class="chart-container">
+                        <canvas id="chart-revenue-trend"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-row">
+                    <div class="card">
+                        <div class="card-title">Revenue by City</div>
+                        <div class="chart-container">
+                            <canvas id="chart-revenue-city"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Product Category Mix</div>
+                        <div class="chart-container">
+                            <canvas id="chart-product-mix"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Recent Activities</div>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-dot" style="background: #E67E22;"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-title">Burcin Karaca - Meeting</div>
+                                <div class="timeline-time">Today at 2:30 PM - Contract/Projects</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot" style="background: #27AE60;"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-title">Ceren Senyuz - Email Sent</div>
+                                <div class="timeline-time">Today at 11:15 AM - Indoor Furniture</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot" style="background: #25D366;"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-title">Zeynep Uzel - WhatsApp Message</div>
+                                <div class="timeline-time">Yesterday at 4:45 PM - Outdoor Furniture</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot" style="background: #3498DB;"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-title">Idil Alanyalioglu - Call</div>
+                                <div class="timeline-time">Yesterday at 10:00 AM - Lighting</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot" style="background: #9B59B6;"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-title">Banu Nazlica - Site Visit</div>
+                                <div class="timeline-time">2 days ago at 3:20 PM - Accessories</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pipeline Tab -->
+            <div id="tab-pipeline" class="tab-content">
+                <div class="kpi-grid">
+                    <div class="card">
+                        <div class="card-title">Total Pipeline</div>
+                        <div class="card-value">₺48.2M</div>
+                        <div class="card-subtitle">All stages</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Weighted Pipeline</div>
+                        <div class="card-value">₺22.8M</div>
+                        <div class="card-subtitle">By probability</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Avg Deal Size</div>
+                        <div class="card-value">₺2.0M</div>
+                        <div class="card-subtitle">24 deals</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Q1 Expected Close</div>
+                        <div class="card-value">₺12.4M</div>
+                        <div class="card-subtitle">Forecast</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Pipeline by Stage</div>
+                    <div class="kanban">
+                        <div class="kanban-column">
+                            <div class="kanban-header">Lead</div>
+                            <div class="kanban-value">₺8.5M</div>
+                            <div class="kanban-card">Bulgari Bodrum</div>
+                            <div class="kanban-card">Shangrila Yalikavak</div>
+                        </div>
+                        <div class="kanban-column">
+                            <div class="kanban-header">Discovery</div>
+                            <div class="kanban-value">₺12.1M</div>
+                            <div class="kanban-card">Amanruya</div>
+                            <div class="kanban-card">Maxx Royal Maldives</div>
+                        </div>
+                        <div class="kanban-column">
+                            <div class="kanban-header">Proposal</div>
+                            <div class="kanban-value">₺11.8M</div>
+                            <div class="kanban-card">Divan Talya</div>
+                            <div class="kanban-card">Hillside Bodrum Rooftop</div>
+                        </div>
+                        <div class="kanban-column">
+                            <div class="kanban-header">Negotiation</div>
+                            <div class="kanban-value">₺8.6M</div>
+                            <div class="kanban-card">Barut Anda</div>
+                        </div>
+                        <div class="kanban-column">
+                            <div class="kanban-header">Verbal Commit</div>
+                            <div class="kanban-value">₺4.4M</div>
+                        </div>
+                        <div class="kanban-column">
+                            <div class="kanban-header">Closed Won</div>
+                            <div class="kanban-value">₺2.8M</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rep Performance Tab -->
+            <div id="tab-reps" class="tab-content">
+                <div class="card">
+                    <div class="card-title">Revenue by Sales Rep</div>
+                    <div class="chart-container">
+                        <canvas id="chart-rep-revenue"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Sales Rep Leaderboard</div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Sales Rep</th>
+                                    <th>Revenue</th>
+                                    <th>Active Deals</th>
+                                    <th>Avg Deal Size</th>
+                                    <th>Win Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Zeynep Uzel</td>
+                                    <td>₺258M</td>
+                                    <td>12</td>
+                                    <td>₺21.5M</td>
+                                    <td><span class="badge badge-success">68%</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Banu Nazlica</td>
+                                    <td>₺218M</td>
+                                    <td>9</td>
+                                    <td>₺24.2M</td>
+                                    <td><span class="badge badge-success">65%</span></td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Idil Alanyalioglu</td>
+                                    <td>₺198M</td>
+                                    <td>8</td>
+                                    <td>₺24.75M</td>
+                                    <td><span class="badge badge-warning">58%</span></td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Ceren Senyuz</td>
+                                    <td>₺187M</td>
+                                    <td>7</td>
+                                    <td>₺26.7M</td>
+                                    <td><span class="badge badge-warning">52%</span></td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>Burcin Karaca</td>
+                                    <td>₺176M</td>
+                                    <td>6</td>
+                                    <td>₺29.3M</td>
+                                    <td><span class="badge badge-warning">45%</span></td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>Sena Kaya</td>
+                                    <td>₺154M</td>
+                                    <td>5</td>
+                                    <td>₺30.8M</td>
+                                    <td><span class="badge badge-danger">42%</span></td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>Biricik Mutlu</td>
+                                    <td>₺142M</td>
+                                    <td>4</td>
+                                    <td>₺35.5M</td>
+                                    <td><span class="badge badge-danger">38%</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Customers Tab -->
+            <div id="tab-customers" class="tab-content">
+                <div class="card">
+                    <div class="card-title">Top 15 Customers by Revenue</div>
+                    <div class="chart-container">
+                        <canvas id="chart-top-customers"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Top Customers</div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Account Name</th>
+                                    <th>Type</th>
+                                    <th>Lifetime Revenue</th>
+                                    <th>Active Deals</th>
+                                    <th>Account Owner</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>MRA Turizm</td>
+                                    <td>Corporate</td>
+                                    <td>₺233M</td>
+                                    <td>3</td>
+                                    <td>Zeynep Uzel</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Numarine</td>
+                                    <td>Corporate</td>
+                                    <td>₺157M</td>
+                                    <td>2</td>
+                                    <td>Banu Nazlica</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>EFS Mimarlik</td>
+                                    <td>Architect</td>
+                                    <td>₺128M</td>
+                                    <td>4</td>
+                                    <td>Idil Alanyalioglu</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Is Bankasi</td>
+                                    <td>Corporate</td>
+                                    <td>₺118M</td>
+                                    <td>1</td>
+                                    <td>Ceren Senyuz</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>Beymen</td>
+                                    <td>Retail</td>
+                                    <td>₺98M</td>
+                                    <td>2</td>
+                                    <td>Burcin Karaca</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>Divan Hotels</td>
+                                    <td>Corporate</td>
+                                    <td>₺87M</td>
+                                    <td>2</td>
+                                    <td>Sena Kaya</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>Hilton Istanbul</td>
+                                    <td>Corporate</td>
+                                    <td>₺76M</td>
+                                    <td>1</td>
+                                    <td>Biricik Mutlu</td>
+                                </tr>
+                                <tr>
+                                    <td>8</td>
+                                    <td>Armada Design</td>
+                                    <td>Architect</td>
+                                    <td>₺64M</td>
+                                    <td>3</td>
+                                    <td>Zeynep Uzel</td>
+                                </tr>
+                                <tr>
+                                    <td>9</td>
+                                    <td>Starbucks Turkey</td>
+                                    <td>Corporate</td>
+                                    <td>₺54M</td>
+                                    <td>1</td>
+                                    <td>Ceren Senyuz</td>
+                                </tr>
+                                <tr>
+                                    <td>10</td>
+                                    <td>CVK Hotels</td>
+                                    <td>Corporate</td>
+                                    <td>₺48M</td>
+                                    <td>1</td>
+                                    <td>Banu Nazlica</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pipeline Page -->
+        <div id="page-pipeline" class="page-view">
+            <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                <h2>Sales Pipeline</h2>
+                <div class="export-dropdown">
+                    <button class="export-btn" onclick="toggleExportMenu(this)">Export</button>
+                    <div class="export-menu">
+                        <button onclick="exportCSV('pipeline', 'Mozaik_Pipeline')">CSV</button>
+                        <button onclick="exportPrint('pipeline')">Print/PDF</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Deal</th>
+                                <th>Account</th>
+                                <th>Department</th>
+                                <th>Value</th>
+                                <th>Stage</th>
+                                <th>Probability</th>
+                                <th>Expected Close</th>
+                                <th>Rep</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-dept="contract">
+                                <td>Bulgari Bodrum</td>
+                                <td>Bulgari Hotels</td>
+                                <td><span class="badge badge-contract">Contract</span></td>
+                                <td>₺5.2M</td>
+                                <td><span class="badge badge-warning">Lead</span></td>
+                                <td>25%</td>
+                                <td>Q2 2026</td>
+                                <td>Zeynep Uzel</td>
+                            </tr>
+                            <tr data-dept="contract">
+                                <td>Shangrila Yalikavak</td>
+                                <td>Shangrila Hotels</td>
+                                <td><span class="badge badge-contract">Contract</span></td>
+                                <td>₺3.3M</td>
+                                <td><span class="badge badge-warning">Lead</span></td>
+                                <td>20%</td>
+                                <td>Q3 2026</td>
+                                <td>Banu Nazlica</td>
+                            </tr>
+                            <tr data-dept="contract">
+                                <td>Amanruya</td>
+                                <td>Amanruya Bodrum</td>
+                                <td><span class="badge badge-contract">Contract</span></td>
+                                <td>₺4.8M</td>
+                                <td><span class="badge badge-warning">Discovery</span></td>
+                                <td>40%</td>
+                                <td>Q2 2026</td>
+                                <td>Idil Alanyalioglu</td>
+                            </tr>
+                            <tr data-dept="contract">
+                                <td>Maxx Royal Maldives</td>
+                                <td>Maxx Royal Hotels</td>
+                                <td><span class="badge badge-contract">Contract</span></td>
+                                <td>₺7.3M</td>
+                                <td><span class="badge badge-warning">Discovery</span></td>
+                                <td>45%</td>
+                                <td>Q1 2026</td>
+                                <td>Ceren Senyuz</td>
+                            </tr>
+                            <tr data-dept="contract">
+                                <td>Divan Talya</td>
+                                <td>Divan Hotels</td>
+                                <td><span class="badge badge-contract">Contract</span></td>
+                                <td>₺3.8M</td>
+                                <td><span class="badge badge-success">Proposal</span></td>
+                                <td>65%</td>
+                                <td>Q1 2026</td>
+                                <td>Burcin Karaca</td>
+                            </tr>
+                            <tr data-dept="contract">
+                                <td>Hillside Bodrum Rooftop</td>
+                                <td>Hillside Hotels</td>
+                                <td><span class="badge badge-contract">Contract</span></td>
+                                <td>₺8.0M</td>
+                                <td><span class="badge badge-success">Proposal</span></td>
+                                <td>70%</td>
+                                <td>Q1 2026</td>
+                                <td>Sena Kaya</td>
+                            </tr>
+                            <tr data-dept="indoor">
+                                <td>Corporate Office Fit</td>
+                                <td>Is Bankasi</td>
+                                <td><span class="badge badge-indoor">Indoor</span></td>
+                                <td>₺2.1M</td>
+                                <td><span class="badge badge-danger">Negotiation</span></td>
+                                <td>55%</td>
+                                <td>Q2 2026</td>
+                                <td>Biricik Mutlu</td>
+                            </tr>
+                            <tr data-dept="outdoor">
+                                <td>Resort Landscaping</td>
+                                <td>CVK Hotels</td>
+                                <td><span class="badge badge-outdoor">Outdoor</span></td>
+                                <td>₺1.9M</td>
+                                <td><span class="badge badge-success">Proposal</span></td>
+                                <td>60%</td>
+                                <td>Q2 2026</td>
+                                <td>Zeynep Uzel</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contacts Page -->
+        <div id="page-contacts" class="page-view">
+            <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                <h2>Contacts Management</h2>
+                <div class="export-dropdown">
+                    <button class="export-btn" onclick="toggleExportMenu(this)">Export</button>
+                    <div class="export-menu">
+                        <button onclick="exportCSV('contacts', 'Mozaik_Contacts')">CSV</button>
+                        <button onclick="exportPrint('contacts')">Print/PDF</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div style="margin-bottom: 15px;">
+                    <strong>Stats:</strong> 6,542 total contacts | 412 architects | 1,847 corporate | 4,283 retail
+                </div>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search contacts...">
+                    <button class="filter-btn active">All Types</button>
+                    <button class="filter-btn">Architects</button>
+                    <button class="filter-btn">Corporate</button>
+                    <button class="filter-btn">Retail</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Company</th>
+                                <th>Type</th>
+                                <th>Department</th>
+                                <th>City</th>
+                                <th>Sales Rep</th>
+                                <th>Last Activity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-dept="contract">
+                                <td>Rezzan Benardete</td>
+                                <td>Bulgari Hotels</td>
+                                <td><span class="badge badge-success">Corporate</span></td>
+                                <td><span class="badge badge-contract">Contract</span></td>
+                                <td>Bodrum</td>
+                                <td>Zeynep Uzel</td>
+                                <td>2 hours ago</td>
+                            </tr>
+                            <tr data-dept="indoor">
+                                <td>Atilgan Ozer</td>
+                                <td>EFS Mimarlik</td>
+                                <td><span class="badge badge-warning">Architect</span></td>
+                                <td><span class="badge badge-indoor">Indoor</span></td>
+                                <td>Istanbul</td>
+                                <td>Idil Alanyalioglu</td>
+                                <td>4 hours ago</td>
+                            </tr>
+                            <tr data-dept="retail">
+                                <td>Serra Kilic</td>
+                                <td>Beymen</td>
+                                <td><span class="badge badge-danger">Retail</span></td>
+                                <td><span class="badge badge-retail">Retail</span></td>
+                                <td>Istanbul</td>
+                                <td>Burcin Karaca</td>
+                                <td>1 day ago</td>
+                            </tr>
+                            <tr data-dept="contract">
+                                <td>Mehmet Turk</td>
+                                <td>Divan Hotels</td>
+                                <td><span class="badge badge-success">Corporate</span></td>
+                                <td><span class="badge badge-contract">Contract</span></td>
+                                <td>Istanbul</td>
+                                <td>Ceren Senyuz</td>
+                                <td>2 days ago</td>
+                            </tr>
+                            <tr data-dept="outdoor">
+                                <td>Gokce Yilmaz</td>
+                                <td>Numarine</td>
+                                <td><span class="badge badge-success">Corporate</span></td>
+                                <td><span class="badge badge-outdoor">Outdoor</span></td>
+                                <td>Mugla</td>
+                                <td>Banu Nazlica</td>
+                                <td>3 days ago</td>
+                            </tr>
+                            <tr data-dept="lighting">
+                                <td>Hasan Demirkol</td>
+                                <td>Ingo Maurer Design</td>
+                                <td><span class="badge badge-warning">Architect</span></td>
+                                <td><span class="badge badge-lighting">Lighting</span></td>
+                                <td>Ankara</td>
+                                <td>Sena Kaya</td>
+                                <td>5 days ago</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accounts Page -->
+        <div id="page-accounts" class="page-view">
+            <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                <h2>Accounts</h2>
+                <div class="export-dropdown">
+                    <button class="export-btn" onclick="toggleExportMenu(this)">Export</button>
+                    <div class="export-menu">
+                        <button onclick="exportCSV('accounts', 'Mozaik_Accounts')">CSV</button>
+                        <button onclick="exportPrint('accounts')">Print/PDF</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div style="margin-bottom: 15px;">
+                    <strong>Stats:</strong> 6,542 total accounts | Lifetime ₺3.6B | 66,546 invoices
+                </div>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search accounts...">
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Account Name</th>
+                                <th>Cari Kodu</th>
+                                <th>City</th>
+                                <th>Type</th>
+                                <th>Department</th>
+                                <th>Lifetime Revenue</th>
+                                <th>Invoices</th>
+                                <th>Tier</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-dept="contract">
+                                <td>MRA Turizm</td>
+                                <td>MRA-001</td>
+                                <td>Istanbul</td>
+                                <td>Corporate</td>
+                                <td><span class="badge badge-contract">Contract</span></td>
+                                <td>₺233M</td>
+                                <td>1,247</td>
+                                <td><span class="badge badge-danger">Platinum</span></td>
+                            </tr>
+                            <tr data-dept="outdoor">
+                                <td>Numarine</td>
+                                <td>NUM-002</td>
+                                <td>Mugla</td>
+                                <td>Corporate</td>
+                                <td><span class="badge badge-outdoor">Outdoor</span></td>
+                                <td>₺157M</td>
+                                <td>892</td>
+                                <td><span class="badge badge-danger">Gold</span></td>
+                            </tr>
+                            <tr data-dept="indoor">
+                                <td>EFS Mimarlik</td>
+                                <td>EFS-003</td>
+                                <td>Istanbul</td>
+                                <td>Architect</td>
+                                <td><span class="badge badge-indoor">Indoor</span></td>
+                                <td>₺128M</td>
+                                <td>756</td>
+                                <td><span class="badge badge-warning">Silver</span></td>
+                            </tr>
+                            <tr data-dept="contract">
+                                <td>Is Bankasi</td>
+                                <td>ISBANK-004</td>
+                                <td>Istanbul</td>
+                                <td>Corporate</td>
+                                <td><span class="badge badge-contract">Contract</span></td>
+                                <td>₺118M</td>
+                                <td>645</td>
+                                <td><span class="badge badge-danger">Gold</span></td>
+                            </tr>
+                            <tr data-dept="retail">
+                                <td>Beymen</td>
+                                <td>BEY-005</td>
+                                <td>Istanbul</td>
+                                <td>Retail</td>
+                                <td><span class="badge badge-retail">Retail</span></td>
+                                <td>₺98M</td>
+                                <td>534</td>
+                                <td><span class="badge badge-warning">Silver</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Page -->
+        <div id="page-products" class="page-view">
+            <div style="margin-bottom: 20px;">
+                <h2>Products</h2>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search products...">
+                    <button class="filter-btn active">All Categories</button>
+                    <button class="filter-btn">Indoor</button>
+                    <button class="filter-btn">Outdoor</button>
+                    <button class="filter-btn">Lighting</button>
+                    <button class="filter-btn">Accessories</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Product Category Revenue</div>
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <div class="stat-label">Sandalye</div>
+                        <div class="stat-value">₺346M</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Koltuk</div>
+                        <div class="stat-value">₺297M</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Kanepe</div>
+                        <div class="stat-value">₺262M</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Aydinlatma</div>
+                        <div class="stat-value">₺135M</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Sehpa</div>
+                        <div class="stat-value">₺110M</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Masa</div>
+                        <div class="stat-value">₺109M</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-grid">
+                <div class="product-card">
+                    <div class="product-image">Image Placeholder</div>
+                    <div class="product-info">
+                        <div class="product-name">B&B Italia Charles Sofa</div>
+                        <div class="product-category">Indoor Furniture</div>
+                        <div class="product-price">€8,400</div>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image">Image Placeholder</div>
+                    <div class="product-info">
+                        <div class="product-name">Fendi Casa Peekaboo</div>
+                        <div class="product-category">Accessories</div>
+                        <div class="product-price">€3,200</div>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image">Image Placeholder</div>
+                    <div class="product-info">
+                        <div class="product-name">FLOS Skygarden</div>
+                        <div class="product-category">Lighting</div>
+                        <div class="product-price">€2,675</div>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image">Image Placeholder</div>
+                    <div class="product-info">
+                        <div class="product-name">B&B Outdoor Canasta</div>
+                        <div class="product-category">Outdoor Furniture</div>
+                        <div class="product-price">€4,600</div>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image">Image Placeholder</div>
+                    <div class="product-info">
+                        <div class="product-name">Maxalto Febo</div>
+                        <div class="product-category">Indoor Furniture</div>
+                        <div class="product-price">€5,900</div>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image">Image Placeholder</div>
+                    <div class="product-info">
+                        <div class="product-name">Ingo Maurer Zettel'z</div>
+                        <div class="product-category">Lighting</div>
+                        <div class="product-price">€2,800</div>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image">Image Placeholder</div>
+                    <div class="product-info">
+                        <div class="product-name">Lumina Dot 110</div>
+                        <div class="product-category">Lighting</div>
+                        <div class="product-price">€5,500</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activities Page -->
+        <div id="page-activities" class="page-view">
+            <div class="card">
+                <h2 style="margin-bottom: 20px;">Activities Timeline</h2>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-dot" style="background: #E67E22;"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Burcin Karaca - Meeting Scheduled</div>
+                            <div class="timeline-time">Today at 2:30 PM - <span class="badge badge-contract">Contract/Projects</span></div>
+                            <div style="margin-top: 8px; font-size: 12px; color: #7F8C8D;">Divan Talya project kickoff meeting</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot" style="background: #27AE60;"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Ceren Senyuz - Email Sent</div>
+                            <div class="timeline-time">Today at 11:15 AM - <span class="badge badge-indoor">Indoor Furniture</span></div>
+                            <div style="margin-top: 8px; font-size: 12px; color: #7F8C8D;">Follow-up on proposal for Is Bankasi</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot" style="background: #25D366;"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Zeynep Uzel - WhatsApp Message</div>
+                            <div class="timeline-time">Yesterday at 4:45 PM - <span class="badge badge-outdoor">Outdoor Furniture</span></div>
+                            <div style="margin-top: 8px; font-size: 12px; color: #7F8C8D;">Customer inquiry regarding Canasta collection</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot" style="background: #3498DB;"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Idil Alanyalioglu - Phone Call</div>
+                            <div class="timeline-time">Yesterday at 10:00 AM - <span class="badge badge-lighting">Lighting</span></div>
+                            <div style="margin-top: 8px; font-size: 12px; color: #7F8C8D;">Discussed lighting options for resort project</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot" style="background: #9B59B6;"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Banu Nazlica - Site Visit</div>
+                            <div class="timeline-time">2 days ago at 3:20 PM - <span class="badge badge-accessories">Accessories</span></div>
+                            <div style="margin-top: 8px; font-size: 12px; color: #7F8C8D;">Inspected installation at Numarine facility</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot" style="background: #95A5A6;"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Sena Kaya - Internal Note</div>
+                            <div class="timeline-time">3 days ago at 9:15 AM - <span class="badge badge-contract">Contract/Projects</span></div>
+                            <div style="margin-top: 8px; font-size: 12px; color: #7F8C8D;">Updated contact info for Hillside Bodrum account</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Proposals Page -->
+        <div id="page-proposals" class="page-view">
+            <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                <h2>Proposals</h2>
+                <div class="export-dropdown">
+                    <button class="export-btn" onclick="toggleExportMenu(this)">Export</button>
+                    <div class="export-menu">
+                        <button onclick="exportCSV('proposals', 'Mozaik_Proposals')">CSV</button>
+                        <button onclick="exportPrint('proposals')">Print/PDF</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Proposal #</th>
+                                <th>Account</th>
+                                <th>Deal</th>
+                                <th>Department</th>
+                                <th>Value</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Rep</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-dept="contract">
+                                <td>PRO-2026-044</td>
+                                <td>Maxx Royal Hotels</td>
+                                <td>Maxx Royal Bodrum</td>
+                                <td><span class="badge badge-contract">Contract</span></td>
+                                <td>₺5.2M</td>
+                                <td><span class="badge badge-success">Approved</span></td>
+                                <td>Mar 01, 2026</td>
+                                <td>Ceren Senyuz</td>
+                            </tr>
+                            <tr data-dept="contract">
+                                <td>PRO-2026-043</td>
+                                <td>Divan Hotels</td>
+                                <td>Divan Talya</td>
+                                <td><span class="badge badge-contract">Contract</span></td>
+                                <td>₺3.8M</td>
+                                <td><span class="badge badge-success">Approved</span></td>
+                                <td>Feb 28, 2026</td>
+                                <td>Burcin Karaca</td>
+                            </tr>
+                            <tr data-dept="lighting">
+                                <td>PRO-2026-0456</td>
+                                <td>Senem Gurun Design</td>
+                                <td>Lighting Implementation</td>
+                                <td><span class="badge badge-lighting">Lighting</span></td>
+                                <td>€14,180</td>
+                                <td><span class="badge badge-warning">Pending</span></td>
+                                <td>Feb 26, 2026</td>
+                                <td>Sena Kaya</td>
+                            </tr>
+                            <tr data-dept="indoor">
+                                <td>PRO-2026-042</td>
+                                <td>Is Bankasi</td>
+                                <td>Corporate Office Fit</td>
+                                <td><span class="badge badge-indoor">Indoor</span></td>
+                                <td>₺2.1M</td>
+                                <td><span class="badge badge-warning">Under Review</span></td>
+                                <td>Feb 25, 2026</td>
+                                <td>Idil Alanyalioglu</td>
+                            </tr>
+                            <tr data-dept="outdoor">
+                                <td>PRO-2026-041</td>
+                                <td>CVK Hotels</td>
+                                <td>Resort Landscaping</td>
+                                <td><span class="badge badge-outdoor">Outdoor</span></td>
+                                <td>₺1.9M</td>
+                                <td><span class="badge badge-danger">Rejected</span></td>
+                                <td>Feb 20, 2026</td>
+                                <td>Zeynep Uzel</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Projects Page -->
+        <div id="page-projects" class="page-view">
+            <div class="card">
+                <h2 style="margin-bottom: 20px;">Projects</h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Project</th>
+                                <th>Architect</th>
+                                <th>Location</th>
+                                <th>Departments</th>
+                                <th>Areas</th>
+                                <th>Status</th>
+                                <th>Account Manager</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-dept="contract">
+                                <td>Divan Talya Istanbul</td>
+                                <td>Ergonomik Architects</td>
+                                <td>Istanbul</td>
+                                <td><span class="badge badge-indoor">Indoor</span> <span class="badge badge-outdoor">Outdoor</span></td>
+                                <td>12,500 m²</td>
+                                <td><span class="badge badge-warning">In Progress</span></td>
+                                <td>Burcin Karaca</td>
+                            </tr>
+                            <tr data-dept="contract">
+                                <td>Maxx Royal Bodrum</td>
+                                <td>Istanbul Design Studio</td>
+                                <td>Bodrum</td>
+                                <td><span class="badge badge-contract">Contract</span> <span class="badge badge-outdoor">Outdoor</span></td>
+                                <td>8,300 m²</td>
+                                <td><span class="badge badge-warning">In Progress</span></td>
+                                <td>Ceren Senyuz</td>
+                            </tr>
+                            <tr data-dept="contract">
+                                <td>Hillside Bodrum Rooftop</td>
+                                <td>Akra Architecture</td>
+                                <td>Bodrum</td>
+                                <td><span class="badge badge-indoor">Indoor</span> <span class="badge badge-lighting">Lighting</span></td>
+                                <td>3,200 m²</td>
+                                <td><span class="badge badge-warning">In Progress</span></td>
+                                <td>Sena Kaya</td>
+                            </tr>
+                            <tr data-dept="contract">
+                                <td>Amanruya Bodrum</td>
+                                <td>Mimar Design</td>
+                                <td>Bodrum</td>
+                                <td><span class="badge badge-outdoor">Outdoor</span> <span class="badge badge-accessories">Accessories</span></td>
+                                <td>15,600 m²</td>
+                                <td><span class="badge badge-success">Completed</span></td>
+                                <td>Idil Alanyalioglu</td>
+                            </tr>
+                            <tr data-dept="retail">
+                                <td>Beymen Istanbul Showroom</td>
+                                <td>Retail Design Group</td>
+                                <td>Istanbul</td>
+                                <td><span class="badge badge-retail">Retail</span> <span class="badge badge-lighting">Lighting</span></td>
+                                <td>4,800 m²</td>
+                                <td><span class="badge badge-success">Completed</span></td>
+                                <td>Burcin Karaca</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Page -->
+        <div id="page-reports" class="page-view">
+            <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                <h2>Reports & Analytics</h2>
+                <div class="export-dropdown">
+                    <button class="export-btn" onclick="toggleExportMenu(this)">Export</button>
+                    <div class="export-menu">
+                        <button onclick="exportCSV('reports', 'Mozaik_Reports')">CSV</button>
+                        <button onclick="exportPrint('reports')">Print/PDF</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                <div class="card">
+                    <div class="card-title">Revenue Report</div>
+                    <div style="padding: 20px 0; text-align: center; cursor: pointer; color: var(--primary);">View Details →</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Pipeline Report</div>
+                    <div style="padding: 20px 0; text-align: center; cursor: pointer; color: var(--primary);">View Details →</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Customer Health</div>
+                    <div style="padding: 20px 0; text-align: center; cursor: pointer; color: var(--primary);">View Details →</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Lost Deal Analysis</div>
+                    <div style="padding: 20px 0; text-align: center; cursor: pointer; color: var(--primary);">View Details →</div>
+                </div>
+            </div>
+
+            <div class="chart-row">
+                <div class="card">
+                    <div class="card-title">Win Rate by Stage</div>
+                    <div class="chart-container">
+                        <canvas id="chart-win-rate"></canvas>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Revenue Forecast</div>
+                    <div class="chart-container">
+                        <canvas id="chart-forecast"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Department Summary</div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Department</th>
+                                <th>Total Revenue</th>
+                                <th>Active Deals</th>
+                                <th>Avg Deal Size</th>
+                                <th>Win Rate</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="badge badge-contract">Contract/Projects</span></td>
+                                <td>₺521M</td>
+                                <td>8</td>
+                                <td>₺65.1M</td>
+                                <td><span class="badge badge-success">72%</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge badge-indoor">Indoor Furniture</span></td>
+                                <td>₺346M</td>
+                                <td>6</td>
+                                <td>₺57.7M</td>
+                                <td><span class="badge badge-success">68%</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge badge-outdoor">Outdoor Furniture</span></td>
+                                <td>₺287M</td>
+                                <td>5</td>
+                                <td>₺57.4M</td>
+                                <td><span class="badge badge-warning">62%</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge badge-lighting">Lighting</span></td>
+                                <td>₺212M</td>
+                                <td>3</td>
+                                <td>₺70.7M</td>
+                                <td><span class="badge badge-warning">58%</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge badge-accessories">Accessories</span></td>
+                                <td>₺98M</td>
+                                <td>2</td>
+                                <td>₺49.0M</td>
+                                <td><span class="badge badge-danger">45%</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Page -->
+        <div id="page-settings" class="page-view">
+            <div class="card">
+                <h2 style="margin-bottom: 30px;">System Settings</h2>
+                <div class="settings-grid">
+                    <div class="settings-item">
+                        <div class="settings-label">Company Name</div>
+                        <div class="settings-value">Mozaik Design & Furniture</div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-label">ERP System</div>
+                        <div class="settings-value">NetSuite</div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-label">Active Users</div>
+                        <div class="settings-value">42</div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-label">Currency</div>
+                        <div class="settings-value">Turkish Lira (₺)</div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-label">Language</div>
+                        <div class="settings-value">English</div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-label">Fiscal Year</div>
+                        <div class="settings-value">January - December</div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-label">Time Zone</div>
+                        <div class="settings-value">Turkey (GMT+3)</div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-label">Last System Update</div>
+                        <div class="settings-value">Mar 8, 2026</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        const chartsInit = {};
+        const pageTitles = {
+            dashboard: 'Dashboard',
+            pipeline: 'Sales Pipeline',
+            contacts: 'Contacts',
+            accounts: 'Accounts',
+            products: 'Products',
+            activities: 'Activities',
+            proposals: 'Proposals',
+            projects: 'Projects',
+            reports: 'Reports',
+            settings: 'Settings'
+        };
+
+        const roleNavMap = {
+            sales_rep: ['settings', 'reports'],
+            marketing: ['settings'],
+            finance: ['pipeline', 'contacts', 'settings']
+        };
+
+        // Initialize on page load
+        function initPage() {
+            updateDate();
+            initPageCharts('dashboard');
+            chartsInit['tab-overview'] = true;
+        }
+
+        function updateDate() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', options);
+        }
+
+        // Main navigation function
+        function navigateTo(page) {
+            document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + page).classList.add('active');
+            
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelector('.nav-item[data-page="' + page + '"]').classList.add('active');
+            
+            document.getElementById('page-title').textContent = pageTitles[page];
+            
+            if (!chartsInit[page]) {
+                chartsInit[page] = true;
+                setTimeout(() => initPageCharts(page), 100);
+            }
+        }
+
+        // Tab switching function
+        function switchTab(tab, el) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            el.classList.add('active');
+            document.getElementById('tab-' + tab).classList.add('active');
+            
+            if (!chartsInit['tab-' + tab]) {
+                chartsInit['tab-' + tab] = true;
+                setTimeout(() => initTabCharts(tab), 100);
+            }
+        }
+
+        // Initialize page charts
+        function initPageCharts(page) {
+            if (page === 'dashboard') {
+                // Revenue trend
+                const ctx1 = document.getElementById('chart-revenue-trend');
+                if (ctx1 && !ctx1.chart) {
+                    ctx1.chart = new Chart(ctx1, {
+                        type: 'line',
+                        data: {
+                            labels: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan'],
+                            datasets: [{
+                                label: 'Monthly Revenue (₺M)',
+                                data: [56, 54, 74, 287, 62, 84, 69, 57, 62, 58, 100, 67, 63, 128, 106, 138, 124, 105, 112, 123, 109, 113, 149, 72],
+                                borderColor: '#1B4F72',
+                                backgroundColor: 'rgba(27, 79, 114, 0.1)',
+                                fill: true,
+                                tension: 0.4,
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } }
+                        }
+                    });
+                }
+
+                // Revenue by city
+                const ctx2 = document.getElementById('chart-revenue-city');
+                if (ctx2 && !ctx2.chart) {
+                    ctx2.chart = new Chart(ctx2, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Istanbul', 'Mugla', 'Ankara', 'Kocaeli', 'Izmir', 'Antalya', 'Other'],
+                            datasets: [{
+                                data: [2412, 359, 163, 121, 61, 44, 160],
+                                backgroundColor: ['#1B4F72', '#2E86C1', '#3498DB', '#5DADE2', '#85C1E2', '#AED6F1', '#D6EAF8']
+                            }]
+                        },
+                        options: { responsive: true, maintainAspectRatio: false }
+                    });
+                }
+
+                // Product mix
+                const ctx3 = document.getElementById('chart-product-mix');
+                if (ctx3 && !ctx3.chart) {
+                    ctx3.chart = new Chart(ctx3, {
+                        type: 'bar',
+                        indexAxis: 'y',
+                        data: {
+                            labels: ['Sandalye', 'Koltuk', 'Kanepe', 'Aydinlatma', 'Sehpa', 'Masa'],
+                            datasets: [{
+                                label: 'Revenue (₺M)',
+                                data: [346, 297, 262, 135, 110, 109],
+                                backgroundColor: '#2E86C1'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } }
+                        }
+                    });
+                }
+            } else if (page === 'reports') {
+                // Win rate
+                const ctx4 = document.getElementById('chart-win-rate');
+                if (ctx4 && !ctx4.chart) {
+                    ctx4.chart = new Chart(ctx4, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Lead', 'Discovery', 'Proposal', 'Negotiation', 'Verbal Commit'],
+                            datasets: [{
+                                label: 'Win Rate (%)',
+                                data: [15, 35, 62, 78, 92],
+                                backgroundColor: '#27AE60'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } }
+                        }
+                    });
+                }
+
+                // Forecast
+                const ctx5 = document.getElementById('chart-forecast');
+                if (ctx5 && !ctx5.chart) {
+                    ctx5.chart = new Chart(ctx5, {
+                        type: 'line',
+                        data: {
+                            labels: ['Q1 2026', 'Q2 2026', 'Q3 2026', 'Q4 2026', 'Q1 2027'],
+                            datasets: [{
+                                label: 'Revenue Forecast (₺M)',
+                                data: [87, 156, 124, 203, 145],
+                                borderColor: '#E67E22',
+                                backgroundColor: 'rgba(230, 126, 34, 0.1)',
+                                fill: true,
+                                tension: 0.4,
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } }
+                        }
+                    });
+                }
+            }
+        }
+
+        // Initialize tab charts
+        function initTabCharts(tab) {
+            if (tab === 'reps') {
+                const ctx = document.getElementById('chart-rep-revenue');
+                if (ctx && !ctx.chart) {
+                    ctx.chart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Zeynep U.', 'Banu N.', 'Idil A.', 'Ceren S.', 'Burcin K.', 'Sena K.', 'Biricik M.'],
+                            datasets: [{
+                                label: 'Revenue (₺M)',
+                                data: [258, 218, 198, 187, 176, 154, 142],
+                                backgroundColor: '#2E86C1'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } }
+                        }
+                    });
+                }
+            } else if (tab === 'customers') {
+                const ctx = document.getElementById('chart-top-customers');
+                if (ctx && !ctx.chart) {
+                    ctx.chart = new Chart(ctx, {
+                        type: 'bar',
+                        indexAxis: 'y',
+                        data: {
+                            labels: ['MRA Turizm', 'Numarine', 'EFS Mimarlik', 'Is Bankasi', 'Beymen', 'Divan Hotels', 'Hilton Istanbul', 'Armada Design', 'Starbucks Turkey', 'CVK Hotels', 'Acenta Tours', 'Gulliver Travel', 'Tekfen Holding', 'Turkish Airlines', 'Zorlu Holding'],
+                            datasets: [{
+                                label: 'Revenue (₺M)',
+                                data: [233, 157, 128, 118, 98, 87, 76, 64, 54, 48, 42, 38, 35, 32, 28],
+                                backgroundColor: '#2E86C1'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } }
+                        }
+                    });
+                }
+            }
+        }
+
+        // Department filtering
+        function filterByDept() {
+            const dept = document.getElementById('dept-filter').value;
+            document.querySelectorAll('tbody tr[data-dept]').forEach(row => {
+                row.style.display = (dept === '' || row.dataset.dept === dept) ? '' : 'none';
+            });
+        }
+
+        // Role-based filtering
+        function filterByRole() {
+            const role = document.getElementById('role-filter').value;
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('hidden');
+            });
+
+            if (roleNavMap[role]) {
+                roleNavMap[role].forEach(page => {
+                    const item = document.querySelector(`.nav-item[data-page="${page}"]`);
+                    if (item) item.classList.add('hidden');
+                });
+            }
+        }
+
+        // Export functions
+        function toggleExportMenu(btn) {
+            const menu = btn.nextElementSibling;
+            menu.classList.toggle('active');
+            document.addEventListener('click', function closeMenu(e) {
+                if (!btn.parentElement.contains(e.target)) {
+                    menu.classList.remove('active');
+                    document.removeEventListener('click', closeMenu);
+                }
+            });
+        }
+
+        function exportCSV(page, filename) {
+            const table = document.querySelector(`#page-${page} table`);
+            if (!table) return alert('No table found for export');
+            let csv = [];
+            table.querySelectorAll('tr').forEach(row => {
+                let cols = [];
+                row.querySelectorAll('td, th').forEach(cell => {
+                    cols.push('"' + cell.innerText.replace(/"/g, '""') + '"');
+                });
+                csv.push(cols.join(','));
+            });
+            const link = document.createElement('a');
+            link.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv.join('\n'));
+            link.download = filename + '.csv';
+            link.click();
+        }
+
+        function exportPrint(page) {
+            const content = document.getElementById('page-' + page).innerHTML;
+            const printWindow = window.open('', '', 'height=600,width=800');
+            printWindow.document.write('<html><head><title>Export</title></head><body>');
+            printWindow.document.write(content);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        // Start
+        initPage();
+    </script>
+</body>
+</html>
