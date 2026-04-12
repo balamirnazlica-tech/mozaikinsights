@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mozaik Design â CRM Platform Decision Dashboard (Team Version)</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f0f2f5;color:#1a1a2e}
+.header{background:linear-gradient(135deg,#1B4F72 0%,#2980B9 100%);color:#fff;padding:28px 40px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:22px;font-weight:600;letter-spacing:.5px}
+.header .subtitle{font-size:13px;opacity:.8;margin-top:4px}
+.header .badge{background:rgba(255,255,255,.2);padding:6px 16px;border-radius:20px;font-size:12px;font-weight:500}
+
+.tabs{display:flex;background:#fff;border-bottom:2px solid #e0e4e8;padding:0 40px;gap:0}
+.tab{padding:14px 24px;cursor:pointer;font-size:13px;font-weight:500;color:#7f8c8d;border-bottom:3px solid transparent;transition:all .2s}
+.tab:hover{color:#1B4F72}
+.tab.active{color:#1B4F72;border-bottom-color:#1B4F72;font-weight:600}
+
+.page{display:none;padding:30px 40px;max-width:1400px;margin:0 auto}
+.page.active{display:block}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+.grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:20px}
+
+.card{background:#fff;border-radius:12px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.card h3{font-size:15px;color:#1B4F72;margin-bottom:16px;font-weight:600}
+.card.full{grid-column:1/-1}
+.card.highlight{border-left:4px solid #27AE60}
+.card.warning{border-left:4px solid #F39C12}
+.card.danger{border-left:4px solid #E74C3C}
+
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.kpi{background:#fff;border-radius:12px;padding:20px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.kpi .label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#7f8c8d;margin-bottom:6px}
+.kpi .value{font-size:28px;font-weight:700;color:#1B4F72}
+.kpi .sub{font-size:12px;color:#95a5a6;margin-top:4px}
+.kpi.green .value{color:#27AE60}
+.kpi.red .value{color:#E74C3C}
+.kpi.orange .value{color:#F39C12}
+
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#1B4F72;color:#fff;padding:10px 14px;text-align:left;font-weight:500;font-size:12px}
+td{padding:10px 14px;border-bottom:1px solid #ecf0f1}
+tr:nth-child(even){background:#f8f9fa}
+tr:hover{background:#eaf2f8}
+.tag-green{background:#d5f5e3;color:#1e8449;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600}
+.tag-yellow{background:#fef9e7;color:#b7950b;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600}
+.tag-red{background:#fadbd8;color:#c0392b;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600}
+
+.winner-banner{background:linear-gradient(135deg,#27AE60,#2ECC71);color:#fff;border-radius:12px;padding:24px 32px;text-align:center;margin-bottom:24px}
+.winner-banner h2{font-size:20px;margin-bottom:6px}
+.winner-banner p{font-size:14px;opacity:.9}
+
+.bar-compare{display:flex;align-items:center;margin:8px 0}
+.bar-compare .bar-label{width:140px;font-size:12px;font-weight:500;color:#566573}
+.bar-compare .bar-track{flex:1;height:24px;background:#ecf0f1;border-radius:12px;overflow:hidden;position:relative}
+.bar-compare .bar-fill{height:100%;border-radius:12px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:11px;font-weight:600;color:#fff;transition:width .6s ease}
+.bar-custom{background:linear-gradient(90deg,#27AE60,#2ECC71)}
+.bar-hubspot{background:linear-gradient(90deg,#F39C12,#F1C40F)}
+.bar-salesforce{background:linear-gradient(90deg,#E74C3C,#EC7063)}
+
+.timeline{position:relative;padding-left:30px}
+.timeline::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:3px;background:#d5dbdb}
+.timeline-item{position:relative;margin-bottom:20px;padding-left:20px}
+.timeline-item::before{content:'';position:absolute;left:-25px;top:4px;width:14px;height:14px;border-radius:50%;background:#1B4F72;border:3px solid #d6eaf8}
+.timeline-item h4{font-size:13px;color:#1B4F72;font-weight:600}
+.timeline-item p{font-size:12px;color:#7f8c8d;margin-top:2px}
+
+.score-circle{display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;font-size:18px;font-weight:700;color:#fff}
+.score-green{background:linear-gradient(135deg,#27AE60,#2ECC71)}
+.score-yellow{background:linear-gradient(135deg,#F39C12,#F1C40F)}
+.score-red{background:linear-gradient(135deg,#E74C3C,#EC7063)}
+
+.legend{display:flex;gap:20px;margin:12px 0;font-size:12px}
+.legend-item{display:flex;align-items:center;gap:6px}
+.legend-dot{width:12px;height:12px;border-radius:3px}
+
+.pros-cons{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.pros-col{padding:16px;border-right:1px solid #ecf0f1}
+.cons-col{padding:16px}
+.pros-col h4{color:#27AE60;font-size:13px;margin-bottom:10px}
+.cons-col h4{color:#E74C3C;font-size:13px;margin-bottom:10px}
+.pros-col li,.cons-col li{font-size:12px;margin-bottom:6px;line-height:1.5}
+
+.note-box{background:#fef9e7;border:1px solid #f9e79f;border-radius:8px;padding:14px 18px;font-size:12px;color:#7d6608;margin-top:16px}
+
+canvas{max-height:300px}
+
+@media(max-width:900px){
+  .grid-2,.grid-3,.grid-4,.kpi-row{grid-template-columns:1fr}
+  .header{flex-direction:column;gap:12px;text-align:center}
+  .tabs{overflow-x:auto;padding:0 16px}
+  .page{padding:20px 16px}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>MOZAIK DESIGN â CRM Platform Decision</h1>
+    <div class="subtitle">Build with Claude Code vs. HubSpot vs. Salesforce | 16 Users â 20</div>
+  </div>
+  <div style="display:flex;gap:12px;align-items:center">
+    <div class="badge" style="background:rgba(255,255,255,.35);font-weight:600">TEAM VERSION</div>
+    <div class="badge">March 2026</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showPage('overview',this)">Executive Overview</div>
+  <div class="tab" onclick="showPage('costs',this)">Cost Analysis</div>
+  <div class="tab" onclick="showPage('features',this)">Features & Fit</div>
+  <div class="tab" onclick="showPage('roi',this)">CRM Spend & ROI</div>
+  <div class="tab" onclick="showPage('risks',this)">Risks & Pros/Cons</div>
+  <div class="tab" onclick="showPage('roadmap',this)">Implementation</div>
+</div>
+
+<!-- ===== EXECUTIVE OVERVIEW ===== -->
+<div id="page-overview" class="page active">
+  <div class="winner-banner">
+    <h2>â RECOMMENDED: Custom Build with Claude Code</h2>
+    <p>Weighted Score: 8.20/10 â Lowest TCO, best feature fit for Mozaik's specific requirements</p>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi green">
+      <div class="label">Custom Build 5Y TCO</div>
+      <div class="value">$53K-$253K</div>
+      <div class="sub">Lowest cost option</div>
+    </div>
+    <div class="kpi orange">
+      <div class="label">HubSpot 5Y TCO</div>
+      <div class="value">$113K-$264K</div>
+      <div class="sub">Mid-range (16 users)</div>
+    </div>
+    <div class="kpi red">
+      <div class="label">Salesforce 5Y TCO</div>
+      <div class="value">$137K-$583K</div>
+      <div class="sub">Highest cost option</div>
+    </div>
+    <div class="kpi green">
+      <div class="label">5-Year Savings</div>
+      <div class="value">$60K-$330K</div>
+      <div class="sub">vs. commercial CRMs</div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card highlight">
+      <h3>Option A: Custom Build</h3>
+      <div style="text-align:center;margin:16px 0"><div class="score-circle score-green">8.2</div></div>
+      <table>
+        <tr><td>Setup Time</td><td><strong>6 months</strong></td></tr>
+        <tr><td>Year 1 Cost</td><td><strong>$51K-$102K</strong></td></tr>
+        <tr><td>Ongoing/Year</td><td><strong>$800-$38K</strong></td></tr>
+        <tr><td>Per User/Month</td><td><strong>$0 (no license)</strong></td></tr>
+        <tr><td>Logo ERP</td><td><span class="tag-green">Native</span></td></tr>
+        <tr><td>Turkish UI</td><td><span class="tag-green">Full</span></td></tr>
+        <tr><td>Data Ownership</td><td><span class="tag-green">100% Yours</span></td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Option B: HubSpot</h3>
+      <div style="text-align:center;margin:16px 0"><div class="score-circle score-yellow">6.5</div></div>
+      <table>
+        <tr><td>Setup Time</td><td><strong>2-4 weeks</strong></td></tr>
+        <tr><td>Year 1 Cost</td><td><strong>$24K-$69K</strong></td></tr>
+        <tr><td>Ongoing/Year</td><td><strong>$22K-$49K</strong></td></tr>
+        <tr><td>Per User/Month</td><td><strong>$90-$150</strong></td></tr>
+        <tr><td>Logo ERP</td><td><span class="tag-yellow">Zapier</span></td></tr>
+        <tr><td>Turkish UI</td><td><span class="tag-yellow">Partial</span></td></tr>
+        <tr><td>Data Ownership</td><td><span class="tag-red">HubSpot</span></td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Option C: Salesforce</h3>
+      <div style="text-align:center;margin:16px 0"><div class="score-circle score-red">6.2</div></div>
+      <table>
+        <tr><td>Setup Time</td><td><strong>4-8 weeks</strong></td></tr>
+        <tr><td>Year 1 Cost</td><td><strong>$35K-$177K</strong></td></tr>
+        <tr><td>Ongoing/Year</td><td><strong>$25K-$102K</strong></td></tr>
+        <tr><td>Per User/Month</td><td><strong>$80-$165</strong></td></tr>
+        <tr><td>Logo ERP</td><td><span class="tag-red">MuleSoft $$$</span></td></tr>
+        <tr><td>Turkish UI</td><td><span class="tag-yellow">Partial</span></td></tr>
+        <tr><td>Data Ownership</td><td><span class="tag-red">Salesforce</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div style="margin-top:24px">
+    <div class="card full">
+      <h3>Weighted Decision Matrix (Score out of 10)</h3>
+      <canvas id="chart-matrix" height="90"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ===== COST ANALYSIS ===== -->
+<div id="page-costs" class="page">
+  <div class="kpi-row">
+    <div class="kpi green">
+      <div class="label">Custom â Per Rep/Month</div>
+      <div class="value">$4</div>
+      <div class="sub">Infrastructure only</div>
+    </div>
+    <div class="kpi orange">
+      <div class="label">HubSpot â Per Rep/Month</div>
+      <div class="value">$116-$255</div>
+      <div class="sub">License + add-ons</div>
+    </div>
+    <div class="kpi red">
+      <div class="label">Salesforce â Per Rep/Month</div>
+      <div class="value">$130-$531</div>
+      <div class="sub">License + admin + add-ons</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Industry Benchmark</div>
+      <div class="value">$125-$475</div>
+      <div class="sub">Recommended per rep/month</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>5-Year TCO Comparison</h3>
+      <canvas id="chart-tco" height="200"></canvas>
+    </div>
+    <div class="card">
+      <h3>Year-by-Year Cost (Mid-Range Estimates)</h3>
+      <canvas id="chart-yearly" height="200"></canvas>
+    </div>
+  </div>
+
+  <div style="margin-top:20px" class="grid-3">
+    <div class="card highlight">
+      <h3>Custom Build â Cost Breakdown</h3>
+      <table>
+        <tr><td>Setup (Build)</td><td style="text-align:right"><strong>$50K-$101K</strong></td></tr>
+        <tr><td>Monthly per user</td><td style="text-align:right"><strong>$0</strong></td></tr>
+        <tr><td>Annual license (16)</td><td style="text-align:right"><strong>$0</strong></td></tr>
+        <tr><td>Infrastructure</td><td style="text-align:right"><strong>$800/year</strong></td></tr>
+        <tr><td>Customization</td><td style="text-align:right"><strong>$0 (built-in)</strong></td></tr>
+        <tr><td>Training</td><td style="text-align:right"><strong>Self (Claude)</strong></td></tr>
+        <tr><td>Admin</td><td style="text-align:right"><strong>$0</strong></td></tr>
+      </table>
+    </div>
+    <div class="card warning">
+      <h3>HubSpot â Cost Breakdown</h3>
+      <table>
+        <tr><td>Setup</td><td style="text-align:right"><strong>$0-$10K</strong></td></tr>
+        <tr><td>Monthly per user</td><td style="text-align:right"><strong>$90-$150</strong></td></tr>
+        <tr><td>Annual license (16)</td><td style="text-align:right"><strong>$17,280-$28,800</strong></td></tr>
+        <tr><td>Infrastructure</td><td style="text-align:right"><strong>Included</strong></td></tr>
+        <tr><td>Customization</td><td style="text-align:right"><strong>$5K-$20K/year</strong></td></tr>
+        <tr><td>Training</td><td style="text-align:right"><strong>$2K-$10K</strong></td></tr>
+        <tr><td>Admin</td><td style="text-align:right"><strong>$0</strong></td></tr>
+      </table>
+    </div>
+    <div class="card danger">
+      <h3>Salesforce â Cost Breakdown</h3>
+      <table>
+        <tr><td>Setup</td><td style="text-align:right"><strong>$5K-$50K</strong></td></tr>
+        <tr><td>Monthly per user</td><td style="text-align:right"><strong>$80-$165</strong></td></tr>
+        <tr><td>Annual license (16)</td><td style="text-align:right"><strong>$15,360-$31,680</strong></td></tr>
+        <tr><td>Infrastructure</td><td style="text-align:right"><strong>Included</strong></td></tr>
+        <tr><td>Customization</td><td style="text-align:right"><strong>$10K-$40K/year</strong></td></tr>
+        <tr><td>Training</td><td style="text-align:right"><strong>$5K-$25K</strong></td></tr>
+        <tr><td>Admin</td><td style="text-align:right"><strong>$0-$30K/year</strong></td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FEATURES & FIT ===== -->
+<div id="page-features" class="page">
+  <div class="card full">
+    <h3>Feature Comparison â Mozaik-Critical Requirements</h3>
+    <table>
+      <thead>
+        <tr><th>Feature</th><th>Custom Build</th><th>HubSpot</th><th>Salesforce</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Logo ERP Integration</td><td><span class="tag-green">â NATIVE</span></td><td><span class="tag-yellow">â  Zapier</span></td><td><span class="tag-red">â  MuleSoft $$$</span></td></tr>
+        <tr><td>Department Isolation (RBAC)</td><td><span class="tag-green">â Built-in</span></td><td><span class="tag-yellow">â  Limited</span></td><td><span class="tag-green">â Full (Ent.)</span></td></tr>
+        <tr><td>Turkish Language UI</td><td><span class="tag-green">â Full Turkish</span></td><td><span class="tag-yellow">â  Partial</span></td><td><span class="tag-yellow">â  Partial</span></td></tr>
+        <tr><td>Contact & Account Management</td><td><span class="tag-green">â Custom</span></td><td><span class="tag-green">â Standard</span></td><td><span class="tag-green">â Standard</span></td></tr>
+        <tr><td>Deal / Pipeline Management</td><td><span class="tag-green">â Custom</span></td><td><span class="tag-green">â Standard</span></td><td><span class="tag-green">â Standard</span></td></tr>
+        <tr><td>Proposal Generation</td><td><span class="tag-green">â Custom templates</span></td><td><span class="tag-yellow">â  Basic add-on</span></td><td><span class="tag-yellow">â  CPQ add-on</span></td></tr>
+        <tr><td>WhatsApp Integration</td><td><span class="tag-green">â Custom/API</span></td><td><span class="tag-red">â  $500/month</span></td><td><span class="tag-yellow">â  AppExchange</span></td></tr>
+        <tr><td>Custom Reports</td><td><span class="tag-green">â Unlimited</span></td><td><span class="tag-yellow">â  Limited</span></td><td><span class="tag-green">â Unlimited</span></td></tr>
+        <tr><td>Multi-currency (TRY/EUR/USD)</td><td><span class="tag-green">â Built-in</span></td><td><span class="tag-green">â Standard</span></td><td><span class="tag-green">â Standard</span></td></tr>
+        <tr><td>Data Ownership</td><td><span class="tag-green">â 100% Yours</span></td><td><span class="tag-red">â HubSpot owns</span></td><td><span class="tag-red">â SF owns</span></td></tr>
+        <tr><td>Mobile App</td><td><span class="tag-green">â PWA</span></td><td><span class="tag-green">â Native</span></td><td><span class="tag-green">â Native</span></td></tr>
+        <tr><td>Email Marketing</td><td><span class="tag-green">â Built-in</span></td><td><span class="tag-green">â Included</span></td><td><span class="tag-red">â  Pardot $$$</span></td></tr>
+        <tr><td>Unlimited API Access</td><td><span class="tag-green">â Yes</span></td><td><span class="tag-yellow">â  Rate-limited</span></td><td><span class="tag-yellow">â  Rate-limited</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="margin-top:20px">
+    <div class="card full">
+      <h3>Feature Fit Radar â Mozaik Requirements</h3>
+      <div style="max-width:500px;margin:0 auto">
+        <canvas id="chart-radar" height="300"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CRM SPEND & ROI ===== -->
+<div id="page-roi" class="page">
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="label">Recommended CRM Budget</div>
+      <div class="value">$24K-$91K</div>
+      <div class="sub">Per year (industry benchmark)</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Per Rep/Month Benchmark</div>
+      <div class="value">$125-$475</div>
+      <div class="sub">Gartner / Forrester</div>
+    </div>
+    <div class="kpi green">
+      <div class="label">Custom Build Ongoing</div>
+      <div class="value">$56-$265/rep</div>
+      <div class="sub">Per month (5Y avg) â within benchmark</div>
+    </div>
+    <div class="kpi green">
+      <div class="label">Avg CRM ROI (Industry)</div>
+      <div class="value">$8.71</div>
+      <div class="sub">Return per $1 spent (Nucleus)</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Per Rep/Month vs. Industry Benchmark</h3>
+      <div style="margin-top:12px">
+        <div class="bar-compare">
+          <div class="bar-label">Custom (ongoing)</div>
+          <div class="bar-track"><div class="bar-fill bar-custom" style="width:1%">$4</div></div>
+        </div>
+        <div class="bar-compare">
+          <div class="bar-label">HubSpot Prof.</div>
+          <div class="bar-track"><div class="bar-fill bar-hubspot" style="width:36%">$116-194</div></div>
+        </div>
+        <div class="bar-compare">
+          <div class="bar-label">HubSpot Ent.</div>
+          <div class="bar-track"><div class="bar-fill bar-hubspot" style="width:48%">$177-255</div></div>
+        </div>
+        <div class="bar-compare">
+          <div class="bar-label">Salesforce Prof.</div>
+          <div class="bar-track"><div class="bar-fill bar-salesforce" style="width:54%">$130-443</div></div>
+        </div>
+        <div class="bar-compare">
+          <div class="bar-label">Salesforce Ent.</div>
+          <div class="bar-track"><div class="bar-fill bar-salesforce" style="width:80%">$219-531</div></div>
+        </div>
+        <div class="bar-compare">
+          <div class="bar-label" style="color:#1B4F72;font-weight:600">Benchmark Range</div>
+          <div class="bar-track"><div style="position:absolute;left:23%;width:66%;height:100%;background:rgba(27,79,114,.15);border-left:2px dashed #1B4F72;border-right:2px dashed #1B4F72"></div></div>
+        </div>
+      </div>
+      <div class="note-box">Custom Build's ongoing infrastructure cost of $4/rep/month (after Year 1 build investment of $51K-102K) frees up budget vs. benchmark for sales training, marketing, or feature development.</div>
+    </div>
+    <div class="card">
+      <h3>ROI Multiple by Platform</h3>
+      <canvas id="chart-roi" height="200"></canvas>
+      <div class="note-box" style="margin-top:12px">Based on industry benchmarks for a company of Mozaik's size. Nucleus Research shows average CRM returns $8.71 per $1 invested.</div>
+    </div>
+  </div>
+
+  <div style="margin-top:20px">
+    <div class="card full">
+      <h3>CRM ROI Projection â Based on Industry Benchmarks</h3>
+      <table>
+        <thead>
+          <tr><th>Platform</th><th>Annual CRM Cost</th><th>Per Rep/Month</th><th>Expected Productivity Gain</th><th>ROI Multiple</th><th>vs. Benchmark</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Custom Build (5Y avg)</strong></td><td>$11K-$51K/year</td><td>$56-$265</td><td>Significant uplift</td><td><span class="tag-green">27-130x</span></td><td><span class="tag-green">Within/below range</span></td></tr>
+          <tr><td>Custom Build (Year 1)</td><td>$51K-102K one-time</td><td>$266-531</td><td>Significant uplift</td><td><span class="tag-green">14-28x</span></td><td><span class="tag-green">Within range</span></td></tr>
+          <tr><td>HubSpot Professional</td><td>$22K-37K/year</td><td>$116-194</td><td>Moderate uplift</td><td><span class="tag-green">30-60x+</span></td><td><span class="tag-green">Within range</span></td></tr>
+          <tr><td>HubSpot Enterprise</td><td>$34K-49K/year</td><td>$177-255</td><td>Moderate uplift</td><td><span class="tag-yellow">25-40x+</span></td><td><span class="tag-green">Within range</span></td></tr>
+          <tr><td>Salesforce Professional</td><td>$25K-85K/year</td><td>$130-443</td><td>Moderate uplift</td><td><span class="tag-yellow">15-55x+</span></td><td><span class="tag-yellow">Wide range</span></td></tr>
+          <tr><td>Salesforce Enterprise</td><td>$42K-102K/year</td><td>$219-531</td><td>Moderate uplift</td><td><span class="tag-red">10-30x+</span></td><td><span class="tag-red">Exceeds ceiling</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== RISKS & PROS/CONS ===== -->
+<div id="page-risks" class="page">
+  <div class="card full" style="margin-bottom:20px">
+    <h3>Risk Assessment Matrix</h3>
+    <table>
+      <thead>
+        <tr><th>Risk Factor</th><th>Custom Build</th><th>HubSpot</th><th>Salesforce</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Vendor Lock-in</td><td><span class="tag-green">LOW</span></td><td><span class="tag-yellow">MEDIUM</span></td><td><span class="tag-red">HIGH</span></td></tr>
+        <tr><td>Data Portability</td><td><span class="tag-green">Easy export</span></td><td><span class="tag-red">Difficult</span></td><td><span class="tag-red">Very difficult</span></td></tr>
+        <tr><td>Price Increases</td><td><span class="tag-green">None</span></td><td><span class="tag-yellow">5-15%/year</span></td><td><span class="tag-yellow">5-10%/year</span></td></tr>
+        <tr><td>KVKK Compliance</td><td><span class="tag-green">Full control</span></td><td><span class="tag-yellow">Check DPA</span></td><td><span class="tag-yellow">Check DPA</span></td></tr>
+        <tr><td>Logo ERP Reliability</td><td><span class="tag-green">Native</span></td><td><span class="tag-yellow">Zapier (fragile)</span></td><td><span class="tag-red">MuleSoft (expensive)</span></td></tr>
+        <tr><td>Scaling Cost (16â20+)</td><td><span class="tag-green">$0/user</span></td><td><span class="tag-yellow">$1,080+/user/yr</span></td><td><span class="tag-yellow">$960+/user/yr</span></td></tr>
+        <tr><td>User Adoption</td><td><span class="tag-green">7/10</span></td><td><span class="tag-green">9/10</span></td><td><span class="tag-yellow">5/10</span></td></tr>
+        <tr><td>Hidden Cost Surprises</td><td><span class="tag-green">None</span></td><td><span class="tag-yellow">Add-ons creep</span></td><td><span class="tag-red">Many add-ons</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid-3">
+    <div class="card highlight">
+      <h3>Custom Build</h3>
+      <div class="pros-cons">
+        <div class="pros-col">
+          <h4>â Pros</h4>
+          <ul>
+            <li>$800-$38K/year after Year 1</li>
+            <li>100% tailored to Mozaik</li>
+            <li>Native Logo ERP integration</li>
+            <li>Full Turkish UI & KVKK</li>
+            <li>No vendor lock-in</li>
+            <li>$0 per new user</li>
+            <li>You own everything</li>
+          </ul>
+        </div>
+        <div class="cons-col">
+          <h4>â Cons</h4>
+          <ul>
+            <li>6 months to MVP</li>
+            <li>Needs developers (Year 1)</li>
+            <li>No pre-built ecosystem</li>
+            <li>PWA not native app</li>
+            <li>Maintenance required</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="card warning">
+      <h3>HubSpot</h3>
+      <div class="pros-cons">
+        <div class="pros-col">
+          <h4>â Pros</h4>
+          <ul>
+            <li>2-4 weeks to go-live</li>
+            <li>Excellent UX</li>
+            <li>1000+ integrations</li>
+            <li>Strong marketing tools</li>
+            <li>24/7 support</li>
+            <li>No IT team needed</li>
+          </ul>
+        </div>
+        <div class="cons-col">
+          <h4>â Cons</h4>
+          <ul>
+            <li>$113K-264K over 5 years</li>
+            <li>Per-user pricing grows</li>
+            <li>Limited Logo ERP sync</li>
+            <li>Partial Turkish support</li>
+            <li>HubSpot owns your data</li>
+            <li>5-15% annual increases</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="card danger">
+      <h3>Salesforce</h3>
+      <div class="pros-cons">
+        <div class="pros-col">
+          <h4>â Pros</h4>
+          <ul>
+            <li>Industry standard</li>
+            <li>Maximum customization</li>
+            <li>10,000+ apps</li>
+            <li>Enterprise-grade AI</li>
+            <li>Scales to 1000+ users</li>
+          </ul>
+        </div>
+        <div class="cons-col">
+          <h4>â Cons</h4>
+          <ul>
+            <li>$137K-583K over 5 years</li>
+            <li>Over-engineered for 16 users</li>
+            <li>Needs certified admin</li>
+            <li>Steep learning curve</li>
+            <li>MuleSoft for Logo ERP</li>
+            <li>High vendor lock-in</li>
+            <li>Many hidden add-on costs</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== IMPLEMENTATION ===== -->
+<div id="page-roadmap" class="page">
+  <div class="winner-banner">
+    <h2>Custom Build â 24-Week Implementation Roadmap</h2>
+    <p>Phased approach with UAT after each phase | Next.js + Supabase + Claude Code</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Implementation Timeline</h3>
+      <div class="timeline">
+        <div class="timeline-item">
+          <h4>Phase 1: Foundation (Weeks 1-8)</h4>
+          <p>Database, auth, RBAC, contact/account CRUD, Logo ERP import, basic dashboard</p>
+        </div>
+        <div class="timeline-item">
+          <h4>Phase 2: Sales Engine (Weeks 9-16)</h4>
+          <p>Pipeline Kanban, activity logging, proposal builder, follow-up tasks, advanced dashboards</p>
+        </div>
+        <div class="timeline-item">
+          <h4>Phase 3: Intelligence (Weeks 17-24)</h4>
+          <p>Email sync, WhatsApp, RFM analysis, lead assignment, health scoring, Logo ERP batch sync</p>
+        </div>
+        <div class="timeline-item">
+          <h4>Go-Live & Handover</h4>
+          <p>Full deployment, team training, documentation, ongoing support handoff</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Human Resources â Build Phase (6 Months)</h3>
+      <table>
+        <thead><tr><th>Role</th><th>Commitment</th><th>6-Month Cost</th></tr></thead>
+        <tbody>
+          <tr><td>Lead Developer</td><td>Full-time</td><td>$30K-48K</td></tr>
+          <tr><td>Support Developer</td><td>Full-time</td><td>$18K-42K</td></tr>
+          <tr><td>Project Manager</td><td>Part-time (internal)</td><td>$0</td></tr>
+          <tr><td>Claude Code (AI)</td><td>Unlimited</td><td>$120-600</td></tr>
+          <tr><td>UX/UI Designer</td><td>Phase 1 only</td><td>$2K-4K</td></tr>
+          <tr><td>Logo ERP Specialist</td><td>Phase 3</td><td>$0-6K</td></tr>
+          <tr style="background:#d5f5e3"><td><strong>TOTAL BUILD</strong></td><td></td><td><strong>$50K-101K</strong></td></tr>
+        </tbody>
+      </table>
+
+      <h3 style="margin-top:24px">Ongoing Support (Year 2+)</h3>
+      <table>
+        <thead><tr><th>Item</th><th>Monthly</th><th>Annual</th></tr></thead>
+        <tbody>
+          <tr><td>Part-time developer</td><td>$1K-3K</td><td>$12K-36K</td></tr>
+          <tr><td>Infrastructure</td><td>$67</td><td>$800</td></tr>
+          <tr><td>Claude Code</td><td>$20-100</td><td>$240-1.2K</td></tr>
+          <tr style="background:#d5f5e3"><td><strong>TOTAL ONGOING</strong></td><td></td><td><strong>$800-38K/year</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div style="margin-top:20px">
+    <div class="card full">
+      <h3>Human Support â Platform Comparison</h3>
+      <table>
+        <thead><tr><th>Resource</th><th>Custom Build</th><th>HubSpot</th><th>Salesforce</th></tr></thead>
+        <tbody>
+          <tr><td>Developers (build)</td><td>2 devs Ã 6 months</td><td>0 (SaaS)</td><td>0 (SaaS)</td></tr>
+          <tr><td>Ongoing developer</td><td>Part-time (10-20 hrs/mo)</td><td>Not needed</td><td>Not needed</td></tr>
+          <tr><td>Dedicated CRM Admin</td><td>Not required</td><td>Not required</td><td><span class="tag-red">Required ($50-150K/yr)</span></td></tr>
+          <tr><td>Implementation Consultant</td><td>Not required</td><td>$0-5K one-time</td><td>$15K-50K one-time</td></tr>
+          <tr><td><strong>Year 1 Human Cost</strong></td><td><strong>$50K-101K</strong></td><td><strong>$0-5K</strong></td><td><strong>$15K-200K</strong></td></tr>
+          <tr><td><strong>Annual Human Cost (ongoing)</strong></td><td><strong>$0-36K</strong></td><td><strong>$0</strong></td><td><strong>$0-150K</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  el.classList.add('active');
+  if (!chartsInit[id]) { chartsInit[id] = true; setTimeout(() => initCharts(id), 100); }
+}
+
+const chartsInit = { overview: false, costs: false, features: false, roi: false };
+
+function initCharts(page) {
+  const green = '#27AE60', yellow = '#F39C12', red = '#E74C3C', blue = '#1B4F72';
+
+  if (page === 'overview') {
+    new Chart(document.getElementById('chart-matrix'), {
+      type: 'bar',
+      data: {
+        labels: ['Cost Efficiency (25%)', 'Feature Fit (20%)', 'Time to Value (15%)', 'Customization (15%)', 'Ease of Use (10%)', 'Scalability (10%)', 'Data Ownership (5%)'],
+        datasets: [
+          { label: 'Custom Build', data: [2.50, 1.80, 0.60, 1.50, 0.70, 0.60, 0.50], backgroundColor: green },
+          { label: 'HubSpot', data: [1.50, 1.20, 1.35, 0.75, 0.90, 0.60, 0.15], backgroundColor: yellow },
+          { label: 'Salesforce', data: [1.00, 1.40, 1.05, 1.20, 0.50, 0.90, 0.10], backgroundColor: red },
+        ]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'bottom' } }, scales: { y: { beginAtZero: true, max: 2.6 } } }
+    });
+  }
+
+  if (page === 'costs') {
+    new Chart(document.getElementById('chart-tco'), {
+      type: 'bar',
+      data: {
+        labels: ['Custom Build', 'HubSpot Prof.', 'HubSpot Ent.', 'Salesforce Prof.', 'Salesforce Ent.'],
+        datasets: [
+          { label: 'Low Estimate', data: [54000, 113400, 177000, 136800, 233400], backgroundColor: [green, yellow, yellow, red, red] },
+          { label: 'High Estimate', data: [253000, 196400, 264000, 421800, 583400], backgroundColor: ['#2ECC71', '#F1C40F', '#F1C40F', '#EC7063', '#EC7063'] },
+        ]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: ctx => '$' + ctx.parsed.y.toLocaleString() } } }, scales: { y: { beginAtZero: true, ticks: { callback: v => '$' + (v/1000) + 'K' } } } }
+    });
+
+    new Chart(document.getElementById('chart-yearly'), {
+      type: 'line',
+      data: {
+        labels: ['Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5'],
+        datasets: [
+          { label: 'Custom Build', data: [51000, 19400, 19400, 19400, 19400], borderColor: green, backgroundColor: green + '20', fill: true, tension: .3 },
+          { label: 'HubSpot Prof.', data: [35780, 29780, 29780, 29780, 29780], borderColor: yellow, backgroundColor: yellow + '20', fill: true, tension: .3 },
+          { label: 'Salesforce Ent.', data: [121680, 71680, 71680, 71680, 71680], borderColor: red, backgroundColor: red + '20', fill: true, tension: .3 },
+        ]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'bottom' } }, scales: { y: { beginAtZero: true, ticks: { callback: v => '$' + (v/1000) + 'K' } } } }
+    });
+  }
+
+  if (page === 'features') {
+    new Chart(document.getElementById('chart-radar'), {
+      type: 'radar',
+      data: {
+        labels: ['Logo ERP', 'RBAC/Dept Isolation', 'Turkish UI', 'Customization', 'Data Ownership', 'Cost Efficiency', 'Ease of Use'],
+        datasets: [
+          { label: 'Custom Build', data: [10, 9, 10, 10, 10, 10, 7], borderColor: green, backgroundColor: green + '30' },
+          { label: 'HubSpot', data: [4, 5, 5, 5, 3, 6, 9], borderColor: yellow, backgroundColor: yellow + '30' },
+          { label: 'Salesforce', data: [5, 8, 5, 8, 2, 4, 5], borderColor: red, backgroundColor: red + '30' },
+        ]
+      },
+      options: { responsive: true, scales: { r: { beginAtZero: true, max: 10 } }, plugins: { legend: { position: 'bottom' } } }
+    });
+  }
+
+  if (page === 'roi') {
+    new Chart(document.getElementById('chart-roi'), {
+      type: 'bar',
+      data: {
+        labels: ['Custom Build', 'HubSpot Prof.', 'HubSpot Ent.', 'Salesforce Prof.', 'Salesforce Ent.'],
+        datasets: [{
+          label: 'ROI Multiple (industry benchmark)',
+          data: [80, 45, 32, 35, 20],
+          backgroundColor: [green, yellow, yellow, red, red],
+        }]
+      },
+      options: {
+        responsive: true, indexAxis: 'y',
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.parsed.x + 'x ROI' } } },
+        scales: { x: { beginAtZero: true, max: 100, ticks: { callback: v => v + 'x' } } }
+      }
+    });
+  }
+}
+
+// Init first page charts
+setTimeout(() => { chartsInit.overview = true; initCharts('overview'); }, 200);
+</script>
+</body>
+</html>
