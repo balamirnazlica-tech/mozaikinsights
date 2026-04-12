@@ -1,11 +1,26 @@
 <!DOCTYPE html>
 <html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Mozaik Showroom — Trafik Analizi</title>
+<title>Mozaik Showroom &#8212; Trafik Analizi</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh}
 .page{max-width:1480px;margin:0 auto;padding:22px}
+.store-nav{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.store-btn{background:#1e293b;color:#94a3b8;border:1px solid rgba(129,140,248,.2);padding:12px 24px;border-radius:12px;font-size:14.5px;font-weight:700;cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:10px}
+.store-btn:hover{border-color:#818cf8;color:#e2e8f0}
+.store-btn.active{background:linear-gradient(135deg,rgba(129,140,248,.18),rgba(56,189,248,.1));border-color:#818cf8;color:#e2e8f0;box-shadow:0 0 20px rgba(129,140,248,.15)}
+.store-btn .store-icon{font-size:18px}
+.store-btn .store-tag{font-size:10px;text-transform:uppercase;letter-spacing:.1em;padding:3px 8px;border-radius:999px;font-weight:700}
+.store-btn .tag-active{background:rgba(52,211,153,.15);color:#34d399}
+.store-btn .tag-soon{background:rgba(251,146,60,.15);color:#fb923c}
+.store-section{display:none}
+.store-section.active{display:block}
+.coming-soon{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:420px;text-align:center}
+.coming-soon .cs-icon{font-size:72px;margin-bottom:24px;opacity:.7}
+.coming-soon h2{font-size:28px;font-weight:800;background:linear-gradient(135deg,#818cf8,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
+.coming-soon p{color:#64748b;font-size:16px;max-width:420px;line-height:1.65}
+.coming-soon .cs-badge{margin-top:20px;background:rgba(251,146,60,.12);color:#fb923c;padding:10px 28px;border-radius:999px;font-size:14px;font-weight:700;border:1px solid rgba(251,146,60,.25)}
 .hdr{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-bottom:20px;padding-bottom:18px;border-bottom:1px solid rgba(129,140,248,.2)}
 .hdr h1{font-size:28px;font-weight:800;background:linear-gradient(135deg,#818cf8,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .hdr p{color:#94a3b8;font-size:14px;margin-top:4px}
@@ -47,71 +62,111 @@ td.num{text-align:right;color:#a5b4fc;font-variant-numeric:tabular-nums}
 .ins h3{color:#a5b4fc;font-size:14.5px;margin-bottom:10px;font-weight:700}
 .ins ul{list-style:none;padding:0}
 .ins li{color:#cbd5e1;font-size:14px;padding:7px 0;padding-left:22px;position:relative;line-height:1.55}
-.ins li:before{content:"▸";color:#818cf8;position:absolute;left:4px;font-weight:900}
+.ins li:before{content:"\25B8";color:#818cf8;position:absolute;left:4px;font-weight:900}
 .empty{text-align:center;padding:40px;color:#64748b;font-size:14px}
 </style></head><body><div class="page">
 
+<div class="store-nav">
+  <button class="store-btn active" onclick="switchStore('ortakoy',this)">
+    <span class="store-icon">&#127978;</span>
+    <span>Ortaköy Showroom</span>
+    <span class="store-tag tag-active">Aktif</span>
+  </button>
+  <button class="store-btn" onclick="switchStore('ankara',this)">
+    <span class="store-icon">&#127963;</span>
+    <span>Ankara Ma&#287;azas&#305;</span>
+    <span class="store-tag tag-soon">Yak&#305;nda</span>
+  </button>
+  <button class="store-btn" onclick="switchStore('outlet',this)">
+    <span class="store-icon">&#128717;</span>
+    <span>Outlet Ma&#287;azas&#305;</span>
+    <span class="store-tag tag-soon">Yak&#305;nda</span>
+  </button>
+</div>
+
+<div class="store-section active" id="store-ortakoy">
+
 <div class="hdr">
-  <div><h1>MOZAIK SHOWROOM</h1><p>Trafik & Personel Analizi · 15 Yıllık Veri · 2012–2026</p></div>
+  <div><h1>MOZAIK SHOWROOM &#8212; ORTAK&#214;Y</h1><p>Trafik &amp; Personel Analizi &#183; 15 Y&#305;ll&#305;k Veri &#183; 2012&#8211;2026</p></div>
   <div class="hdr-right">
-    <span class="pill">Toplam <span id="hdrTotal">—</span></span>
+    <span class="pill">Toplam <span id="hdrTotal">&#8212;</span></span>
     <select id="repSel" class="sel"></select>
-    <span id="repBadge" class="rep-badge">Tüm Personel</span>
+    <span id="repBadge" class="rep-badge">T&#252;m Personel</span>
   </div>
 </div>
 
 <div class="tabs">
-  <button class="tab on" data-p="ov" onclick="sw(this)">Genel Bakış</button>
+  <button class="tab on" data-p="ov" onclick="sw(this)">Genel Bak&#305;&#351;</button>
   <button class="tab" data-p="tr" onclick="sw(this)">Trafik</button>
-  <button class="tab" data-p="tp" onclick="sw(this)">Ulaşım & Araç</button>
-  <button class="tab" data-p="vi" onclick="sw(this)">Ziyaretçiler</button>
-  <button class="tab" data-p="in" onclick="sw(this)">Öngörüler</button>
+  <button class="tab" data-p="tp" onclick="sw(this)">Ula&#351;&#305;m &amp; Ara&#231;</button>
+  <button class="tab" data-p="vi" onclick="sw(this)">Ziyaret&#231;iler</button>
+  <button class="tab" data-p="in" onclick="sw(this)">&#214;ng&#246;r&#252;ler</button>
 </div>
 
 <div class="pnl on" id="p-ov">
   <div class="kpis" id="ovKpis"></div>
   <div class="r2">
-    <div class="cd"><div class="ct">Yıllık Trafik</div><div class="cs" id="ovYSub"></div><div class="h260"><canvas id="cOvY"></canvas></div></div>
-    <div class="cd"><div class="ct">Aylık Dağılım</div><div class="cs">12 ay toplam</div><div class="h260"><canvas id="cOvM"></canvas></div></div>
+    <div class="cd"><div class="ct">Y&#305;ll&#305;k Trafik</div><div class="cs" id="ovYSub"></div><div class="h260"><canvas id="cOvY"></canvas></div></div>
+    <div class="cd"><div class="ct">Ayl&#305;k Da&#287;&#305;l&#305;m</div><div class="cs">12 ay toplam</div><div class="h260"><canvas id="cOvM"></canvas></div></div>
   </div>
   <div class="r2">
-    <div class="cd"><div class="ct">Ulaşım Türü</div><div class="cs">Araç / yaya / motor / bilinmiyor</div><div class="h260"><canvas id="cOvT"></canvas></div></div>
-    <div class="cd"><div class="ct">Gün Dağılımı</div><div class="cs">Hafta içi vs hafta sonu</div><div class="h260"><canvas id="cOvD"></canvas></div></div>
+    <div class="cd"><div class="ct">Ula&#351;&#305;m T&#252;r&#252;</div><div class="cs">Ara&#231; / yaya / motor / bilinmiyor</div><div class="h260"><canvas id="cOvT"></canvas></div></div>
+    <div class="cd"><div class="ct">G&#252;n Da&#287;&#305;l&#305;m&#305;</div><div class="cs">Hafta i&#231;i vs hafta sonu</div><div class="h260"><canvas id="cOvD"></canvas></div></div>
   </div>
 </div>
 
 <div class="pnl" id="p-tr">
   <div class="kpis" id="trKpis"></div>
-  <div class="cd"><div class="ct">Yıllık Trend</div><div class="cs">2012–2026</div><div class="h320"><canvas id="cTrY"></canvas></div></div>
+  <div class="cd"><div class="ct">Y&#305;ll&#305;k Trend</div><div class="cs">2012&#8211;2026</div><div class="h320"><canvas id="cTrY"></canvas></div></div>
   <div class="r2">
-    <div class="cd"><div class="ct">Aylık Mevsimsellik</div><div class="cs">Tüm yıllar toplamı</div><div class="h260"><canvas id="cTrM"></canvas></div></div>
-    <div class="cd"><div class="ct">Günlük Dağılım</div><div class="cs">Pzt–Paz</div><div class="h260"><canvas id="cTrD"></canvas></div></div>
+    <div class="cd"><div class="ct">Ayl&#305;k Mevsimsellik</div><div class="cs">T&#252;m y&#305;llar toplam&#305;</div><div class="h260"><canvas id="cTrM"></canvas></div></div>
+    <div class="cd"><div class="ct">G&#252;nl&#252;k Da&#287;&#305;l&#305;m</div><div class="cs">Pzt&#8211;Paz</div><div class="h260"><canvas id="cTrD"></canvas></div></div>
   </div>
 </div>
 
 <div class="pnl" id="p-tp">
   <div class="kpis" id="tpKpis"></div>
   <div class="r2">
-    <div class="cd"><div class="ct">Ulaşım Türü</div><div class="cs">Dağılım</div><div class="h260"><canvas id="cTpU"></canvas></div></div>
-    <div class="cd"><div class="ct">Araç Markaları — Top 11</div><div class="cs">Marka kayıtları</div><div class="h260"><canvas id="cTpB"></canvas></div></div>
+    <div class="cd"><div class="ct">Ula&#351;&#305;m T&#252;r&#252;</div><div class="cs">Da&#287;&#305;l&#305;m</div><div class="h260"><canvas id="cTpU"></canvas></div></div>
+    <div class="cd"><div class="ct">Ara&#231; Markalar&#305; &#8212; Top 11</div><div class="cs">Marka kay&#305;tlar&#305;</div><div class="h260"><canvas id="cTpB"></canvas></div></div>
   </div>
-  <div class="cd"><div class="ct">Marka Detay</div><div class="cs">Premium müşteri profili</div>
+  <div class="cd"><div class="ct">Marka Detay</div><div class="cs">Premium m&#252;&#351;teri profili</div>
     <table><thead><tr><th>#</th><th>Marka</th><th style="text-align:right">Ziyaret</th><th style="text-align:right">Pay</th></tr></thead><tbody id="tpBrandTbl"></tbody></table>
   </div>
 </div>
 
 <div class="pnl" id="p-vi">
   <div class="kpis" id="viKpis"></div>
-  <div class="cd"><div class="ct">Top 20 Ziyaretçi</div><div class="cs">En sadık müşteriler — tekrar ziyaret sayısı</div>
-    <table><thead><tr><th>#</th><th>İsim</th><th style="text-align:right">Ziyaret</th><th>Profil</th></tr></thead><tbody id="viTbl"></tbody></table>
+  <div class="cd"><div class="ct">Top 20 Ziyaret&#231;i</div><div class="cs">En sad&#305;k m&#252;&#351;teriler &#8212; tekrar ziyaret say&#305;s&#305;</div>
+    <table><thead><tr><th>#</th><th>&#304;sim</th><th style="text-align:right">Ziyaret</th><th>Profil</th></tr></thead><tbody id="viTbl"></tbody></table>
   </div>
 </div>
 
 <div class="pnl" id="p-in">
-  <div class="ins"><h3>Öngörüler</h3><ul id="insList"></ul></div>
+  <div class="ins"><h3>&#214;ng&#246;r&#252;ler</h3><ul id="insList"></ul></div>
   <div class="r2">
-    <div class="cd"><div class="ct">Büyüme Eğrisi</div><div class="cs">Yıllık trend</div><div class="h260"><canvas id="cInG"></canvas></div></div>
-    <div class="cd"><div class="ct">Peak Analizi</div><div class="cs">En yoğun ay & gün</div><div class="h260"><canvas id="cInP"></canvas></div></div>
+    <div class="cd"><div class="ct">B&#252;y&#252;me E&#287;risi</div><div class="cs">Y&#305;ll&#305;k trend</div><div class="h260"><canvas id="cInG"></canvas></div></div>
+    <div class="cd"><div class="ct">Peak Analizi</div><div class="cs">En yo&#287;un ay &amp; g&#252;n</div><div class="h260"><canvas id="cInP"></canvas></div></div>
+  </div>
+</div>
+
+</div>
+
+<div class="store-section" id="store-ankara">
+  <div class="coming-soon">
+    <div class="cs-icon">&#127963;</div>
+    <h2>Ankara Ma&#287;azas&#305;</h2>
+    <p>Ankara ma&#287;azas&#305;n&#305;n trafik verileri haz&#305;rlan&#305;yor. A&#231;&#305;l&#305;&#351; sonras&#305; t&#252;m veriler burada g&#246;r&#252;nt&#252;lenecektir.</p>
+    <div class="cs-badge">&#128205; Yak&#305;nda Aktif</div>
+  </div>
+</div>
+
+<div class="store-section" id="store-outlet">
+  <div class="coming-soon">
+    <div class="cs-icon">&#128717;</div>
+    <h2>Outlet Ma&#287;azas&#305;</h2>
+    <p>Outlet ma&#287;azas&#305;n&#305;n trafik verileri haz&#305;rlan&#305;yor. A&#231;&#305;l&#305;&#351; sonras&#305; t&#252;m veriler burada g&#246;r&#252;nt&#252;lenecektir.</p>
+    <div class="cs-badge">&#128205; Yak&#305;nda Aktif</div>
   </div>
 </div>
 
@@ -119,8 +174,8 @@ td.num{text-align:right;color:#a5b4fc;font-variant-numeric:tabular-nums}
 <script>
 let DATA;
 let YR;
-const MO=['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
-const DA=['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'];
+const MO=['Oca','\u015Eub','Mar','Nis','May','Haz','Tem','A\u011Fu','Eyl','Eki','Kas','Ara'];
+const DA=['Pzt','Sal','\u00C7ar','Per','Cum','Cmt','Paz'];
 const P=['#818cf8','#38bdf8','#34d399','#fb923c','#f472b6','#facc15','#a78bfa','#22d3ee','#86efac','#fda4af','#c084fc'];
 Chart.defaults.color='#94a3b8';
 Chart.defaults.borderColor='rgba(255,255,255,0.05)';
@@ -129,95 +184,94 @@ const fmt=n=>n.toLocaleString('tr-TR');
 const charts={};
 function mk(id,cfg){if(charts[id])charts[id].destroy();charts[id]=new Chart(id,cfg)}
 
+function switchStore(store,btn){
+  document.querySelectorAll('.store-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.store-section').forEach(s=>s.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('store-'+store).classList.add('active');
+}
+
 function sw(btn){document.querySelectorAll('.pnl').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));document.getElementById('p-'+btn.dataset.p).classList.add('on');btn.classList.add('on')}
 
 function init(){
   const sel=document.getElementById('repSel');
-  sel.innerHTML='<option value="">— Tüm Personel —</option>'+DATA.rep_order.map(r=>`<option value="${r}">${r} (${fmt(DATA.reps[r].total)})</option>`).join('');
-  sel.onchange=()=>render(sel.value);}
+  sel.innerHTML='<option value="">\u2014 T\u00FCm Personel \u2014</option>'+DATA.rep_order.map(r=>'<option value="'+r+'">'+r+' ('+fmt(DATA.reps[r].total)+')</option>').join('');
+  sel.onchange=function(){render(sel.value);};}
 
 function render(repKey){
-  const d = repKey ? DATA.reps[repKey] : DATA.all;
-  const label = repKey || 'Tüm Personel';
+  var d = repKey ? DATA.reps[repKey] : DATA.all;
+  var label = repKey || 'T\u00FCm Personel';
   document.getElementById('hdrTotal').textContent = fmt(d.total);
   document.getElementById('repBadge').textContent = label;
 
-  // KPIs shared
-  const maxY = Math.max(...d.YC);
-  const peakYear = YR[d.YC.indexOf(maxY)];
-  const prev2025 = d.YC[YR.indexOf(2025)]||0;
-  const ytd = d.ytd_2026||0;
-  const tr = d.transport;
-  const araPct = d.arac_pct;
+  var maxY = Math.max.apply(null,d.YC);
+  var peakYear = YR[d.YC.indexOf(maxY)];
+  var prev2025 = d.YC[YR.indexOf(2025)]||0;
+  var ytd = d.ytd_2026||0;
+  var tr = d.transport;
+  var araPct = d.arac_pct;
 
-  const ovKpis = `
-    <div class="kpi" style="--c:#818cf8"><div class="kpi-l">Toplam Ziyaret</div><div class="kpi-v">${fmt(d.total)}</div><div class="kpi-n">2012–2026</div></div>
-    <div class="kpi" style="--c:#34d399"><div class="kpi-l">Zirve Yılı</div><div class="kpi-v">${peakYear||'—'}</div><div class="kpi-n">${fmt(maxY)} ziyaret</div></div>
-    <div class="kpi" style="--c:#38bdf8"><div class="kpi-l">2025</div><div class="kpi-v">${fmt(prev2025)}</div><div class="kpi-n">Geçen yıl</div></div>
-    <div class="kpi" style="--c:#facc15"><div class="kpi-l">2026 YTD</div><div class="kpi-v">${fmt(ytd)}</div><div class="kpi-n">Nisan itibariyle</div></div>
-    <div class="kpi" style="--c:#fb923c"><div class="kpi-l">Benzersiz Ziyaretçi</div><div class="kpi-v">${fmt(d.unique_visitors)}</div><div class="kpi-n">Tekil isim</div></div>
-    <div class="kpi" style="--c:#f472b6"><div class="kpi-l">Araçla Gelen</div><div class="kpi-v">${araPct}%</div><div class="kpi-n">${fmt(tr.arac)} kayıt</div></div>`;
+  var ovKpis =
+    '<div class="kpi" style="--c:#818cf8"><div class="kpi-l">Toplam Ziyaret</div><div class="kpi-v">'+fmt(d.total)+'</div><div class="kpi-n">2012\u20132026</div></div>'+
+    '<div class="kpi" style="--c:#34d399"><div class="kpi-l">Zirve Y\u0131l\u0131</div><div class="kpi-v">'+(peakYear||'\u2014')+'</div><div class="kpi-n">'+fmt(maxY)+' ziyaret</div></div>'+
+    '<div class="kpi" style="--c:#38bdf8"><div class="kpi-l">2025</div><div class="kpi-v">'+fmt(prev2025)+'</div><div class="kpi-n">Ge\u00E7en y\u0131l</div></div>'+
+    '<div class="kpi" style="--c:#facc15"><div class="kpi-l">2026 YTD</div><div class="kpi-v">'+fmt(ytd)+'</div><div class="kpi-n">Nisan itibariyle</div></div>'+
+    '<div class="kpi" style="--c:#fb923c"><div class="kpi-l">Benzersiz Ziyaret\u00E7i</div><div class="kpi-v">'+fmt(d.unique_visitors)+'</div><div class="kpi-n">Tekil isim</div></div>'+
+    '<div class="kpi" style="--c:#f472b6"><div class="kpi-l">Ara\u00E7la Gelen</div><div class="kpi-v">'+araPct+'%</div><div class="kpi-n">'+fmt(tr.arac)+' kay\u0131t</div></div>';
   document.getElementById('ovKpis').innerHTML = ovKpis;
   document.getElementById('trKpis').innerHTML = ovKpis;
-  document.getElementById('ovYSub').textContent = label+' · zirve '+peakYear;
+  document.getElementById('ovYSub').textContent = label+' \u00B7 zirve '+peakYear;
 
-  // Overview charts
   mk('cOvY',{type:'line',data:{labels:YR,datasets:[{data:d.YC,borderColor:'#818cf8',backgroundColor:'rgba(129,140,248,.12)',tension:.4,fill:true,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:G},y:{grid:G}}}});
   mk('cOvM',{type:'bar',data:{labels:MO,datasets:[{data:d.MC,backgroundColor:'#818cf8cc',borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:G}}}});
-  mk('cOvT',{type:'doughnut',data:{labels:['Araçla','Yaya','Motor','Bilinmiyor'],datasets:[{data:[tr.arac,tr.yaya,tr.motor,tr.unk],backgroundColor:['#818cf8','#34d399','#fb923c','#334155'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:11}}}}}});
-  mk('cOvD',{type:'bar',data:{labels:DA,datasets:[{data:d.DC,backgroundColor:d.DC.map((v,i)=>i===5?'#34d399cc':i===6?'#f87171cc':'#818cf899'),borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:G}}}});
+  mk('cOvT',{type:'doughnut',data:{labels:['Ara\u00E7la','Yaya','Motor','Bilinmiyor'],datasets:[{data:[tr.arac,tr.yaya,tr.motor,tr.unk],backgroundColor:['#818cf8','#34d399','#fb923c','#334155'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:11}}}}}});
+  mk('cOvD',{type:'bar',data:{labels:DA,datasets:[{data:d.DC,backgroundColor:d.DC.map(function(v,i){return i===5?'#34d399cc':i===6?'#f87171cc':'#818cf899';}),borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:G}}}});
 
-  // Trafik
-  mk('cTrY',{type:'bar',data:{labels:YR,datasets:[{data:d.YC,backgroundColor:d.YC.map(v=>v===maxY?'#34d399cc':'#818cf899'),borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:G}}}});
+  mk('cTrY',{type:'bar',data:{labels:YR,datasets:[{data:d.YC,backgroundColor:d.YC.map(function(v){return v===maxY?'#34d399cc':'#818cf899';}),borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:G}}}});
   mk('cTrM',{type:'line',data:{labels:MO,datasets:[{data:d.MC,borderColor:'#38bdf8',backgroundColor:'rgba(56,189,248,.12)',tension:.4,fill:true,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:G},y:{grid:G}}}});
   mk('cTrD',{type:'bar',data:{labels:DA,datasets:[{data:d.DC,backgroundColor:'#a78bfacc',borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:G}}}});
 
-  // Ulasim
-  const tpTotal = tr.arac+tr.yaya+tr.motor+tr.unk;
-  document.getElementById('tpKpis').innerHTML = `
-    <div class="kpi" style="--c:#818cf8"><div class="kpi-l">Araçla</div><div class="kpi-v">${fmt(tr.arac)}</div><div class="kpi-n">${tpTotal?((tr.arac/tpTotal*100).toFixed(1)):0}%</div></div>
-    <div class="kpi" style="--c:#34d399"><div class="kpi-l">Yaya</div><div class="kpi-v">${fmt(tr.yaya)}</div><div class="kpi-n">${tpTotal?((tr.yaya/tpTotal*100).toFixed(1)):0}%</div></div>
-    <div class="kpi" style="--c:#fb923c"><div class="kpi-l">Kayıt Yok</div><div class="kpi-v">${fmt(tr.unk)}</div><div class="kpi-n">${tpTotal?((tr.unk/tpTotal*100).toFixed(1)):0}%</div></div>
-    <div class="kpi" style="--c:#38bdf8"><div class="kpi-l">Motor</div><div class="kpi-v">${fmt(tr.motor)}</div><div class="kpi-n">${tpTotal?((tr.motor/tpTotal*100).toFixed(1)):0}%</div></div>`;
-  mk('cTpU',{type:'doughnut',data:{labels:['Araçla','Yaya','Motor','Bilinmiyor'],datasets:[{data:[tr.arac,tr.yaya,tr.motor,tr.unk],backgroundColor:['#818cf8','#34d399','#fb923c','#334155'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'right',labels:{boxWidth:10,font:{size:11}}}}}});
-  const tb = d.top_brands||[];
-  mk('cTpB',{type:'bar',data:{labels:tb.map(x=>x[0]),datasets:[{data:tb.map(x=>x[1]),backgroundColor:P.map(c=>c+'cc'),borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{grid:G},y:{grid:{display:false}}}}});
-  const bTot = tb.reduce((a,b)=>a+b[1],0);
-  document.getElementById('tpBrandTbl').innerHTML = tb.length?tb.map((b,i)=>{
-    const pct = bTot?((b[1]/bTot*100).toFixed(1)):0;
-    const cls = ['Mercedes','BMW','Audi','Porsche','Land Rover','Volvo'].includes(b[0])?'bg':'bv';
-    return `<tr><td class="rank">${i+1}</td><td class="big">${b[0]}</td><td class="num">${fmt(b[1])}</td><td class="num">${pct}%</td></tr>`;
-  }).join(''):'<tr><td colspan="4" class="empty">Marka kaydı yok</td></tr>';
+  var tpTotal = tr.arac+tr.yaya+tr.motor+tr.unk;
+  document.getElementById('tpKpis').innerHTML =
+    '<div class="kpi" style="--c:#818cf8"><div class="kpi-l">Ara\u00E7la</div><div class="kpi-v">'+fmt(tr.arac)+'</div><div class="kpi-n">'+(tpTotal?((tr.arac/tpTotal*100).toFixed(1)):0)+'%</div></div>'+
+    '<div class="kpi" style="--c:#34d399"><div class="kpi-l">Yaya</div><div class="kpi-v">'+fmt(tr.yaya)+'</div><div class="kpi-n">'+(tpTotal?((tr.yaya/tpTotal*100).toFixed(1)):0)+'%</div></div>'+
+    '<div class="kpi" style="--c:#fb923c"><div class="kpi-l">Kay\u0131t Yok</div><div class="kpi-v">'+fmt(tr.unk)+'</div><div class="kpi-n">'+(tpTotal?((tr.unk/tpTotal*100).toFixed(1)):0)+'%</div></div>'+
+    '<div class="kpi" style="--c:#38bdf8"><div class="kpi-l">Motor</div><div class="kpi-v">'+fmt(tr.motor)+'</div><div class="kpi-n">'+(tpTotal?((tr.motor/tpTotal*100).toFixed(1)):0)+'%</div></div>';
+  mk('cTpU',{type:'doughnut',data:{labels:['Ara\u00E7la','Yaya','Motor','Bilinmiyor'],datasets:[{data:[tr.arac,tr.yaya,tr.motor,tr.unk],backgroundColor:['#818cf8','#34d399','#fb923c','#334155'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'right',labels:{boxWidth:10,font:{size:11}}}}}});
+  var tb = d.top_brands||[];
+  mk('cTpB',{type:'bar',data:{labels:tb.map(function(x){return x[0];}),datasets:[{data:tb.map(function(x){return x[1];}),backgroundColor:P.map(function(c){return c+'cc';}),borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{grid:G},y:{grid:{display:false}}}}});
+  var bTot = tb.reduce(function(a,b){return a+b[1];},0);
+  document.getElementById('tpBrandTbl').innerHTML = tb.length?tb.map(function(b,i){
+    var pct = bTot?((b[1]/bTot*100).toFixed(1)):0;
+    return '<tr><td class="rank">'+(i+1)+'</td><td class="big">'+b[0]+'</td><td class="num">'+fmt(b[1])+'</td><td class="num">'+pct+'%</td></tr>';
+  }).join(''):'<tr><td colspan="4" class="empty">Marka kayd\u0131 yok</td></tr>';
 
-  // Ziyaretciler
-  document.getElementById('viKpis').innerHTML = `
-    <div class="kpi" style="--c:#818cf8"><div class="kpi-l">Benzersiz</div><div class="kpi-v">${fmt(d.unique_visitors)}</div><div class="kpi-n">Tekil ziyaretçi</div></div>
-    <div class="kpi" style="--c:#34d399"><div class="kpi-l">Toplam Ziyaret</div><div class="kpi-v">${fmt(d.total)}</div><div class="kpi-n">Tüm dönem</div></div>
-    <div class="kpi" style="--c:#facc15"><div class="kpi-l">#1 VIP</div><div class="kpi-v" style="font-size:20px">${d.top_visitors[0]?d.top_visitors[0][0]:'—'}</div><div class="kpi-n">${d.top_visitors[0]?fmt(d.top_visitors[0][1])+' ziyaret':''}</div></div>`;
-  const tv = d.top_visitors||[];
-  document.getElementById('viTbl').innerHTML = tv.length?tv.map((v,i)=>{
-    const lbl = v[1]>=40?'VIP ⭐':v[1]>=10?'Sadık':'Tekrarlayan';
-    const cls = v[1]>=40?'bg':v[1]>=10?'bv':'bo';
-    return `<tr><td class="rank">${i+1}</td><td class="big">${v[0]}</td><td class="num">${fmt(v[1])}</td><td><span class="b ${cls}">${lbl}</span></td></tr>`;
-  }).join(''):'<tr><td colspan="4" class="empty">Ziyaretçi kaydı yok</td></tr>';
+  document.getElementById('viKpis').innerHTML =
+    '<div class="kpi" style="--c:#818cf8"><div class="kpi-l">Benzersiz</div><div class="kpi-v">'+fmt(d.unique_visitors)+'</div><div class="kpi-n">Tekil ziyaret\u00E7i</div></div>'+
+    '<div class="kpi" style="--c:#34d399"><div class="kpi-l">Toplam Ziyaret</div><div class="kpi-v">'+fmt(d.total)+'</div><div class="kpi-n">T\u00FCm d\u00F6nem</div></div>'+
+    '<div class="kpi" style="--c:#facc15"><div class="kpi-l">#1 VIP</div><div class="kpi-v" style="font-size:20px">'+(d.top_visitors[0]?d.top_visitors[0][0]:'\u2014')+'</div><div class="kpi-n">'+(d.top_visitors[0]?fmt(d.top_visitors[0][1])+' ziyaret':'')+'</div></div>';
+  var tv = d.top_visitors||[];
+  document.getElementById('viTbl').innerHTML = tv.length?tv.map(function(v,i){
+    var lbl = v[1]>=40?'VIP \u2B50':v[1]>=10?'Sad\u0131k':'Tekrarlayan';
+    var cls = v[1]>=40?'bg':v[1]>=10?'bv':'bo';
+    return '<tr><td class="rank">'+(i+1)+'</td><td class="big">'+v[0]+'</td><td class="num">'+fmt(v[1])+'</td><td><span class="b '+cls+'">'+lbl+'</span></td></tr>';
+  }).join(''):'<tr><td colspan="4" class="empty">Ziyaret\u00E7i kayd\u0131 yok</td></tr>';
 
-  // Ongoruler
-  const peakMo = MO[d.peak_mo_idx];
-  const peakDay = DA[d.peak_day_idx];
-  const growth = d.YC[0]>0 ? Math.round((d.YC[d.YC.length-2]-d.YC[0])/d.YC[0]*100) : null;
-  const topBrand = tb[0]?tb[0][0]:'—';
-  const topVisitor = tv[0]?tv[0][0]:'—';
-  document.getElementById('insList').innerHTML = `
-    <li><strong>${label}</strong> toplam ${fmt(d.total)} ziyaretçi etkileşimi — ${fmt(d.unique_visitors)} benzersiz kişi.</li>
-    <li>Zirve yılı: <strong>${peakYear}</strong> (${fmt(maxY)} ziyaret). 2026 YTD: <strong>${fmt(ytd)}</strong>.</li>
-    <li>En yoğun ay: <strong>${peakMo}</strong> — en yoğun gün: <strong>${peakDay}</strong>.</li>
-    <li>Ulaşım profili: %${araPct} araçla (${fmt(tr.arac)} kayıt). ${topBrand!=='—'?'En popüler marka: <strong>'+topBrand+'</strong>.':''}</li>
-    ${topVisitor!=='—'?'<li>#1 VIP: <strong>'+topVisitor+'</strong> ('+fmt(tv[0][1])+' ziyaret).</li>':''}
-    ${growth!==null?'<li>2012→2025 büyüme: <strong>'+growth+'%</strong>.</li>':''}`;
+  var peakMo = MO[d.peak_mo_idx];
+  var peakDay = DA[d.peak_day_idx];
+  var growth = d.YC[0]>0 ? Math.round((d.YC[d.YC.length-2]-d.YC[0])/d.YC[0]*100) : null;
+  var topBrand = tb[0]?tb[0][0]:'\u2014';
+  var topVisitor = tv[0]?tv[0][0]:'\u2014';
+  document.getElementById('insList').innerHTML =
+    '<li><strong>'+label+'</strong> toplam '+fmt(d.total)+' ziyaret\u00E7i etkile\u015Fimi \u2014 '+fmt(d.unique_visitors)+' benzersiz ki\u015Fi.</li>'+
+    '<li>Zirve y\u0131l\u0131: <strong>'+peakYear+'</strong> ('+fmt(maxY)+' ziyaret). 2026 YTD: <strong>'+fmt(ytd)+'</strong>.</li>'+
+    '<li>En yo\u011Fun ay: <strong>'+peakMo+'</strong> \u2014 en yo\u011Fun g\u00FCn: <strong>'+peakDay+'</strong>.</li>'+
+    '<li>Ula\u015F\u0131m profili: %'+araPct+' ara\u00E7la ('+fmt(tr.arac)+' kay\u0131t). '+(topBrand!=='\u2014'?'En pop\u00FCler marka: <strong>'+topBrand+'</strong>.':'')+'</li>'+
+    (topVisitor!=='\u2014'?'<li>#1 VIP: <strong>'+topVisitor+'</strong> ('+fmt(tv[0][1])+' ziyaret).</li>':'')+
+    (growth!==null?'<li>2012\u21922025 b\u00FCy\u00FCme: <strong>'+growth+'%</strong>.</li>':'');
   mk('cInG',{type:'line',data:{labels:YR,datasets:[{data:d.YC,borderColor:'#34d399',backgroundColor:'rgba(52,211,153,.12)',tension:.4,fill:true,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:G},y:{grid:G}}}});
-  mk('cInP',{type:'bar',data:{labels:MO,datasets:[{label:'Ay',data:d.MC,backgroundColor:d.MC.map((v,i)=>i===d.peak_mo_idx?'#facc15cc':'#818cf866'),borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:G}}}});
+  mk('cInP',{type:'bar',data:{labels:MO,datasets:[{label:'Ay',data:d.MC,backgroundColor:d.MC.map(function(v,i){return i===d.peak_mo_idx?'#facc15cc':'#818cf866';}),borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:G}}}});
 }
 
-fetch('data.json').then(r=>r.json()).then(d=>{DATA=d;YR=d.YR;init();render('');});
+fetch('data.json').then(function(r){return r.json();}).then(function(d){DATA=d;YR=d.YR;init();render('');});
 </script></body></html>
-
