@@ -1,5 +1,5 @@
 (function(){
-var PASS_HASH='5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8';
+var PASS_HASH='d04d7f12d8c2cc4a1146c7bcc5d8e4d7b03e5dbe4c0f3e7341a2955d02dfe334';
 var SK='_mzi_auth';
 function sha256(s){
   return crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)).then(function(b){
