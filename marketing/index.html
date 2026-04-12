@@ -29,11 +29,11 @@
 
 <script>
 const DASHBOARDS=[
-  {id:'unified',label:'Unified Analytics',url:'https://balamirnazlica-tech.github.io/mozaik-analytics/mozaik-unified-dashboard.html'},
-  {id:'unified-full',label:'Unified (Full)',url:'https://balamirnazlica-tech.github.io/mozaik-analytics/mozaik-unified-dashboard-full.html'},
-  {id:'customer',label:'Customer Intelligence',url:'https://balamirnazlica-tech.github.io/mozaik-analytics/mozaik-customer-intelligence.html'},
-  {id:'product',label:'Product Intelligence',url:'https://balamirnazlica-tech.github.io/mozaik-analytics/mozaik-product-intelligence.html'},
-  {id:'orders',label:'Orders',url:'https://balamirnazlica-tech.github.io/mozaik-analytics/mozaik-orders-dashboard.html'}
+  {id:'unified',label:'Unified Analytics',url:'./mozaik-unified-dashboard.html'},
+  {id:'unified-full',label:'Unified (Full)',url:'./mozaik-unified-dashboard-full.html'},
+  {id:'customer',label:'Customer Intelligence',url:'./mozaik-customer-intelligence.html'},
+  {id:'product',label:'Product Intelligence',url:'./mozaik-product-intelligence.html'},
+  {id:'orders',label:'Orders',url:'./mozaik-orders-dashboard.html'}
 ];
 const frame=document.getElementById('frame'),tabs=document.getElementById('tabs');
 function activate(id){const d=DASHBOARDS.find(x=>x.id===id)||DASHBOARDS[0];frame.src=d.url;[...tabs.children].forEach(b=>b.classList.toggle('active',b.dataset.id===d.id));history.replaceState(null,'','#'+d.id);}
