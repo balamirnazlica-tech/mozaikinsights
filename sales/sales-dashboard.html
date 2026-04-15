@@ -314,7 +314,7 @@ function drawRepChart(){
     options:{plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#64748b',font:{size:9}},grid:{display:false}},
     y:{ticks:{color:'#64748b',callback:v=>state.metric==='revenue'?moneyK(v):v},grid:{color:'#1f2a44'}}}}}));
   charts.push(new Chart(document.getElementById('repFootfallChart'),{type:'line',
-      data:{labels:mIdx.map(i=>DATA.months[i]),datasets:[{label:'Visits',data:mIdx.map(i=>(selData.footfall||[])[i]||0),borderColor:'#fb7185',backgroundColor:'rgba(251,113,133,0.15)',fill:true,tension:0.35,pointRadius:2}]},
+      data:{labels:mIdx.map(i=>DATA.months[i]),datasets:[{label:'Visits',data:mIdx.map(i=>(r.footfall||[])[i]||0),borderColor:'#fb7185',backgroundColor:'rgba(251,113,133,0.15)',fill:true,tension:0.35,pointRadius:2}]},
       options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{color:'#9ca3af'}},x:{ticks:{color:'#9ca3af'}}}}}));
 }
 
