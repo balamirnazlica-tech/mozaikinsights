@@ -19,6 +19,7 @@
       <li><a class="link" href="../marketing/">Marketing</a></li>
       <li><a class="link active" href="./">Sales</a></li>
       <li><a class="link" href="../operations/">Operations</a></li>
+      <li><a class="link" href="../projects/">Projects</a></li>
     </ul>
   </div>
 </nav>
@@ -31,18 +32,13 @@
 <script>
 const DASHBOARDS=[
   {id:'sales',label:'Sales Dashboard',url:'./sales-dashboard.html'},
-  {id:'crm',label:'CRM Dashboard',url:'./crm-dashboard.html'},
-  {id:'bvb',label:'Build vs Buy',url:'./crm-build-vs-buy-dashboard.html'},
-  {id:'bvbt',label:'Build vs Buy (Team)',url:'./crm-build-vs-buy-dashboard-team.html'},
   {id:'efunnel',label:'Enterprise Funnel',url:'./Enterprise_Sales_Dashboard.html'}
 ];
 const frame=document.getElementById('frame'),tabs=document.getElementById('tabs');
-function activate(id){const d=DASHBOARDS.find(x=>x.id===id)||DASHBOARDS[0];frame.src=d.url;[...tabs.children].forEach(b=>b.classList.toggle('active',b.dataset.id===d.id));history.replaceState(null,'','#'+d.id);}
-DASHBOARDS.forEach(d=>{const b=document.createElement('button');b.textContent=d.label;b.dataset.id=d.id;b.onclick=()=>activate(d.id);tabs.appendChild(b);});
-activate(location.hash.replace('#','')||'sales');
-
-window.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();location.reload();}});
-setInterval(()=>{try{const f=document.querySelector('.frame-host iframe');if(f&&f.contentWindow&&!f._kb){f._kb=1;f.contentWindow.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();parent.location.reload();}});}}catch(e){}},1000);
+function activate(id){const d=DASHBOARDS.find(x=>x.id===id)||DASHBOARDS[0];frame.src=d.url;tabs.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.id===d.id))}
+DASHBOARDS.forEach(d=>{const b=document.createElement('button');b.textContent=d.label;b.dataset.id=d.id;b.onclick=()=>activate(d.id);tabs.appendChild(b)});
+activate(new URLSearchParams(location.search).get('tab')||'sales');
+window.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){const i=DASHBOARDS.findIndex(d=>d.id===(tabs.querySelector('.active')||{}).dataset?.id);const n=e.key==='ArrowRight'?(i+1)%DASHBOARDS.length:(i-1+DASHBOARDS.length)%DASHBOARDS.length;activate(DASHBOARDS[n].id)}});
 </script>
 </body>
 </html>
