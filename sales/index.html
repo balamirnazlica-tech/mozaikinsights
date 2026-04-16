@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/style.css?v=11">
+<link rel="stylesheet" href="../assets/style.css?v=12">
 <script src="/assets/auth.js"></script>
 </head>
 <body class="viewer">
@@ -32,7 +32,8 @@
 <script>
 const DASHBOARDS=[
   {id:'sales',label:'Retail Sales',url:'./sales-dashboard.html'},
-  {id:'efunnel',label:'Enterprise Sales',url:'./Enterprise_Sales_Dashboard.html'}
+  {id:'efunnel',label:'Enterprise Sales',url:'./Enterprise_Sales_Dashboard.html'},
+  {id:'footfall',label:'Footfall Traffic',url:'./footfall/'}
 ];
 const frame=document.getElementById('frame'),tabs=document.getElementById('tabs');
 function activate(id){const d=DASHBOARDS.find(x=>x.id===id)||DASHBOARDS[0];frame.src=d.url;tabs.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.id===d.id))}
