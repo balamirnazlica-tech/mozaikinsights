@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Projects &#8212; Mozaik Insights</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css?v=11">
+<script src="/assets/auth.js"></script>
+</head>
+<body class="viewer">
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="../"><span class="brand-mark"></span><span class="brand-name">Mozaik Insights</span><span class="brand-sub">analytics hub</span></a>
+    <ul>
+      <li><a class="link" href="../">Home</a></li>
+      <li><a class="link" href="../marketing/">Marketing</a></li>
+      <li><a class="link" href="../sales/">Sales</a></li>
+      <li><a class="link" href="../operations/">Operations</a></li>
+      <li><a class="link active" href="./">Projects</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="viewer-main">
+  <div class="tabbar" id="tabs"></div>
+  <div class="frame-host"><iframe id="frame" title="Projects dashboard" loading="eager" allow="fullscreen"></iframe></div>
+</main>
+
+<script>
+const DASHBOARDS=[
+  {id:'bvbt',label:'Build vs Buy (Team)',url:'../sales/crm-build-vs-buy-dashboard-team.html'}
+];
+const frame=document.getElementById('frame'),tabs=document.getElementById('tabs');
+function activate(id){const d=DASHBOARDS.find(x=>x.id===id)||DASHBOARDS[0];frame.src=d.url;tabs.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.id===d.id))}
+DASHBOARDS.forEach(d=>{const b=document.createElement('button');b.textContent=d.label;b.dataset.id=d.id;b.onclick=()=>activate(d.id);tabs.appendChild(b)});
+activate(new URLSearchParams(location.search).get('tab')||'bvbt');
+window.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){const i=DASHBOARDS.findIndex(d=>d.id===(tabs.querySelector('.active')||{}).dataset?.id);const n=e.key==='ArrowRight'?(i+1)%DASHBOARDS.length:(i-1+DASHBOARDS.length)%DASHBOARDS.length;activate(DASHBOARDS[n].id)}});
+</script>
+</body>
+</html>
+
