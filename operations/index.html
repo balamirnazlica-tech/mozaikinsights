@@ -1,15 +1,20 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Operations — Mozaik Insights</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect rx='18' width='100' height='100' fill='%234f8cff'/><text x='50' y='68' text-anchor='middle' font-size='50' fill='white' font-family='system-ui' font-weight='700'>MZ</text></svg>">
+<title>Operations &#8212; Mozaik Insights</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/style.css?v=11">
-<script src="../assets/auth.js"></script>
+<link rel="stylesheet" href="../assets/style.css?v=12">
+<script src="/assets/auth.js"></script>
+<style>
+.coming-soon-box{max-width:480px;margin:120px auto;text-align:center;padding:48px 32px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px}
+.coming-soon-box h2{font-size:1.5rem;font-weight:600;margin:0 0 12px;color:#fff}
+.coming-soon-box p{font-size:1rem;color:rgba(255,255,255,0.55);margin:0}
+.coming-soon-badge{display:inline-block;padding:4px 14px;border-radius:999px;font-size:.75rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;background:rgba(255,183,77,0.12);color:#ffb74d;margin-bottom:20px}
+</style>
 </head>
 <body class="viewer">
 <nav class="nav">
@@ -25,19 +30,13 @@
   </div>
 </nav>
 
-<main class="viewer-main">
-  <div class="tabbar" id="tabs"></div>
-  <div class="frame-host"><iframe id="frame" title="Operations dashboard" loading="eager" allow="fullscreen"></iframe></div>
+<main>
+  <div class="coming-soon-box">
+    <span class="coming-soon-badge">Coming Soon</span>
+    <h2>Showroom Footfall</h2>
+    <p>Operations footfall data is being set up. This dashboard will be available once data collection begins.</p>
+  </div>
 </main>
 
-<script>
-const tabs=[{label:"Showroom Footfall",src:"./footfall.html"}];
-const bar=document.getElementById("tabs"),frame=document.getElementById("frame");
-let cur=0;
-tabs.forEach((t,i)=>{const b=document.createElement("button");b.textContent=t.label;b.onclick=()=>activate(i);bar.appendChild(b)});
-function activate(i){cur=i;frame.src=tabs[i].src;bar.querySelectorAll("button").forEach((b,j)=>b.classList.toggle("active",j===i))}
-activate(0);
-window.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();activate(cur)}});
-</script>
 </body>
 </html>
