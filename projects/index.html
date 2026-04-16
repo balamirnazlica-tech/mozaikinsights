@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/style.css?v=11">
+<link rel="stylesheet" href="../assets/style.css?v=12">
 <script src="/assets/auth.js"></script>
 </head>
 <body class="viewer">
@@ -28,17 +28,16 @@
   <div class="tabbar" id="tabs"></div>
   <div class="frame-host"><iframe id="frame" title="Projects dashboard" loading="eager" allow="fullscreen"></iframe></div>
 </main>
-
 <script>
 const DASHBOARDS=[
+  {id:'crm',label:'CRM Dashboard',url:'../sales/crm-dashboard.html'},
   {id:'bvbt',label:'Build vs Buy (Team)',url:'../sales/crm-build-vs-buy-dashboard-team.html'}
 ];
 const frame=document.getElementById('frame'),tabs=document.getElementById('tabs');
 function activate(id){const d=DASHBOARDS.find(x=>x.id===id)||DASHBOARDS[0];frame.src=d.url;tabs.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.id===d.id))}
 DASHBOARDS.forEach(d=>{const b=document.createElement('button');b.textContent=d.label;b.dataset.id=d.id;b.onclick=()=>activate(d.id);tabs.appendChild(b)});
-activate(new URLSearchParams(location.search).get('tab')||'bvbt');
+activate(new URLSearchParams(location.search).get('tab')||'crm');
 window.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){const i=DASHBOARDS.findIndex(d=>d.id===(tabs.querySelector('.active')||{}).dataset?.id);const n=e.key==='ArrowRight'?(i+1)%DASHBOARDS.length:(i-1+DASHBOARDS.length)%DASHBOARDS.length;activate(DASHBOARDS[n].id)}});
 </script>
 </body>
 </html>
-
