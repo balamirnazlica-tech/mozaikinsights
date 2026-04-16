@@ -74,6 +74,29 @@
   .legend span{display:flex;align-items:center;gap:6px}
   .legend i{width:10px;height:10px;border-radius:2px;display:inline-block}
   footer{margin-top:40px;color:var(--ink-dim2);font-size:12px;border-top:1px solid var(--line);padding-top:16px}
+  /* Guide panel */
+  .guide-wrap{margin-bottom:20px}
+  .guide-toggle{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(122,166,255,.12),rgba(155,124,255,.10));border:1px solid rgba(122,166,255,.25);border-radius:12px;padding:12px 16px;cursor:pointer;width:100%;text-align:left;color:var(--ink);font-size:14px;font-weight:600;transition:background .2s}
+  .guide-toggle:hover{background:linear-gradient(135deg,rgba(122,166,255,.18),rgba(155,124,255,.16))}
+  .guide-toggle .chevron{transition:transform .25s;font-size:12px;color:var(--accent)}
+  .guide-toggle.open .chevron{transform:rotate(90deg)}
+  .guide-toggle .badge{background:var(--accent);color:#0b1020;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;text-transform:uppercase;letter-spacing:.06em}
+  .guide-body{display:none;background:var(--panel);border:1px solid var(--line);border-top:none;border-radius:0 0 12px 12px;padding:20px 22px 24px;margin-top:-1px}
+  .guide-body.open{display:block}
+  .guide-body h3{color:var(--accent);font-size:14px;margin:18px 0 8px;font-weight:700}
+  .guide-body h3:first-child{margin-top:0}
+  .guide-body p{margin:0 0 8px;font-size:13px;line-height:1.6;color:var(--ink)}
+  .guide-body .g-dim{color:var(--ink-dim)}
+  .guide-body .g-section{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+  .guide-body .g-section h4{font-size:13px;font-weight:600;margin:0 0 6px;display:flex;align-items:center;gap:8px}
+  .guide-body .g-section p{font-size:12.5px;margin:0 0 4px}
+  .guide-body .g-section .g-action{color:var(--warn);font-weight:600;font-size:12px;margin-top:6px}
+  .guide-body .g-checklist{list-style:none;padding:0;margin:12px 0 0}
+  .guide-body .g-checklist li{position:relative;padding:6px 0 6px 26px;font-size:13px;border-bottom:1px solid var(--line)}
+  .guide-body .g-checklist li:last-child{border-bottom:none}
+  .guide-body .g-checklist li::before{content:"☐";position:absolute;left:0;top:6px;color:var(--accent);font-size:15px}
+  .guide-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:980px){.guide-cols{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -85,6 +108,70 @@
   </div>
   <div class="meta">Reps: Burçin · Zeynep · İrem · Elif</div>
 </header>
+
+<!-- GUIDE PANEL -->
+<div class="guide-wrap">
+  <button class="guide-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
+    <span class="chevron">&#9654;</span>
+    <span>Dashboard Guide for Leadership</span>
+    <span class="badge">VP Walkthrough</span>
+    <span style="margin-left:auto;font-weight:400;font-size:12px;color:var(--ink-dim)">Click to expand</span>
+  </button>
+  <div class="guide-body">
+    <p class="g-dim">A tab-by-tab guide to reading this dashboard, designed for department heads and VPs. Use it to run weekly pipeline reviews, challenge stage accuracy, and spot risks before they cost you the quarter.</p>
+
+    <div class="guide-cols">
+      <div class="g-section">
+        <h4><span class="pill tofu">Tab</span> Overview</h4>
+        <p>The four KPI cards show <strong>Open Opportunities</strong> (active deals across all stages), <strong>Gross Pipeline</strong> (sum of deal values where a number exists), <strong>Weighted Pipeline</strong> (each value x probability &mdash; your best forecast), and <strong>Data Completeness</strong> (avg % of key fields filled).</p>
+        <p>The funnel visualization shows count, gross, and weighted value per stage. A healthy funnel is wider at the top. If BOFU dominates, short-term revenue looks strong but Q3+ pipeline is at risk.</p>
+        <p class="g-action">Action: If weighted BOFU &gt; 3x weighted TOFU, escalate prospecting immediately.</p>
+      </div>
+      <div class="g-section">
+        <h4><span class="pill mofu">Tab</span> Funnel Definitions</h4>
+        <p><strong>TOFU</strong> = discovery/interest (5&ndash;25% probability). <strong>MOFU</strong> = qualified with proposal (30&ndash;70%). <strong>BOFU</strong> = closing, terms agreed (75&ndash;99%). Use these criteria to challenge stage placement during reviews.</p>
+        <p>A deal without confirmed budget should not be in MOFU. A deal at 100% probability should be moved to &ldquo;Won&rdquo; immediately &mdash; leaving it in BOFU inflates the pipeline.</p>
+        <p class="g-action">Action: In each review, pick 2&ndash;3 deals and verify stage vs. criteria.</p>
+      </div>
+      <div class="g-section">
+        <h4><span class="pill ok">Tab</span> Rep Performance</h4>
+        <p>Scoreboard with each rep&rsquo;s deal count, stage split, gross and weighted pipeline, average deal size, and data fill %. Use it to spot uneven workload, low data fill (coaching signal), and concentration risk (one rep holding most value).</p>
+        <p class="g-action">Action: Flag any rep with data fill &lt; 70% for a 1:1 data-quality review.</p>
+      </div>
+      <div class="g-section">
+        <h4><span class="pill bofu">Tab</span> BOFU Close Watch</h4>
+        <p>Deals expected to close this quarter, sorted by weighted value. Highlighted rows = &ge;85% probability. Start every weekly review here: which deals moved? Which slipped? Any stuck &ge;14 days?</p>
+        <p class="g-action">Action: Any BOFU deal without movement for 2 weeks &rarr; require a concrete next-step with a date, or downgrade to MOFU.</p>
+      </div>
+      <div class="g-section">
+        <h4><span class="pill bad">Tab</span> At-Risk / Stuck</h4>
+        <p>Deals with probability &lt;20%, missing next steps, or flagged blockers (Ghosting, Budget, Operation, Time). These are pipeline &ldquo;dead weight&rdquo; that distort your forecast.</p>
+        <p class="g-action">Action: Every deal here for 2+ weeks without a next step &rarr; re-stage to TOFU or mark Lost. No exceptions.</p>
+      </div>
+      <div class="g-section">
+        <h4><span class="pill warn">Tab</span> Data Quality</h4>
+        <p>Field fill rates across all 108 deals, plus rows with free-text values that can&rsquo;t be forecasted. Your forecast is only as accurate as the data. Key gaps: 33% of deals have no numeric value, 55% missing close dates.</p>
+        <p class="g-action">Action: Set a team target of &ge;85% data fill. Tie it to the weekly cadence.</p>
+      </div>
+    </div>
+
+    <div class="g-section" style="border-top:2px solid var(--accent);margin-top:4px">
+      <h4 style="color:var(--accent)">Insights &amp; What&rsquo;s Missing</h4>
+      <p>Strategic tab covering what the funnel cannot yet tell you. The pipeline is top-heavy (&euro;7.1M weighted in BOFU vs &euro;0.2M in TOFU). Top 5 deals = 58% of BOFU value (concentration risk). No Won/Lost stages means no win rate or cycle-time calculation. No lead source or industry dimension blocks channel-mix analysis.</p>
+      <p class="g-action">Action: Review the &ldquo;Recommendations before CRM adoption&rdquo; section and assign owners to each item with a deadline.</p>
+    </div>
+
+    <h3 style="margin-top:20px">Weekly Review Checklist for VPs</h3>
+    <ul class="g-checklist">
+      <li><strong>BOFU Close Watch</strong> &mdash; challenge any deal &ge;14 days without movement; confirm close dates are real</li>
+      <li><strong>At-Risk tab</strong> &mdash; decide for each deal: intervene, re-stage to TOFU, or mark Lost</li>
+      <li><strong>Rep Performance</strong> &mdash; verify even pipeline distribution; flag data fill below 70%</li>
+      <li><strong>Spot-check 2&ndash;3 deals per rep</strong> &mdash; validate stage placement against Funnel Definitions criteria</li>
+      <li><strong>Outbound activity</strong> &mdash; are reps adding &ge;2 new TOFU opportunities per week?</li>
+      <li><strong>Update this dashboard</strong> &mdash; ensure the source spreadsheet is refreshed before each Monday review</li>
+    </ul>
+  </div>
+</div>
 
 <div class="tabs">
   <button class="tab active" data-tab="overview">Overview</button>
