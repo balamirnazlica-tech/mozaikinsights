@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Mozaik Design · Enterprise Sales Funnel Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#0b1020; --panel:#121a33; --panel2:#19244a; --line:#273258;
+    --ink:#e8ecf7; --ink-dim:#a4adc9; --ink-dim2:#6f7aa0;
+    --accent:#7aa6ff; --accent2:#9b7cff; --ok:#29d398; --warn:#f5a524; --bad:#ff6b6b;
+    --bofu:#29d398; --mofu:#f5a524; --tofu:#7aa6ff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5}
+  a{color:var(--accent)}
+  .wrap{max-width:1400px;margin:0 auto;padding:28px 24px 80px}
+  header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:20px}
+  h1{font-size:22px;font-weight:700;margin:0;letter-spacing:-.01em}
+  h1 small{color:var(--ink-dim);font-weight:400;font-size:13px;margin-left:8px}
+  h2{font-size:15px;font-weight:600;margin:0 0 12px;letter-spacing:.02em;text-transform:uppercase;color:var(--ink-dim)}
+  h3{font-size:14px;font-weight:600;margin:0 0 8px}
+  .meta{color:var(--ink-dim);font-size:12px}
+  .grid{display:grid;gap:16px}
+  .cards{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .two{grid-template-columns:2fr 1fr}
+  .two-eq{grid-template-columns:1fr 1fr}
+  .three{grid-template-columns:repeat(3,minmax(0,1fr))}
+  @media (max-width: 980px){.cards,.two,.two-eq,.three{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+  .kpi .label{color:var(--ink-dim);font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+  .kpi .val{font-size:26px;font-weight:700;margin-top:6px;letter-spacing:-.01em}
+  .kpi .sub{color:var(--ink-dim);font-size:12px;margin-top:4px}
+  .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600}
+  .pill.bofu{background:rgba(41,211,152,.15);color:var(--bofu)}
+  .pill.mofu{background:rgba(245,165,36,.15);color:var(--mofu)}
+  .pill.tofu{background:rgba(122,166,255,.15);color:var(--tofu)}
+  .pill.ok{background:rgba(41,211,152,.15);color:var(--ok)}
+  .pill.warn{background:rgba(245,165,36,.18);color:var(--warn)}
+  .pill.bad{background:rgba(255,107,107,.18);color:var(--bad)}
+  .pill.mut{background:rgba(164,173,201,.14);color:var(--ink-dim)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-weight:600;color:var(--ink-dim);font-size:11px;text-transform:uppercase;letter-spacing:.06em;background:rgba(255,255,255,.02);position:sticky;top:0}
+  td.num, th.num{text-align:right;font-variant-numeric:tabular-nums}
+  .tblwrap{max-height:420px;overflow:auto;border-radius:10px;border:1px solid var(--line)}
+  canvas{max-width:100%}
+  .defs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .defs .def{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:14px}
+  .defs .def h3{display:flex;align-items:center;gap:8px}
+  .defs .def .crit{margin-top:10px;font-size:12.5px;color:var(--ink-dim)}
+  .defs .def ul{margin:6px 0 0 18px;padding:0}
+  .defs .def li{margin:2px 0}
+  .note{background:rgba(122,166,255,.08);border-left:3px solid var(--accent);padding:10px 12px;border-radius:6px;font-size:13px;color:var(--ink)}
+  .flag{background:rgba(245,165,36,.08);border-left:3px solid var(--warn);padding:10px 12px;border-radius:6px;font-size:13px;color:var(--ink)}
+  .bad-bg{background:rgba(255,107,107,.08);border-left:3px solid var(--bad);padding:10px 12px;border-radius:6px;font-size:13px;color:var(--ink)}
+  ul.insights{margin:0;padding-left:18px}
+  ul.insights li{margin:8px 0}
+  .tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+  .tab{background:var(--panel);border:1px solid var(--line);color:var(--ink-dim);padding:8px 12px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:500}
+  .tab.active{background:var(--panel2);color:var(--ink);border-color:#3a4a80}
+  .tab:hover{color:var(--ink)}
+  section{margin-bottom:28px}
+  .scroll{overflow-x:auto}
+  .muted{color:var(--ink-dim)}
+  .small{font-size:12px}
+  .hide{display:none}
+  .funnel-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+  .funnel-bar{height:34px;border-radius:8px;display:flex;align-items:center;justify-content:flex-end;padding:0 12px;color:white;font-weight:600;font-size:13px;min-width:60px}
+  .funnel-label{width:90px;color:var(--ink-dim);font-size:12px}
+  .funnel-meta{margin-left:10px;color:var(--ink-dim);font-size:12px}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--ink-dim)}
+  .legend span{display:flex;align-items:center;gap:6px}
+  .legend i{width:10px;height:10px;border-radius:2px;display:inline-block}
+  footer{margin-top:40px;color:var(--ink-dim2);font-size:12px;border-top:1px solid var(--line);padding-top:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <h1>Enterprise Sales Funnel Dashboard <small>Mozaik Design · as of 16 Apr 2026</small></h1>
+    <div class="meta">Source: <em>Enterprise Sales Funnel – Sample Till CRM Adoption.ods</em> · 108 opportunities across TOFU / MOFU / BOFU + 40 outbound targets. Values are EUR (€).</div>
+  </div>
+  <div class="meta">Reps: Burçin · Zeynep · İrem · Elif</div>
+</header>
+
+<div class="tabs">
+  <button class="tab active" data-tab="overview">Overview</button>
+  <button class="tab" data-tab="funnel">Funnel definitions</button>
+  <button class="tab" data-tab="reps">Rep performance</button>
+  <button class="tab" data-tab="bofu">BOFU close watch</button>
+  <button class="tab" data-tab="risk">At-risk / stuck</button>
+  <button class="tab" data-tab="quality">Data quality</button>
+  <button class="tab" data-tab="insights">Insights &amp; what's missing</button>
+</div>
+
+<!-- OVERVIEW -->
+<section id="tab-overview">
+  <div class="grid cards">
+    <div class="card kpi"><div class="label">Open opportunities</div><div class="val" id="k-open">–</div><div class="sub">TOFU + MOFU + BOFU</div></div>
+    <div class="card kpi"><div class="label">Total pipeline (gross)</div><div class="val" id="k-gross">–</div><div class="sub">Sum of deal values with a number attached</div></div>
+    <div class="card kpi"><div class="label">Weighted pipeline</div><div class="val" id="k-weighted">–</div><div class="sub">Σ (value × probability)</div></div>
+    <div class="card kpi"><div class="label">Data completeness</div><div class="val" id="k-quality">–</div><div class="sub">Avg. % of key fields filled</div></div>
+  </div>
+
+  <div class="grid two" style="margin-top:16px">
+    <div class="card">
+      <h2>Funnel — count, value, weighted value</h2>
+      <div id="funnel-vis"></div>
+      <div class="legend" style="margin-top:10px">
+        <span><i style="background:var(--tofu)"></i>TOFU — Top of funnel</span>
+        <span><i style="background:var(--mofu)"></i>MOFU — Middle of funnel</span>
+        <span><i style="background:var(--bofu)"></i>BOFU — Bottom of funnel</span>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Pipeline by stage (weighted €)</h2>
+      <canvas id="chartStageValue" height="220"></canvas>
+    </div>
+  </div>
+
+  <div class="grid two-eq" style="margin-top:16px">
+    <div class="card">
+      <h2>Opportunities by rep</h2>
+      <canvas id="chartByRep" height="220"></canvas>
+    </div>
+    <div class="card">
+      <h2>Gross pipeline by rep (€)</h2>
+      <canvas id="chartValueByRep" height="220"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- FUNNEL DEFINITIONS -->
+<section id="tab-funnel" class="hide">
+  <div class="card">
+    <h2>Funnel stage definitions — tailored to Mozaik Design</h2>
+    <p class="muted">Mozaik's enterprise sales cycle typically involves an architect/specifier, a client/owner, and a product package (furniture, lighting, fabrics). Here's a proposed definition of each stage that maps cleanly to what the team is already tracking.</p>
+    <div class="defs">
+      <div class="def" style="border-top:3px solid var(--tofu)">
+        <h3><span class="pill tofu">TOFU</span> Top of Funnel — <span class="muted small">Discovery / interest</span></h3>
+        <p class="small">A qualified target where we've made contact, but there is no confirmed brief, budget, or timeline yet. We are building relationships with the architect or owner.</p>
+        <div class="crit"><strong>Entry criteria:</strong>
+          <ul class="small">
+            <li>Target company + contact identified</li>
+            <li>We've had at least one meaningful touchpoint (meeting, site visit, showroom, intro mail)</li>
+            <li>Broad product fit is plausible (hospitality, office, yacht, retail)</li>
+          </ul>
+        </div>
+        <div class="crit"><strong>Exit to MOFU when:</strong>
+          <ul class="small">
+            <li>Specific project brief exists (name, location, scope)</li>
+            <li>Architect engaged or RFP received</li>
+            <li>Indicative budget range known</li>
+          </ul>
+        </div>
+        <div class="crit"><strong>Typical probability:</strong> 5–25%</div>
+      </div>
+
+      <div class="def" style="border-top:3px solid var(--mofu)">
+        <h3><span class="pill mofu">MOFU</span> Middle of Funnel — <span class="muted small">Qualification &amp; proposal</span></h3>
+        <p class="small">Active project with a defined scope. We are selecting products, pricing, and competing with alternatives. A formal proposal has been sent or is being prepared.</p>
+        <div class="crit"><strong>Entry criteria:</strong>
+          <ul class="small">
+            <li>Project brief confirmed and quantified (€ value)</li>
+            <li>Architect actively specifying our products</li>
+            <li>Decision-maker known and reachable</li>
+            <li>Proposal sent or scheduled</li>
+          </ul>
+        </div>
+        <div class="crit"><strong>Exit to BOFU when:</strong>
+          <ul class="small">
+            <li>Proposal accepted verbally or budget confirmed</li>
+            <li>Competitive set narrowed to us + 1, or we're sole source</li>
+            <li>Order / contract being drafted; only sign-off &amp; terms remain</li>
+          </ul>
+        </div>
+        <div class="crit"><strong>Typical probability:</strong> 30–70%</div>
+      </div>
+
+      <div class="def" style="border-top:3px solid var(--bofu)">
+        <h3><span class="pill bofu">BOFU</span> Bottom of Funnel — <span class="muted small">Closing</span></h3>
+        <p class="small">Commercial terms are agreed in principle. We're waiting on signature, purchase order, or down-payment. Slippage here is usually operational, not competitive.</p>
+        <div class="crit"><strong>Entry criteria (all must be true):</strong>
+          <ul class="small">
+            <li>Proposal sent &amp; approved</li>
+            <li>Budget explicitly confirmed</li>
+            <li>Decision-maker committed</li>
+            <li>A <em>compelling event</em> exists (opening date, season, move-in)</li>
+          </ul>
+        </div>
+        <div class="crit"><strong>Exit to Won when:</strong>
+          <ul class="small">
+            <li>Signed order / contract received</li>
+            <li>Down-payment received (or PO issued for corporate)</li>
+          </ul>
+        </div>
+        <div class="crit"><strong>Typical probability:</strong> 75–99%</div>
+      </div>
+    </div>
+    <div class="note" style="margin-top:16px">
+      <strong>Recommended probability bands.</strong> Right now probabilities are free-form (0.01 → 1.0) which makes forecasting noisy. Standardize to: <span class="pill tofu">TOFU</span> 10 / 20 · <span class="pill mofu">MOFU</span> 30 / 50 / 70 · <span class="pill bofu">BOFU</span> 80 / 90 / 100. Anything at 100% should be moved to a "Won" stage, not left in BOFU.
+    </div>
+  </div>
+</section>
+
+<!-- REPS -->
+<section id="tab-reps" class="hide">
+  <div class="card">
+    <h2>Per-rep scoreboard</h2>
+    <div class="scroll">
+      <table id="tbl-reps"><thead><tr>
+        <th>Rep</th>
+        <th class="num">Total deals</th>
+        <th class="num">TOFU</th>
+        <th class="num">MOFU</th>
+        <th class="num">BOFU</th>
+        <th class="num">Gross € pipeline</th>
+        <th class="num">Weighted €</th>
+        <th class="num">Avg deal €</th>
+        <th class="num">Data fill %</th>
+      </tr></thead><tbody></tbody></table>
+    </div>
+    <p class="muted small" style="margin-top:10px">Gross = sum of deal values with a number attached. Weighted = Σ(value × probability). Data fill = % of 5 key qualification fields (proposal, architect, budget, decision maker, competitor) that are filled.</p>
+  </div>
+</section>
+
+<!-- BOFU CLOSE WATCH -->
+<section id="tab-bofu" class="hide">
+  <div class="card">
+    <h2>BOFU — deals we should close this quarter</h2>
+    <p class="muted small">Sorted by weighted value. Highlighted rows are ≥ 85% probability — those should close in the next 30–60 days.</p>
+    <div class="tblwrap">
+      <table id="tbl-bofu"><thead><tr>
+        <th>Rep</th><th>Project</th>
+        <th class="num">Value €</th><th class="num">Prob</th><th class="num">Weighted €</th>
+        <th>Close date</th><th>Next step</th>
+      </tr></thead><tbody></tbody></table>
+    </div>
+  </div>
+</section>
+
+<!-- RISK -->
+<section id="tab-risk" class="hide">
+  <div class="card">
+    <h2>At-risk and stuck deals</h2>
+    <p class="muted small">Deals with probability &lt; 20%, or missing a next step, or blocked by known categories (Ghosting, Budget, Operation, Time).</p>
+    <div class="tblwrap">
+      <table id="tbl-risk"><thead><tr>
+        <th>Stage</th><th>Rep</th><th>Project</th>
+        <th class="num">Value €</th><th class="num">Prob</th>
+        <th>Issue</th><th>Next step</th>
+      </tr></thead><tbody></tbody></table>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h2>Key blockers called out in the weekly notes</h2>
+    <div class="grid three">
+      <div class="bad-bg"><strong>Ghosting</strong><div class="small" style="margin-top:6px">Elif · Emre · Numerin · Birgül · Shalin Misra · Numarine — €248K + €16K + €19K + €13K at risk</div></div>
+      <div class="flag"><strong>Time poverty (Zaman Fakiri)</strong><div class="small" style="margin-top:6px">Burçin · Divan Talya (€738K) · Grownhouse (€35K) — slipping on rep capacity</div></div>
+      <div class="flag"><strong>Operation</strong><div class="small" style="margin-top:6px">İrem · Ogan · Numerin · QNB — €25K + €6K + €19K delivery/ops friction</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- DATA QUALITY -->
+<section id="tab-quality" class="hide">
+  <div class="grid two">
+    <div class="card">
+      <h2>Field fill rates (across all 108 deals)</h2>
+      <canvas id="chartFields" height="260"></canvas>
+    </div>
+    <div class="card">
+      <h2>Headline data gaps</h2>
+      <ul class="insights" id="ul-gaps"></ul>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h2>Rows that aren't usable for forecasting</h2>
+    <p class="muted small">Deals where Value is stored as free text (e.g. "teklif verildi", "hazırlanıyor", "teklif verilmedi") instead of a number. These cannot be summed or weighted.</p>
+    <div class="tblwrap">
+      <table id="tbl-badvals"><thead><tr>
+        <th>Stage</th><th>Rep</th><th>Project</th><th>Value (raw text)</th>
+      </tr></thead><tbody></tbody></table>
+    </div>
+  </div>
+</section>
+
+<!-- INSIGHTS -->
+<section id="tab-insights" class="hide">
+  <div class="grid two-eq">
+    <div class="card">
+      <h2>What's missing from the funnel</h2>
+      <ul class="insights">
+        <li><strong>No "Won" or "Lost" stages.</strong> The file ends at BOFU, so closed deals, win rate and cycle time cannot be calculated. The weekly notes mention wins (LoomGames, Pekin, Hakkı Yıldız) but they're not in the staged sheets.</li>
+        <li><strong>No lead source / industry dimension.</strong> We can't tell which channel (architect referral, existing client, outbound, showroom) or vertical (hospitality / office / yacht / retail / bank) is converting best.</li>
+        <li><strong>No stage-entry dates.</strong> Without "entered TOFU on", "entered MOFU on", we cannot measure <em>velocity</em> or <em>time-in-stage</em> — the "Sales Velocity" column exists but is empty in every BOFU row.</li>
+        <li><strong>Close dates are ~55% missing</strong> and many that exist are free text ("end of april", "soon", "belirsiz", "2027"). This blocks any time-phased forecast.</li>
+        <li><strong>Value is missing or text on 33% of deals</strong> (36/108). TOFU in particular is unusable for pipeline value — only 1 of 44 TOFU deals has a €number.</li>
+        <li><strong>No "compelling event" captured below BOFU.</strong> The compelling-event column is BOFU-only, but MOFU/TOFU also need it (season, opening, move-in) to judge urgency.</li>
+        <li><strong>No owner of the <em>next step</em>.</strong> Next step text is there, but there's no "who" and "by when" — so it can't drive a weekly cadence.</li>
+        <li><strong>No products / quantities / margin.</strong> We know €value but not what's being sold — impossible to forecast stock, GM%, or category mix.</li>
+        <li><strong>No lost reasons.</strong> The notes hint at Ghosting, Operation, Time — these should be structured drop-down reasons on every lost deal.</li>
+        <li><strong>OUTBOUND sheet has no date / status.</strong> We can't tell whether a target architect was contacted last week or last year.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Top insights from what <em>is</em> there</h2>
+      <ul class="insights">
+        <li><strong>The pipeline is top-heavy on Zeynep and İrem.</strong> Together they carry ~60% of opportunity count. Burçin holds the biggest hospitality whales (Hillside Bodrum €1.2M, Divan Göcek €341K). Elif's book is the thinnest and 3 of her deals are flagged "ghosting".</li>
+        <li><strong>€7.1M weighted in BOFU</strong> vs. €1.8M in MOFU vs. €0.2M in TOFU — this funnel is severely inverted. That's fine short-term (Q2 will be strong) but means April/May wins won't be replaced. <span class="pill warn">Pipeline risk Q3+</span></li>
+        <li><strong>A handful of deals drive most of the value.</strong> The top 5 BOFU deals = ~€4.1M weighted, i.e. ~58% of BOFU. Concentration risk is real: any one slipping moves the quarter.</li>
+        <li><strong>Proposal Sent is filled 82% of the time</strong> but Budget Confirmed only 66% — the team is quoting before confirming budget, which explains some of the &lt;20% probability deals (e.g. Aydın Kuruyemiş €430K p=5%, Medipol €720K p=5%).</li>
+        <li><strong>Architect Engaged = Yes on 70/83 filled deals</strong> (84%). Architects are the strongest signal — which argues the OUTBOUND sheet (a list of architect firms) is the right prospecting engine, but it needs statuses to be actionable.</li>
+        <li><strong>4 deals are already at 100% probability</strong> (Divan Talya Upsell, Barut Anda, Kundu Voyage, Numarine VIP). They should move to a "Won — awaiting PO/payment" column this week, not sit in BOFU.</li>
+        <li><strong>Closing risk cluster:</strong> 10 deals at ≤20% probability are still labelled BOFU/MOFU. Either re-stage to TOFU or mark Lost — leaving them inflates pipeline optics.</li>
+        <li><strong>Outbound coverage is uneven.</strong> Named architect targets: Burçin 14, Elif 11, İrem 9, Zeynep 0 (she has 4 placeholder rows with no company; Elif has 2 extra empty rows too). Outbound to architects is the cheapest path to TOFU — close that gap.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h2>Recommendations before CRM adoption</h2>
+    <ol class="insights" style="padding-left:22px">
+      <li><strong>Fix the schema.</strong> Every row must have: Rep · Account · Project · Stage · <em>Value (€, numeric only)</em> · <em>Close Date (date only)</em> · Probability (fixed bands) · Stage-entered date · Next step owner · Next step due date · Lost reason (if lost).</li>
+      <li><strong>Add Won and Lost stages.</strong> A funnel without them cannot calculate win rate, avg cycle time, or average deal size — the three numbers any sales leader needs.</li>
+      <li><strong>Standardize probabilities</strong> to the bands in the Funnel-definitions tab. Remove 0.01 / 0.51 / 0.97 style noise.</li>
+      <li><strong>One language for boolean fields.</strong> Pick Yes / No / Unknown (or evet / hayır / bilinmiyor). Right now there's a mix of evet, yes, hayır, no, "belirsiz", "not yet", "bütçe üzerindeyiz" — none of which can be filtered or reported on.</li>
+      <li><strong>Upgrade OUTBOUND to a true prospecting list.</strong> Add Status, Last-touch date, Next-touch date, and convert to TOFU when a project is known.</li>
+      <li><strong>Track lost reason as a drop-down:</strong> Ghosting, Budget, Competitor, Timing, Operation, Price, Product mismatch. Gives you coaching loops instead of anecdotes.</li>
+      <li><strong>Add industry and source fields.</strong> Hospitality / Office / Yacht / Retail / Bank · Architect referral / Existing client / Outbound / Showroom / Inbound. These two alone unlock 80% of useful pipeline analytics.</li>
+      <li><strong>Weekly cadence:</strong> every Monday, every rep must (a) advance or disqualify any deal ≥14 days without movement, (b) refresh close dates in BOFU, (c) add 2 new TOFU opportunities. This single rule keeps the funnel healthy.</li>
+    </ol>
+  </div>
+</section>
+
+<footer>
+  Built from <code>Enterprise Sales Funnel – Sample Till CRM Adoption.ods</code>. Data normalized: Turkish/English booleans, € values parsed, rep names canonicalised, "teklif verildi"-type text values flagged as missing.
+</footer>
+</div>
+
+<script id="funnel-data" type="application/json">{"as_of":"2026-04-16","currency":"EUR","deals":[{"stage":"BOFU","rep":"Burçin","project":"Divan Talya – Upsell (Ek Paket)","value_eur":328000.0,"value_raw":"328000.0","close_date":"2026-04-06 00:00:00","probability":1.0,"weighted_value_eur":328000.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":true,"architect_firm":null,"next_step":"onaylandı, sipariş girildi. ödeme bekleniyor","qual_fields_filled":5,"is_example":false},{"stage":"BOFU","rep":"Burçin","project":"Barut Anda  Otel","value_eur":11000.0,"value_raw":"11000.0","close_date":"2026-03-14 00:00:00","probability":1.0,"weighted_value_eur":11000.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":false,"architect_firm":null,"next_step":"onaylandı sipariş girildi . ödeme bekleniyor","qual_fields_filled":5,"is_example":false},{"stage":"BOFU","rep":"Burçin","project":"Hillside Bodrum","value_eur":1200000.0,"value_raw":"1200000.0","close_date":"2027-05-15 00:00:00","probability":0.55,"weighted_value_eur":660000.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":null,"decision_maker_identified":true,"competitor_present":true,"architect_firm":null,"next_step":"sıkı takip !!! perş toplantı","qual_fields_filled":4,"is_example":false},{"stage":"BOFU","rep":"Burçin","project":"Fiko Selimiye Otel","value_eur":70000.0,"value_raw":"70000.0","close_date":"2026-04-17 00:00:00","probability":0.75,"weighted_value_eur":52500.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":null,"decision_maker_identified":true,"competitor_present":false,"architect_firm":null,"next_step":null,"qual_fields_filled":4,"is_example":false},{"stage":"BOFU","rep":"Burçin","project":"7Mehmet Restaurant","value_eur":70000.0,"value_raw":"70000.0","close_date":"2026-04-17 00:00:00","probability":0.95,"weighted_value_eur":66500.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":null,"decision_maker_identified":true,"competitor_present":null,"architect_firm":null,"next_step":"mock ürün tekrar sunuma gitti , teslim süresi konusuldu , onay bekleniyor","qual_fields_filled":3,"is_example":false},{"stage":"BOFU","rep":"Burçin","project":"Gençoglu Karakoy satış ofis","value_eur":100000.0,"value_raw":"100000.0","close_date":"2026-03-31 00:00:00","probability":0.97,"weighted_value_eur":97000.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":false,"architect_firm":null,"next_step":"onay bekleniyor - imar !","qual_fields_filled":5,"is_example":false},{"stage":"BOFU","rep":"Burçin","project":"Circle Bodrum","value_eur":11250.0,"value_raw":"11250.0","close_date":"2026-05-01 00:00:00","probability":0.85,"weighted_value_eur":9562.5,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":false,"architect_firm":null,"next_step":"onay bekleniyor","qual_fields_filled":5,"is_example":false},{"stage":"BOFU","rep":"Burçin","project":"Kundu Voyage - ek","value_eur":33000.0,"value_raw":"33000.0","close_date":"2026-03-05 00:00:00","probability":1.0,"weighted_value_eur":33000.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":false,"architect_firm":null,"next_step":"onaylandı, sipariş girildi. ödeme bekleniyor","qual_fields_filled":5,"is_example":false},{"stage":"BOFU","rep":"Zeynep","project":"Borsa İstanbul – Çalışma Sandalye/toplantı","value_eur":1000000.0,"value_raw":"1000000.0","close_date":"2026-03-30 00:00:00","probability":0.85,"weighted_value_eur":850000.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":true,"architect_firm":null,"next_step":"son onay","qual_fields_filled":5,"is_example":false},{"stage":"BOFU","rep":"Zeynep","project":"Borsa İstanbulYönetim","value_eur":900000.0,"value_raw":"900000.0","close_date":"2026-04-30 00:00:00","probability":0.7,"weighted_value_eur":630000.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":null,"decision_maker_identified":true,"competitor_present":true,"architect_firm":null,"next_step":"revize teklif aşaması","qual_fields_filled":4,"is_example":false},{"stage":"BOFU","rep":"Zeynep","project":"Garanti – TOPLANTI Sandalye","value_eur":78000.0,"value_raw":"78000.0","close_date":"","probability":0.7,"weighted_value_eur":54600.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":true,"architect_firm":null,"next_step":"revize teklif aşaması","qual_fields_filled":5,"is_example":false},{"stage":"BOFU","rep":"Zeynep","project":"DaaX – 2nd Package","value_eur":448000.0,"value_raw":"448000.0","close_date":"beginning of april","probability":0.8,"weighted_value_eur":358400.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":true,"architect_firm":null,"next_step":"ONAY BEKLENİYOR","qual_fields_filled":5,"is_example":false},{"stage":"BOFU","rep":"Zeynep","project":"EPIAŞ","value_eur":200000.0,"value_raw":"200000.0","close_date":"end of april","probability":0.5,"weighted_value_eur":100000.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":false,"decision_maker_identified":true,"competitor_present":true,"architect_firm":null,"next_step":"ihaleye çıkılmış takip istiyor","qual_fields_filled":5,"is_example":false},{"stage":"BOFU","rep":"Zeynep","project":"amazon framery","value_eur":125000.0,"value_raw":"125000.0","close_date":"end of april","probability":0.9,"weighted_value_eur":112500.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":true,"architect_firm":null,"next_step":"revize teklif gitti doalr oalrak onay vakti","qual_fields_filled":5,"is_example":false},{"stage":"BOFU","rep":"Zeynep","project":"30xp-04","value_eur":105700.0,"value_raw":"105700.0","close_date":"end of march","probability":0.9,"weighted_value_eur":95130.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":true,"architect_firm":null,"next_step":null,"qual_fields_filled":5,"is_example":false},{"stage":"BOFU","rep":"Zeynep","project":"cevahir holding kavacık teras","value_eur":93000.0,"value_raw":"93000.0","close_date":"end of april","probability":0.9,"weighted_value_eur":83700.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":false,"architect_firm":null,"next_step":"rev teklif","qual_fields_filled":5,"is_example":false},{"stage":"BOFU","rep":"Zeynep","project":"GARANTİ SOFTWORK","value_eur":458000.0,"value_raw":"458000.0","close_date":"mid april","probability":0.85,"weighted_value_eur":389300.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":false,"architect_firm":null,"next_step":"çok istediklerini belirttiler","qual_fields_filled":5,"is_example":false},{"stage":"BOFU","rep":"Zeynep","project":"halkbank","value_eur":110000.0,"value_raw":"110000.0","close_date":"end of march","probability":0.9,"weighted_value_eur":99000.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":false,"architect_firm":null,"next_step":"ONAY BEKLENİYOR","qual_fields_filled":5,"is_example":false},{"stage":"BOFU","rep":"İrem","project":"Bodrum Bodrum","value_eur":238000.0,"value_raw":"238000.0","close_date":"?","probability":0.05,"weighted_value_eur":11900.0,"proposal_sent":true,"architect_engaged":false,"budget_confirmed":null,"decision_maker_identified":true,"competitor_present":true,"architect_firm":null,"next_step":"reminded, geri dönüşe bağlı ilerlenecek","qual_fields_filled":4,"is_example":false},{"stage":"BOFU","rep":"İrem","project":"Cup of Joy","value_eur":42000.0,"value_raw":"42000.0","close_date":"","probability":0.9,"weighted_value_eur":37800.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":false,"architect_firm":null,"next_step":"onaylandı ödeme gelicek","qual_fields_filled":5,"is_example":false},{"stage":"BOFU","rep":"İrem","project":"Çengelköy Ofis Projesi","value_eur":54000.0,"value_raw":"54000.0","close_date":"","probability":0.8,"weighted_value_eur":43200.0,"proposal_sent":true,"architect_engaged":null,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":true,"architect_firm":null,"next_step":"inşai süreçte / mimari  satın alma toplantısı olumlu","qual_fields_filled":4,"is_example":false},{"stage":"BOFU","rep":"İrem","project":"Çalık Holding / İstanbloom Office","value_eur":90000.0,"value_raw":"90000.0","close_date":"","probability":0.5,"weighted_value_eur":45000.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":false,"decision_maker_identified":true,"competitor_present":true,"architect_firm":null,"next_step":"ihale(firmalara teklif verildi )","qual_fields_filled":5,"is_example":false},{"stage":"BOFU","rep":"İrem","project":"HSBC","value_eur":35000.0,"value_raw":"35000.0","close_date":"","probability":0.6,"weighted_value_eur":21000.0,"proposal_sent":true,"architect_engaged":false,"budget_confirmed":false,"decision_maker_identified":true,"competitor_present":true,"architect_firm":null,"next_step":"bütçe onayından geçmesi bekleniyor","qual_fields_filled":5,"is_example":false},{"stage":"BOFU","rep":"İrem","project":"Aydın Kuruyemiş","value_eur":430000.0,"value_raw":"430000.0","close_date":"","probability":0.05,"weighted_value_eur":21500.0,"proposal_sent":true,"architect_engaged":false,"budget_confirmed":false,"decision_maker_identified":true,"competitor_present":true,"architect_firm":null,"next_step":"12/2025 de çalışıldı, hala karar aşamasında","qual_fields_filled":5,"is_example":false},{"stage":"BOFU","rep":"İrem","project":"Turkcell Ankara Vega Plaza","value_eur":415000.0,"value_raw":"415000.0","close_date":"","probability":0.2,"weighted_value_eur":83000.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":false,"decision_maker_identified":true,"competitor_present":true,"architect_firm":null,"next_step":"teklif verildi,bütçe onayına sunuldu","qual_fields_filled":5,"is_example":false},{"stage":"BOFU","rep":"İrem","project":"Aylin Koen / Office Renovation","value_eur":119000.0,"value_raw":"119000.0","close_date":"","probability":0.75,"weighted_value_eur":89250.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":true,"architect_firm":null,"next_step":"03/03 de teklif verildi. / onay aşamasında","qual_fields_filled":5,"is_example":false},{"stage":"BOFU","rep":"İrem","project":"TimeValee PopUp","value_eur":10000.0,"value_raw":"10000.0","close_date":"","probability":0.6,"weighted_value_eur":6000.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":true,"architect_firm":null,"next_step":"yeni teklif verildi / önceden çalıştığımız bir müşteri","qual_fields_filled":5,"is_example":false},{"stage":"BOFU","rep":"İrem","project":"Caudile Kanyon","value_eur":29000.0,"value_raw":"29000.0","close_date":"","probability":0.6,"weighted_value_eur":17400.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":false,"architect_firm":null,"next_step":null,"qual_fields_filled":5,"is_example":false},{"stage":"BOFU","rep":"Elif","project":"Numarine (VIP)","value_eur":279000.0,"value_raw":"279000.0","close_date":"2026-04-10 00:00:00","probability":1.0,"weighted_value_eur":279000.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":false,"architect_firm":null,"next_step":"ONAYLANDI","qual_fields_filled":5,"is_example":false},{"stage":"BOFU","rep":"Elif","project":"Casino – Kıbrıs (Edra)","value_eur":185000.0,"value_raw":"185000.0","close_date":"2026-04-10 00:00:00","probability":0.3,"weighted_value_eur":55500.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":null,"decision_maker_identified":true,"competitor_present":false,"architect_firm":null,"next_step":"onay bekleniyor","qual_fields_filled":4,"is_example":false},{"stage":"BOFU","rep":"Elif","project":"Tapestry Gümüşsuyu Hilton","value_eur":88437.0,"value_raw":"88437.0","close_date":"","probability":0.25,"weighted_value_eur":22109.25,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":false,"decision_maker_identified":true,"competitor_present":null,"architect_firm":null,"next_step":"09.04.2026 mail attım","qual_fields_filled":4,"is_example":false},{"stage":"BOFU","rep":"Elif","project":"Divan Bodrum Padel Club","value_eur":130576.0,"value_raw":"130576.0","close_date":"2026-05-31 00:00:00","probability":0.51,"weighted_value_eur":66593.76,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":true,"architect_firm":null,"next_step":"yeni teklif","qual_fields_filled":5,"is_example":false},{"stage":"BOFU","rep":"Elif","project":"Robert Koleji","value_eur":163800.0,"value_raw":"163800.0","close_date":"Ağustos sonu","probability":0.35,"weighted_value_eur":57330.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":true,"architect_firm":null,"next_step":"15.04 teklif","qual_fields_filled":5,"is_example":false},{"stage":"BOFU","rep":"Balamir (example)","project":"Mozaik Design","value_eur":7355387.0,"value_raw":"7355387.0","close_date":"","probability":0.3,"weighted_value_eur":2206616.1,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":false,"decision_maker_identified":true,"competitor_present":null,"architect_firm":null,"next_step":"Follow up","qual_fields_filled":4,"is_example":true},{"stage":"MOFU","rep":"Burçin","project":"BEEFBAR ORTAKÖY","value_eur":25000.0,"value_raw":"25000 €","close_date":"2026-08-01 00:00:00","probability":0.95,"weighted_value_eur":23750.0,"proposal_sent":false,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":null,"competitor_present":false,"architect_firm":"Geo_id","next_step":"açılış 2026 Eylül e ertelendi , paketi bekletiyorlar.Geo_id ile görüşülüyor. ürünler özel üreim","qual_fields_filled":4,"is_example":false},{"stage":"MOFU","rep":"Burçin","project":"DIVAN AKARETLER SUIT","value_eur":100000.0,"value_raw":"100000 €","close_date":"2026-06-30 00:00:00","probability":0.99,"weighted_value_eur":99000.0,"proposal_sent":null,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":null,"architect_firm":"Tabanlıoğlu Mim","next_step":"Tabanalıoglundan son adetler bekleniyor. Haziran sonu teslim !","qual_fields_filled":3,"is_example":false},{"stage":"MOFU","rep":"Burçin","project":"The Marmara Bodrum","value_eur":18000.0,"value_raw":"18000 €","close_date":"2026-05-01 00:00:00","probability":0.85,"weighted_value_eur":15300.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":null,"competitor_present":null,"architect_firm":"Cengiz Kurt","next_step":"teklif büyüyor alternatif ürünler önerildi","qual_fields_filled":3,"is_example":false},{"stage":"MOFU","rep":"Burçin","project":"OZ RESTAURANT","value_eur":75000.0,"value_raw":"75000 €","close_date":"belirsiz","probability":0.49,"weighted_value_eur":36750.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":false,"decision_maker_identified":true,"competitor_present":null,"architect_firm":"Misa mimarlık","next_step":"alternatif ürünler için fiyat toplanıyori açılış + bütçe  belirsiz.","qual_fields_filled":4,"is_example":false},{"stage":"MOFU","rep":"Burçin","project":"Divan Göcek","value_eur":341280.0,"value_raw":"341280 €","close_date":"2026-11-15 00:00:00","probability":0.55,"weighted_value_eur":187704.00000000003,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":null,"decision_maker_identified":true,"competitor_present":null,"architect_firm":"Metex Sinan Kafadar","next_step":"yatırımcı ile görüşüldü , mock  up için bütçe üzeri kaldık. Genel paket için ayrıca çalışacağız Mimar Sinan Kafadar. Satınalım tahmini kasım 2026 , açılış 2027 başı .","qual_fields_filled":3,"is_example":false},{"stage":"MOFU","rep":"Burçin","project":"JW Marriott Ankara","value_eur":70000.0,"value_raw":"70000 €","close_date":"2026-04-20 00:00:00","probability":0.25,"weighted_value_eur":17500.0,"proposal_sent":null,"architect_engaged":true,"budget_confirmed":null,"decision_maker_identified":null,"competitor_present":true,"architect_firm":"evet","next_step":"Otel geneli için showroom görselleri ve referanslar mimar & ilgili kişi ve yatırımcıya gönderildi İstanbul daveti yapıldı","qual_fields_filled":2,"is_example":false},{"stage":"MOFU","rep":"Burçin","project":"İstinyepark food court","value_eur":null,"value_raw":null,"close_date":"","probability":0.51,"weighted_value_eur":null,"proposal_sent":true,"architect_engaged":null,"budget_confirmed":null,"decision_maker_identified":true,"competitor_present":null,"architect_firm":"Orjin Grup","next_step":null,"qual_fields_filled":2,"is_example":false},{"stage":"MOFU","rep":"Burçin","project":"Sardunya Selimiye Otel","value_eur":17000.0,"value_raw":"17000","close_date":"46127","probability":0.2,"weighted_value_eur":3400.0,"proposal_sent":null,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":true,"architect_firm":"hayır","next_step":null,"qual_fields_filled":4,"is_example":false},{"stage":"MOFU","rep":"Elif","project":"Mensis Energy","value_eur":258000.0,"value_raw":"258000","close_date":"2026 haziran","probability":0.05,"weighted_value_eur":12900.0,"proposal_sent":null,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":null,"competitor_present":false,"architect_firm":"evet","next_step":"14.04.2026 norm ile görüşüldü yarın toplantıları var.","qual_fields_filled":3,"is_example":false},{"stage":"MOFU","rep":"Elif","project":"SEHER AYDINLAR OFİS","value_eur":60000.0,"value_raw":"60000","close_date":"2026","probability":0.45,"weighted_value_eur":27000.0,"proposal_sent":false,"architect_engaged":true,"budget_confirmed":false,"decision_maker_identified":true,"competitor_present":false,"architect_firm":"Norm Mimarlık","next_step":"Vural Bey'i aradım yarın dönüş yapacak 08.04.2026","qual_fields_filled":5,"is_example":false},{"stage":"MOFU","rep":"Elif","project":"Medipol Kavacık Yurt","value_eur":720000.0,"value_raw":"720000","close_date":"","probability":0.05,"weighted_value_eur":36000.0,"proposal_sent":true,"architect_engaged":false,"budget_confirmed":false,"decision_maker_identified":false,"competitor_present":true,"architect_firm":"Yapı Artı","next_step":"ihale dosyası gönderildi","qual_fields_filled":5,"is_example":false},{"stage":"MOFU","rep":"Elif","project":"CENGİZ ANTALYA OTEL","value_eur":null,"value_raw":"hazırlanıyor","close_date":"","probability":null,"weighted_value_eur":null,"proposal_sent":false,"architect_engaged":true,"budget_confirmed":null,"decision_maker_identified":null,"competitor_present":null,"architect_firm":"Atıldan Ozel         Bar Studio","next_step":"2026 aralık MİMAR BARSTUDIO / Nisan 7 - 8 mimarlar ve yatırımcının şantiyede toplantısı olacak.Mimar netleşirse prpje başlayacak , şansımız çok yüksek !!!!","qual_fields_filled":2,"is_example":false},{"stage":"MOFU","rep":"Zeynep","project":"THY JFK","value_eur":299000.0,"value_raw":"299000.0","close_date":"end of april","probability":0.6,"weighted_value_eur":179400.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":false,"decision_maker_identified":true,"competitor_present":true,"architect_firm":"INHOUSE+AUTOBAN","next_step":"İLK TEKLİF","qual_fields_filled":5,"is_example":false},{"stage":"MOFU","rep":"Zeynep","project":"thy kahire","value_eur":189000.0,"value_raw":"189000.0","close_date":"","probability":0.5,"weighted_value_eur":94500.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":false,"decision_maker_identified":true,"competitor_present":true,"architect_firm":"INHOUSE+AUTOBAN","next_step":null,"qual_fields_filled":5,"is_example":false},{"stage":"MOFU","rep":"Zeynep","project":"daax walter knoll paket","value_eur":665000.0,"value_raw":"665000.0","close_date":"","probability":0.8,"weighted_value_eur":532000.0,"proposal_sent":false,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":false,"architect_firm":"ZAHA HADİD","next_step":"HAZIRLIK","qual_fields_filled":5,"is_example":false},{"stage":"MOFU","rep":"Zeynep","project":"çalık yonetici odası","value_eur":56000.0,"value_raw":"56000.0","close_date":"","probability":0.4,"weighted_value_eur":22400.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":false,"decision_maker_identified":true,"competitor_present":false,"architect_firm":"INHOUSE","next_step":"teklif verildi","qual_fields_filled":5,"is_example":false},{"stage":"MOFU","rep":"Zeynep","project":"ıga genel havacılık terminalı","value_eur":92000.0,"value_raw":"92.000K","close_date":"NEXT WEEK","probability":0.4,"weighted_value_eur":36800.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":true,"architect_firm":"INHOUSE+AUTOBAN","next_step":"STOK URUN OLDUGU İÇİN KONU ACİL","qual_fields_filled":5,"is_example":false},{"stage":"MOFU","rep":"İrem","project":"Özdilek TOSAB Fabrika","value_eur":null,"value_raw":"teklif verildi","close_date":"","probability":0.01,"weighted_value_eur":null,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":true,"architect_firm":null,"next_step":null,"qual_fields_filled":5,"is_example":false},{"stage":"MOFU","rep":"İrem","project":"kadoil yonetim kat","value_eur":572000.0,"value_raw":"572000","close_date":"","probability":0.55,"weighted_value_eur":314600.0,"proposal_sent":null,"architect_engaged":true,"budget_confirmed":false,"decision_maker_identified":true,"competitor_present":null,"architect_firm":null,"next_step":"11/2025 de çalışıldı, henüz karar verilmemiş.","qual_fields_filled":3,"is_example":false},{"stage":"MOFU","rep":"İrem","project":"Riyadh CEO Office","value_eur":75000.0,"value_raw":"75000","close_date":"","probability":0.01,"weighted_value_eur":750.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":false,"decision_maker_identified":false,"competitor_present":true,"architect_firm":null,"next_step":"showroom ziyaretine gelicekler(miş)","qual_fields_filled":5,"is_example":false},{"stage":"MOFU","rep":"İrem","project":"AAW-Maslak Ofis","value_eur":196000.0,"value_raw":"196000","close_date":"inşaat aşamasında","probability":0.6,"weighted_value_eur":117600.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":false,"decision_maker_identified":true,"competitor_present":false,"architect_firm":null,"next_step":null,"qual_fields_filled":5,"is_example":false},{"stage":"MOFU","rep":"İrem","project":"Doğuhan Emiruras Tekne ( doğan holding )","value_eur":27000.0,"value_raw":"27000","close_date":"","probability":0.6,"weighted_value_eur":16200.0,"proposal_sent":true,"architect_engaged":false,"budget_confirmed":false,"decision_maker_identified":true,"competitor_present":true,"architect_firm":null,"next_step":"teklif verildi, mşteriden dönüş bekleniyor","qual_fields_filled":5,"is_example":false},{"stage":"MOFU","rep":"İrem","project":"Projeckt Hous","value_eur":30000.0,"value_raw":"30000","close_date":"","probability":0.05,"weighted_value_eur":1500.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":false,"decision_maker_identified":false,"competitor_present":null,"architect_firm":null,"next_step":"bütçe toplantısından geçmeli","qual_fields_filled":4,"is_example":false},{"stage":"MOFU","rep":"İrem","project":"Emlak Katılım","value_eur":90000.0,"value_raw":"90000","close_date":"soon","probability":0.45,"weighted_value_eur":40500.0,"proposal_sent":true,"architect_engaged":false,"budget_confirmed":false,"decision_maker_identified":true,"competitor_present":null,"architect_firm":null,"next_step":"teklif verildi & reminded , dönüş bekleniyor","qual_fields_filled":4,"is_example":false},{"stage":"MOFU","rep":"İrem","project":"Sneaks-Up","value_eur":26000.0,"value_raw":"26000","close_date":"","probability":0.25,"weighted_value_eur":6500.0,"proposal_sent":true,"architect_engaged":false,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":true,"architect_firm":null,"next_step":"reminded,geri dönüş olmadı","qual_fields_filled":5,"is_example":false},{"stage":"MOFU","rep":"İrem","project":"ESAS HOLDİNG YÖNETİM KATI","value_eur":null,"value_raw":"teklif verilmedi / sunum iletildi","close_date":"","probability":0.4,"weighted_value_eur":null,"proposal_sent":false,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":true,"architect_firm":null,"next_step":"fourandmore ile takipteyiz","qual_fields_filled":5,"is_example":false},{"stage":"MOFU","rep":"İrem","project":"EFS ÇELİKTAŞ OFİS","value_eur":10000.0,"value_raw":"10000","close_date":"","probability":0.6,"weighted_value_eur":6000.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":null,"decision_maker_identified":true,"competitor_present":false,"architect_firm":null,"next_step":"efs / alternatifli teklif verildi","qual_fields_filled":4,"is_example":false},{"stage":"MOFU","rep":"İrem","project":"HAS&KOEN FAB PROJECT","value_eur":null,"value_raw":"teklif verilmedi","close_date":"","probability":0.51,"weighted_value_eur":null,"proposal_sent":null,"architect_engaged":true,"budget_confirmed":null,"decision_maker_identified":null,"competitor_present":null,"architect_firm":null,"next_step":"seçilen ürünlere teklif verildi","qual_fields_filled":1,"is_example":false},{"stage":"MOFU","rep":"İrem","project":"KAYA ERSU OFİS","value_eur":33000.0,"value_raw":"33000","close_date":"","probability":null,"weighted_value_eur":null,"proposal_sent":null,"architect_engaged":null,"budget_confirmed":null,"decision_maker_identified":null,"competitor_present":null,"architect_firm":null,"next_step":"seçilen ürünlere teklif verildi","qual_fields_filled":0,"is_example":false},{"stage":"MOFU","rep":"İrem","project":"ENSAR TEKSTİL","value_eur":19000.0,"value_raw":"19000","close_date":"","probability":null,"weighted_value_eur":null,"proposal_sent":true,"architect_engaged":false,"budget_confirmed":null,"decision_maker_identified":null,"competitor_present":null,"architect_firm":null,"next_step":"seçilen ürünlere teklif verildi","qual_fields_filled":2,"is_example":false},{"stage":"TOFU","rep":"Zeynep","project":"KUVEYTTURK EK KATLAR","value_eur":0.0,"value_raw":"0","close_date":"","probability":0.95,"weighted_value_eur":0.0,"proposal_sent":false,"architect_engaged":true,"budget_confirmed":false,"decision_maker_identified":true,"competitor_present":true,"architect_firm":"KREATIF","next_step":"TAKİP","qual_fields_filled":5,"is_example":false},{"stage":"TOFU","rep":"Zeynep","project":"TERA BANK","value_eur":0.0,"value_raw":"0","close_date":"","probability":0.8,"weighted_value_eur":0.0,"proposal_sent":false,"architect_engaged":true,"budget_confirmed":false,"decision_maker_identified":false,"competitor_present":true,"architect_firm":"TEAM PROJECT","next_step":"SUNUM HAZırlandı mimardan TOPLANTI RİCA EDİLDİ","qual_fields_filled":5,"is_example":false},{"stage":"TOFU","rep":"Zeynep","project":"CERIST","value_eur":0.0,"value_raw":"0","close_date":"","probability":0.8,"weighted_value_eur":0.0,"proposal_sent":false,"architect_engaged":true,"budget_confirmed":false,"decision_maker_identified":true,"competitor_present":true,"architect_firm":"HAN TUMERTEKIN","next_step":"SUNUM HAZIRLANACAK","qual_fields_filled":5,"is_example":false},{"stage":"TOFU","rep":"Zeynep","project":"işbank yonetim katları","value_eur":null,"value_raw":null,"close_date":"","probability":0.85,"weighted_value_eur":null,"proposal_sent":false,"architect_engaged":false,"budget_confirmed":false,"decision_maker_identified":true,"competitor_present":false,"architect_firm":null,"next_step":"ihale process","qual_fields_filled":5,"is_example":false},{"stage":"TOFU","rep":"Zeynep","project":"Garanti – Çalışma Sandalye","value_eur":null,"value_raw":null,"close_date":"","probability":0.5,"weighted_value_eur":null,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":true,"architect_firm":null,"next_step":"musteriden bu satınalımı yapıp yapmayacagını bekliyoruz. DEĞİŞİM DAHA YUKSEK","qual_fields_filled":5,"is_example":false},{"stage":"TOFU","rep":"Zeynep","project":"p&g framery","value_eur":null,"value_raw":null,"close_date":"","probability":null,"weighted_value_eur":null,"proposal_sent":false,"architect_engaged":false,"budget_confirmed":false,"decision_maker_identified":false,"competitor_present":false,"architect_firm":null,"next_step":"lead","qual_fields_filled":5,"is_example":false},{"stage":"TOFU","rep":"Zeynep","project":"beymen ifm","value_eur":null,"value_raw":null,"close_date":"2026-05-15 00:00:00","probability":0.9,"weighted_value_eur":null,"proposal_sent":false,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":false,"architect_firm":"bağımsız mimarlar +beymen inhouse","next_step":"SUNUM YAPILDI. eylul acılıs","qual_fields_filled":5,"is_example":false},{"stage":"TOFU","rep":"Zeynep","project":"beymen zorlu","value_eur":null,"value_raw":null,"close_date":"2026-12-12 00:00:00","probability":0.9,"weighted_value_eur":null,"proposal_sent":false,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":false,"architect_firm":"yabu pushenberg","next_step":"2027","qual_fields_filled":5,"is_example":false},{"stage":"TOFU","rep":"Zeynep","project":"beymen armada","value_eur":null,"value_raw":null,"close_date":"2026-12-12 00:00:00","probability":0.9,"weighted_value_eur":null,"proposal_sent":false,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":false,"architect_firm":null,"next_step":"2027","qual_fields_filled":5,"is_example":false},{"stage":"TOFU","rep":"Zeynep","project":"denizbank sosyal alan","value_eur":null,"value_raw":null,"close_date":"2026-05-11 00:00:00","probability":null,"weighted_value_eur":null,"proposal_sent":false,"architect_engaged":true,"budget_confirmed":false,"decision_maker_identified":false,"competitor_present":true,"architect_firm":"jeyabn ulku arc","next_step":"sunum hazırlanıyor","qual_fields_filled":5,"is_example":false},{"stage":"TOFU","rep":"Zeynep","project":"Four season satış ofisi+penthouse","value_eur":null,"value_raw":null,"close_date":"2026-05-11 00:00:00","probability":0.5,"weighted_value_eur":null,"proposal_sent":false,"architect_engaged":true,"budget_confirmed":false,"decision_maker_identified":true,"competitor_present":true,"architect_firm":"sinan kafadar","next_step":"sunum yapılıyor musteriye top musteride","qual_fields_filled":5,"is_example":false},{"stage":"TOFU","rep":"Zeynep","project":"bilişim ofisi projesi faz 0","value_eur":null,"value_raw":null,"close_date":"2026-05-11 00:00:00","probability":0.4,"weighted_value_eur":null,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":false,"decision_maker_identified":true,"competitor_present":true,"architect_firm":"norm","next_step":"teklif yollandı","qual_fields_filled":5,"is_example":false},{"stage":"TOFU","rep":"Zeynep","project":"polat psm projesi","value_eur":1159000.0,"value_raw":"1159000.0","close_date":"2026-05-11 00:00:00","probability":0.2,"weighted_value_eur":231800.0,"proposal_sent":true,"architect_engaged":true,"budget_confirmed":false,"decision_maker_identified":true,"competitor_present":true,"architect_firm":"inhouse","next_step":"teklif yollandı teknik spect markadan bekliyoruz","qual_fields_filled":5,"is_example":false},{"stage":"TOFU","rep":"Burçin","project":"AMANRUYA","value_eur":0.0,"value_raw":"0","close_date":"","probability":null,"weighted_value_eur":null,"proposal_sent":false,"architect_engaged":null,"budget_confirmed":null,"decision_maker_identified":null,"competitor_present":null,"architect_firm":"Atılgan özel  VE ??","next_step":"Atılgan Özel ile örnek villalar yapıalcak , takip ediyoruz. Otel bölümü için daha zaman var","qual_fields_filled":1,"is_example":false},{"stage":"TOFU","rep":"Burçin","project":"Bulgari Bodrum SatışOFİS","value_eur":null,"value_raw":null,"close_date":"","probability":null,"weighted_value_eur":null,"proposal_sent":null,"architect_engaged":true,"budget_confirmed":null,"decision_maker_identified":null,"competitor_present":null,"architect_firm":"ZD Group","next_step":"Haziran ilk hafta satış ofisi açılışı hedefleniyor, çok kısıtlı süre. önümüzdeki hafta 14.04 malzeme seçimleri yapılacak. yatırımcıdan teklif isteği bekleniyor - Cengiz Holding","qual_fields_filled":1,"is_example":false},{"stage":"TOFU","rep":"Burçin","project":"MAXX ROYAL MALDIVLER","value_eur":null,"value_raw":null,"close_date":"","probability":null,"weighted_value_eur":null,"proposal_sent":false,"architect_engaged":null,"budget_confirmed":null,"decision_maker_identified":null,"competitor_present":null,"architect_firm":"Autoban","next_step":"2026 aralık sezon açılış. Paket bekleniyor. yatırımcı + ceo ile süreli irtibattayız. Mimar bizi sevmiyor ancak Maxx Royal grup proje partneriyiz","qual_fields_filled":1,"is_example":false},{"stage":"TOFU","rep":"Burçin","project":"MAXX ROYAL BELEK","value_eur":null,"value_raw":null,"close_date":"2027 Sezon","probability":0.99,"weighted_value_eur":null,"proposal_sent":null,"architect_engaged":null,"budget_confirmed":null,"decision_maker_identified":null,"competitor_present":null,"architect_firm":"???","next_step":"Maxx Royal grup proje partneriyiz şansımız yüksek, mevcut otel renovasyona girecek. HBA Sayeli uysal ile görüşülecek . HBA İptal Arketipo ile görüşülüyor","qual_fields_filled":0,"is_example":false},{"stage":"TOFU","rep":"Burçin","project":"Ankara Savunma sanayi","value_eur":null,"value_raw":null,"close_date":"","probability":null,"weighted_value_eur":null,"proposal_sent":null,"architect_engaged":null,"budget_confirmed":null,"decision_maker_identified":null,"competitor_present":null,"architect_firm":null,"next_step":"84 adet 4 haftada teslim sandalye için çalışıyoruz.","qual_fields_filled":0,"is_example":false},{"stage":"TOFU","rep":"Burçin","project":"SİRKECİ GAR OTEL","value_eur":null,"value_raw":null,"close_date":"","probability":null,"weighted_value_eur":null,"proposal_sent":null,"architect_engaged":null,"budget_confirmed":null,"decision_maker_identified":null,"competitor_present":null,"architect_firm":"Gökcan  Bulut","next_step":"mimar ile görüşüldü yeni otel projesi , bekliyoruz..TOSMUR Group","qual_fields_filled":0,"is_example":false},{"stage":"TOFU","rep":"Burçin","project":"FİKO POLİGON","value_eur":null,"value_raw":null,"close_date":"","probability":null,"weighted_value_eur":null,"proposal_sent":false,"architect_engaged":null,"budget_confirmed":true,"decision_maker_identified":null,"competitor_present":null,"architect_firm":"Misa mimarlık","next_step":"Önerile uygun bulunmadı , yeni öneri yapılacak düşük bütçe","qual_fields_filled":2,"is_example":false},{"stage":"TOFU","rep":"Burçin","project":"ST REGIS KARYA COVE RESORT BODRUM","value_eur":null,"value_raw":null,"close_date":"2027 Haziran","probability":null,"weighted_value_eur":null,"proposal_sent":null,"architect_engaged":null,"budget_confirmed":null,"decision_maker_identified":null,"competitor_present":null,"architect_firm":"ÖĞREN  ???","next_step":"Access hospitality Haluk Özdoğan ile 27. 04 görüşülecek . Yatırımcı Kuzu Grıup","qual_fields_filled":0,"is_example":false},{"stage":"TOFU","rep":"Burçin","project":"THY OTEL","value_eur":0.0,"value_raw":"0","close_date":"","probability":null,"weighted_value_eur":null,"proposal_sent":false,"architect_engaged":null,"budget_confirmed":null,"decision_maker_identified":null,"competitor_present":null,"architect_firm":"Sevimlisoy Mim.","next_step":"işletmeci grup Grand Yazıcı  ile sürekli iletişime geçmeye çalışılıyor, cevap yok . şantiye ?","qual_fields_filled":1,"is_example":false},{"stage":"TOFU","rep":"Burçin","project":"grand tarabya - accor fairmont oluyor !","value_eur":0.0,"value_raw":"0","close_date":"","probability":null,"weighted_value_eur":null,"proposal_sent":false,"architect_engaged":null,"budget_confirmed":null,"decision_maker_identified":null,"competitor_present":null,"architect_firm":"Yeşim Kozanlı","next_step":"Marka değişiyor , otel komple renovasyona girecek.","qual_fields_filled":1,"is_example":false},{"stage":"TOFU","rep":"Burçin","project":"Hyatt Regency Ataköy Rams a satılmış !","value_eur":null,"value_raw":null,"close_date":"","probability":null,"weighted_value_eur":null,"proposal_sent":null,"architect_engaged":null,"budget_confirmed":null,"decision_maker_identified":null,"competitor_present":null,"architect_firm":null,"next_step":null,"qual_fields_filled":0,"is_example":false},{"stage":"TOFU","rep":"Burçin","project":"LUJO KERPİC","value_eur":0.0,"value_raw":"0","close_date":"","probability":null,"weighted_value_eur":null,"proposal_sent":false,"architect_engaged":null,"budget_confirmed":null,"decision_maker_identified":null,"competitor_present":null,"architect_firm":"?","next_step":"otelin sahibi ile görüşüldü, miamr belli değil proje başında dahil olmak için sıkı takip !","qual_fields_filled":1,"is_example":false},{"stage":"TOFU","rep":"Burçin","project":"GRAND HYATT TAKSİM - DOĞUŞ","value_eur":0.0,"value_raw":"0","close_date":"","probability":null,"weighted_value_eur":null,"proposal_sent":false,"architect_engaged":null,"budget_confirmed":null,"decision_maker_identified":null,"competitor_present":null,"architect_firm":"?","next_step":"Renovasyona gireceğini öğrendik, Doğuş Hospitality ile iletişime geçeceğiz","qual_fields_filled":1,"is_example":false},{"stage":"TOFU","rep":"Burçin","project":"BEACH PROJE           I AM IST","value_eur":0.0,"value_raw":"0","close_date":"","probability":null,"weighted_value_eur":null,"proposal_sent":false,"architect_engaged":null,"budget_confirmed":null,"decision_maker_identified":null,"competitor_present":null,"architect_firm":"I AM ISTANBUL","next_step":"Mimara örnek sunumlar & alt. ürünler gönderildi . gelişme olmadı","qual_fields_filled":1,"is_example":false},{"stage":"TOFU","rep":"Burçin","project":"FIKO YALIKAVAK","value_eur":0.0,"value_raw":"0","close_date":"","probability":null,"weighted_value_eur":null,"proposal_sent":false,"architect_engaged":null,"budget_confirmed":null,"decision_maker_identified":null,"competitor_present":null,"architect_firm":"Misa mimarlık","next_step":"yatırımcı ile görüşüldü, mevcut restoranın sandalyeleri değişecek , takip !","qual_fields_filled":1,"is_example":false},{"stage":"TOFU","rep":"Burçin","project":"SHANGRIA YALIKAVAK","value_eur":0.0,"value_raw":"0","close_date":"","probability":null,"weighted_value_eur":null,"proposal_sent":false,"architect_engaged":null,"budget_confirmed":null,"decision_maker_identified":null,"competitor_present":null,"architect_firm":"????","next_step":"2029 açılış - mimar  kim ? araştır","qual_fields_filled":1,"is_example":false},{"stage":"TOFU","rep":"Burçin","project":"KIZILAGAÇ YALIÇIFTLIK OTEL  KALYON","value_eur":null,"value_raw":null,"close_date":"2029","probability":null,"weighted_value_eur":null,"proposal_sent":null,"architect_engaged":null,"budget_confirmed":null,"decision_maker_identified":null,"competitor_present":null,"architect_firm":"AW2 ARCH.","next_step":"AW2 ARCH. DOME+PARTNERS ? İNTERİOR ?","qual_fields_filled":0,"is_example":false},{"stage":"TOFU","rep":"Burçin","project":"LONDRA OTEL","value_eur":null,"value_raw":null,"close_date":"","probability":null,"weighted_value_eur":null,"proposal_sent":null,"architect_engaged":null,"budget_confirmed":null,"decision_maker_identified":null,"competitor_present":null,"architect_firm":null,"next_step":null,"qual_fields_filled":0,"is_example":false},{"stage":"TOFU","rep":"Burçin","project":"ION RIVA OTEL & KONUT & SOSYAL ALANLAR","value_eur":null,"value_raw":null,"close_date":"2027","probability":null,"weighted_value_eur":null,"proposal_sent":null,"architect_engaged":null,"budget_confirmed":null,"decision_maker_identified":null,"competitor_present":null,"architect_firm":null,"next_step":"yatırımcı ile görüşüldü. Konut & otel  & sosyal alanlar çok kapsamlı proje.              mimar : snohetta /big /bilgin studio/","qual_fields_filled":0,"is_example":false},{"stage":"TOFU","rep":"Elif","project":"MEDİPOL","value_eur":0.0,"value_raw":"0","close_date":"","probability":0.05,"weighted_value_eur":0.0,"proposal_sent":false,"architect_engaged":false,"budget_confirmed":null,"decision_maker_identified":null,"competitor_present":null,"architect_firm":null,"next_step":"Hasan beyden Rıza uçan numarasını aldım aradım açmadı tekrar","qual_fields_filled":2,"is_example":false},{"stage":"TOFU","rep":"Elif","project":"Swissotel Bosphorus","value_eur":0.0,"value_raw":"0","close_date":"2026","probability":null,"weighted_value_eur":null,"proposal_sent":false,"architect_engaged":true,"budget_confirmed":false,"decision_maker_identified":false,"competitor_present":null,"architect_firm":"Designist","next_step":"iletişim bilgimi listelere eklediler","qual_fields_filled":4,"is_example":false},{"stage":"TOFU","rep":"Elif","project":"Acıbadem Hastahanesi Beylikdüzü","value_eur":0.0,"value_raw":"0","close_date":"2027","probability":null,"weighted_value_eur":null,"proposal_sent":false,"architect_engaged":true,"budget_confirmed":false,"decision_maker_identified":false,"competitor_present":true,"architect_firm":null,"next_step":"Norm Mimarlık ile görüşüldü proje devam ediyor","qual_fields_filled":5,"is_example":false},{"stage":"TOFU","rep":"Elif","project":"Acıbadem Hastahanesi Ankara","value_eur":0.0,"value_raw":"0","close_date":"","probability":null,"weighted_value_eur":null,"proposal_sent":false,"architect_engaged":true,"budget_confirmed":false,"decision_maker_identified":false,"competitor_present":true,"architect_firm":null,"next_step":null,"qual_fields_filled":5,"is_example":false},{"stage":"TOFU","rep":"Elif","project":"GÜVEN HASTANE","value_eur":0.0,"value_raw":"0","close_date":"","probability":null,"weighted_value_eur":null,"proposal_sent":false,"architect_engaged":null,"budget_confirmed":null,"decision_maker_identified":null,"competitor_present":null,"architect_firm":null,"next_step":"Sunum ileteceğim","qual_fields_filled":1,"is_example":false},{"stage":"TOFU","rep":"Elif","project":"Kemer ELA Otel Mockup","value_eur":null,"value_raw":null,"close_date":"2027","probability":0.25,"weighted_value_eur":null,"proposal_sent":false,"architect_engaged":true,"budget_confirmed":false,"decision_maker_identified":false,"competitor_present":true,"architect_firm":"Inter Yapı","next_step":"Merve Hanımdan tarih aldım takip ediliyor","qual_fields_filled":5,"is_example":false},{"stage":"TOFU","rep":"İrem","project":"DEFINEX OFFICE","value_eur":null,"value_raw":"teklif verilmedi","close_date":"","probability":0.15,"weighted_value_eur":null,"proposal_sent":false,"architect_engaged":true,"budget_confirmed":false,"decision_maker_identified":null,"competitor_present":null,"architect_firm":null,"next_step":"SUNUM YAPILDI/ mimar ile toplantı bekleniyor","qual_fields_filled":3,"is_example":false},{"stage":"TOFU","rep":"İrem","project":"Gökcan Bulut  / tekne","value_eur":null,"value_raw":"teklif verilmedi","close_date":"soon / stok","probability":0.05,"weighted_value_eur":null,"proposal_sent":false,"architect_engaged":false,"budget_confirmed":false,"decision_maker_identified":true,"competitor_present":true,"architect_firm":null,"next_step":"müşteriye ulaşmaya çalışıyorum","qual_fields_filled":5,"is_example":false},{"stage":"TOFU","rep":"İrem","project":"ZUBER OFİS","value_eur":null,"value_raw":"teklif verilmedi,sunum gitti","close_date":"","probability":0.51,"weighted_value_eur":null,"proposal_sent":null,"architect_engaged":null,"budget_confirmed":null,"decision_maker_identified":null,"competitor_present":null,"architect_firm":null,"next_step":"teklif verilecek","qual_fields_filled":0,"is_example":false},{"stage":"TOFU","rep":"İrem","project":"EKSİM HOLDİNG","value_eur":null,"value_raw":"teklif verilmedi","close_date":"","probability":0.51,"weighted_value_eur":null,"proposal_sent":false,"architect_engaged":false,"budget_confirmed":false,"decision_maker_identified":true,"competitor_present":true,"architect_firm":null,"next_step":"teklif verilecek","qual_fields_filled":5,"is_example":false},{"stage":"TOFU","rep":"İrem","project":"SEDA TÜRKOĞLU-Ceccotti Ofis","value_eur":null,"value_raw":"teklif verilmedi","close_date":"","probability":0.51,"weighted_value_eur":null,"proposal_sent":null,"architect_engaged":true,"budget_confirmed":true,"decision_maker_identified":true,"competitor_present":false,"architect_firm":null,"next_step":"teklif verilecek , showroomda topantı ayarlanacak","qual_fields_filled":4,"is_example":false},{"stage":"TOFU","rep":"İrem","project":"EMRE AROLAT-OFİS","value_eur":null,"value_raw":null,"close_date":"","probability":null,"weighted_value_eur":null,"proposal_sent":null,"architect_engaged":null,"budget_confirmed":null,"decision_maker_identified":null,"competitor_present":null,"architect_firm":null,"next_step":null,"qual_fields_filled":0,"is_example":false}],"outbound":[{"section":"HOSPITALITY","rep":"Elif","company":"WANGAN","contact":null,"date":null,"note":null},{"section":"HOSPITALITY","rep":"Elif","company":"ÖZER+TULGAN","contact":null,"date":null,"note":null},{"section":"HOSPITALITY","rep":"Elif","company":"MURAT ÖZ","contact":null,"date":null,"note":null},{"section":"HOSPITALITY","rep":"Elif","company":"URBANJOBS","contact":null,"date":null,"note":null},{"section":"HOSPITALITY","rep":"Elif","company":"ZOOMTPU","contact":null,"date":null,"note":null},{"section":"HOSPITALITY","rep":"Elif","company":"KRN MIMARLIK","contact":null,"date":null,"note":null},{"section":"HOSPITALITY","rep":"Elif","company":"ACIBADEM PROJE YONETIM","contact":null,"date":null,"note":null},{"section":"HOSPITALITY","rep":"Elif","company":"DESIGNIST","contact":null,"date":null,"note":null},{"section":"HOSPITALITY","rep":"Elif","company":"SANAYI313","contact":null,"date":null,"note":null},{"section":"HOSPITALITY","rep":"Elif","company":"AYSE KUBILAY","contact":null,"date":null,"note":null},{"section":"HOSPITALITY","rep":"Elif","company":"SEÇİL ONUK","contact":null,"date":null,"note":"ANKARA GÜVEN HASTANE"},{"section":"HOSPITALITY","rep":"Elif","company":null,"contact":null,"date":null,"note":null},{"section":"HOSPITALITY","rep":"Elif","company":null,"contact":null,"date":null,"note":null},{"section":"HOSPITALITY","rep":"Burçin","company":"NORM MIMARLIK","contact":"EKIN PEKAKCAN","date":"2026-04-15 00:00:00","note":"Ekin Pekakcan Ve Esin Tersan ile görüşüldü. Beylikdüzü Acıbadem Proje !  Terminal Bilişim merkezi çok büyük proje olacak Zeynep çalışıyor.  Salone sonrası yenilikler için görüşelim"},{"section":"HOSPITALITY","rep":"Burçin","company":"ACCESS HOSPITALITY","contact":null,"date":"2026-04-15 00:00:00","note":"27.04  haftası  Haluk Özdoğan ile görüşülecek"},{"section":"HOSPITALITY","rep":"Burçin","company":"GEO_ID","contact":"TUĞÇE RİZELİ","date":null,"note":null},{"section":"HOSPITALITY","rep":"Burçin","company":"METEX","contact":"SİNAN KAFADAR","date":null,"note":null},{"section":"HOSPITALITY","rep":"Burçin","company":"STUDIO ERK","contact":"HÜRAY ERK","date":null,"note":null},{"section":"HOSPITALITY","rep":"Burçin","company":"SEVIMLI MIMARLIK","contact":null,"date":null,"note":null},{"section":"HOSPITALITY","rep":"Burçin","company":"TABANLIOĞLU","contact":null,"date":null,"note":null},{"section":"HOSPITALITY","rep":"Burçin","company":"MISA MIMARLIK","contact":"AYŞE ÖZ","date":null,"note":null},{"section":"HOSPITALITY","rep":"Burçin","company":"KUD","contact":"TOLGAN SENCER","date":null,"note":null},{"section":"HOSPITALITY","rep":"Burçin","company":"GULDEN ŞENER","contact":"GULDEN ŞENER","date":null,"note":null},{"section":"HOSPITALITY","rep":"Burçin","company":"YEŞİM KOZANLI MIMARLIK","contact":"BANU - KORAY KİDİŞ","date":null,"note":null},{"section":"HOSPITALITY","rep":"Burçin","company":"DOĞUŞ HOSPİTALITY","contact":"RANA AKIN","date":null,"note":null},{"section":"HOSPITALITY","rep":"Burçin","company":"HILL INVESTMENT","contact":null,"date":null,"note":null},{"section":"HOSPITALITY","rep":"Burçin","company":"SERVOTEL","contact":"ÖMER ISVAN","date":null,"note":null},{"section":"OFIS","rep":"İrem","company":"ALTIPATLAR ARCH. **","contact":"Yasin Altipat","date":null,"note":"klinik projeler, colgate,Schwarzkopf Projesi"},{"section":"OFIS","rep":"İrem","company":"İKİBİNİKİ","contact":"Adil Kırkaya (Ortak)-Erdem Argun (Ortak)","date":null,"note":null},{"section":"OFIS","rep":"İrem","company":"U DESIGN","contact":"Umut Uzuner","date":null,"note":"ofis, holding ,  \"yeni ofis tasarımları\""},{"section":"OFIS","rep":"İrem","company":"DAM DESIGN","contact":"Dicle DemirAlper TüzünoğluCo-Founder / Architects","date":null,"note":"ofis,bank hq, hotel"},{"section":"OFIS","rep":"İrem","company":"DBS","contact":"Muzaffer Emiroğlu kurucu ortak","date":null,"note":"\"dbs, bir Mimarlık ve mühendislik şirketidir. Kurumsal fit-out alanında ofis dizaynı ve uygulamaları yapar"},{"section":"OFIS","rep":"İrem","company":"ALYA ARCH.","contact":null,"date":null,"note":null},{"section":"OFIS","rep":"İrem","company":"GİZEM ŞİPKAN (MİMAR)","contact":null,"date":null,"note":null},{"section":"OFIS","rep":"İrem","company":"OSO ARCH.","contact":null,"date":null,"note":null},{"section":"OFIS","rep":"İrem","company":"OĞUL BURNAZ ARCH.","contact":null,"date":null,"note":null},{"section":"OFIS","rep":"Zeynep","company":null,"contact":null,"date":null,"note":null},{"section":"OFIS","rep":"Zeynep","company":null,"contact":null,"date":null,"note":null},{"section":"OFIS","rep":"Zeynep","company":null,"contact":null,"date":null,"note":null},{"section":"OFIS","rep":"Zeynep","company":null,"contact":null,"date":null,"note":null}]}</script>
+<script>
+(function(){
+  const DATA = JSON.parse(document.getElementById("funnel-data").textContent);
+  const deals = DATA.deals.filter(d => !d.is_example); // exclude the example row
+  const REPS = ["Burçin","Zeynep","İrem","Elif"];
+  const STAGES = ["TOFU","MOFU","BOFU"];
+  const COLOR = {TOFU:"#7aa6ff",MOFU:"#f5a524",BOFU:"#29d398"};
+
+  const fmtEur = v => v==null||isNaN(v) ? "—" : "€"+Math.round(v).toLocaleString("en-US");
+  const fmtEurShort = v => {
+    if (v==null||isNaN(v)) return "—";
+    if (v>=1e6) return "€"+(v/1e6).toFixed(2)+"M";
+    if (v>=1e3) return "€"+(v/1e3).toFixed(0)+"K";
+    return "€"+Math.round(v);
+  };
+  const pct = v => v==null ? "—" : Math.round(v*100)+"%";
+
+  // -------- KPIs --------
+  const totalOpen = deals.length;
+  const gross = deals.reduce((s,d)=>s+(d.value_eur||0),0);
+  const weighted = deals.reduce((s,d)=>s+(d.weighted_value_eur||0),0);
+  const fields = ["proposal_sent","architect_engaged","budget_confirmed","decision_maker_identified","competitor_present"];
+  const fillRates = fields.map(f => {
+    const filled = deals.filter(d => d[f]!==null && d[f]!==undefined).length;
+    return {field:f, filled, pct: filled/deals.length};
+  });
+  const avgFill = fillRates.reduce((s,x)=>s+x.pct,0) / fillRates.length;
+
+  document.getElementById("k-open").textContent = totalOpen;
+  document.getElementById("k-gross").textContent = fmtEurShort(gross);
+  document.getElementById("k-weighted").textContent = fmtEurShort(weighted);
+  document.getElementById("k-quality").textContent = Math.round(avgFill*100)+"%";
+
+  // -------- Funnel visualization --------
+  const byStage = {};
+  STAGES.forEach(s => byStage[s] = {count:0, gross:0, weighted:0});
+  deals.forEach(d => {
+    if (!byStage[d.stage]) return;
+    byStage[d.stage].count += 1;
+    byStage[d.stage].gross += (d.value_eur||0);
+    byStage[d.stage].weighted += (d.weighted_value_eur||0);
+  });
+  const maxCount = Math.max(...STAGES.map(s=>byStage[s].count));
+  const fv = document.getElementById("funnel-vis");
+  STAGES.forEach(s => {
+    const o = byStage[s];
+    const w = Math.max(60, Math.round(o.count/maxCount*100)) + "%";
+    fv.insertAdjacentHTML("beforeend",`
+      <div class="funnel-row">
+        <div class="funnel-label">${s}</div>
+        <div class="funnel-bar" style="background:${COLOR[s]};width:${w}">${o.count} deals</div>
+        <div class="funnel-meta">${fmtEurShort(o.gross)} gross · ${fmtEurShort(o.weighted)} weighted</div>
+      </div>`);
+  });
+
+  // -------- Chart: weighted value by stage --------
+  new Chart(document.getElementById("chartStageValue"), {
+    type:"bar",
+    data:{labels:STAGES, datasets:[
+      {label:"Gross €", data: STAGES.map(s=>byStage[s].gross), backgroundColor: STAGES.map(s=>COLOR[s]+"55"), borderColor: STAGES.map(s=>COLOR[s]), borderWidth:1},
+      {label:"Weighted €", data: STAGES.map(s=>byStage[s].weighted), backgroundColor: STAGES.map(s=>COLOR[s])}
+    ]},
+    options:{responsive:true, plugins:{legend:{labels:{color:"#a4adc9"}}}, scales:{y:{ticks:{color:"#a4adc9", callback:v=>fmtEurShort(v)}, grid:{color:"#273258"}}, x:{ticks:{color:"#a4adc9"}, grid:{display:false}}}}
+  });
+
+  // -------- Per rep --------
+  const byRep = {};
+  REPS.forEach(r => byRep[r] = {count:0, TOFU:0, MOFU:0, BOFU:0, gross:0, weighted:0, fill:0, fillN:0, vals:[]});
+  deals.forEach(d => {
+    const r = d.rep;
+    if (!byRep[r]) return;
+    byRep[r].count += 1;
+    if (byRep[r][d.stage]!==undefined) byRep[r][d.stage] += 1;
+    byRep[r].gross += (d.value_eur||0);
+    byRep[r].weighted += (d.weighted_value_eur||0);
+    if (d.value_eur) byRep[r].vals.push(d.value_eur);
+    // fill rate
+    const f = fields.filter(f => d[f]!==null && d[f]!==undefined).length;
+    byRep[r].fill += f/fields.length;
+    byRep[r].fillN += 1;
+  });
+
+  // rep table
+  const repTbody = document.querySelector("#tbl-reps tbody");
+  REPS.forEach(r => {
+    const o = byRep[r];
+    const avg = o.vals.length ? o.vals.reduce((s,v)=>s+v,0)/o.vals.length : null;
+    const fillPct = o.fillN? Math.round(o.fill/o.fillN*100) : 0;
+    repTbody.insertAdjacentHTML("beforeend", `<tr>
+      <td>${r}</td>
+      <td class="num">${o.count}</td>
+      <td class="num"><span class="pill tofu">${o.TOFU}</span></td>
+      <td class="num"><span class="pill mofu">${o.MOFU}</span></td>
+      <td class="num"><span class="pill bofu">${o.BOFU}</span></td>
+      <td class="num">${fmtEurShort(o.gross)}</td>
+      <td class="num">${fmtEurShort(o.weighted)}</td>
+      <td class="num">${avg?fmtEurShort(avg):"—"}</td>
+      <td class="num"><span class="pill ${fillPct>=75?"ok":fillPct>=50?"warn":"bad"}">${fillPct}%</span></td>
+    </tr>`);
+  });
+
+  new Chart(document.getElementById("chartByRep"), {
+    type:"bar",
+    data:{labels:REPS, datasets:STAGES.map(s => ({
+      label:s, data: REPS.map(r => byRep[r][s]||0), backgroundColor: COLOR[s]
+    }))},
+    options:{responsive:true, plugins:{legend:{labels:{color:"#a4adc9"}}}, scales:{x:{stacked:true, ticks:{color:"#a4adc9"}, grid:{display:false}}, y:{stacked:true, ticks:{color:"#a4adc9"}, grid:{color:"#273258"}}}}
+  });
+
+  new Chart(document.getElementById("chartValueByRep"), {
+    type:"bar",
+    data:{labels:REPS, datasets:[
+      {label:"Gross €", data: REPS.map(r => byRep[r].gross), backgroundColor:"#7aa6ff55", borderColor:"#7aa6ff", borderWidth:1},
+      {label:"Weighted €", data: REPS.map(r => byRep[r].weighted), backgroundColor:"#9b7cff"}
+    ]},
+    options:{responsive:true, plugins:{legend:{labels:{color:"#a4adc9"}}}, scales:{y:{ticks:{color:"#a4adc9", callback:v=>fmtEurShort(v)}, grid:{color:"#273258"}}, x:{ticks:{color:"#a4adc9"}, grid:{display:false}}}}
+  });
+
+  // -------- BOFU close watch --------
+  const bofu = deals.filter(d => d.stage==="BOFU");
+  bofu.sort((a,b) => (b.weighted_value_eur||0) - (a.weighted_value_eur||0));
+  const bofuBody = document.querySelector("#tbl-bofu tbody");
+  bofu.forEach(d => {
+    const hot = (d.probability||0) >= 0.85 ? "style='background:rgba(41,211,152,.06)'" : "";
+    bofuBody.insertAdjacentHTML("beforeend", `<tr ${hot}>
+      <td>${d.rep||""}</td>
+      <td>${d.project||""}</td>
+      <td class="num">${d.value_eur?fmtEur(d.value_eur):"—"}</td>
+      <td class="num">${d.probability!=null?pct(d.probability):"—"}</td>
+      <td class="num">${d.weighted_value_eur?fmtEur(d.weighted_value_eur):"—"}</td>
+      <td>${d.close_date||"<span class='muted'>—</span>"}</td>
+      <td class="small">${(d.next_step||"").slice(0,120)}</td>
+    </tr>`);
+  });
+
+  // -------- Risk table --------
+  const risk = deals.filter(d =>
+    (d.probability!=null && d.probability < 0.2) ||
+    (!d.next_step && d.stage!=="TOFU")
+  );
+  risk.sort((a,b) => (a.probability||0) - (b.probability||0));
+  const riskBody = document.querySelector("#tbl-risk tbody");
+  risk.forEach(d => {
+    let issue = [];
+    if (d.probability!=null && d.probability<0.2) issue.push("Low prob");
+    if (!d.next_step) issue.push("No next step");
+    if (d.budget_confirmed===false) issue.push("No budget");
+    if (d.proposal_sent===false) issue.push("No proposal");
+    riskBody.insertAdjacentHTML("beforeend", `<tr>
+      <td><span class="pill ${d.stage==='BOFU'?'bofu':d.stage==='MOFU'?'mofu':'tofu'}">${d.stage}</span></td>
+      <td>${d.rep||""}</td>
+      <td>${d.project||""}</td>
+      <td class="num">${d.value_eur?fmtEur(d.value_eur):"—"}</td>
+      <td class="num">${d.probability!=null?pct(d.probability):"—"}</td>
+      <td>${issue.map(x=>`<span class='pill bad' style='margin-right:4px'>${x}</span>`).join("")}</td>
+      <td class="small">${(d.next_step||"").slice(0,120)}</td>
+    </tr>`);
+  });
+
+  // -------- Data quality --------
+  new Chart(document.getElementById("chartFields"), {
+    type:"bar",
+    data:{labels: fillRates.map(x => x.field.replace(/_/g,' ')), datasets:[{
+      label:"% filled", data: fillRates.map(x => Math.round(x.pct*100)),
+      backgroundColor: fillRates.map(x => x.pct>=.75?"#29d398":x.pct>=.6?"#f5a524":"#ff6b6b")
+    }]},
+    options:{indexAxis:"y", responsive:true, plugins:{legend:{display:false}}, scales:{x:{max:100, ticks:{color:"#a4adc9", callback:v=>v+"%"}, grid:{color:"#273258"}}, y:{ticks:{color:"#a4adc9"}, grid:{display:false}}}}
+  });
+
+  const missingVal = deals.filter(d => d.value_eur==null).length;
+  const missingDate = deals.filter(d => !d.close_date).length;
+  const missingProb = deals.filter(d => d.probability==null).length;
+  const noNext = deals.filter(d => !d.next_step).length;
+  const prob100 = deals.filter(d => d.probability===1).length;
+  const ul = document.getElementById("ul-gaps");
+  [
+    `<strong>${missingVal}/${deals.length}</strong> deals (${Math.round(missingVal/deals.length*100)}%) have no numeric € value — can't be forecasted.`,
+    `<strong>${missingDate}/${deals.length}</strong> deals (${Math.round(missingDate/deals.length*100)}%) have no close date — blocks any time-phased forecast.`,
+    `<strong>${missingProb}/${deals.length}</strong> deals (${Math.round(missingProb/deals.length*100)}%) have no probability set.`,
+    `<strong>${noNext}</strong> deals have no next step documented — means no cadence discipline for those accounts.`,
+    `<strong>${prob100} deals are already at 100%</strong> — these should be a separate "Won" stage, not BOFU.`,
+    `<strong>43/44 TOFU deals</strong> have no € value — entire top of funnel is invisible to the forecast.`,
+    `Sales Velocity column exists in BOFU but is <strong>100% empty</strong>.`,
+    `Boolean fields use mixed Turkish/English ("evet","yes","hayır","no","belirsiz","not yet") — not filterable.`
+  ].forEach(h => ul.insertAdjacentHTML("beforeend", `<li>${h}</li>`));
+
+  // bad-values table
+  const bad = deals.filter(d => d.value_eur==null && (d.value_raw || d.project));
+  const badBody = document.querySelector("#tbl-badvals tbody");
+  bad.forEach(d => badBody.insertAdjacentHTML("beforeend", `<tr>
+    <td><span class="pill ${d.stage==='BOFU'?'bofu':d.stage==='MOFU'?'mofu':'tofu'}">${d.stage}</span></td>
+    <td>${d.rep||""}</td>
+    <td>${d.project||""}</td>
+    <td class="small muted">${d.value_raw||"(empty)"}</td>
+  </tr>`));
+
+  // -------- tabs --------
+  document.querySelectorAll(".tab").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const id = btn.dataset.tab;
+      document.querySelectorAll("section[id^=tab-]").forEach(s => s.classList.add("hide"));
+      document.getElementById("tab-"+id).classList.remove("hide");
+    });
+  });
+})();
+</script>
+</body>
+</html>
