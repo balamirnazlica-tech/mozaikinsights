@@ -33,7 +33,8 @@ const DASHBOARDS=[
   {id:'sales',label:'Sales Dashboard',url:'./sales-dashboard.html'},
   {id:'crm',label:'CRM Dashboard',url:'./crm-dashboard.html'},
   {id:'bvb',label:'Build vs Buy',url:'./crm-build-vs-buy-dashboard.html'},
-  {id:'bvbt',label:'Build vs Buy (Team)',url:'./crm-build-vs-buy-dashboard-team.html'}
+  {id:'bvbt',label:'Build vs Buy (Team)',url:'./crm-build-vs-buy-dashboard-team.html'},
+  {id:'efunnel',label:'Enterprise Funnel',url:'./Enterprise_Sales_Dashboard.html'}
 ];
 const frame=document.getElementById('frame'),tabs=document.getElementById('tabs');
 function activate(id){const d=DASHBOARDS.find(x=>x.id===id)||DASHBOARDS[0];frame.src=d.url;[...tabs.children].forEach(b=>b.classList.toggle('active',b.dataset.id===d.id));history.replaceState(null,'','#'+d.id);}
