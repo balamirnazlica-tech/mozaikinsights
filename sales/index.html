@@ -31,8 +31,8 @@
 
 <script>
 const DASHBOARDS=[
-  {id:'sales',label:'Sales Dashboard',url:'./sales-dashboard.html'},
-  {id:'efunnel',label:'Enterprise Funnel',url:'./Enterprise_Sales_Dashboard.html'}
+  {id:'sales',label:'Retail Sales',url:'./sales-dashboard.html'},
+  {id:'efunnel',label:'Enterprise Sales',url:'./Enterprise_Sales_Dashboard.html'}
 ];
 const frame=document.getElementById('frame'),tabs=document.getElementById('tabs');
 function activate(id){const d=DASHBOARDS.find(x=>x.id===id)||DASHBOARDS[0];frame.src=d.url;tabs.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.id===d.id))}
