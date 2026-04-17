@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Retail Sales Leadership Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="/assets/auth.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Inter",sans-serif;background:#0e1117;color:#c9d1d9;line-height:1.6;padding:32px 24px}
+.wrap{max-width:900px;margin:0 auto}
+
+/* Header */
+.hdr{border-bottom:3px solid #d32f2f;padding-bottom:20px;margin-bottom:32px}
+.hdr h1{font-size:1.75rem;font-weight:700;color:#fff}
+.hdr .sub{font-size:.85rem;color:rgba(255,255,255,.45);margin-top:4px}
+.badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.7rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;background:rgba(211,47,47,.15);color:#ef5350;margin-bottom:10px}
+
+/* KPI row */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:32px}
+.kpi{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:18px 16px;text-align:center}
+.kpi .val{font-size:1.5rem;font-weight:700;color:#fff}
+.kpi .lbl{font-size:.75rem;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.03em;margin-top:2px}
+.kpi.highlight{border-color:#d32f2f;background:rgba(211,47,47,.08)}
+.kpi.highlight .val{color:#ef5350}
+
+/* Sections */
+.section{margin-bottom:28px}
+.section h2{font-size:1.1rem;font-weight:600;color:#fff;margin-bottom:12px;padding-left:12px;border-left:3px solid #d32f2f}
+.card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:18px 20px;margin-bottom:12px}
+.card h3{font-size:.9rem;font-weight:600;color:#e0e0e0;margin-bottom:6px}
+.card p{font-size:.85rem;color:rgba(255,255,255,.55)}
+mark{background:rgba(211,47,47,.2);color:#ef5350;padding:1px 6px;border-radius:4px;font-weight:600}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:8px}
+.tbl th{text-align:left;padding:8px 10px;background:rgba(211,47,47,.1);color:#ef5350;font-weight:600;border-bottom:1px solid rgba(255,255,255,.1)}
+.tbl td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.05);color:#c9d1d9}
+.tbl tr:hover td{background:rgba(255,255,255,.03)}
+.tbl .num{text-align:right;font-weight:600;color:#fff}
+
+/* Tags */
+.tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.7rem;font-weight:600}
+.tag-red{background:rgba(211,47,47,.15);color:#ef5350}
+.tag-green{background:rgba(76,175,80,.15);color:#66bb6a}
+.tag-amber{background:rgba(255,183,77,.15);color:#ffb74d}
+
+/* Callout */
+.callout{border-left:3px solid #d32f2f;background:rgba(211,47,47,.06);padding:14px 18px;border-radius:0 10px 10px 0;margin:16px 0;font-size:.85rem}
+.callout strong{color:#ef5350}
+
+.footer{margin-top:40px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08);font-size:.72rem;color:rgba(255,255,255,.3);text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hdr">
+  <span class="badge">Leadership Brief</span>
+  <h1>Retail Sales Dashboard Guide</h1>
+  <div class="sub">Jan 2025 – Mar 2026 · Mozaik Design</div>
+</div>
+
+<!-- KPIs -->
+<div class="kpi-row">
+  <div class="kpi highlight"><div class="val">€49.95M</div><div class="lbl">Total Revenue</div></div>
+  <div class="kpi"><div class="val">2,554</div><div class="lbl">Units Sold</div></div>
+  <div class="kpi"><div class="val">1,733</div><div class="lbl">Total Customers</div></div>
+  <div class="kpi highlight"><div class="val">867</div><div class="lbl">Net New Customers</div></div>
+  <div class="kpi"><div class="val">€20k</div><div class="lbl">Avg Order Value</div></div>
+</div>
+
+<!-- Department Breakdown -->
+<div class="section">
+  <h2>Department Revenue</h2>
+  <table class="tbl">
+    <tr><th>Department</th><th style="text-align:right">Revenue</th><th style="text-align:right">Share</th><th>Status</th></tr>
+    <tr><td><strong>Retail</strong></td><td class="num">€26.98M</td><td class="num">54%</td><td><span class="tag tag-green">Leading</span></td></tr>
+    <tr><td>Enterprise</td><td class="num">€15.42M</td><td class="num">31%</td><td><span class="tag tag-green">Strong</span></td></tr>
+    <tr><td>Lighting</td><td class="num">€7.29M</td><td class="num">15%</td><td><span class="tag tag-amber">Growth</span></td></tr>
+    <tr><td>Marketing</td><td class="num">€259k</td><td class="num">&lt;1%</td><td><span class="tag tag-red">Low</span></td></tr>
+  </table>
+</div>
+
+<!-- Top Performers -->
+<div class="section">
+  <h2>Top Performers</h2>
+  <div class="card">
+    <h3>By Revenue</h3>
+    <table class="tbl">
+      <tr><th>#</th><th>Rep</th><th>Dept</th><th style="text-align:right">Revenue</th></tr>
+      <tr><td>1</td><td><strong>Zeynep</strong></td><td>Enterprise</td><td class="num"><mark>€6.97M</mark></td></tr>
+      <tr><td>2</td><td><strong>Sena</strong></td><td>Retail</td><td class="num">€4.98M</td></tr>
+      <tr><td>3</td><td><strong>İdil</strong></td><td>Retail</td><td class="num">€4.97M</td></tr>
+      <tr><td>4</td><td><strong>Burçin</strong></td><td>Enterprise</td><td class="num">€4.94M</td></tr>
+      <tr><td>5</td><td><strong>Ceren</strong></td><td>Retail</td><td class="num">€4.74M</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h3>By Volume (Orders)</h3>
+    <table class="tbl">
+      <tr><th>#</th><th>Rep</th><th>Dept</th><th style="text-align:right">Orders</th></tr>
+      <tr><td>1</td><td><strong>Ceren M.</strong></td><td>Marketing</td><td class="num"><mark>496</mark></td></tr>
+      <tr><td>2</td><td><strong>Biricik</strong></td><td>Lighting</td><td class="num">392</td></tr>
+      <tr><td>3</td><td><strong>Betül</strong></td><td>Retail</td><td class="num">246</td></tr>
+      <tr><td>4</td><td><strong>Sena</strong></td><td>Retail</td><td class="num">189</td></tr>
+      <tr><td>5</td><td><strong>Ecem</strong></td><td>Lighting</td><td class="num">184</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- Key Insights -->
+<div class="section">
+  <h2>Key Insights</h2>
+  <div class="callout">
+    <strong>Retail dominates at 54%</strong> of total revenue. 5 of the top 8 reps are in Retail.
+  </div>
+  <div class="callout">
+    <strong>Zeynep is the clear #1</strong> in revenue, leading by +40% over the next rep.
+  </div>
+  <div class="callout">
+    <strong>Volume vs. Value gap:</strong> Ceren M. leads in orders (496) but ranks lower in revenue — signals high-volume, lower-ticket deals.
+  </div>
+  <div class="callout">
+    <strong>Lighting is a growth opportunity</strong> at 15% share with strong volume from Biricik (392 orders).
+  </div>
+</div>
+
+<!-- How to Use -->
+<div class="section">
+  <h2>How to Use the Dashboard</h2>
+  <div class="card">
+    <h3>Filters</h3>
+    <p>Toggle between <mark>Revenue</mark> and <mark>Units Sold</mark> at the top. Filter by time: All Time, FY 2025, FY 2026 YTD, Q1 2026, or Last 6 months.</p>
+  </div>
+  <div class="card">
+    <h3>Tabs</h3>
+    <p><mark>Overview</mark> for KPIs and trends. <mark>Departments</mark> for dept-level drill-down. <mark>Sales Reps</mark> for individual performance. <mark>Customers</mark> for client-level data. <mark>Deep Analysis</mark> for cross-cutting insights.</p>
+  </div>
+  <div class="card">
+    <h3>Drill-Down</h3>
+    <p>Click any department, rep name, or table row for detailed breakdowns.</p>
+  </div>
+</div>
+
+<div class="footer">Mozaik Insights · Retail Sales Leadership Guide · Updated April 2026</div>
+
+</div>
+</body>
+  </html>
