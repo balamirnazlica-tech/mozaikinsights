@@ -39,6 +39,22 @@ th,td{padding:10px 8px;font-size:13px;white-space:nowrap}
 }
 thead th{text-align:left;color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid #1f2a44}
 tbody td{border-bottom:1px solid #121c34}
+
+  .guide-toggle{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(211,47,47,.12),rgba(211,47,47,.08));border:1px solid rgba(211,47,47,.25);border-radius:12px;padding:12px 16px;cursor:pointer;width:100%;text-align:left;color:var(--ink);font-size:14px;font-weight:600;transition:background .2s;margin-bottom:16px}
+  .guide-toggle:hover{background:linear-gradient(135deg,rgba(211,47,47,.2),rgba(211,47,47,.14))}
+  .guide-toggle .arrow{transition:transform .25s}
+  .guide-toggle.open .arrow{transform:rotate(90deg)}
+  .badge{background:#d32f2f;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;text-transform:uppercase;letter-spacing:.06em}
+  .guide-toggle .hint{margin-left:auto;font-size:12px;color:var(--ink-dim);font-weight:400}
+  .guide-body{display:none;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:24px 28px;margin-bottom:20px;font-size:13px;line-height:1.7;color:var(--ink-dim)}
+  .guide-body.open{display:block}
+  .guide-body h2{font-size:15px;font-weight:600;margin:20px 0 8px;letter-spacing:.02em;text-transform:uppercase;color:var(--ink-dim)}
+  .guide-body h3{font-size:14px;font-weight:600;margin:0 0 8px;color:var(--ink)}
+  .guide-body .g-action{background:rgba(211,47,47,.08);border-left:3px solid #d32f2f;padding:8px 12px;border-radius:0 8px 8px 0;margin:8px 0 16px;font-size:13px}
+  .guide-body .g-action strong{color:#ef5350}
+  .guide-body .g-checklist{list-style:none;padding:0}
+  .guide-body .g-checklist li{padding:4px 0;border-bottom:1px solid var(--line)}
+  .guide-body .g-checklist li strong{color:var(--ink)}
 </style>
 <script src="/assets/auth.js"></script>
 </head>
@@ -66,6 +82,50 @@ tbody td{border-bottom:1px solid #121c34}
       </select>
     </div>
   </header>
+
+
+
+  <button class="guide-toggle" onclick="this.classList.toggle('open');document.getElementById('guideBody').classList.toggle('open')">
+    <span class="arrow">▶</span>
+    <span>Dashboard Guide for Leadership</span>
+    <span class="badge">Head Walkthrough</span>
+    <span class="hint">Click to expand</span>
+  </button>
+
+  <div class="guide-body" id="guideBody">
+    <p>A tab-by-tab guide to reading this dashboard, designed for department heads. Use it to run weekly sales reviews and spot performance gaps quickly.</p>
+
+    <h2>Tab Overview</h2>
+    <h3>KPI Cards</h3>
+    <p>The five KPI cards show <strong>Total Revenue</strong> (€49.95M), <strong>Units Sold</strong> (2,554), <strong>Total Customers</strong> (1,733), <strong>Net New Customers</strong> (867), and <strong>Avg Order Value</strong> (€20k). Toggle between Revenue and Units Sold using the dropdown. Filter by time period: All Time, FY 2025, FY 2026 YTD, Q1 2026, or Last 6 months.</p>
+    <div class="g-action"><strong>Action:</strong> If Net New Customers drops below 50/month, escalate lead generation immediately.</div>
+
+    <h2>Tab Departments</h2>
+    <p>Department-level revenue breakdown. <strong>Retail</strong> leads at 54% (€26.98M), followed by <strong>Enterprise</strong> at 31% (€15.42M), <strong>Lighting</strong> at 15% (€7.29M), and <strong>Marketing</strong> at &lt;1%.</p>
+    <div class="g-action"><strong>Action:</strong> Retail carries the business. If any single department drops below 20% of its trailing 3-month average, flag for review.</div>
+
+    <h2>Tab Sales Reps</h2>
+    <p>Individual rep performance by revenue and order volume. <strong>Zeynep</strong> (Enterprise) leads revenue at €6.97M — 40% ahead of #2. <strong>Ceren M.</strong> (Marketing) leads order volume with 496 orders but ranks lower in revenue, signalling high-volume, lower-ticket deals.</p>
+    <div class="g-action"><strong>Action:</strong> Any rep with revenue below €2M over the period needs a pipeline review. Compare volume vs. value to identify reps who may need upsell coaching.</div>
+
+    <h2>Tab Customers</h2>
+    <p>Client-level data including order history and spend. Use this to identify top accounts and at-risk relationships where spend is declining.</p>
+    <div class="g-action"><strong>Action:</strong> Flag any top-20 customer with a quarter-over-quarter spend decline &gt;15%.</div>
+
+    <h2>Tab Deep Analysis</h2>
+    <p>Cross-cutting insights combining department, rep, and customer data. Use for strategic planning and board-level reporting.</p>
+    <div class="g-action"><strong>Action:</strong> Review monthly for trends. Bring the top 3 insights to the leadership meeting.</div>
+
+    <h2>Weekly Review Checklist for Heads</h2>
+    <ul class="g-checklist">
+      <li><strong>Department trends</strong> — compare each department to its trailing 3-month average; flag any &gt;10% drop</li>
+      <li><strong>Rep performance</strong> — identify bottom 2 reps by revenue; schedule coaching or pipeline reviews</li>
+      <li><strong>Top customers</strong> — verify top-10 accounts are on track; flag any with declining orders</li>
+      <li><strong>Volume vs. value</strong> — check if high-volume reps are leaving money on the table (low AOV)</li>
+      <li><strong>Net new customers</strong> — are we adding at least 50 new customers per month?</li>
+      <li><strong>Filters</strong> — toggle to Units Sold view to catch volume trends that revenue might mask</li>
+    </ul>
+  </div>
 
   <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-5" id="kpis"></div>
 
