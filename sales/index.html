@@ -7,8 +7,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/style.css?v=12">
+<link rel="stylesheet" href="../assets/style.css?v=13">
 <script src="/assets/auth.js"></script>
+<style>
+.tabbar button.red-tab{background:rgba(211,47,47,.15);color:#ef5350;border:1px solid rgba(211,47,47,.3)}
+.tabbar button.red-tab.active{background:#d32f2f;color:#fff}
+</style>
 </head>
 <body class="viewer">
 <nav class="nav">
@@ -33,11 +37,12 @@
 const DASHBOARDS=[
   {id:'sales',label:'Retail Sales',url:'./sales-dashboard.html'},
   {id:'efunnel',label:'Enterprise Sales',url:'./Enterprise_Sales_Dashboard.html'},
-  {id:'footfall',label:'Footfall Traffic',url:'./footfall/'}
+  {id:'footfall',label:'Footfall Traffic',url:'./footfall/'},
+  {id:'guide',label:'Leadership Guide',url:'./leadership-guide.html',red:true}
 ];
 const frame=document.getElementById('frame'),tabs=document.getElementById('tabs');
 function activate(id){const d=DASHBOARDS.find(x=>x.id===id)||DASHBOARDS[0];frame.src=d.url;tabs.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.id===d.id))}
-DASHBOARDS.forEach(d=>{const b=document.createElement('button');b.textContent=d.label;b.dataset.id=d.id;b.onclick=()=>activate(d.id);tabs.appendChild(b)});
+DASHBOARDS.forEach(d=>{const b=document.createElement('button');b.textContent=d.label;b.dataset.id=d.id;if(d.red)b.classList.add('red-tab');b.onclick=()=>activate(d.id);tabs.appendChild(b)});
 activate(new URLSearchParams(location.search).get('tab')||'sales');
 window.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){const i=DASHBOARDS.findIndex(d=>d.id===(tabs.querySelector('.active')||{}).dataset?.id);const n=e.key==='ArrowRight'?(i+1)%DASHBOARDS.length:(i-1+DASHBOARDS.length)%DASHBOARDS.length;activate(DASHBOARDS[n].id)}});
 </script>
