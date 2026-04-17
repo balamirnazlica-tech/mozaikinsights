@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Footfall Traffic – Per Rep Analysis</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0b1020;color:#e0e6f0;min-height:100vh}
+.header{background:linear-gradient(135deg,#0f1a2e 0%,#162040 100%);padding:24px 32px;border-bottom:1px solid rgba(255,255,255,.06)}
+.header h1{font-size:22px;font-weight:600;color:#fff;margin-bottom:4px}
+.header p{font-size:13px;color:#8892a8;margin-top:2px}
+.badge{display:inline-block;background:#1a73e8;color:#fff;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;margin-left:10px;vertical-align:middle}
+.container{max-width:1280px;margin:0 auto;padding:24px 32px}
+.section-title{font-size:17px;font-weight:600;color:#fff;margin:28px 0 16px;display:flex;align-items:center;gap:8px}
+.section-title .dot{width:8px;height:8px;border-radius:50%;background:#1a73e8}
+.chart-card{background:linear-gradient(135deg,#111827 0%,#0f172a 100%);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:24px;margin-bottom:24px}
+.chart-card h3{font-size:14px;font-weight:500;color:#8892a8;margin-bottom:16px}
+.chart-wrap{position:relative;height:360px}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px}
+.kpi{background:linear-gradient(135deg,#111827 0%,#0f172a 100%);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:18px 20px}
+.kpi .label{font-size:11px;color:#8892a8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.kpi .value{font-size:26px;font-weight:700;color:#fff}
+.kpi .sub{font-size:12px;color:#64748b;margin-top:2px}
+.toggle-row{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.toggle-btn{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#8892a8;font-size:12px;padding:6px 14px;border-radius:8px;cursor:pointer;transition:all .2s}
+.toggle-btn:hover{background:rgba(26,115,232,.1);color:#60a5fa}
+.toggle-btn.active{background:rgba(26,115,232,.15);color:#60a5fa;border-color:rgba(26,115,232,.3)}
+.legend-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;justify-content:center}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:12px;color:#8892a8;cursor:pointer;padding:3px 8px;border-radius:6px;transition:all .2s}
+.legend-item:hover{background:rgba(255,255,255,.05)}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.table-wrap{overflow-x:auto;margin-top:16px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:10px 14px;text-align:right;border-bottom:1px solid rgba(255,255,255,.04)}
+th{color:#8892a8;font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.4px;background:rgba(255,255,255,.02)}
+td{color:#cbd5e1}
+th:first-child,td:first-child{text-align:left}
+tr:hover td{background:rgba(26,115,232,.04)}
+.rank-1{color:#fbbf24;font-weight:600}
+.rank-2{color:#94a3b8;font-weight:600}
+.rank-3{color:#cd7f32;font-weight:600}
+.total-row td{font-weight:600;color:#fff;border-top:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.02)}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Footfall Traffic <span class="badge">Per Rep</span></h1>
+  <p>Showroom visitor attendance by sales representative — Jan 2025 to Apr 2026</p>
+</div>
+<div class="container">
+
+  <!-- KPI Cards -->
+  <div class="kpi-row" id="kpis"></div>
+
+  <!-- Monthly Chart -->
+  <div class="section-title"><span class="dot"></span> Monthly Footfall by Rep</div>
+  <div class="chart-card">
+    <h3>Visitors attended per month (line chart)</h3>
+    <div class="toggle-row" id="monthToggle"></div>
+    <div class="chart-wrap"><canvas id="monthChart"></canvas></div>
+  </div>
+
+  <!-- Weekly Chart -->
+  <div class="section-title"><span class="dot"></span> Weekly Footfall by Rep (2026)</div>
+  <div class="chart-card">
+    <h3>Visitors attended per week (bar chart)</h3>
+    <div class="toggle-row" id="weekToggle"></div>
+    <div class="chart-wrap"><canvas id="weekChart"></canvas></div>
+  </div>
+
+  <!-- Monthly Table -->
+  <div class="section-title"><span class="dot"></span> Monthly Breakdown Table</div>
+  <div class="chart-card">
+    <div class="table-wrap">
+      <table id="monthTable"></table>
+    </div>
+  </div>
+
+  <!-- Weekly Table -->
+  <div class="section-title"><span class="dot"></span> Weekly Breakdown Table (2026)</div>
+  <div class="chart-card">
+    <div class="table-wrap">
+      <table id="weekTable"></table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ─── DATA ───
+const REPS = ["Sena","Bener","Derin","Ceren","Idil","Banu","Elif","Zeynep"];
+const COLORS = ["#3b82f6","#f59e0b","#10b981","#ef4444","#8b5cf6","#ec4899","#06b6d4","#f97316"];
+
+const months = ["2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04"];
+const monthly = {"2025-01":{"Sena":34,"Bener":21,"Derin":11,"Ceren":29,"Idil":18,"Banu":10,"Elif":18,"Zeynep":14,"Total":352},"2025-02":{"Sena":20,"Bener":37,"Derin":26,"Ceren":28,"Idil":18,"Banu":16,"Elif":16,"Zeynep":16,"Total":346},"2025-03":{"Sena":40,"Bener":33,"Derin":29,"Ceren":23,"Idil":19,"Banu":21,"Elif":15,"Zeynep":12,"Total":384},"2025-04":{"Sena":36,"Bener":28,"Derin":40,"Ceren":26,"Idil":23,"Banu":14,"Elif":13,"Zeynep":7,"Total":396},"2025-05":{"Sena":45,"Bener":25,"Derin":40,"Ceren":32,"Idil":17,"Banu":10,"Elif":9,"Zeynep":13,"Total":365},"2025-06":{"Sena":39,"Bener":33,"Derin":25,"Ceren":20,"Idil":21,"Banu":13,"Elif":11,"Zeynep":11,"Total":302},"2025-07":{"Sena":35,"Bener":28,"Derin":27,"Ceren":10,"Idil":30,"Banu":4,"Elif":16,"Zeynep":9,"Total":310},"2025-08":{"Sena":29,"Bener":32,"Derin":27,"Ceren":22,"Idil":13,"Banu":18,"Elif":14,"Zeynep":13,"Total":353},"2025-09":{"Sena":48,"Bener":34,"Derin":31,"Ceren":26,"Idil":32,"Banu":24,"Elif":14,"Zeynep":11,"Total":406},"2025-10":{"Sena":31,"Bener":21,"Derin":26,"Ceren":10,"Idil":10,"Banu":12,"Elif":3,"Zeynep":8,"Total":245},"2025-11":{"Sena":42,"Bener":49,"Derin":43,"Ceren":40,"Idil":29,"Banu":25,"Elif":9,"Zeynep":11,"Total":485},"2025-12":{"Sena":59,"Bener":43,"Derin":38,"Ceren":29,"Idil":27,"Banu":25,"Elif":19,"Zeynep":17,"Total":481},"2026-01":{"Sena":35,"Bener":33,"Derin":33,"Ceren":15,"Idil":18,"Banu":33,"Elif":23,"Zeynep":15,"Total":414},"2026-02":{"Sena":34,"Bener":42,"Derin":34,"Ceren":25,"Idil":33,"Banu":31,"Elif":19,"Zeynep":15,"Total":503},"2026-03":{"Sena":36,"Bener":38,"Derin":37,"Ceren":29,"Idil":14,"Banu":16,"Elif":17,"Zeynep":19,"Total":459},"2026-04":{"Sena":13,"Bener":29,"Derin":16,"Ceren":14,"Idil":15,"Banu":4,"Elif":10,"Zeynep":4,"Total":253}};
+
+const weeks = ["2026-W01","2026-W02","2026-W03","2026-W04","2026-W05","2026-W06","2026-W07","2026-W08","2026-W09","2026-W10","2026-W11","2026-W12","2026-W13","2026-W14","2026-W15","2026-W16"];
+const weekly = {"2026-W01":{"Sena":2,"Bener":1,"Derin":4,"Ceren":0,"Idil":2,"Banu":1,"Elif":2,"Zeynep":0,"Total":22},"2026-W02":{"Sena":10,"Bener":9,"Derin":15,"Ceren":6,"Idil":5,"Banu":8,"Elif":4,"Zeynep":6,"Total":105},"2026-W03":{"Sena":4,"Bener":14,"Derin":6,"Ceren":2,"Idil":2,"Banu":15,"Elif":8,"Zeynep":3,"Total":101},"2026-W04":{"Sena":4,"Bener":7,"Derin":3,"Ceren":3,"Idil":5,"Banu":4,"Elif":3,"Zeynep":2,"Total":88},"2026-W05":{"Sena":15,"Bener":2,"Derin":5,"Ceren":4,"Idil":4,"Banu":5,"Elif":6,"Zeynep":4,"Total":98},"2026-W06":{"Sena":2,"Bener":8,"Derin":8,"Ceren":4,"Idil":4,"Banu":11,"Elif":1,"Zeynep":2,"Total":116},"2026-W07":{"Sena":15,"Bener":8,"Derin":9,"Ceren":9,"Idil":12,"Banu":8,"Elif":7,"Zeynep":6,"Total":126},"2026-W08":{"Sena":7,"Bener":18,"Derin":10,"Ceren":3,"Idil":8,"Banu":8,"Elif":4,"Zeynep":1,"Total":122},"2026-W09":{"Sena":10,"Bener":8,"Derin":7,"Ceren":9,"Idil":9,"Banu":4,"Elif":7,"Zeynep":6,"Total":139},"2026-W10":{"Sena":8,"Bener":11,"Derin":14,"Ceren":11,"Idil":10,"Banu":2,"Elif":6,"Zeynep":3,"Total":117},"2026-W11":{"Sena":8,"Bener":6,"Derin":10,"Ceren":4,"Idil":1,"Banu":5,"Elif":6,"Zeynep":6,"Total":122},"2026-W12":{"Sena":4,"Bener":4,"Derin":0,"Ceren":3,"Idil":2,"Banu":2,"Elif":5,"Zeynep":3,"Total":46},"2026-W13":{"Sena":12,"Bener":13,"Derin":9,"Ceren":9,"Idil":1,"Banu":7,"Elif":0,"Zeynep":7,"Total":145},"2026-W14":{"Sena":11,"Bener":9,"Derin":9,"Ceren":3,"Idil":9,"Banu":1,"Elif":6,"Zeynep":2,"Total":112},"2026-W15":{"Sena":2,"Bener":19,"Derin":4,"Ceren":10,"Idil":5,"Banu":1,"Elif":1,"Zeynep":1,"Total":94},"2026-W16":{"Sena":4,"Bener":5,"Derin":7,"Ceren":3,"Idil":1,"Banu":2,"Elif":3,"Zeynep":1,"Total":76}};
+
+// ─── KPIs ───
+const totalVisitors = Object.values(monthly).reduce((s,m)=>s+m.Total,0);
+const repTotals = REPS.map(r=>({name:r,total:Object.values(monthly).reduce((s,m)=>s+(m[r]||0),0)})).sort((a,b)=>b.total-a.total);
+const avgMonthly = Math.round(totalVisitors/months.length);
+const peakMonth = months.reduce((best,m)=>monthly[m].Total>monthly[best].Total?m:best,months[0]);
+const peakMonthLabel = new Date(peakMonth+'-01').toLocaleDateString('en',{month:'short',year:'numeric'});
+
+document.getElementById('kpis').innerHTML = `
+  <div class="kpi"><div class="label">Total Visitors</div><div class="value">${totalVisitors.toLocaleString()}</div><div class="sub">Jan 2025 – Apr 2026</div></div>
+  <div class="kpi"><div class="label">Avg / Month</div><div class="value">${avgMonthly}</div><div class="sub">across ${months.length} months</div></div>
+  <div class="kpi"><div class="label">Peak Month</div><div class="value">${peakMonthLabel}</div><div class="sub">${monthly[peakMonth].Total} visitors</div></div>
+  <div class="kpi"><div class="label">Top Rep</div><div class="value">${repTotals[0].name}</div><div class="sub">${repTotals[0].total} total visitors</div></div>
+`;
+
+// ─── HELPERS ───
+function monthLabel(m){const d=new Date(m+'-01');return d.toLocaleDateString('en',{month:'short',year:'2-digit'})}
+function weekLabel(w){return w.replace('2026-','')}
+
+// ─── MONTHLY LINE CHART ───
+const monthLabels = months.map(monthLabel);
+let monthVisibility = REPS.map(()=>true);
+
+const monthCtx = document.getElementById('monthChart').getContext('2d');
+const monthChartObj = new Chart(monthCtx, {
+  type:'line',
+  data:{
+    labels: monthLabels,
+    datasets: REPS.map((rep,i)=>({
+      label: rep,
+      data: months.map(m=>monthly[m][rep]||0),
+      borderColor: COLORS[i],
+      backgroundColor: COLORS[i]+'20',
+      borderWidth: 2.5,
+      pointRadius: 4,
+      pointHoverRadius: 7,
+      tension: 0.3,
+      fill: false
+    }))
+  },
+  options:{
+    responsive:true,
+    maintainAspectRatio:false,
+    plugins:{
+      legend:{display:false},
+      tooltip:{
+        mode:'index',
+        backgroundColor:'#1e293b',
+        titleColor:'#fff',
+        bodyColor:'#cbd5e1',
+        borderColor:'rgba(255,255,255,.1)',
+        borderWidth:1,
+        padding:12,
+        cornerRadius:8,
+        callbacks:{
+          footer:function(items){return 'Total: '+items.reduce((s,i)=>s+i.parsed.y,0)}
+        }
+      }
+    },
+    scales:{
+      x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#64748b',font:{size:11}}},
+      y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#64748b',font:{size:11}},beginAtZero:true}
+    },
+    interaction:{mode:'nearest',intersect:false}
+  }
+});
+
+// Toggle buttons for monthly
+const mToggle = document.getElementById('monthToggle');
+REPS.forEach((rep,i)=>{
+  const btn = document.createElement('button');
+  btn.className = 'toggle-btn active';
+  btn.innerHTML = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${COLORS[i]};margin-right:5px"></span>${rep}`;
+  btn.onclick = ()=>{
+    monthVisibility[i] = !monthVisibility[i];
+    monthChartObj.data.datasets[i].hidden = !monthVisibility[i];
+    monthChartObj.update();
+    btn.classList.toggle('active');
+  };
+  mToggle.appendChild(btn);
+});
+
+// ─── WEEKLY STACKED BAR CHART ───
+const weekLabels = weeks.map(weekLabel);
+let weekVisibility = REPS.map(()=>true);
+
+const weekCtx = document.getElementById('weekChart').getContext('2d');
+const weekChartObj = new Chart(weekCtx, {
+  type:'bar',
+  data:{
+    labels: weekLabels,
+    datasets: REPS.map((rep,i)=>({
+      label: rep,
+      data: weeks.map(w=>weekly[w][rep]||0),
+      backgroundColor: COLORS[i]+'cc',
+      borderColor: COLORS[i],
+      borderWidth: 1,
+      borderRadius: 3
+    }))
+  },
+  options:{
+    responsive:true,
+    maintainAspectRatio:false,
+    plugins:{
+      legend:{display:false},
+      tooltip:{
+        mode:'index',
+        backgroundColor:'#1e293b',
+        titleColor:'#fff',
+        bodyColor:'#cbd5e1',
+        borderColor:'rgba(255,255,255,.1)',
+        borderWidth:1,
+        padding:12,
+        cornerRadius:8,
+        callbacks:{
+          footer:function(items){return 'Total: '+items.reduce((s,i)=>s+i.parsed.y,0)}
+        }
+      }
+    },
+    scales:{
+      x:{stacked:true,grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#64748b',font:{size:11}}},
+      y:{stacked:true,grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#64748b',font:{size:11}},beginAtZero:true}
+    }
+  }
+});
+
+// Toggle buttons for weekly
+const wToggle = document.getElementById('weekToggle');
+REPS.forEach((rep,i)=>{
+  const btn = document.createElement('button');
+  btn.className = 'toggle-btn active';
+  btn.innerHTML = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${COLORS[i]};margin-right:5px"></span>${rep}`;
+  btn.onclick = ()=>{
+    weekVisibility[i] = !weekVisibility[i];
+    weekChartObj.data.datasets[i].hidden = !weekVisibility[i];
+    weekChartObj.update();
+    btn.classList.toggle('active');
+  };
+  wToggle.appendChild(btn);
+});
+
+// ─── MONTHLY TABLE ───
+(function(){
+  const t = document.getElementById('monthTable');
+  let html = '<thead><tr><th>Month</th>';
+  REPS.forEach(r=>{html+='<th>'+r+'</th>'});
+  html += '<th>Total</th></tr></thead><tbody>';
+  months.forEach(m=>{
+    const d = monthly[m];
+    const vals = REPS.map(r=>d[r]||0);
+    const sorted = [...vals].sort((a,b)=>b-a);
+    html += '<tr><td>'+monthLabel(m)+'</td>';
+    vals.forEach(v=>{
+      let cls = '';
+      if(v===sorted[0] && v>0) cls='rank-1';
+      else if(v===sorted[1] && v>0) cls='rank-2';
+      else if(v===sorted[2] && v>0) cls='rank-3';
+      html += '<td class="'+cls+'">'+v+'</td>';
+    });
+    html += '<td><strong>'+d.Total+'</strong></td></tr>';
+  });
+  // Totals row
+  html += '<tr class="total-row"><td>TOTAL</td>';
+  REPS.forEach(r=>{
+    const tot = months.reduce((s,m)=>s+(monthly[m][r]||0),0);
+    html += '<td>'+tot+'</td>';
+  });
+  html += '<td><strong>'+totalVisitors+'</strong></td></tr>';
+  html += '</tbody>';
+  t.innerHTML = html;
+})();
+
+// ─── WEEKLY TABLE ───
+(function(){
+  const t = document.getElementById('weekTable');
+  let html = '<thead><tr><th>Week</th>';
+  REPS.forEach(r=>{html+='<th>'+r+'</th>'});
+  html += '<th>Total</th></tr></thead><tbody>';
+  weeks.forEach(w=>{
+    const d = weekly[w];
+    const vals = REPS.map(r=>d[r]||0);
+    const sorted = [...vals].sort((a,b)=>b-a);
+    html += '<tr><td>'+weekLabel(w)+'</td>';
+    vals.forEach(v=>{
+      let cls = '';
+      if(v===sorted[0] && v>0) cls='rank-1';
+      else if(v===sorted[1] && v>0) cls='rank-2';
+      else if(v===sorted[2] && v>0) cls='rank-3';
+      html += '<td class="'+cls+'">'+v+'</td>';
+    });
+    html += '<td><strong>'+d.Total+'</strong></td></tr>';
+  });
+  // Totals row
+  const weekTotal = weeks.reduce((s,w)=>s+weekly[w].Total,0);
+  html += '<tr class="total-row"><td>TOTAL</td>';
+  REPS.forEach(r=>{
+    const tot = weeks.reduce((s,w)=>s+(weekly[w][r]||0),0);
+    html += '<td>'+tot+'</td>';
+  });
+  html += '<td><strong>'+weekTotal+'</strong></td></tr>';
+  html += '</tbody>';
+  t.innerHTML = html;
+})();
+</script>
+</body>
+</html>
