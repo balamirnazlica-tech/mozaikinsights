@@ -7,13 +7,20 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/style.css?v=12">
+<link rel="stylesheet" href="../assets/style.css?v=13">
 <script src="/assets/auth.js"></script>
 <style>
-.coming-soon-box{max-width:480px;margin:120px auto;text-align:center;padding:48px 32px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px}
-.coming-soon-box h2{font-size:1.5rem;font-weight:600;margin:0 0 12px;color:#fff}
-.coming-soon-box p{font-size:1rem;color:rgba(255,255,255,0.55);margin:0}
-.coming-soon-badge{display:inline-block;padding:4px 14px;border-radius:999px;font-size:.75rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;background:rgba(255,183,77,0.12);color:#ffb74d;margin-bottom:20px}
+.ops-grid{max-width:800px;margin:80px auto;padding:0 24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px}
+.ops-card{padding:36px 32px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;text-decoration:none;transition:all .2s ease}
+.ops-card:hover{background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.15);transform:translateY(-2px)}
+.ops-card h2{font-size:1.35rem;font-weight:600;margin:0 0 10px;color:#fff}
+.ops-card p{font-size:.95rem;color:rgba(255,255,255,0.55);margin:0 0 18px;line-height:1.5}
+.ops-badge{display:inline-block;padding:4px 14px;border-radius:999px;font-size:.75rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.ops-badge.live{background:rgba(76,175,80,0.12);color:#66bb6a}
+.ops-badge.active{background:rgba(66,165,245,0.12);color:#42a5f5}
+.ops-heading{max-width:800px;margin:60px auto 0;padding:0 24px}
+.ops-heading h1{font-size:1.75rem;font-weight:700;color:#fff;margin:0 0 8px}
+.ops-heading p{font-size:1rem;color:rgba(255,255,255,0.45);margin:0}
 </style>
 </head>
 <body class="viewer">
@@ -30,13 +37,23 @@
   </div>
 </nav>
 
-<main>
-  <div class="coming-soon-box">
-    <span class="coming-soon-badge">Coming Soon</span>
+<div class="ops-heading">
+  <h1>Operations Dashboards</h1>
+  <p>Real-time operational insights for Mozaik Design</p>
+</div>
+
+<div class="ops-grid">
+  <a class="ops-card" href="Mozaik_Inventory_Dashboard_2026.html">
+    <span class="ops-badge live">Live</span>
+    <h2>Inventory Dashboard</h2>
+    <p>Track stock levels, warehouse inventory, and product availability across all locations.</p>
+  </a>
+  <a class="ops-card" href="footfall.html">
+    <span class="ops-badge active">Active</span>
     <h2>Showroom Footfall</h2>
-    <p>Operations footfall data is being set up. This dashboard will be available once data collection begins.</p>
-  </div>
-</main>
+    <p>Monitor showroom visitor traffic with weekly and monthly breakdowns by representative.</p>
+  </a>
+</div>
 
 </body>
 </html>
