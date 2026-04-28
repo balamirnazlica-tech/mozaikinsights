@@ -35,11 +35,12 @@
 
 <script>
 const DASHBOARDS=[
-  {id:'sales',label:'Retail Sales',url:'./sales-dashboard.html'},
+  {id:'sales',label:'All Sales',url:'./sales-dashboard.html'},
+  {id:'retail',label:'Retail',url:'./sales-dashboard.html?dept=Retail'},
   {id:'efunnel',label:'Enterprise Sales',url:'./Enterprise_Sales_Dashboard.html'},
   {id:'footfall',label:'Footfall Traffic',url:'./footfall/'},
-      {id:'ffreps',label:'Footfall Per Rep',url:'./footfall/footfall-reps.html'},
-  {id:'guide',label:'Leadership Guide',url:'./leadership-guide.html',red:true}
+  {id:'ffreps',label:'Footfall Per Rep',url:'./footfall/per-rep.html'},
+  {id:'guide',label:'Leadership Guide',url:'./leadership-guide.html',class:'red-tab'}
 ];
 const frame=document.getElementById('frame'),tabs=document.getElementById('tabs');
 function activate(id){const d=DASHBOARDS.find(x=>x.id===id)||DASHBOARDS[0];frame.src=d.url;tabs.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.id===d.id))}
