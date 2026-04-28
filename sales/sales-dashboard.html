@@ -362,7 +362,7 @@ function renderReps(){
           <div class="text-xl font-bold text-teal-400">${(()=>{const ff=(selData.footfall||[]).reduce((a,b)=>a+b,0);const u=selData.units.reduce((a,b)=>a+b,0);return ff>0?(u/ff*100).toFixed(1)+'%':'—';})()}</div>
         </div>
       </div>
-      <div class="mt-4"><canvas id="repChart" height="160"></canvas><div class="text-[10px] text-gray-400 uppercase mt-3">Showroom Footfall</div><canvas id="repFootfallChart" height="100"></canvas></div>
+      <div class="mt-4"><canvas id="repChart" height="160"></canvas><div class="text-[10px] text-gray-400 uppercase mt-3">Showroom Footfall</div><div style="height:160px;position:relative"><canvas id="repFootfallChart"></canvas></div></div>
       `:`<div class="text-gray-500 text-sm text-center py-12">👈 Click a rep to see their details, monthly performance, and KPIs</div>`}
     </div>
   </div>`;
