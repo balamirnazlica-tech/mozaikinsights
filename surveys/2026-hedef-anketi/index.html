@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mozaik Design — 2026 Hedef Anketi Sonuçları</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #f8fafc; -webkit-text-size-adjust: 100%; }
+  .card { background: white; border-radius: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02); }
+  .kpi-card { transition: transform 0.15s ease; }
+  .kpi-card:hover { transform: translateY(-2px); }
+  .pulse-dot { animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .quote { border-left: 3px solid #cbd5e1; padding-left: 12px; font-style: italic; color: #475569; }
+  .tab-btn { transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
+  .tab-btn.active { background: #0f172a; color: white; }
+  .theme-bar { transition: width 1s ease-out; }
+  @media (max-width: 640px) {
+    h1 { font-size: 1.75rem !important; line-height: 1.2; }
+    h2 { font-size: 1.125rem !important; }
+    .text-3xl { font-size: 1.5rem !important; }
+    .text-4xl { font-size: 1.75rem !important; }
+    .kpi-card { padding: 1rem !important; }
+    .card { padding: 1rem !important; }
+    .tab-btn { font-size: 0.8rem; padding: 0.5rem 0.75rem; white-space: nowrap; }
+    .quote { font-size: 0.875rem; }
+    table { font-size: 0.75rem !important; }
+    table th, table td { padding: 0.5rem 0.4rem !important; }
+    canvas { max-height: 220px !important; }
+  }
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .tabs-wrap { display: flex; flex-wrap: wrap; gap: 0.5rem; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+  @media print {
+    body { background: white !important; }
+    .tabs-wrap, .pulse-dot, .no-print { display: none !important; }
+    .tab-content.hidden { display: block !important; }
+    .tab-content { page-break-inside: avoid; margin-bottom: 1rem; }
+    .card { box-shadow: none !important; border: 1px solid #e2e8f0 !important; page-break-inside: avoid; }
+    .kpi-card:hover { transform: none !important; }
+    h2, h3 { page-break-after: avoid; }
+    canvas { max-height: 280px !important; }
+    @page { margin: 14mm; size: A4; }
+  }
+</style>
+</head>
+<body class="text-slate-800">
+
+<div class="max-w-7xl mx-auto px-4 py-8">
+
+  <div class="mb-8">
+    <div class="flex items-center gap-3 mb-2">
+      <div class="w-2 h-2 bg-emerald-500 rounded-full pulse-dot"></div>
+      <span class="text-xs uppercase tracking-wider text-slate-500 font-semibold">Ekip İç Anketi · 6 Mayıs 2026</span>
+    </div>
+    <div class="flex items-start justify-between gap-4 flex-wrap">
+      <div>
+        <h1 class="text-4xl font-bold text-slate-900 mb-2">2026 Hedef Hizalanma Anketi</h1>
+        <p class="text-slate-600 text-lg">Mozaik Design ekibi, 2026 hedefinde nerede duruyor?</p>
+      </div>
+      <button onclick="window.print()" class="no-print bg-slate-900 hover:bg-slate-700 text-white text-sm font-medium px-4 py-2 rounded-lg flex items-center gap-2 transition-colors" title="Yazdır veya PDF olarak kaydet">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+        PDF İndir
+      </button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <div class="card kpi-card p-5">
+      <div class="text-xs text-slate-500 uppercase tracking-wider mb-1">Toplam Yanıt</div>
+      <div class="text-3xl font-bold text-slate-900">20</div>
+      <div class="text-xs text-emerald-600 mt-1">~67% katılım</div>
+    </div>
+    <div class="card kpi-card p-5">
+      <div class="text-xs text-slate-500 uppercase tracking-wider mb-1">Hizalanma Skoru</div>
+      <div class="text-3xl font-bold text-amber-600">2.9<span class="text-base text-slate-400">/5</span></div>
+      <div class="text-xs text-amber-600 mt-1">Orta noktanın altında</div>
+    </div>
+    <div class="card kpi-card p-5">
+      <div class="text-xs text-slate-500 uppercase tracking-wider mb-1">"Sistem" Diyenler</div>
+      <div class="text-3xl font-bold text-blue-600">50%</div>
+      <div class="text-xs text-blue-600 mt-1">10 / 20 yanıt</div>
+    </div>
+    <div class="card kpi-card p-5">
+      <div class="text-xs text-slate-500 uppercase tracking-wider mb-1">En Yüksek Varyans</div>
+      <div class="text-3xl font-bold text-rose-600">1–5</div>
+      <div class="text-xs text-rose-600 mt-1">Kurumsal: aynı ekip, zıt uçlar</div>
+    </div>
+  </div>
+
+  <div class="card p-6 mb-8 border-l-4 border-blue-500 bg-gradient-to-r from-blue-50 to-white">
+    <div class="text-xs uppercase tracking-wider text-blue-700 font-semibold mb-2">Asıl Bulgu</div>
+    <h2 class="text-xl font-bold text-slate-900 mb-2">Ekip kendini hizada hissetmiyor — ama aslında %50'si aynı şeyi söylüyor</h2>
+    <p class="text-slate-700 leading-relaxed">
+      Hizalanma skoru 2.9/5 — yani ekip kendini hizada hissetmiyor. Fakat cevapların içeriğine bakınca <strong>20 kişiden 10'u 2026 hedefini "sistem kurmak / sistemli çalışmak / kurumsallaşmak"</strong> olarak tanımlıyor. Asıl mesele hedef belirlemek değil, aynı kelimenin farklı yorumlarını <strong>tek bir cümlede netleştirmek</strong>.
+    </p>
+  </div>
+
+  <div class="tabs-wrap mb-6">
+    <button onclick="showTab('overview', this)" class="tab-btn active px-4 py-2 rounded-lg text-sm font-medium bg-slate-200 text-slate-700">Genel Bakış</button>
+    <button onclick="showTab('themes', this)" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-slate-200 text-slate-700">Temalar</button>
+    <button onclick="showTab('departments', this)" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-slate-200 text-slate-700">Departmanlar</button>
+    <button onclick="showTab('quotes', this)" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-slate-200 text-slate-700">Cevaplardan</button>
+    <button onclick="showTab('action', this)" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-slate-200 text-slate-700">Önerilen Adımlar</button>
+  </div>
+
+  <div id="tab-overview" class="tab-content">
+    <div class="grid md:grid-cols-2 gap-6 mb-6">
+      <div class="card p-6">
+        <h3 class="text-lg font-bold text-slate-900 mb-1">Hizalanma Skoru Dağılımı</h3>
+        <p class="text-sm text-slate-500 mb-4">"1 = Hiç hizada değiliz, 5 = Tamamen hizadayız"</p>
+        <canvas id="scoreChart" height="240"></canvas>
+      </div>
+      <div class="card p-6">
+        <h3 class="text-lg font-bold text-slate-900 mb-1">Departman Bazında Ortalama Skor</h3>
+        <p class="text-sm text-slate-500 mb-4">Hangi departman ne kadar hizada hissediyor</p>
+        <canvas id="deptChart" height="240"></canvas>
+      </div>
+    </div>
+    <div class="card p-6">
+      <h3 class="text-lg font-bold text-slate-900 mb-3">Kısa Yorumlar</h3>
+      <div class="grid md:grid-cols-3 gap-4 text-sm">
+        <div class="p-4 bg-emerald-50 rounded-lg">
+          <div class="font-semibold text-emerald-900 mb-1">İyi haber</div>
+          <p class="text-slate-700">%50 ekip aynı temayı söylüyor (sistem). Mevcut bir uzlaşma var, sadece görünmüyor.</p>
+        </div>
+        <div class="p-4 bg-amber-50 rounded-lg">
+          <div class="font-semibold text-amber-900 mb-1">Dikkat</div>
+          <p class="text-slate-700">Ortalama skor 2.9. %35 ekip (skor 1-2) açıkça hizasız hissediyor. Bunu görmezden gelemeyiz.</p>
+        </div>
+        <div class="p-4 bg-rose-50 rounded-lg">
+          <div class="font-semibold text-rose-900 mb-1">Acil</div>
+          <p class="text-slate-700">Kurumsal'da skor 1'den 5'e kadar — aynı ekip içinde zıt uçlar. Bu varyans, ortalamadan daha kritik.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-themes" class="tab-content hidden">
+    <div class="card p-6 mb-6">
+      <h3 class="text-lg font-bold text-slate-900 mb-1">2026 Hedefi Olarak Söylenen Temalar</h3>
+      <p class="text-sm text-slate-500 mb-6">Bir cevap birden fazla temaya girebilir</p>
+      <div class="space-y-5">
+        <div>
+          <div class="flex justify-between mb-1"><span class="font-semibold">🥇 Sistem / yapılanma / profesyonelleşme</span><span class="font-bold text-blue-600">50% (10/20)</span></div>
+          <div class="h-3 bg-slate-100 rounded-full overflow-hidden"><div class="theme-bar h-full bg-blue-500" style="width:50%"></div></div>
+          <p class="text-xs text-slate-500 mt-1">"sistem", "sistematik", "düzenli", "kurumsal", "sisteme oturtmak"</p>
+        </div>
+        <div>
+          <div class="flex justify-between mb-1"><span class="font-semibold">🥈 Satış büyümesi / ticari ölçek</span><span class="font-bold text-emerald-600">25% (5/20)</span></div>
+          <div class="h-3 bg-slate-100 rounded-full overflow-hidden"><div class="theme-bar h-full bg-emerald-500" style="width:25%"></div></div>
+          <p class="text-xs text-slate-500 mt-1">"satış makinesi", "satış hacmi", "yeni müşteriler", "kârlılık"</p>
+        </div>
+        <div>
+          <div class="flex justify-between mb-1"><span class="font-semibold">🥉 Ekip / motivasyon / kültür</span><span class="font-bold text-purple-600">25% (5/20)</span></div>
+          <div class="h-3 bg-slate-100 rounded-full overflow-hidden"><div class="theme-bar h-full bg-purple-500" style="width:25%"></div></div>
+          <p class="text-xs text-slate-500 mt-1">"motivasyon", "harmoni", "sorumluluk", "huzur"</p>
+        </div>
+        <div>
+          <div class="flex justify-between mb-1"><span class="font-semibold">Marka bilinirliği / görünürlük</span><span class="font-bold text-amber-600">20% (4/20)</span></div>
+          <div class="h-3 bg-slate-100 rounded-full overflow-hidden"><div class="theme-bar h-full bg-amber-500" style="width:20%"></div></div>
+          <p class="text-xs text-slate-500 mt-1">"marka bilinirliği", "tanınırlık", "görünür"</p>
+        </div>
+        <div>
+          <div class="flex justify-between mb-1"><span class="font-semibold">Müşteri memnuniyeti</span><span class="font-bold text-rose-600">20% (4/20)</span></div>
+          <div class="h-3 bg-slate-100 rounded-full overflow-hidden"><div class="theme-bar h-full bg-rose-500" style="width:20%"></div></div>
+          <p class="text-xs text-slate-500 mt-1">"0 şikayet", "müşteri memnuniyeti", "müşteri talepleri"</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card p-6 border-l-4 border-amber-500 bg-amber-50">
+      <h3 class="text-lg font-bold text-slate-900 mb-2">"Sistem" 4 farklı şey anlamına geliyor</h3>
+      <p class="text-slate-700 mb-4">Kelime aynı, anlam farklı. Hizasızlık hissinin asıl kaynağı bu.</p>
+      <div class="grid md:grid-cols-2 gap-3 text-sm">
+        <div class="p-3 bg-white rounded-lg border border-amber-200"><span class="font-semibold text-amber-900">Mağaza için:</span> görev tanımı netliği</div>
+        <div class="p-3 bg-white rounded-lg border border-amber-200"><span class="font-semibold text-amber-900">Kurumsal için:</span> süreç ve CRM</div>
+        <div class="p-3 bg-white rounded-lg border border-amber-200"><span class="font-semibold text-amber-900">Depo için:</span> personel ve araç sayısı</div>
+        <div class="p-3 bg-white rounded-lg border border-amber-200"><span class="font-semibold text-amber-900">Marketing için:</span> satış makinesi altyapısı</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-departments" class="tab-content hidden">
+    <div class="card p-6 mb-6">
+      <h3 class="text-lg font-bold text-slate-900 mb-1">Departmanlar — Hizalanma & Sinyal</h3>
+      <p class="text-sm text-slate-500 mb-4">Kontrakt + Enterprise + Contract-Lighting + Lighting (Aydınlatma) birleştirilmiş Kurumsal olarak sayıldı.</p>
+      <div class="table-wrap">
+        <table class="w-full text-sm min-w-[640px]">
+          <thead>
+            <tr class="border-b border-slate-200 text-left text-slate-500 text-xs uppercase tracking-wider">
+              <th class="py-3">Departman</th>
+              <th class="py-3 text-center">Yanıt</th>
+              <th class="py-3 text-center">Ort. Skor</th>
+              <th class="py-3 text-center">Skor Aralığı</th>
+              <th class="py-3">Sinyal</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr><td class="py-3 font-medium">Marketing</td><td class="text-center">1</td><td class="text-center"><span class="px-2 py-1 bg-emerald-100 text-emerald-800 rounded font-semibold">4.0</span></td><td class="text-center text-slate-500">4</td><td class="text-slate-600">Tek yanıt, yüksek</td></tr>
+            <tr><td class="py-3 font-medium">Retail / Mağaza</td><td class="text-center font-bold">6</td><td class="text-center"><span class="px-2 py-1 bg-emerald-100 text-emerald-800 rounded font-semibold">3.5</span></td><td class="text-center text-slate-500">2–5</td><td class="text-slate-600">En hizada hisseden büyük grup</td></tr>
+            <tr class="bg-rose-50"><td class="py-3 font-medium">Kurumsal (birleşik)</td><td class="text-center font-bold">6</td><td class="text-center"><span class="px-2 py-1 bg-amber-100 text-amber-800 rounded font-semibold">2.83</span></td><td class="text-center font-bold text-rose-700">1–5</td><td class="text-slate-600">⚠️ Aynı büyüklük, çok daha düşük hizalanma</td></tr>
+            <tr><td class="py-3 font-medium">Satış (genel)</td><td class="text-center">3</td><td class="text-center"><span class="px-2 py-1 bg-amber-100 text-amber-800 rounded font-semibold">2.67</span></td><td class="text-center text-slate-500">2–3</td><td class="text-slate-600">Hizasızlık sinyali</td></tr>
+            <tr><td class="py-3 font-medium">Belirtmemiş</td><td class="text-center">2</td><td class="text-center"><span class="px-2 py-1 bg-amber-100 text-amber-800 rounded font-semibold">2.5</span></td><td class="text-center text-slate-500">2–3</td><td class="text-slate-600">—</td></tr>
+            <tr class="bg-rose-50"><td class="py-3 font-medium">Finans</td><td class="text-center">1</td><td class="text-center"><span class="px-2 py-1 bg-rose-100 text-rose-800 rounded font-semibold">2.0</span></td><td class="text-center text-slate-500">2</td><td class="text-slate-600">"Mutluluk / Huzur" — 1:1 gerekli</td></tr>
+            <tr class="bg-rose-50"><td class="py-3 font-medium">Depo & Sevkiyat</td><td class="text-center">1</td><td class="text-center"><span class="px-2 py-1 bg-rose-100 text-rose-800 rounded font-semibold">1.0</span></td><td class="text-center text-slate-500">1</td><td class="text-slate-600">Operasyonel kapasite eksik</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-xs text-slate-500 mt-4 italic">Retail ve Kurumsal aynı büyüklükte (6'şar yanıt) ama Retail 3.5'te rahat, Kurumsal 2.83'te dağınık. Aynı insan sayısı, çok farklı tablo.</p>
+    </div>
+
+    <div class="card p-6 border-l-4 border-rose-500 bg-rose-50">
+      <h3 class="text-lg font-bold text-slate-900 mb-2">Kurumsal — Asıl hikâye</h3>
+      <p class="text-slate-700 mb-3">Kurumsal 6 yanıtla Retail ile birlikte en kalabalık grup ve şu skorları verdi:</p>
+      <div class="flex flex-wrap gap-2 sm:gap-3 mb-4 text-xl sm:text-2xl font-bold">
+        <span class="px-3 sm:px-4 py-2 bg-emerald-200 text-emerald-900 rounded">5</span>
+        <span class="px-3 sm:px-4 py-2 bg-amber-200 text-amber-900 rounded">3</span>
+        <span class="px-3 sm:px-4 py-2 bg-amber-200 text-amber-900 rounded">3</span>
+        <span class="px-3 sm:px-4 py-2 bg-amber-200 text-amber-900 rounded">3</span>
+        <span class="px-3 sm:px-4 py-2 bg-rose-200 text-rose-900 rounded">2</span>
+        <span class="px-3 sm:px-4 py-2 bg-rose-300 text-rose-900 rounded">1</span>
+      </div>
+      <p class="text-slate-700 mb-2">Ortalama 2.83 — ama gerçek sinyal <strong>varyans + gri bölge</strong>. Bir kişi "tam hizadayız" (5), bir kişi "hiç hizada değiliz" (1), <strong>üç kişi orta nokta (3)</strong> — yani ekibin yarısı "fena değil ama emin değilim" diyor.</p>
+      <p class="text-slate-700 text-sm"><strong>Toplantıda sor:</strong> "5 verenler ne görüyor? 3 verenler ne yarımsa eksik kalıyor? 1 verenler ne göremiyor?" — bu üç katmanı kapatmak alignment'ın anahtarı.</p>
+    </div>
+  </div>
+
+  <div id="tab-quotes" class="tab-content hidden">
+    <div class="grid md:grid-cols-2 gap-4">
+      <div class="card p-5">
+        <div class="text-xs uppercase tracking-wider text-blue-700 font-semibold mb-2">Sistem / Yapılanma</div>
+        <div class="space-y-3">
+          <p class="quote">"Yıllardır süregelen satış stratejisini bir sisteme oturtmak"</p>
+          <p class="quote">"Kaosu çözmek için bir sistem getirmek!"</p>
+          <p class="quote">"Sistematik, daha görünür bir şirket olmak"</p>
+          <p class="quote">"Çalışma düzeni sağlanıp, sisteme girmek"</p>
+          <p class="quote">"Her şeyin daha sistemli, daha profesyonel bir Mozaik"</p>
+        </div>
+      </div>
+      <div class="card p-5">
+        <div class="text-xs uppercase tracking-wider text-emerald-700 font-semibold mb-2">Satış / Büyüme</div>
+        <div class="space-y-3">
+          <p class="quote">"Organizasyonu yeniden yapılandırarak bir satış makinesi yaratmak"</p>
+          <p class="quote">"Yeni müşterilere ulaşmak ve satış hedefimizi yükseltmek"</p>
+          <p class="quote">"Artan satışlarımızı büyüterek devam etmek (kafalar yanmadan)"</p>
+          <p class="quote">"Satış hacmini ve karlılığı artırmak"</p>
+        </div>
+      </div>
+      <div class="card p-5">
+        <div class="text-xs uppercase tracking-wider text-purple-700 font-semibold mb-2">Ekip / Motivasyon</div>
+        <div class="space-y-3">
+          <p class="quote">"Bilgili, İlgili, Canlı bir ekip ile daha profesyonel olmak"</p>
+          <p class="quote">"Mozaik ekibinin yüksek motivasyonu ile müşteri memnuniyetini yükseltmek"</p>
+          <p class="quote">"Ön cephe ile arka cephenin harmonik çalışabilmesi"</p>
+          <p class="quote">"Ekibin sorumluluk sahibi olması"</p>
+        </div>
+      </div>
+      <div class="card p-5 border-l-4 border-amber-400">
+        <div class="text-xs uppercase tracking-wider text-amber-700 font-semibold mb-2">Dikkat — Sinyal Cevaplar</div>
+        <div class="space-y-3">
+          <div>
+            <p class="quote">"MUTLULUK / HUZUR"</p>
+            <p class="text-xs text-slate-500 mt-1">Finans · Skor 2 — strateji yerine insani ihtiyaç</p>
+          </div>
+          <div>
+            <p class="quote">"Yeterli eleman yok. Yeterli araç yok. Sorumluluk sahibi olunması..."</p>
+            <p class="text-xs text-slate-500 mt-1">Depo · Skor 1 — kapasite eksik, hedef konuşacak halde değil</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-action" class="tab-content hidden">
+    <div class="card p-6 mb-6 border-l-4 border-blue-500">
+      <div class="text-xs uppercase tracking-wider text-blue-700 font-semibold mb-2">Öneri 1 · 2 hafta içinde</div>
+      <h3 class="text-xl font-bold text-slate-900 mb-3">"Sistem" tanımını tek cümleye indir</h3>
+      <p class="text-slate-700 mb-4">Ekip "sistem" diyor ama 4 farklı şey kastediyor. Tek bir cümle paylaşıldığında, herkes aynı şeyi anladığında 2.9 puan kendiliğinden 3.5+ olur. 20 yanıttan damıtılmış öneri:</p>
+      <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+        <p class="text-slate-900 font-medium italic">"2026'da Mozaik'in hedefi, satış stratejisini sisteme oturtarak — ekipler arası net görev tanımları, müşteri takip altyapısı ve marka bilinirliği ile — kontrollü ve sürdürülebilir büyüme."</p>
+      </div>
+      <p class="text-xs text-slate-500 mt-3">Bu cümle 20 yanıttan 13'ünü doğrudan kapsıyor (Sistem + Satış + Marka temalarının birleşim kümesi).</p>
+    </div>
+
+    <div class="card p-6 mb-6 border-l-4 border-rose-500">
+      <div class="text-xs uppercase tracking-wider text-rose-700 font-semibold mb-2">Öneri 2 · Bu hafta</div>
+      <h3 class="text-xl font-bold text-slate-900 mb-3">İki kritik birebir görüşme</h3>
+      <ul class="space-y-3 text-slate-700">
+        <li class="flex gap-3">
+          <span class="text-rose-500 font-bold">•</span>
+          <div><strong>Kurumsal ekibi (6 kişi):</strong> Skor 2.83, gelirin önemli kısmı orada. Aynı ekipte 5 ve 1 yan yana. CRM/süreç sıkıntısı en sık geçen şikayet.</div>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-rose-500 font-bold">•</span>
+          <div><strong>Finans + Depo:</strong> "Mutluluk" ve "personel/araç eksik" cevapları stratejik değil — operasyonel/insani. Önce bu sinyalleri ciddiye al, sonra hedef konuş.</div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card p-6 border-l-4 border-emerald-500">
+      <div class="text-xs uppercase tracking-wider text-emerald-700 font-semibold mb-2">Öneri 3 · 1 ay içinde</div>
+      <h3 class="text-xl font-bold text-slate-900 mb-3">Sonuçları ekiple paylaş — söz tutuldu</h3>
+      <p class="text-slate-700 mb-3">Anketi gönderirken "ortak temaları sizinle paylaşacağız" demiştik. Ekibin <strong>"%50 zaten sistem diyor"</strong> sonucunu görmesi hizalanma hissini ciddi şekilde artırır. Skoru 6 ay sonra tekrar ölç.</p>
+      <div class="bg-emerald-50 p-3 rounded-lg text-sm text-emerald-900">
+        <strong>Baseline:</strong> 2.9 / 5 · Mayıs 2026 · n=20
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-8 pt-6 border-t border-slate-200 text-xs text-slate-500 text-center">
+    Mozaik Design İç Anket · Anonim · 6 Mayıs 2026
+  </div>
+
+</div>
+
+<script>
+new Chart(document.getElementById('scoreChart'), { type: 'bar', data: { labels: ['1 - Hiç hizada', '2', '3', '4', '5 - Tamamen hizada'], datasets: [{ data: [2, 5, 8, 3, 2], backgroundColor: ['#e11d48', '#f97316', '#f59e0b', '#84cc16', '#10b981'], borderRadius: 8 }] }, options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 2 }, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } } } });
+
+new Chart(document.getElementById('deptChart'), { type: 'bar', data: { labels: ['Depo (1)', 'Finans (1)', 'Belirtmemiş (2)', 'Satış (3)', 'Kurumsal (6)', 'Retail (6)', 'Marketing (1)'], datasets: [{ label: 'Ortalama Skor', data: [1.0, 2.0, 2.5, 2.67, 2.83, 3.5, 4.0], backgroundColor: function(ctx) { const v = ctx.raw; if (v <= 2) return '#e11d48'; if (v <= 3) return '#f59e0b'; return '#10b981'; }, borderRadius: 6 }] }, options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false }, tooltip: { callbacks: { afterLabel: function(ctx) { const ranges = ['Aralık: 1', 'Aralık: 2', 'Aralık: 2–3', 'Aralık: 2–3', 'Aralık: 1–5 ⚠️', 'Aralık: 2–5', 'Aralık: 4']; return ranges[ctx.dataIndex]; } } } }, scales: { x: { beginAtZero: true, max: 5, grid: { color: '#f1f5f9' } }, y: { grid: { display: false } } } } });
+
+function showTab(name, btn) { document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden')); document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active')); document.getElementById('tab-' + name).classList.remove('hidden'); if (btn) btn.classList.add('active'); if (btn && window.innerWidth < 640) btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }); }
+</script>
+
+</body>
+</html>
