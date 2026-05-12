@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Mozaik Insights — Sales Dashboard</title>
+<title>Luxury Furniture — Sales Dashboard</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
@@ -39,24 +39,7 @@ th,td{padding:10px 8px;font-size:13px;white-space:nowrap}
 }
 thead th{text-align:left;color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid #1f2a44}
 tbody td{border-bottom:1px solid #121c34}
-
-  .guide-toggle{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(211,47,47,.12),rgba(211,47,47,.08));border:1px solid rgba(211,47,47,.25);border-radius:12px;padding:12px 16px;cursor:pointer;width:100%;text-align:left;color:var(--ink);font-size:14px;font-weight:600;transition:background .2s;margin-bottom:16px}
-  .guide-toggle:hover{background:linear-gradient(135deg,rgba(211,47,47,.2),rgba(211,47,47,.14))}
-  .guide-toggle .arrow{transition:transform .25s}
-  .guide-toggle.open .arrow{transform:rotate(90deg)}
-  .badge{background:#d32f2f;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;text-transform:uppercase;letter-spacing:.06em}
-  .guide-toggle .hint{margin-left:auto;font-size:12px;color:var(--ink-dim);font-weight:400}
-  .guide-body{display:none;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:24px 28px;margin-bottom:20px;font-size:13px;line-height:1.7;color:var(--ink-dim)}
-  .guide-body.open{display:block}
-  .guide-body h2{font-size:15px;font-weight:600;margin:20px 0 8px;letter-spacing:.02em;text-transform:uppercase;color:var(--ink-dim)}
-  .guide-body h3{font-size:14px;font-weight:600;margin:0 0 8px;color:var(--ink)}
-  .guide-body .g-action{background:rgba(211,47,47,.08);border-left:3px solid #d32f2f;padding:8px 12px;border-radius:0 8px 8px 0;margin:8px 0 16px;font-size:13px}
-  .guide-body .g-action strong{color:#ef5350}
-  .guide-body .g-checklist{list-style:none;padding:0}
-  .guide-body .g-checklist li{padding:4px 0;border-bottom:1px solid var(--line)}
-  .guide-body .g-checklist li strong{color:var(--ink)}
 </style>
-<script src="/assets/auth.js"></script>
 </head>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
 <body class="p-3 md:p-6">
@@ -66,13 +49,13 @@ tbody td{border-bottom:1px solid #121c34}
       <div class="logo">MZ</div>
       <div>
         <div class="text-[10px] uppercase tracking-widest text-blue-400">Mozaik Design · Sales Platform</div>
-        <h1 class="text-2xl font-bold leading-tight">Mozaik Insights — Sales Dashboard</h1>
-        <p class="text-gray-500 text-xs">Jan 2025 – Mar 2026 · Live interactive analytics</p>
+        <h1 class="text-2xl font-bold leading-tight">Luxury Furniture — Sales Dashboard</h1>
+        <p class="text-gray-500 text-xs">Jan 2025 – Apr 2026 · Live interactive analytics</p>
       </div>
     </div>
     <div class="flex gap-2 items-center flex-wrap">
       <span class="text-xs text-green-400 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-400 pulse"></span>Live</span>
-      <select id="metricSel"><option value="revenue">Revenue (€)</option><option value="units">Units Sold</option></select>
+      <select id="metricSel"><option value="revenue">Revenue (₺)</option><option value="units">Units Sold</option></select>
       <select id="rangeSel">
         <option value="all">All Time (15 mo)</option>
         <option value="fy25">FY 2025</option>
@@ -83,50 +66,6 @@ tbody td{border-bottom:1px solid #121c34}
     </div>
   </header>
 
-
-
-  <button class="guide-toggle" onclick="this.classList.toggle('open');document.getElementById('guideBody').classList.toggle('open')">
-    <span class="arrow">▶</span>
-    <span>Dashboard Guide for Leadership</span>
-    <span class="badge">Head Walkthrough</span>
-    <span class="hint">Click to expand</span>
-  </button>
-
-  <div class="guide-body" id="guideBody">
-    <p>A tab-by-tab guide to reading this dashboard, designed for department heads. Use it to run weekly sales reviews and spot performance gaps quickly.</p>
-
-    <h2>Tab Overview</h2>
-    <h3>KPI Cards</h3>
-    <p>The five KPI cards show <strong>Total Revenue</strong> (€49.95M), <strong>Units Sold</strong> (2,554), <strong>Total Customers</strong> (1,733), <strong>Net New Customers</strong> (867), and <strong>Avg Order Value</strong> (€20k). Toggle between Revenue and Units Sold using the dropdown. Filter by time period: All Time, FY 2025, FY 2026 YTD, Q1 2026, or Last 6 months.</p>
-    <div class="g-action"><strong>Action:</strong> If Net New Customers drops below 50/month, escalate lead generation immediately.</div>
-
-    <h2>Tab Departments</h2>
-    <p>Department-level revenue breakdown. <strong>Retail</strong> leads at 54% (€26.98M), followed by <strong>Enterprise</strong> at 31% (€15.42M), <strong>Lighting</strong> at 15% (€7.29M), and <strong>Marketing</strong> at &lt;1%.</p>
-    <div class="g-action"><strong>Action:</strong> Retail carries the business. If any single department drops below 20% of its trailing 3-month average, flag for review.</div>
-
-    <h2>Tab Sales Reps</h2>
-    <p>Individual rep performance by revenue and order volume. <strong>Zeynep</strong> (Enterprise) leads revenue at €6.97M — 40% ahead of #2. <strong>Ceren M.</strong> (Marketing) leads order volume with 496 orders but ranks lower in revenue, signalling high-volume, lower-ticket deals.</p>
-    <div class="g-action"><strong>Action:</strong> Any rep with revenue below €2M over the period needs a pipeline review. Compare volume vs. value to identify reps who may need upsell coaching.</div>
-
-    <h2>Tab Customers</h2>
-    <p>Client-level data including order history and spend. Use this to identify top accounts and at-risk relationships where spend is declining.</p>
-    <div class="g-action"><strong>Action:</strong> Flag any top-20 customer with a quarter-over-quarter spend decline &gt;15%.</div>
-
-    <h2>Tab Deep Analysis</h2>
-    <p>Cross-cutting insights combining department, rep, and customer data. Use for strategic planning and board-level reporting.</p>
-    <div class="g-action"><strong>Action:</strong> Review monthly for trends. Bring the top 3 insights to the leadership meeting.</div>
-
-    <h2>Weekly Review Checklist for Heads</h2>
-    <ul class="g-checklist">
-      <li><strong>Department trends</strong> — compare each department to its trailing 3-month average; flag any &gt;10% drop</li>
-      <li><strong>Rep performance</strong> — identify bottom 2 reps by revenue; schedule coaching or pipeline reviews</li>
-      <li><strong>Top customers</strong> — verify top-10 accounts are on track; flag any with declining orders</li>
-      <li><strong>Volume vs. value</strong> — check if high-volume reps are leaving money on the table (low AOV)</li>
-      <li><strong>Net new customers</strong> — are we adding at least 50 new customers per month?</li>
-      <li><strong>Filters</strong> — toggle to Units Sold view to catch volume trends that revenue might mask</li>
-    </ul>
-  </div>
-
   <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-5" id="kpis"></div>
 
   <div class="flex gap-2 mb-5 overflow-x-auto pb-1" id="tabs">
@@ -135,24 +74,156 @@ tbody td{border-bottom:1px solid #121c34}
     <div class="tab" data-tab="reps">👤 Sales Reps</div>
     <div class="tab" data-tab="customers">🧑‍🤝‍🧑 Customers</div>
     <div class="tab" data-tab="analysis">🔍 Deep Analysis</div>
+    <div class="tab" data-tab="funnel">🎯 Enterprise Funnel</div>
+    <div class="tab" data-tab="partners">🤝 Partners</div>
   </div>
 
   <div id="panels"></div>
 
-  <footer class="text-center text-gray-600 text-xs mt-10 pb-4">Source: Sales Data (3).xlsx · Click any department, rep, or row for drill-down</footer>
+  <footer class="text-center text-gray-600 text-xs mt-10 pb-4">Source: Sales Data (1).xlsx + Enterprise Sales Funnel (WON) · Click any department, rep, or row for drill-down</footer>
 </div>
 
 <script>
-const DATA = {"months":["Jan 25","Feb 25","Mar 25","Apr 25","May 25","Jun 25","Jul 25","Aug 25","Sep 25","Oct 25","Nov 25","Dec 25","Jan 26","Feb 26","Mar 26"],"departments":{"Retail":{"revenue":[1452181,1508709,1190281,1868402,1807220,1485332,2203964,1395066,1979165,1754966,1576529,2068053,3179580,1790827,1724325],"units":[56,63,71,67,122,57,89,65,63,70,73,87,94,76,69],"customers":[54,50,69,49,69,62,62,62,74,60,69,73,58,48,74],"new":[30,23,32,20,33,31,32,31,40,27,24,26,21,15,20],"old":[24,27,37,29,36,31,30,31,34,33,45,47,37,33,54],"headcount":[8,8,8,8,7,7,7,7,7,7,7,7,7,7,7]},"Enterprise":{"revenue":[1459275,781163.93,732093,1166503,643089,473637,1981194,323951,313366,319627,672745,3048543.78,1322759,1436048,741488],"units":[22,18,24,23,24,17,28,15,15,18,23,27,29,21,27],"customers":[21,18,23,21,20,16,27,15,15,15,27,28,28,14,27],"new":[7,7,11,13,11,10,14,9,6,6,5,6,9,4,7],"old":[14,11,12,8,9,6,13,6,9,9,22,22,19,10,20],"headcount":[4,4,4,4,4,4,4,4,4,4,4,4,4,4,4]},"Lighting":{"revenue":[491879.34,790041.89,374298.77,427805.55,501227.45,439259.98,379764.73,813659.04,519257.15,407776.75,361735,548875.8,407393.5,426049.25,403508],"units":[25,22,28,31,45,40,34,27,43,58,46,79,60,58,58],"customers":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"new":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"old":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"headcount":[5,5,5,5,4,4,4,4,4,4,4,4,4,4,4]},"Marketing":{"revenue":[5437.6,11299.02222,9431.288889,11935.84444,11558.06667,5857.755556,15793.46667,6991.622222,8664.511111,12086.13333,10320,62043,26986,24868,35247],"units":[19,27,26,25,20,15,24,18,17,29,29,29,85,42,42],"customers":[19,27,26,25,20,15,24,18,17,29,29,85,75,38,38],"new":[3,18,21,18,13,6,15,13,7,22,16,67,62,28,28],"old":[10,5,3,7,3,3,12,1,1,0,12,18,13,10,10],"headcount":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]}},"reps":[{"name":"Banu","dept":"Retail","revenue":[275998,347957,320520,140258,447101,9956,143847,188529,99095,54039,20227,40250,332126,135106,148955],"units":[5,8,7,6,13,4,7,7,10,3,3,4,6,7,3],"stock":1006057,"order":1505016,"footfall":[14,22,26,22,15,16,9,29,29,16,30,32,43,43,29]},{"name":"İdil","dept":"Retail","revenue":[522966,304624,75429,156705,259843,408895,283717,169125,318317,383228,406592,419397,498432,480044,287100],"units":[20,17,11,6,11,12,8,13,12,8,11,6,12,15,9],"stock":1004225,"order":3639363,"footfall":[28,27,24,32,23,26,39,34,37,16,36,31,21,37,25]},{"name":"Sena","dept":"Retail","revenue":[60320,357261,176517,102906,245968,315728,218636,346359,924088,360096,348498,566363,373167,332320,250968],"units":[3,10,9,7,11,9,16,13,0,17,20,24,19,16,15],"stock":1276024,"order":3452203,"footfall":[39,30,56,44,51,46,51,36,52,38,47,67,45,46,45]},{"name":"Ceren","dept":"Retail","revenue":[136212,93099,22553,1010670,314717,341146,506888,350933,125485,480896,328400,251995,378677,262491,138953],"units":[9,5,3,7,8,4,4,5,5,8,3,9,9,8,9],"stock":476889,"order":4128024,"footfall":[39,33,29,36,37,29,19,26,29,17,46,36,23,36,39]},{"name":"Derin","dept":"Retail","revenue":[144936,79265,435502,255024,137107,234543,367933,115932,256340,255090,115599,343552,1081749,232218,126241],"units":[7,8,16,10,12,13,8,9,17,15,12,0,11,0,14],"stock":2288611,"order":1730857,"footfall":[16,38,35,50,47,31,40,36,38,27,48,48,43,43,47]},{"name":"Bener","dept":"Retail","revenue":[311631,322382,140879,136808,187451,165919,527731,218220,249626,158706,338578,334197,312593,74063,489349],"units":[11,8,12,7,13,9,15,16,17,11,14,15,19,8,0],"stock":1175104,"order":2303410,"footfall":[32,41,42,38,35,41,34,36,37,23,55,54,45,55,53]},{"name":"Betül","dept":"Retail","revenue":[118,4121,18881,66031,215033,9145,155212,5968,6214,62911,18635,112299,29777,99654,80455],"units":[1,7,13,24,54,6,31,2,2,8,10,29,18,22,19],"stock":153920,"order":684653,"footfall":[0,0,0,0,0,0,0,0,0,0,2,0,0,0,0]},{"name":"Aleyna","dept":"Retail","revenue":[0,0,0,0,0,0,0,0,0,0,0,19876,75876,119411,84181],"units":[0,0,0,0,0,0,0,0,0,0,0,4,2,3,4],"stock":87564,"order":125617,"footfall":[0,0,0,0,0,0,0,0,0,0,0,8,20,23,35]},{"name":"Simge","dept":"Retail","revenue":[0,0,0,0,0,0,0,0,0,0,0,0,97183,55520,118123],"units":[0,0,0,0,0,0,0,0,0,0,0,0,15,9,10],"stock":152703,"order":0,"footfall":[10,6,1,0,0,0,0,0,0,0,0,0,0,0,0]},{"name":"Burçin","dept":"Enterprise","revenue":[341978,375052.93,149700,227156,94553,77205,592301,4000,0,0,6555,2250667,33757,738038,44722],"units":[5,3,2,5,3,4,3,1,0,0,2,4,3,2,3],"stock":63771.8,"order":4478796.905,"footfall":[8,4,9,13,2,7,14,10,10,8,11,11,9,13,5]},{"name":"Zeynep","dept":"Enterprise","revenue":[1058109,169751,430168,524520,473116,286875,675992,91662,174298,16375,483057,579974.78,978556,586639,437563],"units":[9,5,11,12,10,7,6,4,4,4,9,8,11,8,8],"stock":354597,"order":6612103.78,"footfall":[16,18,14,11,17,12,15,14,11,10,12,17,21,19,23]},{"name":"Elif","dept":"Enterprise","revenue":[59188,186141,127005,391400,50454,97532,201538,108276,118695,199506,52825,168394,76850,34035,232370],"units":[8,6,6,6,7,3,6,5,5,7,3,8,7,4,9],"stock":757613,"order":1412468,"footfall":[23,19,17,18,10,15,24,18,15,3,9,20,25,21,18]},{"name":"İrem","dept":"Enterprise","revenue":[0,50219,25220,23427,24966,12025,511363,120013,20373,103746,130308,49508,233596,77336,26833],"units":[0,4,5,0,4,3,13,5,6,7,9,7,8,7,7],"stock":247815,"order":1143239,"footfall":[1,6,1,1,2,4,1,0,0,0,0,0,5,0,0]},{"name":"Biricik","dept":"Lighting","revenue":[296172.95,663026.74,217688.27,320731.3,305782.2,185328.23,145553.23,565084.96,207034.15,293202,151930,271854,242476,115012,245729],"units":[36,24,39,25,25,24,16,34,28,24,18,31,29,17,22],"stock":443342,"order":3537534.4499999997,"footfall":[26,24,23,30,21,19,14,40,25,22,26,26,20,21,27]},{"name":"Artun","dept":"Lighting","revenue":[152939.39,48249.15,114163.5,29917.25,61464.25,160052.75,59228.5,97094.08,116938,38971.75,103210,118260.8,88721.25,220009,80184],"units":[11,7,16,10,10,12,11,11,18,7,12,14,10,18,15],"stock":148800.5,"order":1260419.12,"footfall":[26,19,23,19,13,17,11,28,17,11,20,25,15,22,36]},{"name":"Ecem","dept":"Lighting","revenue":[22934,47549,39910,57487,81126,69172,110132,76688,164730,38798,66690,121793,40158,51272,0],"units":[6,10,11,12,22,18,17,9,17,10,11,25,9,7,0],"stock":320959,"order":666085,"footfall":[13,17,31,30,23,18,27,36,22,13,30,35,26,22,4]},{"name":"Beliz","dept":"Lighting","revenue":[19833,31217,2537,19670,52855,24707,64851,74792,30555,36805,39905,36968,36038.25,39756.25,77595],"units":[8,5,1,9,14,10,6,7,8,17,5,9,12,16,21],"stock":78858,"order":431631.75,"footfall":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},{"name":"Ceren M.","dept":"Marketing","revenue":[5437.6,11299.02222,9431.288889,11935.84444,11558.06667,5857.755556,15793.46667,6991.622222,8664.511111,12086.13333,10320,62043,26986,24868,35247],"units":[19,27,26,25,20,15,24,18,17,29,28,90,85,73,0],"stock":0,"order":0,"footfall":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}],"yearlyTotals":{"2015":13882589,"2016":7111065,"2017":10060317,"2018":9817554,"2019":8035913,"2020":12854873,"2021":11246016,"2022":15938774,"2023":19580773,"2024":28260753,"2025":38432055.471108004,"2026":11519078.75}};// URL param department filter
-(function(){var p=new URLSearchParams(window.location.search);var dept=p.get('dept');if(dept){DATA.reps=DATA.reps.filter(function(r){return r.dept===dept});var kept={};kept[dept]=DATA.departments[dept];DATA.departments=kept;document.title='Mozaik Insights \u2014 '+dept+' Sales';window.addEventListener('DOMContentLoaded',function(){var h1=document.querySelector('h1');if(h1)h1.textContent='Mozaik Insights \u2014 '+dept+' Sales';});}})();
+const DATA = {"months":["Jan 25","Feb 25","Mar 25","Apr 25","May 25","Jun 25","Jul 25","Aug 25","Sep 25","Oct 25","Nov 25","Dec 25","Jan 26","Feb 26","Mar 26"],"departments":{"Retail":{"revenue":[1452181.0,1508709.0,1190281.0,1868402.0,1807220.0,1485332.0,2203964.0,1395066.0,1979165.0,1754966.0,1576529.0,2068053.0,3179580.0,1790827.0,0],"units":[56.0,63.0,71.0,67.0,122.0,57.0,89.0,65.0,63.0,70.0,73.0,87.0,94.0,76.0,0],"customers":[54.0,50.0,69.0,49.0,69.0,62.0,62.0,62.0,74.0,60.0,69.0,73.0,58.0,48.0,0],"new":[30.0,23.0,32.0,20.0,33.0,31.0,32.0,31.0,40.0,27.0,24.0,26.0,21.0,15.0,0],"old":[24.0,27.0,37.0,29.0,36.0,31.0,30.0,31.0,34.0,33.0,45.0,47.0,37.0,33.0,0],"headcount":[8.0,8.0,8.0,8.0,7.0,7.0,7.0,7.0,7.0,7.0,7.0,7.0,7.0,7.0,0]},"Enterprise":{"revenue":[1459275.0,781163.93,732093.0,1166503.0,643089.0,473637.0,1981194.0,323951.0,313366.0,319627.0,672745.0,3048543.78,1322759.0,1436048.0,0],"units":[22.0,18.0,24.0,23.0,24.0,17.0,28.0,15.0,15.0,18.0,23.0,27.0,29.0,21.0,0],"customers":[21.0,18.0,23.0,21.0,20.0,16.0,27.0,15.0,15.0,15.0,27.0,28.0,28.0,14.0,0],"new":[7.0,7.0,11.0,13.0,11.0,10.0,14.0,9.0,6.0,6.0,5.0,6.0,9.0,4.0,0],"old":[14.0,11.0,12.0,8.0,9.0,6.0,13.0,6.0,9.0,9.0,22.0,22.0,19.0,10.0,0],"headcount":[4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,0]},"Lighting":{"revenue":[491879.34,790041.89,374298.77,427805.55,501227.45,439259.98,379764.73,813659.04,519257.15,407776.75,361735.0,548875.8,407393.5,426049.25,0],"units":[25.0,22.0,28.0,31.0,45.0,40.0,34.0,27.0,43.0,58.0,46.0,79.0,60.0,58.0,0],"customers":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"new":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"old":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"headcount":[5.0,5.0,5.0,5.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,0]},"Marketing":{"revenue":[5437.6,11299.02222,9431.288889,11935.84444,11558.06667,5857.755556,15793.46667,6991.622222,8664.511111,12086.13333,10320.0,62043.0,26986.0,24868.0,35247.0],"units":[19.0,27.0,26.0,25.0,20.0,15.0,24.0,18.0,17.0,29.0,29.0,29.0,85.0,42.0,49.0],"customers":[19.0,27.0,26.0,25.0,20.0,15.0,24.0,18.0,17.0,29.0,29.0,85.0,75.0,38.0,45.0],"new":[3.0,18.0,21.0,18.0,13.0,6.0,15.0,13.0,7.0,22.0,16.0,67.0,62.0,28.0,33.0],"old":[10.0,5.0,3.0,7.0,3.0,3.0,12.0,1.0,1.0,0.0,12.0,18.0,13.0,10.0,12.0],"headcount":[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0]}},"reps":[{"name":"Banu","dept":"Retail","revenue":[275998.0,347957.0,320520.0,140258.0,447101.0,9956.0,143847.0,188529.0,99095.0,54039.0,20227.0,40250.0,332126.0,135106.0,276134.0],"units":[5.0,8.0,7.0,6.0,13.0,4.0,7.0,7.0,10.0,3.0,3.0,4.0,6.0,7.0,0],"stock":1006057.0,"order":1505016.0},{"name":"\u0130dil","dept":"Retail","revenue":[522966.0,304624.0,75429.0,156705.0,259843.0,408895.0,283717.0,169125.0,318317.0,383228.0,406592.0,419397.0,498432.0,480044.0,276134.0],"units":[20.0,17.0,11.0,6.0,11.0,12.0,8.0,13.0,12.0,8.0,11.0,6.0,12.0,15.0,0],"stock":1004225.0,"order":3639363.0},{"name":"Sena","dept":"Retail","revenue":[60320.0,357261.0,176517.0,102906.0,245968.0,315728.0,218636.0,346359.0,924088.0,360096.0,348498.0,566363.0,373167.0,332320.0,276134.0],"units":[3.0,10.0,9.0,7.0,11.0,9.0,16.0,13.0,0.0,17.0,20.0,24.0,19.0,16.0,0],"stock":1276024.0,"order":3452203.0},{"name":"Ceren","dept":"Retail","revenue":[136212.0,93099.0,22553.0,1010670.0,314717.0,341146.0,506888.0,350933.0,125485.0,480896.0,328400.0,251995.0,378677.0,262491.0,276134.0],"units":[9.0,5.0,3.0,7.0,8.0,4.0,4.0,5.0,5.0,8.0,3.0,9.0,9.0,8.0,0],"stock":476889.0,"order":4128024.0},{"name":"Derin","dept":"Retail","revenue":[144936.0,79265.0,435502.0,255024.0,137107.0,234543.0,367933.0,115932.0,256340.0,255090.0,115599.0,343552.0,1081749.0,232218.0,276134.0],"units":[7.0,8.0,16.0,10.0,12.0,13.0,8.0,9.0,17.0,15.0,12.0,0.0,11.0,0,0],"stock":2288611.0,"order":1730857.0},{"name":"Bener","dept":"Retail","revenue":[311631.0,322382.0,140879.0,136808.0,187451.0,165919.0,527731.0,218220.0,249626.0,158706.0,338578.0,334197.0,312593.0,74063.0,276134.0],"units":[11.0,8.0,12.0,7.0,13.0,9.0,15.0,16.0,17.0,11.0,14.0,15.0,19.0,8.0,0],"stock":1175104.0,"order":2303410.0},{"name":"Bet\u00fcl","dept":"Retail","revenue":[118.0,4121.0,18881.0,66031.0,215033.0,9145.0,155212.0,5968.0,6214.0,62911.0,18635.0,112299.0,29777.0,99654.0,80455.0],"units":[1.0,7.0,13.0,24.0,54.0,6.0,31.0,2.0,2.0,8.0,10.0,29.0,18.0,22.0,23.0],"stock":153920.0,"order":684653.0},{"name":"Aleyna","dept":"Retail","revenue":[0,0,0,0,0,0,0,0,0,0,0,19876.0,75876.0,119411.0,276134.0],"units":[0,0,0,0,0,0,0,0,0,0,0,4.0,2.0,3.0,0],"stock":87564.0,"order":125617.0},{"name":"Simge","dept":"Retail","revenue":[0,0,0,0,0,0,0,0,0,0,0,0,97183.0,55520.0,276134.0],"units":[0,0,0,0,0,0,0,0,0,0,0,0,15.0,9.0,0],"stock":152703.0,"order":0},{"name":"Bur\u00e7in","dept":"Enterprise","revenue":[341978.0,375052.93,149700.0,227156.0,94553.0,77205.0,592301.0,4000.0,0.0,0.0,6555.0,2250667.0,33757.0,738038.0,44722.0],"units":[5.0,3.0,2.0,5.0,3.0,4.0,3.0,1.0,0.0,0.0,2.0,4.0,3.0,2.0,3.0],"stock":63771.8,"order":4478796.905},{"name":"Zeynep","dept":"Enterprise","revenue":[1058109.0,169751.0,430168.0,524520.0,473116.0,286875.0,675992.0,91662.0,174298.0,16375.0,483057.0,579974.78,978556.0,586639.0,0],"units":[9.0,5.0,11.0,12.0,10.0,7.0,6.0,4.0,4.0,4.0,9.0,8.0,11.0,8.0,0],"stock":354597.0,"order":6612103.78},{"name":"Elif","dept":"Enterprise","revenue":[59188.0,186141.0,127005.0,391400.0,50454.0,97532.0,201538.0,108276.0,118695.0,199506.0,52825.0,168394.0,76850.0,34035.0,232370.0],"units":[8.0,6.0,6.0,6.0,7.0,3.0,6.0,5.0,5.0,7.0,3.0,8.0,7.0,4.0,9.0],"stock":757613.0,"order":1412468.0},{"name":"\u0130rem","dept":"Enterprise","revenue":[0.0,50219.0,25220.0,23427.0,24966.0,12025.0,511363.0,120013.0,20373.0,103746.0,130308.0,49508.0,233596.0,77336.0,0],"units":[0,4.0,5.0,0,4.0,3.0,13.0,5.0,6.0,7.0,9.0,7.0,8.0,7.0,0],"stock":247815.0,"order":1143239.0},{"name":"Biricik","dept":"Lighting","revenue":[296172.95,663026.74,217688.27,320731.3,305782.2,185328.23,145553.23,565084.96,207034.15,293202.0,151930.0,271854.0,242476.0,115012.0,0],"units":[36.0,24.0,39.0,25.0,25.0,24.0,16.0,34.0,28.0,24.0,18.0,31.0,29.0,17.0,0],"stock":443342.0,"order":3537534.4499999997},{"name":"Artun","dept":"Lighting","revenue":[152939.39,48249.15,114163.5,29917.25,61464.25,160052.75,59228.5,97094.08,116938.0,38971.75,103210.0,118260.8,88721.25,220009.0,0],"units":[11.0,7.0,16.0,10.0,10.0,12.0,11.0,11.0,18.0,7.0,12.0,14.0,10.0,18.0,0],"stock":148800.5,"order":1260419.12},{"name":"Ecem","dept":"Lighting","revenue":[22934.0,47549.0,39910.0,57487.0,81126.0,69172.0,110132.0,76688.0,164730.0,38798.0,66690.0,121793.0,40158.0,51272.0,0],"units":[6.0,10.0,11.0,12.0,22.0,18.0,17.0,9.0,17.0,10.0,11.0,25.0,9.0,7.0,0],"stock":320959.0,"order":666085.0},{"name":"Beliz","dept":"Lighting","revenue":[19833.0,31217.0,2537.0,19670.0,52855.0,24707.0,64851.0,74792.0,30555.0,36805.0,39905.0,36968.0,36038.25,39756.25,0],"units":[8.0,5.0,1.0,9.0,14.0,10.0,6.0,7.0,8.0,17.0,5.0,9.0,12.0,16.0,0],"stock":78858.0,"order":431631.75},{"name":"Ceren M.","dept":"Marketing","revenue":[5437.6,11299.02222,9431.288889,11935.84444,11558.06667,5857.755556,15793.46667,6991.622222,8664.511111,12086.13333,10320.0,62043.0,26986.0,24868.0,35247.0],"units":[19.0,27.0,26.0,25.0,20.0,15.0,24.0,18.0,17.0,29.0,28.0,90.0,85.0,73.0,0],"stock":0,"order":0}],"yearlyTotals":{"2015":13882589.0,"2016":7111065.0,"2017":10060317.0,"2018":9817554.0,"2019":8035913.0,"2020":12854873.0,"2021":11246016.0,"2022":15938774.0,"2023":19580773.0,"2024":28260753.0,"2025":38432055.471108004,"2026":8649757.75}};
+// Partner commission data — Danışman ödemeleri (Jan 2025 – May 2026) · Total ₺33.76M across 80 partners / 138 payments
+const PARTNERS_RAW = [
+["14.01.2026","1217 Mimarlık",339225.30],["17.03.2026","1217 Mimarlık",580833.95],
+["05.03.2025","1251 Mimarlık (Cemali Oğul Burnaz)",235553.00],
+["15.01.2025","36. Paralel Mimarlık",22972.89],["05.03.2025","36. Paralel Mimarlık",115161.00],
+["15.05.2025","AAD Tasarım Mimarlık A.Ş.",62787.62],["26.06.2025","AAD Tasarım Mimarlık A.Ş.",683390.28],["23.09.2025","AAD Tasarım Mimarlık A.Ş.",68270.16],["26.12.2025","AAD Tasarım Mimarlık A.Ş.",320469.46],
+["08.05.2025","AB Dizayn Takımı (H. A. Burnaz)",17509.96],
+["11.04.2025","Ada Larin Mimarlık",21149.03],["05.09.2025","Ada Larin Mimarlık",8321.45],["11.11.2025","Ada Larin Mimarlık",4007.55],
+["03.02.2026","Akkoca Mimarlık / Ekin Evi",155666.67],["20.02.2026","Akkoca Mimarlık / Ekin Evi",31163.43],
+["19.01.2026","Ali Kaan Maraş",79449.00],
+["28.04.2026","Archimate Mimarlık (Ebru Bilgili)",65960.00],
+["29.07.2025","Arketipo Design",331367.40],
+["16.10.2025","Artı İç Mimari (Bülent Şahhüseyinoğlu)",169683.33],
+["02.04.2026","Atölye 5 Mimarlık (Filiz Atay)",149331.13],
+["12.08.2025","Aysun Doğan",15918.10],["27.08.2025","Aysun Doğan",100206.97],
+["16.03.2026","Azru Çetintaş",377381.71],
+["25.09.2025","B Square Mimarlık",607704.62],
+["15.09.2025","Bonbon Çocuk Tekstil",260474.29],
+["09.01.2025","Cisim İç Mimarlık",74427.40],
+["17.02.2025","CT Mimarlık",287215.35],
+["25.03.2025","Dizayn Tekstil",87337.23],["16.10.2025","Dizayn Tekstil (Altunç Kumova)",430557.28],["20.11.2025","Dizayn Tekstil",26038.68],["20.11.2025","Dizayn Tekstil",266236.33],["20.11.2025","Dizayn Tekstil",27512.07],["23.01.2026","Dizayn Tekstil",389605.38],
+["04.07.2025","Eke Mimarlık",130403.93],
+["17.10.2025","Emre Tülle / Seda Tarım",51867.11],
+["12.05.2025","Erdoğan Demir",7139.88],
+["08.12.2025","Erginoğlu Çalışlar Mimarlık",36726.04],
+["27.06.2025","Esra Kazmirci",494166.67],["23.01.2026","Esra Kazmirci",112210.83],["29.01.2026","Esra Kazmirci",374850.00],
+["30.06.2025","Folistudio Mimarlık",54632.21],["01.12.2025","Folistudio Mimarlık",616990.00],["26.02.2026","Folistudio Mimarlık",235444.28],
+["05.02.2025","Geoid Konsept Danışmanlık",556250.00],
+["04.07.2025","Geostudio Tasarım Danışmanlık",3800.00],
+["11.08.2025","Gosso Gıda Ürünleri",196857.50],
+["14.05.2025","Habif Mimarlık",629497.50],["20.11.2025","Habif Mimarlık",478117.58],
+["29.01.2025","Hasay Yapı Sistemleri",35111.19],
+["18.03.2025","I Am Associates İstanbul",52111.02],
+["31.03.2026","IOS Mimarlık (Irmak Özay)",102176.94],
+["02.05.2025","İlkay Ala Sirkeci",85550.39],["08.07.2025","İlkay Ala Sirkeci",13129.69],["23.09.2025","İlkay Ala Sirkeci",278289.83],["28.01.2026","İlkay Ala Sirkeci",134213.28],
+["08.10.2025","İmrahor Mimarlık",136570.01],
+["18.07.2025","Kitchenist Tasarım",30795.00],
+["17.03.2025","Kocacıklıoğlu Mimarlık",1038309.17],["16.05.2025","Kocacıklıoğlu Mimarlık",771520.83],["05.02.2026","Kocacıklıoğlu Mimarlık",335442.50],
+["11.08.2025","Kontra Mimarlık Danışmanlık",977129.32],
+["29.01.2026","Kreatif Mimarlık",385240.85],
+["17.06.2025","KUD İç Mimarlık",251185.00],
+["21.07.2025","Kutlutan Fişekçi",310951.30],
+["13.06.2025","KY Mimarlık",279435.57],["10.07.2025","KY Mimarlık",389245.65],["23.10.2025","KY Mimarlık",50260.88],["23.01.2026","KY Mimarlık",2134892.14],["23.01.2026","KY Mimarlık",259321.34],["29.01.2026","KY Mimarlık",118743.32],["29.01.2026","KY Mimarlık",45307.23],["29.01.2026","KY Mimarlık",155184.81],["10.02.2026","KY Mimarlık",2771144.74],
+["08.07.2025","Laxmi Interiors",27536.40],
+["17.12.2025","Leman Ecem Tulunay",128546.43],["16.02.2026","Leman Ecem Tulunay",28994.96],
+["02.05.2025","Melike Övet İç Mimarlık",5072.69],
+["01.12.2025","Melis Kebudi",1289.52],["01.12.2025","Melis Kebudi",6447.61],
+["01.10.2025","Merve Saruhan İçten",27074.78],
+["04.12.2025","Meziyet De Andria / R.C. Arsay",125277.87],
+["28.03.2025","Mind Mimarlık",18960.28],
+["05.05.2025","NAMD Mimarlık",554649.85],["04.06.2025","NAMD Mimarlık",97759.39],["14.11.2025","NAMD Mimarlık",25383.86],
+["13.11.2025","Ofisistanbul Tasarım",1452.20],
+["11.12.2025","OSO Mimarlık Danışmanlık",63613.91],
+["22.04.2025","Otocode Güvenlik",193390.60],["22.04.2025","Otocode Güvenlik",68224.90],
+["06.05.2025","Park Mimarlık",58475.00],
+["17.01.2025","Pekmez & Boz Mimarlık",86930.29],
+["10.12.2025","Pınar Budak / Design Lab",43615.00],
+["01.07.2025","Pınar Özcan Işık",52668.30],
+["07.04.2025","Rafine Mimarlık",126404.77],["05.12.2025","Rafine Mimarlık",137039.47],
+["15.04.2026","Rees Evi Mesa Bodrum",33576.72],
+["14.01.2025","Rezzan Benardete İç Mimari",91388.45],["14.01.2025","Rezzan Benardete İç Mimari",55813.24],["14.01.2025","Rezzan Benardete İç Mimari",66869.60],["09.04.2025","Rezzan Benardete İç Mimari",10044.91],["14.04.2025","Rezzan Benardete İç Mimari",80929.05],["01.10.2025","Rezzan Benardete İç Mimari",490203.88],["16.02.2026","Rezzan Benardete İç Mimari",922975.16],["21.04.2026","Rezzan Benardete İç Mimari (Tuba İmik)",23683.92],
+["14.11.2025","SDB Mimarlık Mühendislik",119873.28],["16.01.2026","SDB Mimarlık Mühendislik",303762.42],["23.01.2026","SDB Mimarlık Mühendislik",302063.86],["05.05.2026","SDB Mimarlık Mühendislik",14449.50],
+["11.11.2025","Seda Kayalar / Arka Mimarlık",248500.00],
+["08.02.2025","Selen Hasoğlu",54241.24],
+["13.02.2026","Serpil Şenyüz Mimarlık",57163.43],
+["14.02.2025","Serra Kaslowski Dekorasyon",7380.00],["08.12.2025","Serra Kaslowski Dekorasyon",211542.62],
+["22.07.2025","Sistema Teknolojik Yapı",754569.02],["13.08.2025","Sistema Teknolojik Yapı",1028639.52],
+["06.04.2026","SML Mimarlık",102295.13],
+["27.05.2025","Sumru Kaya",191472.89],
+["16.06.2025","Şema Mimarlık Mühendislik",10216.67],
+["13.03.2025","Şule Atılgan Tasarım Yapı",367014.07],["13.06.2025","Şule Atılgan Tasarım Yapı",102419.13],
+["10.09.2025","Teos İnşaat Müşavirlik",1035493.30],
+["16.01.2025","TİM Mimarlık Dekorasyon",45162.60],["17.07.2025","TİM Mimarlık Dekorasyon",500636.64],
+["21.05.2025","U Design Tasarım Mimarlık",73721.46],["27.08.2025","U Design Tasarım Mimarlık",233312.87],["31.12.2025","U Design Tasarım Mimarlık",20663.11],["12.02.2026","U Design Tasarım Mimarlık",34609.80],
+["24.03.2026","Üçel Elektro Teknik",1503679.90],
+["14.10.2025","Ünder Tasarım Mimarlık",77764.09],
+["16.01.2025","Vangan Mimarlık Tasarım",242096.58],
+["15.04.2026","Workingen Reklam (Yunus Bey)",294700.00],
+["10.11.2025","Yalın Tan İç Mimarlık",22705.28],["10.11.2025","Yalın Tan İç Mimarlık",327869.48],["10.11.2025","Yalın Tan İç Mimarlık",53060.05],
+["20.06.2025","Zeynep Hanif Değer",34279.05],
+["10.07.2025","Zeynep Kopal",32275.45],["11.08.2025","Zeynep Kopal",27874.23],
+["16.03.2026","ZO Mobilya Aksesuar Mimarlık",140042.42]
+];
+
+// parse "DD.MM.YYYY" -> Date object
+function parseDate(s){const [d,m,y]=s.split('.').map(Number);return new Date(y,m-1,d);}
+
+// Filter partner payments by partner range filter
+function partnerScope(){
+  const r=state.partnerRange||'all';
+  return PARTNERS_RAW.filter(([d])=>{
+    const dt=parseDate(d);const y=dt.getFullYear();const m=dt.getMonth();
+    if(r==='all')return true;
+    if(r==='2025')return y===2025;
+    if(r==='2026')return y===2026;
+    if(r==='last6'){const cutoff=new Date(2025,10,1);return dt>=cutoff;} // Nov 2025 → May 2026
+    return true;
+  });
+}
+
+function partnersAggregated(){
+  const rows=partnerScope();
+  const map={};
+  rows.forEach(([d,n,a])=>{
+    if(!map[n])map[n]={name:n,total:0,count:0,first:d,last:d,payments:[]};
+    map[n].total+=a;map[n].count++;
+    map[n].payments.push({date:d,amount:a});
+    if(parseDate(d)<parseDate(map[n].first))map[n].first=d;
+    if(parseDate(d)>parseDate(map[n].last))map[n].last=d;
+  });
+  return Object.values(map).sort((a,b)=>b.total-a.total);
+}
+
+function partnersByMonth(){
+  // Returns {labels:[...], totals:[...]} from Jan 2025 to May 2026
+  const buckets={};
+  const labels=[];
+  for(let y=2025;y<=2026;y++){
+    for(let m=0;m<12;m++){
+      if(y===2026&&m>4)break; // stop at May 2026
+      const key=`${y}-${String(m+1).padStart(2,'0')}`;
+      const label=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m]+' '+String(y).slice(2);
+      buckets[key]=0;labels.push({key,label});
+    }
+  }
+  PARTNERS_RAW.forEach(([d,n,a])=>{
+    const dt=parseDate(d);const k=`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}`;
+    if(buckets[k]!==undefined)buckets[k]+=a;
+  });
+  return {labels:labels.map(l=>l.label),totals:labels.map(l=>buckets[l.key])};
+}
 
 const FMT = new Intl.NumberFormat('en-US',{maximumFractionDigits:0});
-const CUR='€';
+const CUR='₺';
 const money = v => CUR+FMT.format(Math.round(v||0));
 const moneyK = v => { v=v||0; if(Math.abs(v)>=1e6) return CUR+(v/1e6).toFixed(2)+'M'; if(Math.abs(v)>=1e3) return CUR+(v/1e3).toFixed(0)+'k'; return CUR+Math.round(v); };
 const DEPT_COLOR = {Retail:'#3b82f6',Enterprise:'#10b981',Lighting:'#f59e0b',Marketing:'#a855f7'};
 
-let state = {metric:'revenue', range:'all', tab:'overview', selectedRep:null, repSort:'revenue', deptFilter:'all'};
+let state = {metric:'revenue', range:'all', tab:'overview', selectedRep:null, repSort:'revenue', deptFilter:'all', partnerRange:'all', partnerSort:'total', selectedPartner:null};
 
 function monthIdx(){
   if(state.range==='all') return [...Array(15).keys()];
@@ -319,7 +390,7 @@ function renderReps(){
             <option value="Marketing" ${state.deptFilter==='Marketing'?'selected':''}>Marketing</option>
           </select>
           <select onchange="state.repSort=this.value;render();">
-            <option value="revenue" ${sortKey==='revenue'?'selected':''}>Sort: Revenue (Volume €)</option>
+            <option value="revenue" ${sortKey==='revenue'?'selected':''}>Sort: Revenue (Volume ₺)</option>
             <option value="deals" ${sortKey==='deals'?'selected':''}>Sort: Deals / Orders</option>
             <option value="units" ${sortKey==='units'?'selected':''}>Sort: Units Sold</option>
             <option value="aov" ${sortKey==='aov'?'selected':''}>Sort: Avg Order Value</option>
@@ -352,17 +423,7 @@ function renderReps(){
           <div class="bg-amber-900/20 p-3 rounded-lg"><div class="text-[10px] text-gray-400 uppercase">AOV</div><div class="text-xl font-bold text-amber-400">${sumIdx(selData.units)?moneyK(sumIdx(selData.revenue)/sumIdx(selData.units)):'—'}</div></div>
           <div class="bg-purple-900/20 p-3 rounded-lg"><div class="text-[10px] text-gray-400 uppercase">Best Month</div><div class="text-sm font-bold text-purple-400">${DATA.months[selData.revenue.indexOf(Math.max(...selData.revenue))]}</div></div>
         </div>
-        <div class="grid grid-cols-2 gap-2 mt-2">
-        <div class="bg-rose-900/20 p-3 rounded-lg">
-          <div class="text-[10px] text-gray-400 uppercase">Footfall (15 mo)</div>
-          <div class="text-xl font-bold text-rose-400">${(selData.footfall||[]).reduce((a,b)=>a+b,0).toLocaleString()}</div>
-        </div>
-        <div class="bg-teal-900/20 p-3 rounded-lg">
-          <div class="text-[10px] text-gray-400 uppercase">Conversion</div>
-          <div class="text-xl font-bold text-teal-400">${(()=>{const ff=(selData.footfall||[]).reduce((a,b)=>a+b,0);const u=selData.units.reduce((a,b)=>a+b,0);return ff>0?(u/ff*100).toFixed(1)+'%':'—';})()}</div>
-        </div>
-      </div>
-      <div class="mt-4"><canvas id="repChart" height="160"></canvas><div class="text-[10px] text-gray-400 uppercase mt-3">Showroom Footfall</div><div style="height:160px;position:relative"><canvas id="repFootfallChart"></canvas></div></div>
+        <div class="mt-4"><canvas id="repChart" height="160"></canvas></div>
       `:`<div class="text-gray-500 text-sm text-center py-12">👈 Click a rep to see their details, monthly performance, and KPIs</div>`}
     </div>
   </div>`;
@@ -375,9 +436,6 @@ function drawRepChart(){
     data:{labels:mIdx.map(i=>DATA.months[i]),datasets:[{label:state.metric,data:mIdx.map(i=>r[state.metric][i]),backgroundColor:'#3b82f6',borderRadius:4}]},
     options:{plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#64748b',font:{size:9}},grid:{display:false}},
     y:{ticks:{color:'#64748b',callback:v=>state.metric==='revenue'?moneyK(v):v},grid:{color:'#1f2a44'}}}}}));
-  charts.push(new Chart(document.getElementById('repFootfallChart'),{type:'line',
-      data:{labels:mIdx.map(i=>DATA.months[i]),datasets:[{label:'Visits',data:mIdx.map(i=>(r.footfall||[])[i]||0),borderColor:'#fb7185',backgroundColor:'rgba(251,113,133,0.15)',fill:true,tension:0.35,pointRadius:2}]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{color:'#9ca3af'}},x:{ticks:{color:'#9ca3af'}}}}}));
 }
 
 function renderCustomers(){
@@ -452,7 +510,7 @@ function renderAnalysis(){
           <b>Best month: ${bestMonth}</b> (${moneyK(Math.max(...monthlyTotals))}) · <b>Weakest: ${worstMonth}</b> (${moneyK(Math.min(...monthlyTotals))})
         </div>
         <div class="p-3 bg-red-900/20 border-l-2 border-red-500 rounded">
-          <b>YTD vs Target:</b> YTD revenue €27.59M vs €33.0M target → −16.4% variance. Gap concentrated outside Retail.
+          <b>YTD vs Target:</b> YTD revenue $27.59M vs $33.0M target → −16.4% variance. Gap concentrated outside Retail.
         </div>
         <div class="p-3 bg-cyan-900/20 border-l-2 border-cyan-500 rounded">
           <b>Customer mix:</b> Retail 55%/45% repeat/new, Enterprise 59%/41% (sticky contracts), Marketing 30%/70% (acquisition engine).
@@ -500,6 +558,299 @@ function drawAnalysis(){
     options:{plugins:{legend:{labels:{color:'#cbd5e1'}}},scales:{x:{stacked:true,ticks:{color:'#64748b',font:{size:10}},grid:{display:false}},y:{stacked:true,ticks:{color:'#64748b',callback:v=>moneyK(v)},grid:{color:'#1f2a44'}}}}}));
 }
 
+const FUNNEL_DATA = [
+  {rep:"Burçin",project:"Barut Anda Otel",value:11000,closeDate:"14.03.2026",proposal:"yes",architect:"yes",budget:"yes",decisionMaker:"yes",competitor:"no",nextStep:"Onaylandı, sipariş girildi. Ödeme bekleniyor"},
+  {rep:"Burçin",project:"Kundu Voyage - ek",value:33000,closeDate:"05.03.2026",proposal:"yes",architect:"yes",budget:"yes",decisionMaker:"yes",competitor:"no",nextStep:"Onaylandı, sipariş girildi. Ödeme bekleniyor"},
+  {rep:"Burçin",project:"Fiko Selimiye Otel",value:43927,closeDate:"18.04.2026",proposal:"yes",architect:"yes",budget:"",decisionMaker:"yes",competitor:"no",nextStep:"Onaylandı, sipariş girildi, ödeme bekleniyor"},
+  {rep:"Burçin",project:"7Mehmet Restaurant",value:97114,closeDate:"27.04.2026",proposal:"yes",architect:"yes",budget:"",decisionMaker:"yes",competitor:"",nextStep:"Onaylandı, sipariş girildi"},
+  {rep:"Burçin",project:"Divan Talya – Upsell (Ek Paket)",value:328000,closeDate:"06.04.2026",proposal:"yes",architect:"yes",budget:"yes",decisionMaker:"yes",competitor:"yes",nextStep:"Onaylandı, sipariş girildi"},
+  {rep:"Elif",project:"Numarine (VIP)",value:279000,closeDate:"10.04.2026",proposal:"yes",architect:"yes",budget:"yes",decisionMaker:"yes",competitor:"no",nextStep:"ONAYLANDI"},
+  {rep:"Elif",project:"Ebru Büyükbayrak",value:74373,closeDate:"28.04.2026",proposal:"yes",architect:"yes",budget:"yes",decisionMaker:"yes",competitor:"no",nextStep:"ONAYLANDI"},
+  {rep:"İrem",project:"Emlak Konut",value:87000,closeDate:"20.04.2026",proposal:"yes",architect:"yes",budget:"yes",decisionMaker:"yes",competitor:"no",nextStep:"Onaylandı / sipariş girildi"},
+  {rep:"Zeynep",project:"30xp-04",value:105700,closeDate:"01.05.2026",proposal:"yes",architect:"yes",budget:"yes",decisionMaker:"yes",competitor:"yes",nextStep:"Onaylandı, sipariş girildi, ödeme bekleniyor"},
+  {rep:"Biricik",project:"Halkbank - Private Banking",value:50250,closeDate:"07.04.2026",proposal:"yes",architect:"yes",budget:"yes",decisionMaker:"yes",competitor:"no",nextStep:"Onaylandı, sipariş girildi"},
+  {rep:"Biricik",project:"NuMarine 40mxp20",value:27290,closeDate:"10.04.2026",proposal:"yes",architect:"yes",budget:"yes",decisionMaker:"yes",competitor:"yes",nextStep:"Onaylandı, avans ödemesi geldi, stoklu ürünler teslim edildi"},
+  {rep:"Biricik",project:"NuMarine 40mxp20 - İlave",value:2625,closeDate:"21.04.2026",proposal:"yes",architect:"yes",budget:"yes",decisionMaker:"yes",competitor:"yes",nextStep:"Onaylandı"},
+  {rep:"Biricik",project:"Doğuş Otomotiv Audi Esenyurt",value:11984,closeDate:"14.04.2026",proposal:"yes",architect:"yes",budget:"yes",decisionMaker:"yes",competitor:"yes",nextStep:"Onaylandı, avans ödemesi yapılmıyor, sipariş girildi"},
+  {rep:"Biricik",project:"Betül Boy / Zafer / Pervin Ersoy Bodrum Ev",value:20000,closeDate:"21.04.2026",proposal:"yes",architect:"yes",budget:"yes",decisionMaker:"yes",competitor:"yes",nextStep:"Onaylandı, avans ödemesi geldi"},
+  {rep:"Biricik",project:"SSÖ - Urla Evi",value:12834,closeDate:"21.04.2026",proposal:"yes",architect:"yes",budget:"yes",decisionMaker:"yes",competitor:"yes",nextStep:"Onaylandı, avans ödemesi geldi"}
+];
+
+function funnelByRep(){
+  const map={};
+  FUNNEL_DATA.forEach(d=>{
+    if(!map[d.rep]) map[d.rep]={rep:d.rep,deals:0,total:0,items:[]};
+    map[d.rep].deals++;
+    map[d.rep].total+=d.value;
+    map[d.rep].items.push(d);
+  });
+  return Object.values(map).sort((a,b)=>b.total-a.total);
+}
+
+function renderFunnel(){
+  const byRep=funnelByRep();
+  const total=FUNNEL_DATA.reduce((s,d)=>s+d.value,0);
+  const totalDeals=FUNNEL_DATA.length;
+  const avgDeal=total/totalDeals;
+  const withComp=FUNNEL_DATA.filter(d=>d.competitor==='yes').length;
+  const compPct=(withComp/totalDeals*100).toFixed(0);
+  const sorted=[...FUNNEL_DATA].sort((a,b)=>b.value-a.value);
+  return `
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+    <div class="card kpi p-4"><div class="text-[10px] text-gray-400 uppercase tracking-wider">Total Won Revenue</div><div class="text-2xl font-bold mt-2 text-blue-400">${moneyK(total)}</div></div>
+    <div class="card kpi p-4"><div class="text-[10px] text-gray-400 uppercase tracking-wider">Won Deals</div><div class="text-2xl font-bold mt-2 text-emerald-400">${totalDeals}</div></div>
+    <div class="card kpi p-4"><div class="text-[10px] text-gray-400 uppercase tracking-wider">Avg Deal Size</div><div class="text-2xl font-bold mt-2 text-amber-400">${moneyK(avgDeal)}</div></div>
+    <div class="card kpi p-4"><div class="text-[10px] text-gray-400 uppercase tracking-wider">Competitor Present</div><div class="text-2xl font-bold mt-2 text-red-400">${compPct}%</div></div>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="card p-5 md:col-span-2">
+      <h3 class="font-semibold mb-3">Won Deals — Enterprise Funnel <span class="text-xs text-gray-500 font-normal">· Mar–May 2026 · All 100% WON</span></h3>
+      <div class="scroll-x"><table><thead><tr>
+        <th>Rep</th><th>Project</th><th class="text-right">Value</th><th>Close Date</th>
+        <th class="text-center">Proposal</th><th class="text-center">Architect</th>
+        <th class="text-center">Budget</th><th class="text-center">DM</th>
+        <th class="text-center">Comp.</th>
+      </tr></thead><tbody>
+      ${sorted.map(d=>`<tr class="row">
+        <td class="font-semibold">${d.rep}</td>
+        <td class="text-gray-300" style="max-width:200px;overflow:hidden;text-overflow:ellipsis" title="${d.project}">${d.project}</td>
+        <td class="text-right font-bold text-blue-400">${moneyK(d.value)}</td>
+        <td class="text-gray-400">${d.closeDate}</td>
+        <td class="text-center">${d.proposal==='yes'?'<span class="text-emerald-400">✓</span>':d.proposal==='no'?'<span class="text-red-400">✗</span>':'<span class="text-gray-600">—</span>'}</td>
+        <td class="text-center">${d.architect==='yes'?'<span class="text-emerald-400">✓</span>':d.architect==='no'?'<span class="text-red-400">✗</span>':'<span class="text-gray-600">—</span>'}</td>
+        <td class="text-center">${d.budget==='yes'?'<span class="text-emerald-400">✓</span>':d.budget==='no'?'<span class="text-red-400">✗</span>':'<span class="text-gray-600">—</span>'}</td>
+        <td class="text-center">${d.decisionMaker==='yes'?'<span class="text-emerald-400">✓</span>':d.decisionMaker==='no'?'<span class="text-red-400">✗</span>':'<span class="text-gray-600">—</span>'}</td>
+        <td class="text-center">${d.competitor==='yes'?'<span class="text-red-400">⚡</span>':d.competitor==='no'?'<span class="text-gray-500">—</span>':'<span class="text-gray-600">—</span>'}</td>
+      </tr>`).join('')}
+      </tbody></table></div>
+    </div>
+    <div class="card p-5">
+      <h3 class="font-semibold mb-3">Rep Performance</h3>
+      <canvas id="funnelRepChart" height="200"></canvas>
+      <div class="mt-4 space-y-2">
+      ${byRep.map(r=>{const pct=(r.total/byRep[0].total*100).toFixed(0);return `
+        <div class="mb-2">
+          <div class="flex justify-between text-xs mb-1">
+            <span class="font-semibold">${r.rep} <span class="text-gray-500 font-normal">(${r.deals} deals)</span></span>
+            <span class="font-bold text-blue-400">${moneyK(r.total)}</span>
+          </div>
+          <div class="bar"><div style="width:${pct}%"></div></div>
+        </div>`}).join('')}
+      </div>
+    </div>
+    <div class="card p-5">
+      <h3 class="font-semibold mb-3">🏆 Top 5 Deals by Value</h3>
+      ${sorted.slice(0,5).map((d,i)=>`
+        <div class="p-3 mb-2 bg-gradient-to-r from-blue-900/30 to-transparent rounded-lg border-l-2 border-blue-500">
+          <div class="flex justify-between items-start">
+            <div>
+              <div class="font-semibold text-sm">${d.project}</div>
+              <div class="text-xs text-gray-400">${d.rep} · ${d.closeDate}</div>
+            </div>
+            <div class="font-bold text-blue-400">${moneyK(d.value)}</div>
+          </div>
+        </div>`).join('')}
+    </div>
+    <div class="card p-5">
+      <h3 class="font-semibold mb-3">Qualification Scorecard</h3>
+      <canvas id="funnelQualChart" height="200"></canvas>
+      <div class="mt-4 space-y-2 text-sm">
+        <div class="p-3 bg-emerald-900/20 border-l-2 border-emerald-500 rounded">
+          <b>All deals qualified:</b> 100% proposal sent, 100% architect engaged, 100% decision maker identified.
+        </div>
+        <div class="p-3 bg-amber-900/20 border-l-2 border-amber-500 rounded">
+          <b>Competitor pressure:</b> ${compPct}% of deals had competitor present — won regardless.
+        </div>
+        <div class="p-3 bg-blue-900/20 border-l-2 border-blue-500 rounded">
+          <b>Avg deal:</b> ${moneyK(avgDeal)} · <b>Largest:</b> ${moneyK(sorted[0].value)} (${sorted[0].project})
+        </div>
+      </div>
+    </div>
+    <div class="card p-5 md:col-span-3">
+      <h3 class="font-semibold mb-3">Deal Value Distribution by Rep</h3>
+      <canvas id="funnelDistChart" height="70"></canvas>
+    </div>
+  </div>`;
+}
+
+function drawFunnelCharts(){
+  const byRep=funnelByRep();
+  charts.push(new Chart(document.getElementById('funnelRepChart'),{type:'doughnut',
+    data:{labels:byRep.map(r=>r.rep),datasets:[{data:byRep.map(r=>r.total),backgroundColor:['#3b82f6','#10b981','#f59e0b','#a855f7','#ef4444'],borderWidth:0}]},
+    options:{plugins:{legend:{position:'bottom',labels:{color:'#cbd5e1',font:{size:11}}}}}}));
+  const qualLabels=['Proposal Sent','Architect Engaged','Budget Confirmed','Decision Maker','No Competitor'];
+  const qualData=[
+    FUNNEL_DATA.filter(d=>d.proposal==='yes').length,
+    FUNNEL_DATA.filter(d=>d.architect==='yes').length,
+    FUNNEL_DATA.filter(d=>d.budget==='yes').length,
+    FUNNEL_DATA.filter(d=>d.decisionMaker==='yes').length,
+    FUNNEL_DATA.filter(d=>d.competitor==='no').length
+  ];
+  charts.push(new Chart(document.getElementById('funnelQualChart'),{type:'bar',
+    data:{labels:qualLabels,datasets:[{data:qualData,backgroundColor:['#10b981','#3b82f6','#f59e0b','#a855f7','#ef4444'],borderRadius:6}]},
+    options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{max:FUNNEL_DATA.length,ticks:{color:'#64748b',stepSize:5},grid:{color:'#1f2a44'}},y:{ticks:{color:'#cbd5e1',font:{size:11}},grid:{display:false}}}}}));
+  const allDeals=[...FUNNEL_DATA].sort((a,b)=>b.value-a.value);
+  charts.push(new Chart(document.getElementById('funnelDistChart'),{type:'bar',
+    data:{labels:allDeals.map(d=>d.project.slice(0,20)),datasets:[{data:allDeals.map(d=>d.value),backgroundColor:allDeals.map(d=>{const c={Burçin:'#3b82f6',Elif:'#10b981',İrem:'#f59e0b',Zeynep:'#a855f7',Biricik:'#ef4444'};return c[d.rep]||'#64748b';}),borderRadius:4}]},
+    options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.raw?moneyK(c.raw):''}}},scales:{x:{ticks:{color:'#64748b',font:{size:9},maxRotation:45},grid:{display:false}},y:{ticks:{color:'#64748b',callback:v=>moneyK(v)},grid:{color:'#1f2a44'}}}}}));
+}
+
+function renderPartners(){
+  const all=partnersAggregated();
+  const total=all.reduce((s,p)=>s+p.total,0);
+  const totalCount=all.reduce((s,p)=>s+p.count,0);
+  const avgPerPartner=all.length?total/all.length:0;
+  const top=all[0]||{name:'—',total:0};
+  const sortKey=state.partnerSort||'total';
+  const sorted=[...all].sort((a,b)=>{
+    if(sortKey==='count')return b.count-a.count;
+    if(sortKey==='count_asc')return a.count-b.count;
+    if(sortKey==='avg')return (b.total/b.count)-(a.total/a.count);
+    if(sortKey==='avg_asc')return (a.total/a.count)-(b.total/b.count);
+    if(sortKey==='name')return a.name.localeCompare(b.name,'tr');
+    if(sortKey==='total_asc')return a.total-b.total;
+    return b.total-a.total;
+  });
+  const sel=state.selectedPartner;
+  const selData=sel?all.find(p=>p.name===sel):null;
+  const top15=all.slice(0,15);
+  // Year split
+  const y2025=PARTNERS_RAW.filter(([d])=>parseDate(d).getFullYear()===2025).reduce((s,[,,a])=>s+a,0);
+  const y2026=PARTNERS_RAW.filter(([d])=>parseDate(d).getFullYear()===2026).reduce((s,[,,a])=>s+a,0);
+
+  return `
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+    <div class="card kpi p-4"><div class="text-[10px] text-gray-400 uppercase tracking-wider">Total Commission Paid</div><div class="text-2xl font-bold mt-2 text-blue-400">${moneyK(total)}</div><div class="text-[10px] text-gray-500 mt-1">across ${totalCount} payments</div></div>
+    <div class="card kpi p-4"><div class="text-[10px] text-gray-400 uppercase tracking-wider">Unique Partners</div><div class="text-2xl font-bold mt-2 text-emerald-400">${all.length}</div><div class="text-[10px] text-gray-500 mt-1">architects · consultants · firms</div></div>
+    <div class="card kpi p-4"><div class="text-[10px] text-gray-400 uppercase tracking-wider">Avg per Partner</div><div class="text-2xl font-bold mt-2 text-amber-400">${moneyK(avgPerPartner)}</div><div class="text-[10px] text-gray-500 mt-1">total commission ÷ # partners</div></div>
+    <div class="card kpi p-4"><div class="text-[10px] text-gray-400 uppercase tracking-wider">Top Partner</div><div class="text-lg font-bold mt-2 text-purple-400 truncate" title="${top.name}">${top.name}</div><div class="text-[10px] text-gray-500 mt-1">${moneyK(top.total)} · ${top.count} pmts</div></div>
+  </div>
+
+  <div class="flex gap-2 mb-4 flex-wrap">
+    <select onchange="state.partnerRange=this.value;state.selectedPartner=null;render();">
+      <option value="all" ${(state.partnerRange||'all')==='all'?'selected':''}>All Time (Jan 25 – May 26)</option>
+      <option value="2025" ${state.partnerRange==='2025'?'selected':''}>2025 Only</option>
+      <option value="2026" ${state.partnerRange==='2026'?'selected':''}>2026 (YTD)</option>
+      <option value="last6" ${state.partnerRange==='last6'?'selected':''}>Last 6 Months</option>
+    </select>
+    <select onchange="state.partnerSort=this.value;render();">
+      <option value="total" ${sortKey==='total'?'selected':''}>Sort: Total ₺ — Big → Small</option>
+      <option value="total_asc" ${sortKey==='total_asc'?'selected':''}>Sort: Total ₺ — Small → Big</option>
+      <option value="count" ${sortKey==='count'?'selected':''}>Sort: # of Payments — Most</option>
+      <option value="count_asc" ${sortKey==='count_asc'?'selected':''}>Sort: # of Payments — Fewest</option>
+      <option value="avg" ${sortKey==='avg'?'selected':''}>Sort: Avg Payment — High</option>
+      <option value="avg_asc" ${sortKey==='avg_asc'?'selected':''}>Sort: Avg Payment — Low</option>
+      <option value="name" ${sortKey==='name'?'selected':''}>Sort: Name (A–Z)</option>
+    </select>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+    <div class="card p-5 md:col-span-2">
+      <h3 class="font-semibold mb-3">🏆 Top 15 Partners by Commission Paid</h3>
+      <canvas id="partnersTopChart" height="180"></canvas>
+    </div>
+    <div class="card p-5">
+      <h3 class="font-semibold mb-3">2025 vs 2026 Split</h3>
+      <canvas id="partnersYearChart" height="180"></canvas>
+      <div class="mt-3 space-y-2 text-sm">
+        <div class="flex justify-between p-2 bg-blue-900/20 rounded"><span>📅 2025</span><span class="font-bold text-blue-400">${moneyK(y2025)}</span></div>
+        <div class="flex justify-between p-2 bg-amber-900/20 rounded"><span>📅 2026 (5 mo)</span><span class="font-bold text-amber-400">${moneyK(y2026)}</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card p-5 mb-4">
+    <h3 class="font-semibold mb-3">📅 Monthly Commission Outflow · Jan 2025 → May 2026</h3>
+    <canvas id="partnersTrendChart" height="80"></canvas>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="card p-4 md:col-span-2">
+      <div class="flex justify-between items-center mb-3 flex-wrap gap-2">
+        <h3 class="font-semibold">All Partners <span class="text-xs text-gray-500 font-normal">· ${all.length} firms · click row for payment history</span></h3>
+      </div>
+      <div class="scroll-x" style="max-height:520px;overflow-y:auto"><table><thead><tr>
+        <th>#</th><th>Partner</th><th class="text-right">Total ₺</th><th class="text-right">Payments</th><th class="text-right">Avg ₺</th><th class="text-right">Share</th><th class="text-right">Last Payment</th>
+      </tr></thead><tbody>
+      ${sorted.map((p,i)=>{const share=(p.total/total*100).toFixed(1);const avg=p.total/p.count;return `
+        <tr class="row ${sel===p.name?'selected':''}" onclick="selectPartner('${p.name.replace(/'/g,"\\'")}')">
+          <td class="text-gray-500">${i+1}</td>
+          <td class="font-semibold" style="max-width:280px;white-space:normal">${p.name}</td>
+          <td class="text-right font-semibold ${(sortKey==='total'||sortKey==='total_asc')?'text-blue-400':''}">${moneyK(p.total)}</td>
+          <td class="text-right ${(sortKey==='count'||sortKey==='count_asc')?'text-emerald-400 font-semibold':''}">${p.count}</td>
+          <td class="text-right ${(sortKey==='avg'||sortKey==='avg_asc')?'text-amber-400 font-semibold':'text-gray-400'}">${moneyK(avg)}</td>
+          <td class="text-right text-gray-500">${share}%</td>
+          <td class="text-right text-gray-400">${p.last}</td>
+        </tr>`}).join('')}
+      </tbody></table></div>
+    </div>
+    <div class="card p-5">
+      ${sel&&selData?`
+        <div class="flex justify-between items-start mb-3">
+          <div><h3 class="font-bold text-base" style="word-break:break-word">${sel}</h3><span class="chip" style="background:#1e3a8a;color:#bfdbfe">Partner</span></div>
+          <button onclick="selectPartner(null)" class="text-gray-500 hover:text-white text-xl">×</button>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mt-4">
+          <div class="bg-blue-900/20 p-3 rounded-lg"><div class="text-[10px] text-gray-400 uppercase">Total Paid</div><div class="text-xl font-bold text-blue-400">${moneyK(selData.total)}</div></div>
+          <div class="bg-emerald-900/20 p-3 rounded-lg"><div class="text-[10px] text-gray-400 uppercase">Payments</div><div class="text-xl font-bold text-emerald-400">${selData.count}</div></div>
+          <div class="bg-amber-900/20 p-3 rounded-lg"><div class="text-[10px] text-gray-400 uppercase">Avg Payment</div><div class="text-lg font-bold text-amber-400">${moneyK(selData.total/selData.count)}</div></div>
+          <div class="bg-purple-900/20 p-3 rounded-lg"><div class="text-[10px] text-gray-400 uppercase">Span</div><div class="text-xs font-bold text-purple-400">${selData.first}<br>→ ${selData.last}</div></div>
+        </div>
+        <div class="mt-4 border-t border-gray-800 pt-3">
+          <div class="text-[10px] text-gray-500 uppercase mb-2">Payment History</div>
+          <div style="max-height:280px;overflow-y:auto">
+          ${[...selData.payments].sort((a,b)=>parseDate(b.date)-parseDate(a.date)).map(p=>`
+            <div class="flex justify-between items-center py-2 border-b border-gray-800 text-sm">
+              <span class="text-gray-400">${p.date}</span>
+              <span class="font-semibold">${money(p.amount)}</span>
+            </div>`).join('')}
+          </div>
+        </div>
+      `:`<div class="text-gray-500 text-sm text-center py-12">👈 Click a partner row to see their full payment history, average ticket, and timeline</div>`}
+    </div>
+  </div>
+
+  <div class="card p-5 mt-4">
+    <h3 class="font-semibold mb-2">🔎 Partner Insights</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+      <div class="p-3 bg-blue-900/20 border-l-2 border-blue-500 rounded">
+        <b>Top 5 partners drive ${((all.slice(0,5).reduce((s,p)=>s+p.total,0)/total)*100).toFixed(1)}%</b> of all commission paid (${moneyK(all.slice(0,5).reduce((s,p)=>s+p.total,0))} of ${moneyK(total)}). Heavy concentration — these relationships matter most.
+      </div>
+      <div class="p-3 bg-emerald-900/20 border-l-2 border-emerald-500 rounded">
+        <b>${all.filter(p=>p.count>=3).length} partners are repeat collaborators</b> (3+ payments). The strongest long-term partners are the ones bringing recurring deal flow.
+      </div>
+      <div class="p-3 bg-amber-900/20 border-l-2 border-amber-500 rounded">
+        <b>2026 ramp:</b> ${moneyK(y2026)} paid in just 5 months of 2026 vs ${moneyK(y2025)} for all of 2025 — annualized 2026 is on track to be ~${moneyK(y2026*12/5)}.
+      </div>
+      <div class="p-3 bg-purple-900/20 border-l-2 border-purple-500 rounded">
+        <b>Profile:</b> Most partners are mimarlık (architecture) firms and design consultancies, suggesting commissions flow predominantly through the Kurumsal (Enterprise) channel — design-led projects.
+      </div>
+    </div>
+  </div>
+  `;
+}
+
+function drawPartnersCharts(){
+  const all=partnersAggregated();
+  const top15=all.slice(0,15);
+  charts.push(new Chart(document.getElementById('partnersTopChart'),{type:'bar',
+    data:{labels:top15.map(p=>p.name.length>22?p.name.slice(0,22)+'…':p.name),datasets:[{data:top15.map(p=>p.total),backgroundColor:'#3b82f6',borderRadius:4}]},
+    options:{indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>moneyK(c.parsed.x)+' ('+top15[c.dataIndex].count+' payments)',title:c=>top15[c[0].dataIndex].name}}},
+    scales:{x:{ticks:{color:'#64748b',callback:v=>moneyK(v)},grid:{color:'#1f2a44'}},y:{ticks:{color:'#cbd5e1',font:{size:10}},grid:{display:false}}}}}));
+  const y2025=PARTNERS_RAW.filter(([d])=>parseDate(d).getFullYear()===2025).reduce((s,[,,a])=>s+a,0);
+  const y2026=PARTNERS_RAW.filter(([d])=>parseDate(d).getFullYear()===2026).reduce((s,[,,a])=>s+a,0);
+  charts.push(new Chart(document.getElementById('partnersYearChart'),{type:'doughnut',
+    data:{labels:['2025 (12 mo)','2026 (5 mo)'],datasets:[{data:[y2025,y2026],backgroundColor:['#3b82f6','#f59e0b'],borderWidth:0}]},
+    options:{plugins:{legend:{position:'bottom',labels:{color:'#cbd5e1',font:{size:11}}},tooltip:{callbacks:{label:c=>c.label+': '+moneyK(c.parsed)}}}}}));
+  const trend=partnersByMonth();
+  charts.push(new Chart(document.getElementById('partnersTrendChart'),{type:'bar',
+    data:{labels:trend.labels,datasets:[{label:'Commission Paid',data:trend.totals,backgroundColor:trend.labels.map(l=>l.includes('26')?'#f59e0b':'#3b82f6'),borderRadius:4}]},
+    options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>moneyK(c.parsed.y)}}},
+    scales:{x:{ticks:{color:'#64748b',font:{size:10}},grid:{display:false}},y:{ticks:{color:'#64748b',callback:v=>moneyK(v)},grid:{color:'#1f2a44'}}}}}));
+}
+
+function selectPartner(n){state.selectedPartner=(state.selectedPartner===n||n===null)?null:n;render();}
+
 function render(){
   destroyCharts();
   renderKpis();
@@ -510,10 +861,12 @@ function render(){
   else if(state.tab==='reps'){panels.innerHTML=renderReps();setTimeout(drawRepChart,0);}
   else if(state.tab==='customers'){panels.innerHTML=renderCustomers();setTimeout(drawCustCharts,0);}
   else if(state.tab==='analysis'){panels.innerHTML=renderAnalysis();setTimeout(drawAnalysis,0);}
+  else if(state.tab==='funnel'){panels.innerHTML=renderFunnel();setTimeout(drawFunnelCharts,0);}
+  else if(state.tab==='partners'){panels.innerHTML=renderPartners();setTimeout(drawPartnersCharts,0);}
 }
 function selectRep(n){state.selectedRep=(state.selectedRep===n||n===null)?null:n;render();}
 
-document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{state.tab=t.dataset.tab;state.selectedRep=null;render();});
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{state.tab=t.dataset.tab;state.selectedRep=null;state.selectedPartner=null;render();});
 document.getElementById('metricSel').onchange=e=>{state.metric=e.target.value;render();};
 document.getElementById('rangeSel').onchange=e=>{state.range=e.target.value;render();};
 render();
