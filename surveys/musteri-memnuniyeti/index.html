@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Mozaik Design — Müşteri Memnuniyet Anketi</title>
+<meta name="description" content="Mozaik Design mağaza müşteri memnuniyet anketi — Customer satisfaction survey">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d2b55 100%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    user-select: none;
+  }
+  .logo {
+    width: 72px;
+    height: 72px;
+    background: linear-gradient(135deg, #a78bfa 0%, #818cf8 100%);
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 28px;
+    margin-bottom: 28px;
+    box-shadow: 0 20px 40px rgba(167, 139, 250, 0.3);
+  }
+  h1 {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 12px 0;
+    letter-spacing: -0.02em;
+  }
+  h2 {
+    font-size: 24px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.6);
+    margin: 0 0 48px 0;
+    letter-spacing: -0.01em;
+  }
+  .langs {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 32px;
+  }
+  .lang-btn {
+    flex: 1;
+    padding: 24px 16px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 16px;
+    color: white;
+    font-family: inherit;
+    font-size: 22px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .lang-btn:hover, .lang-btn:active {
+    background: rgba(255,255,255,0.16);
+    border-color: rgba(255,255,255,0.3);
+    transform: translateY(-2px);
+  }
+  .lang-flag { font-size: 36px; line-height: 1; }
+  .lang-label { font-size: 22px; }
+  .sub {
+    font-size: 15px;
+    color: rgba(255,255,255,0.45);
+    max-width: 460px;
+    line-height: 1.6;
+    margin: 0;
+  }
+  .footer {
+    position: fixed;
+    bottom: 24px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 12px;
+    color: rgba(255,255,255,0.25);
+  }
+  @media (min-width: 768px) {
+    h1 { font-size: 44px; }
+    h2 { font-size: 28px; }
+    .lang-btn { padding: 32px 24px; font-size: 26px; }
+    .lang-label { font-size: 26px; }
+    .langs { max-width: 600px; }
+  }
+</style>
+</head>
+<body>
+  <div class="logo">MZ</div>
+  <h1>Ziyaretiniz nasıldı?</h1>
+  <h2>How was your visit?</h2>
+
+  <div class="langs">
+    <a class="lang-btn" href="#" id="tr-btn">
+      <span class="lang-flag">🇹🇷</span>
+      <span class="lang-label">TÜRKÇE</span>
+    </a>
+    <a class="lang-btn" href="#" id="en-btn">
+      <span class="lang-flag">🇬🇧</span>
+      <span class="lang-label">ENGLISH</span>
+    </a>
+  </div>
+
+  <p class="sub">
+    Yaklaşık 1 dakika sürer · Aylık çekilişe katılırsınız<br>
+    Takes ~1 minute · Enter monthly prize draw
+  </p>
+
+  <div class="footer">Mozaik Design · 2026</div>
+
+<script>
+  // Google Form URLs — to be replaced after forms are created
+  const FORM_TR = 'PLACEHOLDER_TR_FORM_URL';
+  const FORM_EN = 'PLACEHOLDER_EN_FORM_URL';
+
+  document.getElementById('tr-btn').addEventListener('click', function(e) {
+    e.preventDefault();
+    if (FORM_TR.startsWith('PLACEHOLDER')) {
+      alert('Form henüz aktif değil. Pilot başladığında bu link çalışacak.');
+    } else {
+      window.location.href = FORM_TR;
+    }
+  });
+
+  document.getElementById('en-btn').addEventListener('click', function(e) {
+    e.preventDefault();
+    if (FORM_EN.startsWith('PLACEHOLDER')) {
+      alert('Survey is not yet active. This link will work when the pilot starts.');
+    } else {
+      window.location.href = FORM_EN;
+    }
+  });
+
+  // Prevent iPad context menus and pull-to-refresh
+  document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
+  document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+</script>
+</body>
+</html>
