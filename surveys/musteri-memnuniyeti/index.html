@@ -4,61 +4,48 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Mozaik Design — Müşteri Memnuniyet Anketi</title>
-<meta name="description" content="Mozaik Design mağaza müşteri memnuniyet anketi — Customer satisfaction survey">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body { height: 100%; margin: 0; padding: 0; }
+  html, body { margin: 0; padding: 0; min-height: 100vh; }
   body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     background: linear-gradient(135deg, #1a1a2e 0%, #2d2b55 100%);
     color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 24px;
+    -webkit-text-size-adjust: 100%;
     user-select: none;
   }
+  .screen {
+    min-height: 100vh;
+    padding: 32px 24px 48px;
+    display: none;
+    flex-direction: column;
+  }
+  .screen.active { display: flex; }
+  .header { text-align: center; margin-bottom: 32px; }
   .logo {
-    width: 72px;
-    height: 72px;
+    width: 60px; height: 60px;
     background: linear-gradient(135deg, #a78bfa 0%, #818cf8 100%);
-    border-radius: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 28px;
-    margin-bottom: 28px;
-    box-shadow: 0 20px 40px rgba(167, 139, 250, 0.3);
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    font-weight: 700; font-size: 22px;
+    margin-bottom: 12px;
+    box-shadow: 0 12px 32px rgba(167, 139, 250, 0.3);
   }
-  h1 {
-    font-size: 32px;
-    font-weight: 700;
-    margin: 0 0 12px 0;
-    letter-spacing: -0.02em;
-  }
-  h2 {
-    font-size: 24px;
-    font-weight: 500;
-    color: rgba(255,255,255,0.6);
-    margin: 0 0 48px 0;
-    letter-spacing: -0.01em;
-  }
-  .langs {
-    display: flex;
-    gap: 16px;
-    width: 100%;
-    max-width: 500px;
-    margin-bottom: 32px;
-  }
+  .brand-name { font-weight: 600; opacity: 0.9; letter-spacing: 0.02em; }
+
+  /* ============ LANGUAGE SCREEN ============ */
+  #screen-lang { align-items: center; justify-content: center; text-align: center; }
+  #screen-lang .logo { width: 80px; height: 80px; font-size: 28px; margin-bottom: 32px; }
+  #screen-lang h1 { font-size: 32px; font-weight: 700; margin: 0 0 8px; letter-spacing: -0.02em; }
+  #screen-lang h2 { font-size: 22px; font-weight: 500; color: rgba(255,255,255,0.6); margin: 0 0 48px; }
+  .lang-grid { display: flex; gap: 16px; width: 100%; max-width: 520px; margin-bottom: 28px; }
   .lang-btn {
     flex: 1;
-    padding: 24px 16px;
+    padding: 28px 16px;
     background: rgba(255,255,255,0.08);
     border: 1px solid rgba(255,255,255,0.15);
     border-radius: 16px;
@@ -67,94 +54,511 @@
     font-size: 22px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
-    text-decoration: none;
+    transition: all 0.2s;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
   }
-  .lang-btn:hover, .lang-btn:active {
-    background: rgba(255,255,255,0.16);
-    border-color: rgba(255,255,255,0.3);
-    transform: translateY(-2px);
+  .lang-btn:active { background: rgba(255,255,255,0.18); transform: scale(0.98); }
+  .lang-flag { font-size: 40px; line-height: 1; }
+  .lang-sub { font-size: 14px; color: rgba(255,255,255,0.45); max-width: 460px; line-height: 1.6; }
+
+  /* ============ FORM SCREENS ============ */
+  .form-screen { max-width: 720px; margin: 0 auto; width: 100%; }
+  .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+  .back-link {
+    color: rgba(255,255,255,0.5);
+    text-decoration: none;
+    font-size: 14px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.05);
   }
-  .lang-flag { font-size: 36px; line-height: 1; }
-  .lang-label { font-size: 22px; }
-  .sub {
+  .back-link:active { background: rgba(255,255,255,0.12); }
+  .progress { color: rgba(255,255,255,0.4); font-size: 13px; font-weight: 500; }
+  .form-title { font-size: 26px; font-weight: 700; margin: 0 0 8px; letter-spacing: -0.02em; }
+  .form-intro { font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.6; margin: 0 0 32px; }
+  .question {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .q-label { font-size: 17px; font-weight: 600; margin: 0 0 4px; line-height: 1.35; }
+  .q-help { font-size: 13px; color: rgba(255,255,255,0.45); margin: 0 0 16px; }
+  .q-optional { font-size: 12px; color: rgba(255,255,255,0.4); font-weight: 400; margin-left: 8px; }
+  .choices { display: flex; flex-direction: column; gap: 8px; }
+  .choice {
+    display: flex; align-items: center;
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
     font-size: 15px;
-    color: rgba(255,255,255,0.45);
-    max-width: 460px;
-    line-height: 1.6;
-    margin: 0;
   }
-  .footer {
-    position: fixed;
-    bottom: 24px;
-    left: 0;
-    right: 0;
-    text-align: center;
-    font-size: 12px;
-    color: rgba(255,255,255,0.25);
+  .choice input { margin-right: 12px; width: 18px; height: 18px; cursor: pointer; accent-color: #a78bfa; }
+  .choice:has(input:checked) { background: rgba(167, 139, 250, 0.15); border-color: rgba(167, 139, 250, 0.5); }
+  .choice:active { background: rgba(255,255,255,0.1); }
+  .grid-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 4px; }
+  .grid-table th { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.5); padding: 8px 4px; text-align: center; }
+  .grid-row td { padding: 8px 4px; }
+  .grid-dim { font-size: 14px; font-weight: 500; padding: 12px 4px !important; text-align: left !important; min-width: 140px; }
+  .grid-cell { text-align: center; }
+  .grid-cell input { width: 22px; height: 22px; cursor: pointer; accent-color: #a78bfa; }
+  select {
+    width: 100%; padding: 14px 16px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    color: white;
+    font-family: inherit; font-size: 16px;
+    cursor: pointer; appearance: none; -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 48px;
   }
+  select option { background: #2d2b55; color: white; }
+  .nps-wrap { padding: 8px 4px 4px; }
+  .nps-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .nps-slider { flex: 1; -webkit-appearance: none; appearance: none; height: 6px; background: rgba(255,255,255,0.15); border-radius: 3px; outline: none; }
+  .nps-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 28px; height: 28px; border-radius: 50%; background: #a78bfa; cursor: pointer; box-shadow: 0 4px 12px rgba(167,139,250,0.5); }
+  .nps-slider::-moz-range-thumb { width: 28px; height: 28px; border-radius: 50%; background: #a78bfa; border: none; cursor: pointer; }
+  .nps-value { min-width: 56px; text-align: center; font-size: 24px; font-weight: 700; color: #a78bfa; }
+  .nps-labels { display: flex; justify-content: space-between; font-size: 12px; color: rgba(255,255,255,0.45); }
+  textarea {
+    width: 100%; min-height: 80px; padding: 12px 14px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    color: white; font-family: inherit; font-size: 15px;
+    resize: none; line-height: 1.5;
+  }
+  textarea:focus { outline: none; border-color: rgba(167,139,250,0.5); }
+  input[type="email"] {
+    width: 100%; padding: 14px 16px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    color: white; font-family: inherit; font-size: 16px;
+  }
+  input[type="email"]:focus { outline: none; border-color: rgba(167,139,250,0.5); }
+  .submit-btn {
+    width: 100%; padding: 18px;
+    background: linear-gradient(135deg, #a78bfa 0%, #818cf8 100%);
+    color: white; border: none; border-radius: 12px;
+    font-family: inherit; font-size: 18px; font-weight: 600;
+    cursor: pointer; margin-top: 16px;
+    transition: transform 0.15s;
+  }
+  .submit-btn:active { transform: scale(0.98); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .form-foot { text-align: center; font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 16px; }
+  #screen-thanks { align-items: center; justify-content: center; text-align: center; }
+  #screen-thanks .check {
+    width: 96px; height: 96px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 32px;
+    box-shadow: 0 20px 48px rgba(16, 185, 129, 0.3);
+    animation: pop 0.4s ease-out;
+  }
+  @keyframes pop { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+  #screen-thanks .check svg { width: 48px; height: 48px; }
+  #screen-thanks h1 { font-size: 32px; margin: 0 0 12px; }
+  #screen-thanks p { font-size: 18px; color: rgba(255,255,255,0.7); margin: 0 0 8px; max-width: 480px; line-height: 1.5; }
+  .reset-countdown { font-size: 14px; color: rgba(255,255,255,0.4); margin-top: 24px; }
+  .error-banner {
+    background: rgba(248,113,113,0.15);
+    border: 1px solid rgba(248,113,113,0.4);
+    color: #fca5a5;
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    display: none;
+  }
+  .error-banner.show { display: block; }
   @media (min-width: 768px) {
-    h1 { font-size: 44px; }
-    h2 { font-size: 28px; }
-    .lang-btn { padding: 32px 24px; font-size: 26px; }
-    .lang-label { font-size: 26px; }
-    .langs { max-width: 600px; }
+    #screen-lang h1 { font-size: 44px; }
+    #screen-lang h2 { font-size: 26px; }
+    .lang-btn { padding: 36px 24px; font-size: 26px; }
+    .lang-flag { font-size: 48px; }
+    .form-title { font-size: 32px; }
+    .question { padding: 24px 28px; }
+    .q-label { font-size: 18px; }
   }
 </style>
 </head>
 <body>
+
+<div class="screen active" id="screen-lang">
   <div class="logo">MZ</div>
   <h1>Ziyaretiniz nasıldı?</h1>
   <h2>How was your visit?</h2>
-
-  <div class="langs">
-    <a class="lang-btn" href="#" id="tr-btn">
+  <div class="lang-grid">
+    <button class="lang-btn" onclick="showForm('tr')">
       <span class="lang-flag">🇹🇷</span>
-      <span class="lang-label">TÜRKÇE</span>
-    </a>
-    <a class="lang-btn" href="#" id="en-btn">
+      <span>TÜRKÇE</span>
+    </button>
+    <button class="lang-btn" onclick="showForm('en')">
       <span class="lang-flag">🇬🇧</span>
-      <span class="lang-label">ENGLISH</span>
-    </a>
+      <span>ENGLISH</span>
+    </button>
   </div>
-
-  <p class="sub">
+  <p class="lang-sub">
     Yaklaşık 1 dakika sürer · Aylık çekilişe katılırsınız<br>
     Takes ~1 minute · Enter monthly prize draw
   </p>
+</div>
 
-  <div class="footer">Mozaik Design · 2026</div>
+<div class="screen" id="screen-tr">
+  <form class="form-screen" id="form-tr">
+    <div class="top-bar">
+      <a class="back-link" onclick="goBack()" href="#">← Dil değiştir</a>
+      <span class="progress">5 soru · 1 dakika</span>
+    </div>
+    <div class="header" style="text-align: left; margin-bottom: 24px;">
+      <h2 class="form-title">Mozaik Design</h2>
+      <p class="form-intro">
+        Ziyaretiniz hakkında bize geri bildirim verin. Cevaplarınız <strong>gizli</strong> tutulur ve size hizmet veren çalışan tarafından görülmez.
+      </p>
+    </div>
+
+    <div class="error-banner" id="error-tr">Lütfen tüm zorunlu alanları doldurun.</div>
+
+    <input type="hidden" name="language" value="TR">
+
+    <div class="question">
+      <p class="q-label">Bugün Mozaik'te alışveriş yaptınız mı?</p>
+      <div class="choices">
+        <label class="choice"><input type="radio" name="q1_purchase" value="Evet, alışveriş yaptım"> Evet, alışveriş yaptım</label>
+        <label class="choice"><input type="radio" name="q1_purchase" value="Hayır, sadece baktım"> Hayır, sadece baktım</label>
+        <label class="choice"><input type="radio" name="q1_purchase" value="Hayır ama sipariş vermek üzereyim"> Hayır ama sipariş vermek üzereyim</label>
+      </div>
+    </div>
+
+    <div class="question">
+      <p class="q-label">Bugünkü deneyiminizi değerlendirin</p>
+      <p class="q-help">1 = Çok kötü · 5 = Mükemmel</p>
+      <table class="grid-table">
+        <thead><tr><th></th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr></thead>
+        <tbody>
+          <tr class="grid-row"><td class="grid-dim">Personel ilgisi & bilgisi</td>
+            <td class="grid-cell"><input type="radio" name="q2_personel" value="1"></td>
+            <td class="grid-cell"><input type="radio" name="q2_personel" value="2"></td>
+            <td class="grid-cell"><input type="radio" name="q2_personel" value="3"></td>
+            <td class="grid-cell"><input type="radio" name="q2_personel" value="4"></td>
+            <td class="grid-cell"><input type="radio" name="q2_personel" value="5"></td>
+          </tr>
+          <tr class="grid-row"><td class="grid-dim">Ürün kalitesi & çeşit</td>
+            <td class="grid-cell"><input type="radio" name="q2_urun" value="1"></td>
+            <td class="grid-cell"><input type="radio" name="q2_urun" value="2"></td>
+            <td class="grid-cell"><input type="radio" name="q2_urun" value="3"></td>
+            <td class="grid-cell"><input type="radio" name="q2_urun" value="4"></td>
+            <td class="grid-cell"><input type="radio" name="q2_urun" value="5"></td>
+          </tr>
+          <tr class="grid-row"><td class="grid-dim">Mağaza atmosferi</td>
+            <td class="grid-cell"><input type="radio" name="q2_magaza" value="1"></td>
+            <td class="grid-cell"><input type="radio" name="q2_magaza" value="2"></td>
+            <td class="grid-cell"><input type="radio" name="q2_magaza" value="3"></td>
+            <td class="grid-cell"><input type="radio" name="q2_magaza" value="4"></td>
+            <td class="grid-cell"><input type="radio" name="q2_magaza" value="5"></td>
+          </tr>
+          <tr class="grid-row"><td class="grid-dim">Fiyat-değer dengesi</td>
+            <td class="grid-cell"><input type="radio" name="q2_fiyat" value="1"></td>
+            <td class="grid-cell"><input type="radio" name="q2_fiyat" value="2"></td>
+            <td class="grid-cell"><input type="radio" name="q2_fiyat" value="3"></td>
+            <td class="grid-cell"><input type="radio" name="q2_fiyat" value="4"></td>
+            <td class="grid-cell"><input type="radio" name="q2_fiyat" value="5"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="question">
+      <p class="q-label">Size hizmet veren çalışanımız kimdi?</p>
+      <select name="q3_associate" required>
+        <option value="">Seçiniz...</option>
+        <option>Sena</option>
+        <option>İdil</option>
+        <option>Ceren</option>
+        <option>Çalışan 4</option>
+        <option>Çalışan 5</option>
+        <option>Çalışan 6</option>
+        <option>Birden fazla kişi yardımcı oldu</option>
+        <option>Kimseyle konuşmadım</option>
+        <option>Hatırlamıyorum</option>
+      </select>
+    </div>
+
+    <div class="question">
+      <p class="q-label">Mozaik'i bir arkadaşınıza tavsiye eder misiniz?</p>
+      <p class="q-help">0 = Hiç · 10 = Kesinlikle</p>
+      <div class="nps-wrap">
+        <div class="nps-row">
+          <input type="range" class="nps-slider" name="q4_nps" min="0" max="10" value="5" oninput="document.getElementById('nps-val-tr').textContent=this.value">
+          <span class="nps-value" id="nps-val-tr">5</span>
+        </div>
+        <div class="nps-labels">
+          <span>Hiç tavsiye etmem</span>
+          <span>Kesinlikle tavsiye ederim</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="question">
+      <p class="q-label">Bize başka bir şey söylemek ister misiniz? <span class="q-optional">isteğe bağlı</span></p>
+      <p class="q-help">Sizi en çok mutlu eden veya hayal kırıklığına uğratan şey neydi?</p>
+      <textarea name="q5_comment" rows="3"></textarea>
+    </div>
+
+    <div class="question">
+      <p class="q-label">Çekiliş için e-postanız</p>
+      <p class="q-help">KVKK kapsamında korunur · 6 ay sonra silinir · Sadece çekiliş için</p>
+      <input type="email" name="q6_email" required placeholder="ornek@email.com">
+    </div>
+
+    <button type="submit" class="submit-btn">Gönder</button>
+    <p class="form-foot">Mozaik Design · 2026</p>
+  </form>
+</div>
+
+<div class="screen" id="screen-en">
+  <form class="form-screen" id="form-en">
+    <div class="top-bar">
+      <a class="back-link" onclick="goBack()" href="#">← Change language</a>
+      <span class="progress">5 questions · 1 min</span>
+    </div>
+    <div class="header" style="text-align: left; margin-bottom: 24px;">
+      <h2 class="form-title">Mozaik Design</h2>
+      <p class="form-intro">
+        Share your feedback about today's visit. Your answers are <strong>private</strong> and never seen by the associate who served you.
+      </p>
+    </div>
+
+    <div class="error-banner" id="error-en">Please fill out all required fields.</div>
+
+    <input type="hidden" name="language" value="EN">
+
+    <div class="question">
+      <p class="q-label">Did you make a purchase today?</p>
+      <div class="choices">
+        <label class="choice"><input type="radio" name="q1_purchase" value="Yes, I purchased"> Yes, I purchased</label>
+        <label class="choice"><input type="radio" name="q1_purchase" value="No, I was just browsing"> No, I was just browsing</label>
+        <label class="choice"><input type="radio" name="q1_purchase" value="Not yet, but I plan to order"> Not yet, but I plan to order</label>
+      </div>
+    </div>
+
+    <div class="question">
+      <p class="q-label">Rate today's experience</p>
+      <p class="q-help">1 = Very poor · 5 = Excellent</p>
+      <table class="grid-table">
+        <thead><tr><th></th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr></thead>
+        <tbody>
+          <tr class="grid-row"><td class="grid-dim">Sales associate</td>
+            <td class="grid-cell"><input type="radio" name="q2_personel" value="1"></td>
+            <td class="grid-cell"><input type="radio" name="q2_personel" value="2"></td>
+            <td class="grid-cell"><input type="radio" name="q2_personel" value="3"></td>
+            <td class="grid-cell"><input type="radio" name="q2_personel" value="4"></td>
+            <td class="grid-cell"><input type="radio" name="q2_personel" value="5"></td>
+          </tr>
+          <tr class="grid-row"><td class="grid-dim">Product quality & range</td>
+            <td class="grid-cell"><input type="radio" name="q2_urun" value="1"></td>
+            <td class="grid-cell"><input type="radio" name="q2_urun" value="2"></td>
+            <td class="grid-cell"><input type="radio" name="q2_urun" value="3"></td>
+            <td class="grid-cell"><input type="radio" name="q2_urun" value="4"></td>
+            <td class="grid-cell"><input type="radio" name="q2_urun" value="5"></td>
+          </tr>
+          <tr class="grid-row"><td class="grid-dim">Store atmosphere</td>
+            <td class="grid-cell"><input type="radio" name="q2_magaza" value="1"></td>
+            <td class="grid-cell"><input type="radio" name="q2_magaza" value="2"></td>
+            <td class="grid-cell"><input type="radio" name="q2_magaza" value="3"></td>
+            <td class="grid-cell"><input type="radio" name="q2_magaza" value="4"></td>
+            <td class="grid-cell"><input type="radio" name="q2_magaza" value="5"></td>
+          </tr>
+          <tr class="grid-row"><td class="grid-dim">Price-value balance</td>
+            <td class="grid-cell"><input type="radio" name="q2_fiyat" value="1"></td>
+            <td class="grid-cell"><input type="radio" name="q2_fiyat" value="2"></td>
+            <td class="grid-cell"><input type="radio" name="q2_fiyat" value="3"></td>
+            <td class="grid-cell"><input type="radio" name="q2_fiyat" value="4"></td>
+            <td class="grid-cell"><input type="radio" name="q2_fiyat" value="5"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="question">
+      <p class="q-label">Which associate served you today?</p>
+      <select name="q3_associate" required>
+        <option value="">Select...</option>
+        <option>Sena</option>
+        <option>İdil</option>
+        <option>Ceren</option>
+        <option>Associate 4</option>
+        <option>Associate 5</option>
+        <option>Associate 6</option>
+        <option>Multiple associates helped</option>
+        <option>I didn't speak with anyone</option>
+        <option>I don't remember</option>
+      </select>
+    </div>
+
+    <div class="question">
+      <p class="q-label">How likely are you to recommend Mozaik to a friend?</p>
+      <p class="q-help">0 = Not at all · 10 = Extremely</p>
+      <div class="nps-wrap">
+        <div class="nps-row">
+          <input type="range" class="nps-slider" name="q4_nps" min="0" max="10" value="5" oninput="document.getElementById('nps-val-en').textContent=this.value">
+          <span class="nps-value" id="nps-val-en">5</span>
+        </div>
+        <div class="nps-labels">
+          <span>Not at all likely</span>
+          <span>Extremely likely</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="question">
+      <p class="q-label">Anything else? <span class="q-optional">optional</span></p>
+      <p class="q-help">What made today best, or worst, for you?</p>
+      <textarea name="q5_comment" rows="3"></textarea>
+    </div>
+
+    <div class="question">
+      <p class="q-label">Email for monthly prize draw</p>
+      <p class="q-help">Protected under Turkish KVKK · Deleted after 6 months · Used only for prize draw</p>
+      <input type="email" name="q6_email" required placeholder="you@example.com">
+    </div>
+
+    <button type="submit" class="submit-btn">Submit</button>
+    <p class="form-foot">Mozaik Design · 2026</p>
+  </form>
+</div>
+
+<div class="screen" id="screen-thanks">
+  <div class="check">
+    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+  </div>
+  <h1 id="thanks-title">Teşekkür ederiz!</h1>
+  <p id="thanks-msg">Geri bildiriminiz bizim için çok değerli. Aylık çekiliş kazananı her ayın sonunda e-posta ile bildirilir.</p>
+  <p class="reset-countdown" id="reset-msg">10 saniye içinde yeniden başlıyor...</p>
+</div>
 
 <script>
-  // Google Form URLs — to be replaced after forms are created
-  const FORM_TR = 'PLACEHOLDER_TR_FORM_URL';
-  const FORM_EN = 'PLACEHOLDER_EN_FORM_URL';
+  // FORMSPREE ENDPOINT — Replace with your real Formspree URL after signup
+  const FORMSPREE_ENDPOINT = 'FORMSPREE_ENDPOINT_HERE';
 
-  document.getElementById('tr-btn').addEventListener('click', function(e) {
-    e.preventDefault();
-    if (FORM_TR.startsWith('PLACEHOLDER')) {
-      alert('Form henüz aktif değil. Pilot başladığında bu link çalışacak.');
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+  function showForm(lang) {
+    showScreen('screen-' + lang);
+  }
+  function goBack() {
+    document.getElementById('form-tr').reset();
+    document.getElementById('form-en').reset();
+    document.getElementById('nps-val-tr').textContent = '5';
+    document.getElementById('nps-val-en').textContent = '5';
+    showScreen('screen-lang');
+    return false;
+  }
+
+  function validateForm(form, lang) {
+    var valid = true;
+    var errorBanner = form.querySelector('.error-banner');
+    var required = ['q1_purchase', 'q2_personel', 'q2_urun', 'q2_magaza', 'q2_fiyat'];
+    required.forEach(function(name) {
+      var checked = form.querySelector('input[name="' + name + '"]:checked');
+      if (!checked) valid = false;
+    });
+    if (!form.q3_associate.value) valid = false;
+    if (!form.q6_email.value || !form.q6_email.checkValidity()) valid = false;
+    if (!valid) {
+      errorBanner.classList.add('show');
+      errorBanner.scrollIntoView({ behavior: 'smooth', block: 'center' });
     } else {
-      window.location.href = FORM_TR;
+      errorBanner.classList.remove('show');
     }
-  });
+    return valid;
+  }
 
-  document.getElementById('en-btn').addEventListener('click', function(e) {
+  async function submitForm(e, lang) {
     e.preventDefault();
-    if (FORM_EN.startsWith('PLACEHOLDER')) {
-      alert('Survey is not yet active. This link will work when the pilot starts.');
-    } else {
-      window.location.href = FORM_EN;
+    var form = e.target;
+    if (!validateForm(form, lang)) return;
+    var submitBtn = form.querySelector('.submit-btn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = lang === 'tr' ? 'Gönderiliyor...' : 'Submitting...';
+    try {
+      if (FORMSPREE_ENDPOINT.indexOf('FORMSPREE') === 0) {
+        console.log('FORM DATA:', Object.fromEntries(new FormData(form)));
+        alert(lang === 'tr'
+          ? 'TEST MODU: Formspree URL henüz ayarlanmadı. Veri konsolda görüntülenir.'
+          : 'TEST MODE: Formspree URL not configured yet. Data logged to console.');
+      } else {
+        var data = new FormData(form);
+        var res = await fetch(FORMSPREE_ENDPOINT, {
+          method: 'POST',
+          body: data,
+          headers: { 'Accept': 'application/json' }
+        });
+        if (!res.ok) throw new Error('Submit failed');
+      }
+      showThanks(lang);
+    } catch (err) {
+      alert(lang === 'tr' ? 'Bir hata oluştu. Lütfen tekrar deneyin.' : 'Something went wrong. Please try again.');
+      submitBtn.disabled = false;
+      submitBtn.textContent = lang === 'tr' ? 'Gönder' : 'Submit';
     }
-  });
+  }
 
-  // Prevent iPad context menus and pull-to-refresh
+  function showThanks(lang) {
+    document.getElementById('thanks-title').textContent = lang === 'tr' ? 'Teşekkür ederiz!' : 'Thank you!';
+    document.getElementById('thanks-msg').textContent = lang === 'tr'
+      ? 'Geri bildiriminiz bizim için çok değerli. Aylık çekiliş kazananı her ayın sonunda e-posta ile bildirilir.'
+      : 'Your feedback means a lot. Monthly prize winners are notified by email at the end of each month.';
+    showScreen('screen-thanks');
+    var countdown = 10;
+    var interval = setInterval(function() {
+      countdown--;
+      document.getElementById('reset-msg').textContent = lang === 'tr'
+        ? (countdown + ' saniye içinde yeniden başlıyor...')
+        : ('Restarting in ' + countdown + ' seconds...');
+      if (countdown <= 0) {
+        clearInterval(interval);
+        document.getElementById('form-tr').reset();
+        document.getElementById('form-en').reset();
+        document.getElementById('nps-val-tr').textContent = '5';
+        document.getElementById('nps-val-en').textContent = '5';
+        document.querySelectorAll('.submit-btn').forEach(function(b, i) {
+          b.disabled = false;
+          b.textContent = i === 0 ? 'Gönder' : 'Submit';
+        });
+        showScreen('screen-lang');
+      }
+    }, 1000);
+  }
+
+  document.getElementById('form-tr').addEventListener('submit', function(e) { submitForm(e, 'tr'); });
+  document.getElementById('form-en').addEventListener('submit', function(e) { submitForm(e, 'en'); });
+
   document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
   document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+
+  document.querySelectorAll('input, textarea, select').forEach(function(el) {
+    el.style.userSelect = 'auto';
+    el.style.webkitUserSelect = 'auto';
+  });
 </script>
 </body>
 </html>
