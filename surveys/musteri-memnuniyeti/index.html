@@ -27,7 +27,6 @@
   .form-screen { max-width: 720px; margin: 0 auto; width: 100%; }
   .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
   .back-link { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 14px; padding: 8px 12px; border-radius: 8px; background: rgba(255,255,255,0.05); }
-  .back-link:active { background: rgba(255,255,255,0.12); }
   .progress { color: rgba(255,255,255,0.4); font-size: 13px; font-weight: 500; }
   .form-title { font-size: 26px; font-weight: 700; margin: 0 0 8px; letter-spacing: -0.02em; }
   .form-intro { font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.6; margin: 0 0 32px; }
@@ -54,9 +53,7 @@
   .nps-value { min-width: 56px; text-align: center; font-size: 24px; font-weight: 700; color: #a78bfa; }
   .nps-labels { display: flex; justify-content: space-between; font-size: 12px; color: rgba(255,255,255,0.45); }
   textarea { width: 100%; min-height: 80px; padding: 12px 14px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; color: white; font-family: inherit; font-size: 15px; resize: none; line-height: 1.5; }
-  textarea:focus { outline: none; border-color: rgba(167,139,250,0.5); }
   input[type="email"] { width: 100%; padding: 14px 16px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; color: white; font-family: inherit; font-size: 16px; }
-  input[type="email"]:focus { outline: none; border-color: rgba(167,139,250,0.5); }
   .submit-btn { width: 100%; padding: 18px; background: linear-gradient(135deg, #a78bfa 0%, #818cf8 100%); color: white; border: none; border-radius: 12px; font-family: inherit; font-size: 18px; font-weight: 600; cursor: pointer; margin-top: 16px; transition: transform 0.15s; }
   .submit-btn:active { transform: scale(0.98); }
   .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -133,6 +130,7 @@
         <option>Betül Albayrak</option>
         <option>Biricik Maltepe</option>
         <option>Burçin Karaca</option>
+        <option>Candan Ozcan</option>
         <option>Ceren Senyuz</option>
         <option>Derin Zaimoglu</option>
         <option>Elif Duysak</option>
@@ -224,6 +222,7 @@
         <option>Betül Albayrak</option>
         <option>Biricik Maltepe</option>
         <option>Burçin Karaca</option>
+        <option>Candan Ozcan</option>
         <option>Ceren Senyuz</option>
         <option>Derin Zaimoglu</option>
         <option>Elif Duysak</option>
@@ -280,57 +279,9 @@
   function showScreen(id) { document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); }); document.getElementById(id).classList.add('active'); window.scrollTo(0, 0); }
   function showForm(lang) { showScreen('screen-' + lang); }
   function goBack() { document.getElementById('form-tr').reset(); document.getElementById('form-en').reset(); document.getElementById('nps-val-tr').textContent = '5'; document.getElementById('nps-val-en').textContent = '5'; showScreen('screen-lang'); return false; }
-  function validateForm(form, lang) {
-    var valid = true;
-    var errorBanner = form.querySelector('.error-banner');
-    var required = ['q1_purchase', 'q2_personel', 'q2_urun', 'q2_magaza', 'q2_fiyat'];
-    required.forEach(function(name) { if (!form.querySelector('input[name="' + name + '"]:checked')) valid = false; });
-    if (!form.q3_associate.value) valid = false;
-    if (!form.q6_email.value || !form.q6_email.checkValidity()) valid = false;
-    if (!valid) { errorBanner.classList.add('show'); errorBanner.scrollIntoView({ behavior: 'smooth', block: 'center' }); } else { errorBanner.classList.remove('show'); }
-    return valid;
-  }
-  async function submitForm(e, lang) {
-    e.preventDefault();
-    var form = e.target;
-    if (!validateForm(form, lang)) return;
-    var submitBtn = form.querySelector('.submit-btn');
-    submitBtn.disabled = true;
-    submitBtn.textContent = lang === 'tr' ? 'Gönderiliyor...' : 'Submitting...';
-    try {
-      if (FORMSPREE_ENDPOINT.indexOf('FORMSPREE') === 0) {
-        console.log('FORM DATA:', Object.fromEntries(new FormData(form)));
-        alert(lang === 'tr' ? 'TEST MODU: Formspree URL henüz ayarlanmadı.' : 'TEST MODE: Formspree URL not configured yet.');
-      } else {
-        var res = await fetch(FORMSPREE_ENDPOINT, { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' } });
-        if (!res.ok) throw new Error('Submit failed');
-      }
-      showThanks(lang);
-    } catch (err) {
-      alert(lang === 'tr' ? 'Bir hata oluştu. Lütfen tekrar deneyin.' : 'Something went wrong. Please try again.');
-      submitBtn.disabled = false;
-      submitBtn.textContent = lang === 'tr' ? 'Gönder' : 'Submit';
-    }
-  }
-  function showThanks(lang) {
-    document.getElementById('thanks-title').textContent = lang === 'tr' ? 'Teşekkür ederiz!' : 'Thank you!';
-    document.getElementById('thanks-msg').textContent = lang === 'tr' ? 'Geri bildiriminiz bizim için çok değerli. Aylık çekiliş kazananı her ayın sonunda e-posta ile bildirilir.' : 'Your feedback means a lot. Monthly prize winners are notified by email at the end of each month.';
-    showScreen('screen-thanks');
-    var countdown = 10;
-    var interval = setInterval(function() {
-      countdown--;
-      document.getElementById('reset-msg').textContent = lang === 'tr' ? (countdown + ' saniye içinde yeniden başlıyor...') : ('Restarting in ' + countdown + ' seconds...');
-      if (countdown <= 0) {
-        clearInterval(interval);
-        document.getElementById('form-tr').reset();
-        document.getElementById('form-en').reset();
-        document.getElementById('nps-val-tr').textContent = '5';
-        document.getElementById('nps-val-en').textContent = '5';
-        document.querySelectorAll('.submit-btn').forEach(function(b, i) { b.disabled = false; b.textContent = i === 0 ? 'Gönder' : 'Submit'; });
-        showScreen('screen-lang');
-      }
-    }, 1000);
-  }
+  function validateForm(form, lang) { var valid = true; var errorBanner = form.querySelector('.error-banner'); var required = ['q1_purchase', 'q2_personel', 'q2_urun', 'q2_magaza', 'q2_fiyat']; required.forEach(function(name) { if (!form.querySelector('input[name="' + name + '"]:checked')) valid = false; }); if (!form.q3_associate.value) valid = false; if (!form.q6_email.value || !form.q6_email.checkValidity()) valid = false; if (!valid) { errorBanner.classList.add('show'); errorBanner.scrollIntoView({ behavior: 'smooth', block: 'center' }); } else { errorBanner.classList.remove('show'); } return valid; }
+  async function submitForm(e, lang) { e.preventDefault(); var form = e.target; if (!validateForm(form, lang)) return; var submitBtn = form.querySelector('.submit-btn'); submitBtn.disabled = true; submitBtn.textContent = lang === 'tr' ? 'Gönderiliyor...' : 'Submitting...'; try { if (FORMSPREE_ENDPOINT.indexOf('FORMSPREE') === 0) { console.log('FORM DATA:', Object.fromEntries(new FormData(form))); alert(lang === 'tr' ? 'TEST MODU: Formspree URL henüz ayarlanmadı.' : 'TEST MODE: Formspree URL not configured yet.'); } else { var res = await fetch(FORMSPREE_ENDPOINT, { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' } }); if (!res.ok) throw new Error('Submit failed'); } showThanks(lang); } catch (err) { alert(lang === 'tr' ? 'Bir hata oluştu. Lütfen tekrar deneyin.' : 'Something went wrong. Please try again.'); submitBtn.disabled = false; submitBtn.textContent = lang === 'tr' ? 'Gönder' : 'Submit'; } }
+  function showThanks(lang) { document.getElementById('thanks-title').textContent = lang === 'tr' ? 'Teşekkür ederiz!' : 'Thank you!'; document.getElementById('thanks-msg').textContent = lang === 'tr' ? 'Geri bildiriminiz bizim için çok değerli. Aylık çekiliş kazananı her ayın sonunda e-posta ile bildirilir.' : 'Your feedback means a lot. Monthly prize winners are notified by email at the end of each month.'; showScreen('screen-thanks'); var countdown = 10; var interval = setInterval(function() { countdown--; document.getElementById('reset-msg').textContent = lang === 'tr' ? (countdown + ' saniye içinde yeniden başlıyor...') : ('Restarting in ' + countdown + ' seconds...'); if (countdown <= 0) { clearInterval(interval); document.getElementById('form-tr').reset(); document.getElementById('form-en').reset(); document.getElementById('nps-val-tr').textContent = '5'; document.getElementById('nps-val-en').textContent = '5'; document.querySelectorAll('.submit-btn').forEach(function(b, i) { b.disabled = false; b.textContent = i === 0 ? 'Gönder' : 'Submit'; }); showScreen('screen-lang'); } }, 1000); }
   document.getElementById('form-tr').addEventListener('submit', function(e) { submitForm(e, 'tr'); });
   document.getElementById('form-en').addEventListener('submit', function(e) { submitForm(e, 'en'); });
   document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
