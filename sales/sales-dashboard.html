@@ -702,7 +702,9 @@ function renderPartners(){
   const avgPerPartner=all.length?total/all.length:0;
   const top=all[0]||{name:'—',total:0};
   const sortKey=state.partnerSort||'total';
-  const sorted=[...all].sort((a,b)=>{
+  const search=(state.partnerSearch||'').trim().toLowerCase();
+  const filtered=search?all.filter(p=>p.name.toLowerCase().includes(search)):all;
+  const sorted=[...filtered].sort((a,b)=>{
     if(sortKey==='count')return b.count-a.count;
     if(sortKey==='count_asc')return a.count-b.count;
     if(sortKey==='avg')return (b.total/b.count)-(a.total/a.count);
@@ -713,7 +715,7 @@ function renderPartners(){
   });
   const sel=state.selectedPartner;
   const selData=sel?all.find(p=>p.name===sel):null;
-  const top15=all.slice(0,15);
+  const top15=filtered.slice(0,15);
   // Year split
   const y2025=PARTNERS_RAW.filter(([d])=>parseDate(d).getFullYear()===2025).reduce((s,[,,a])=>s+a,0);
   const y2026=PARTNERS_RAW.filter(([d])=>parseDate(d).getFullYear()===2026).reduce((s,[,,a])=>s+a,0);
@@ -726,7 +728,8 @@ function renderPartners(){
     <div class="card kpi p-4"><div class="text-[10px] text-gray-400 uppercase tracking-wider">Top Partner</div><div class="text-lg font-bold mt-2 text-purple-400 truncate" title="${top.name}">${top.name}</div><div class="text-[10px] text-gray-500 mt-1">${moneyK(top.total)} · ${top.count} pmts</div></div>
   </div>
 
-  <div class="flex gap-2 mb-4 flex-wrap">
+  <div class="flex gap-2 mb-4 flex-wrap items-center">
+    <input id="partnerSearch" type="text" placeholder="🔍 Search partner..." value="${(state.partnerSearch||'').replace(/"/g,'&quot;')}" oninput="const _y=window.scrollY;state.partnerSearch=this.value;state.selectedPartner=null;render();window.scrollTo({top:_y,behavior:'instant'});const _i=document.getElementById('partnerSearch');if(_i){_i.focus();_i.setSelectionRange(_i.value.length,_i.value.length);}" class="bg-slate-800 border border-slate-600 text-slate-200 px-3 py-1.5 rounded text-sm" style="min-width:220px">
     <select onchange="state.partnerRange=this.value;state.selectedPartner=null;render();">
       <option value="all" ${(state.partnerRange||'all')==='all'?'selected':''}>All Time (Jan 25 – May 26)</option>
       <option value="2025" ${state.partnerRange==='2025'?'selected':''}>2025 Only</option>
@@ -849,7 +852,7 @@ function drawPartnersCharts(){
     scales:{x:{ticks:{color:'#64748b',font:{size:10}},grid:{display:false}},y:{ticks:{color:'#64748b',callback:v=>moneyK(v)},grid:{color:'#1f2a44'}}}}}));
 }
 
-function selectPartner(n){state.selectedPartner=(state.selectedPartner===n||n===null)?null:n;render();}
+function selectPartner(n){const _y=window.scrollY;state.selectedPartner=(state.selectedPartner===n||n===null)?null:n;render();window.scrollTo({top:_y,left:0,behavior:'instant'});}
 
 function render(){
   destroyCharts();
