@@ -66,7 +66,11 @@
   .choice input { margin-right: 12px; width: 18px; height: 18px; cursor: pointer; accent-color: var(--kraken-purple); }
   .choice:has(input:checked) { background: var(--kraken-purple-subtle); border-color: var(--kraken-purple-dark); }
   .grid-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 4px; }
-  .grid-table th { font-size: 12px; font-weight: 500; color: var(--silver-blue); padding: 8px 4px; text-align: center; }
+  .grid-table th { font-size: 12px; font-weight: 500; color: var(--silver-blue); padding: 8px 4px; text-align: center; vertical-align: top; }
+  .grid-table th .num { display: block; font-family: var(--font-brand); font-size: 18px; font-weight: 700; line-height: 1; color: var(--cool-gray); }
+  .grid-table th .lbl { display: block; font-size: 10px; font-weight: 600; line-height: 1.15; margin-top: 4px; }
+  .grid-table th.low .num, .grid-table th.low .lbl { color: var(--danger); }
+  .grid-table th.high .num, .grid-table th.high .lbl { color: var(--success); }
   .grid-row td { padding: 8px 4px; border-top: 1px solid var(--border-gray); }
   .grid-row:first-child td { border-top: 0; }
   .grid-dim { font-size: 14px; font-weight: 500; padding: 14px 4px !important; text-align: left !important; min-width: 130px; color: var(--near-black); }
@@ -146,7 +150,7 @@
       <p class="q-label">Bugünkü deneyiminizi değerlendirin</p>
       <p class="q-help">1 = Çok kötü · 5 = Mükemmel</p>
       <table class="grid-table">
-        <thead><tr><th></th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr></thead>
+        <thead><tr><th></th><th class="low"><span class="num">1</span><span class="lbl">Çok kötü</span></th><th><span class="num">2</span></th><th><span class="num">3</span></th><th><span class="num">4</span></th><th class="high"><span class="num">5</span><span class="lbl">Mükemmel</span></th></tr></thead>
         <tbody>
           <tr class="grid-row"><td class="grid-dim">Personel ilgisi & bilgisi</td><td class="grid-cell"><input type="radio" name="q2_personel" value="1"></td><td class="grid-cell"><input type="radio" name="q2_personel" value="2"></td><td class="grid-cell"><input type="radio" name="q2_personel" value="3"></td><td class="grid-cell"><input type="radio" name="q2_personel" value="4"></td><td class="grid-cell"><input type="radio" name="q2_personel" value="5"></td></tr>
           <tr class="grid-row"><td class="grid-dim">Ürün kalitesi & çeşit</td><td class="grid-cell"><input type="radio" name="q2_urun" value="1"></td><td class="grid-cell"><input type="radio" name="q2_urun" value="2"></td><td class="grid-cell"><input type="radio" name="q2_urun" value="3"></td><td class="grid-cell"><input type="radio" name="q2_urun" value="4"></td><td class="grid-cell"><input type="radio" name="q2_urun" value="5"></td></tr>
@@ -239,7 +243,7 @@
       <p class="q-label">Rate today's experience</p>
       <p class="q-help">1 = Very poor · 5 = Excellent</p>
       <table class="grid-table">
-        <thead><tr><th></th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr></thead>
+        <thead><tr><th></th><th class="low"><span class="num">1</span><span class="lbl">Very poor</span></th><th><span class="num">2</span></th><th><span class="num">3</span></th><th><span class="num">4</span></th><th class="high"><span class="num">5</span><span class="lbl">Excellent</span></th></tr></thead>
         <tbody>
           <tr class="grid-row"><td class="grid-dim">Sales associate</td><td class="grid-cell"><input type="radio" name="q2_personel" value="1"></td><td class="grid-cell"><input type="radio" name="q2_personel" value="2"></td><td class="grid-cell"><input type="radio" name="q2_personel" value="3"></td><td class="grid-cell"><input type="radio" name="q2_personel" value="4"></td><td class="grid-cell"><input type="radio" name="q2_personel" value="5"></td></tr>
           <tr class="grid-row"><td class="grid-dim">Product quality & range</td><td class="grid-cell"><input type="radio" name="q2_urun" value="1"></td><td class="grid-cell"><input type="radio" name="q2_urun" value="2"></td><td class="grid-cell"><input type="radio" name="q2_urun" value="3"></td><td class="grid-cell"><input type="radio" name="q2_urun" value="4"></td><td class="grid-cell"><input type="radio" name="q2_urun" value="5"></td></tr>
