@@ -75,7 +75,7 @@ td.num{text-align:right;color:#a5b4fc;font-variant-numeric:tabular-nums}
   <button class="store-btn" onclick="switchStore('ankara',this)">
     <span class="store-icon">&#127963;</span>
     <span>Ankara Ma&#287;azas&#305;</span>
-    <span class="store-tag tag-soon">Yak&#305;nda</span>
+    <span class="store-tag tag-active">Aktif</span>
   </button>
   <button class="store-btn" onclick="switchStore('outlet',this)">
     <span class="store-icon">&#128717;</span>
@@ -84,10 +84,10 @@ td.num{text-align:right;color:#a5b4fc;font-variant-numeric:tabular-nums}
   </button>
 </div>
 
-<div class="store-section active" id="store-ortakoy">
+<div id="dashboard">
 
 <div class="hdr">
-  <div><h1>MOZAIK SHOWROOM &#8212; ORTAK&#214;Y</h1><p>Trafik &amp; Personel Analizi &#183; 15 Y&#305;ll&#305;k Veri &#183; 2012&#8211;2026</p></div>
+  <div><h1 id="storeTitle">MOZAIK SHOWROOM &#8212; ORTAK&#214;Y</h1><p>Trafik &amp; Personel Analizi &#183; 15 Y&#305;ll&#305;k Veri &#183; 2012&#8211;2026</p></div>
   <div class="hdr-right">
     <span class="pill">Toplam <span id="hdrTotal">&#8212;</span></span>
     <select id="repSel" class="sel"></select>
@@ -152,22 +152,12 @@ td.num{text-align:right;color:#a5b4fc;font-variant-numeric:tabular-nums}
 
 </div>
 
-<div class="store-section" id="store-ankara">
-  <div class="coming-soon">
-    <div class="cs-icon">&#127963;</div>
-    <h2>Ankara Ma&#287;azas&#305;</h2>
-    <p>Ankara ma&#287;azas&#305;n&#305;n trafik verileri haz&#305;rlan&#305;yor. A&#231;&#305;l&#305;&#351; sonras&#305; t&#252;m veriler burada g&#246;r&#252;nt&#252;lenecektir.</p>
-    <div class="cs-badge">&#128205; Yak&#305;nda Aktif</div>
-  </div>
+<div id="comingsoon" class="coming-soon" style="display:none">
+  <div class="cs-icon">&#128205;</div>
+  <h2 id="soonName">Ma&#287;aza</h2>
+  <p>Bu ma&#287;azan&#305;n trafik verileri haz&#305;rlan&#305;yor. A&#231;&#305;l&#305;&#351; sonras&#305; t&#252;m veriler burada g&#246;r&#252;nt&#252;lenecektir.</p>
+  <div class="cs-badge">&#128205; Yak&#305;nda Aktif</div>
 </div>
-
-<div class="store-section" id="store-outlet">
-  <div class="coming-soon">
-    <div class="cs-icon">&#128717;</div>
-    <h2>Outlet Ma&#287;azas&#305;</h2>
-    <p>Outlet ma&#287;azas&#305;n&#305;n trafik verileri haz&#305;rlan&#305;yor. A&#231;&#305;l&#305;&#351; sonras&#305; t&#252;m veriler burada g&#246;r&#252;nt&#252;lenecektir.</p>
-    <div class="cs-badge">&#128205; Yak&#305;nda Aktif</div>
-  </div>
 </div>
 
 </div>
@@ -184,11 +174,19 @@ const fmt=n=>n.toLocaleString('tr-TR');
 const charts={};
 function mk(id,cfg){if(charts[id])charts[id].destroy();charts[id]=new Chart(id,cfg)}
 
+const STORE_FILES={ortakoy:'data.json',ankara:'data-ankara.json'};
+const STORE_TITLES={ortakoy:'ORTAKÖY',ankara:'ANKARA',outlet:'OUTLET'};
+const STORE_CACHE={};
 function switchStore(store,btn){
-  document.querySelectorAll('.store-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.store-section').forEach(s=>s.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('store-'+store).classList.add('active');
+  document.querySelectorAll('.store-btn').forEach(function(b){b.classList.remove('active');});
+  if(btn)btn.classList.add('active');
+  var dash=document.getElementById('dashboard'),soon=document.getElementById('comingsoon');
+  if(!STORE_FILES[store]){dash.style.display='none';soon.style.display='flex';document.getElementById('soonName').textContent=STORE_TITLES[store]||store;return;}
+  soon.style.display='none';dash.style.display='block';
+  var t=document.getElementById('storeTitle');if(t)t.textContent='MOZAIK SHOWROOM — '+(STORE_TITLES[store]||store);
+  function go(d){DATA=d;YR=d.YR;init();render('');}
+  if(STORE_CACHE[store])return go(STORE_CACHE[store]);
+  fetch(STORE_FILES[store]).then(function(r){return r.json();}).then(function(d){STORE_CACHE[store]=d;go(d);});
 }
 
 function sw(btn){document.querySelectorAll('.pnl').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));document.getElementById('p-'+btn.dataset.p).classList.add('on');btn.classList.add('on')}
@@ -273,5 +271,5 @@ function render(repKey){
   mk('cInP',{type:'bar',data:{labels:MO,datasets:[{label:'Ay',data:d.MC,backgroundColor:d.MC.map(function(v,i){return i===d.peak_mo_idx?'#facc15cc':'#818cf866';}),borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:G}}}});
 }
 
-fetch('data.json').then(function(r){return r.json();}).then(function(d){DATA=d;YR=d.YR;init();render('');});
+switchStore('ortakoy', document.querySelector('.store-btn'));
 </script></body></html>
