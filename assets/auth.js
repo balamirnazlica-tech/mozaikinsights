@@ -154,3 +154,6 @@ if(!isAuthed()){
   onReady(showBadge);
 }
 })();
+
+/* load responsive nav hamburger */
+(function(){var s=document.createElement('script');s.src='/assets/nav.js';s.defer=true;(document.head||document.documentElement).appendChild(s);})();
