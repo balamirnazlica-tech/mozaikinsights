@@ -101,6 +101,7 @@ td.num{text-align:right;color:#a5b4fc;font-variant-numeric:tabular-nums}
   <button class="tab" data-p="tp" onclick="sw(this)">Ula&#351;&#305;m &amp; Ara&#231;</button>
   <button class="tab" data-p="vi" onclick="sw(this)">Ziyaret&#231;iler</button>
   <button class="tab" data-p="in" onclick="sw(this)">&#214;ng&#246;r&#252;ler</button>
+  <button class="tab" data-p="pr" onclick="sw(this);loadReps()">Personel</button>
 </div>
 
 <div class="pnl on" id="p-ov">
@@ -272,4 +273,8 @@ function render(repKey){
 }
 
 switchStore('ortakoy', document.querySelector('.store-btn'));
-</script></body></html>
+</script><div class="pnl" id="p-pr">
+  <iframe id="repsFrame" data-src="footfall-reps.html" title="Personel / Per Rep" style="width:100%;height:2400px;border:0;border-radius:12px;background:#0b1020"></iframe>
+</div>
+<script>function loadReps(){var f=document.getElementById("repsFrame");if(f&&!f.getAttribute("src")){f.src=f.dataset.src;}}</script>
+</body></html>
