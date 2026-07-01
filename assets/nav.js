@@ -26,6 +26,7 @@
     btn.setAttribute('aria-label','Menu');btn.setAttribute('aria-expanded','false');
     btn.innerHTML='<span></span><span></span><span></span>';
     list.parentNode.insertBefore(btn,list);
+    if(!list.querySelector('a[href="/analytics/"]')){var _li=document.createElement("li");var _a=document.createElement("a");_a.className="link"+(location.pathname.indexOf("/analytics")===0?" active":"");_a.href="/analytics/";_a.textContent="Analytics";_li.appendChild(_a);list.appendChild(_li);}
     btn.addEventListener('click',function(e){e.stopPropagation();var o=nav.classList.toggle('nav-open');btn.setAttribute('aria-expanded',o?'true':'false');});
     list.addEventListener('click',function(e){if(e.target.closest('a'))nav.classList.remove('nav-open');});
     document.addEventListener('click',function(e){if(!nav.contains(e.target))nav.classList.remove('nav-open');});
