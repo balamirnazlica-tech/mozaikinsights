@@ -157,3 +157,18 @@ if(!isAuthed()){
 
 /* load responsive nav hamburger */
 (function(){var s=document.createElement('script');s.src='/assets/nav.js';s.defer=true;(document.head||document.documentElement).appendChild(s);})();
+
+/* page-view logger -> Mozaik Insights usage analytics */
+(function(){
+  var EP='https://script.google.com/macros/s/AKfycbzAJtBbhp3lBQ8MfcsqMt7AVM_5DiUIzj_y7BuMJDYnF6Rw7pUS85s4m2usyXkUNxeF/exec';
+  function nm(){try{return sessionStorage.getItem('_mzi_name')||localStorage.getItem('_mzi_name')||'';}catch(e){return '';}}
+  function logView(){
+    var name=nm(); if(!name)return;
+    try{
+      var body=JSON.stringify({name:name,page:location.pathname,title:document.title,event:'pageview',site:'insights',ref:document.referrer||'',ua:navigator.userAgent});
+      navigator.sendBeacon(EP,new Blob([body],{type:'text/plain;charset=UTF-8'}));
+    }catch(e){}
+  }
+  if(document.readyState==='complete')setTimeout(logView,400);
+  else window.addEventListener('load',function(){setTimeout(logView,400);});
+})();
