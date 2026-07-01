@@ -63,7 +63,21 @@
 var ENDPOINT='https://script.google.com/macros/s/AKfycbzAJtBbhp3lBQ8MfcsqMt7AVM_5DiUIzj_y7BuMJDYnF6Rw7pUS85s4m2usyXkUNxeF/exec';
 var TOKEN='izgS6KDacLVXhybRnQKNtQR';
 
-function fmtPage(p){ if(!p)return '/'; return p.replace(/index\.html$/,'').replace(/\/$/,'')||'/'; }
+function fmtPage(p){
+  p=(p||'/'); var k=p.replace(/index\.html$/,''); if(k.length>1)k=k.replace(/\/$/,''); if(k==='')k='/';
+  var NAMES={
+    '/':'Home','/marketing':'Marketing','/sales':'Sales','/operations':'Operations','/projects':'Projects','/surveys':'Surveys','/analytics':'Usage Analytics',
+    '/sales/sales-dashboard.html':'Sales Dashboard','/sales/Enterprise_Sales_Dashboard.html':'Enterprise Sales','/sales/leadership-guide.html':'Leadership Guide',
+    '/sales/crm':'CRM','/sales/build-vs-buy':'CRM Build vs Buy','/sales/footfall':'Footfall (Traffic)','/sales/footfall/footfall-reps.html':'Footfall Per Rep',
+    '/operations/footfall.html':'Ortak\u00f6y Footfall','/operations/outlet-footfall.html':'Outlet Footfall','/operations/Mozaik_Inventory_Dashboard_2026.html':'Inventory Dashboard','/operations/all-hands-june-2026':'All-Hands (June 2026)',
+    '/marketing/mozaik-customer-intelligence.html':'Customer Intelligence','/marketing/mozaik-product-intelligence.html':'Product Intelligence','/marketing/mozaik-orders-dashboard.html':'Orders Dashboard',
+    '/marketing/mozaik-unified-dashboard.html':'Unified Marketing','/marketing/mozaik-unified-dashboard-full.html':'Unified Marketing (Full)','/marketing/unified':'Unified Marketing'
+  };
+  if(NAMES[k])return NAMES[k];
+  var seg=k.replace(/\/$/,'').split('/').pop().replace(/\.html$/,'').replace(/[-_]+/g,' ').trim();
+  if(!seg)return 'Home';
+  return seg.replace(/\b\w/g,function(c){return c.toUpperCase();});
+}
 function ago(d){ var s=(Date.now()-new Date(d).getTime())/1000; if(s<60)return 'just now'; var m=s/60; if(m<60)return Math.floor(m)+'m ago'; var h=m/60; if(h<24)return Math.floor(h)+'h ago'; return Math.floor(h/24)+'d ago'; }
 
 function render(rows){
