@@ -29,7 +29,7 @@
   canvas{max-height:260px}
 </style>
 </head>
-<body class="viewer">
+<body>
 <nav class="nav">
   <div class="nav-inner">
     <a class="brand" href="../"><span class="brand-mark"></span><span class="brand-name">Mozaik Insights</span><span class="brand-sub">analytics hub</span></a>
@@ -69,9 +69,9 @@ function fmtPage(p){
     '/':'Home','/marketing':'Marketing','/sales':'Sales','/operations':'Operations','/projects':'Projects','/surveys':'Surveys','/analytics':'Usage Analytics',
     '/sales/sales-dashboard.html':'Sales Dashboard','/sales/Enterprise_Sales_Dashboard.html':'Enterprise Sales','/sales/leadership-guide.html':'Leadership Guide',
     '/sales/crm':'CRM','/sales/build-vs-buy':'CRM Build vs Buy','/sales/footfall':'Footfall (Traffic)','/sales/footfall/footfall-reps.html':'Footfall Per Rep',
-    '/operations/footfall.html':'Ortak\u00f6y Footfall','/operations/outlet-footfall.html':'Outlet Footfall','/operations/Mozaik_Inventory_Dashboard_2026.html':'Inventory Dashboard','/operations/all-hands-june-2026':'All-Hands (June 2026)',
+    '/operations/footfall.html':'Ortaköy Footfall','/operations/outlet-footfall.html':'Outlet Footfall','/operations/Mozaik_Inventory_Dashboard_2026.html':'Inventory Dashboard','/operations/all-hands-june-2026':'All-Hands (June 2026)',
     '/marketing/mozaik-customer-intelligence.html':'Customer Intelligence','/marketing/mozaik-product-intelligence.html':'Product Intelligence','/marketing/mozaik-orders-dashboard.html':'Orders Dashboard',
-    '/marketing/mozaik-unified-dashboard.html':'Unified Marketing','/marketing/mozaik-unified-dashboard-full.html':'Unified Marketing (Full)','/marketing/unified':'Unified Marketing'
+    '/marketing/mozaik-unified-dashboard.html':'Unified Marketing','/marketing/mozaik-unified-dashboard-full.html':'Unified Marketing (Full)','/marketing/unified':'Unified Marketing','/marketing/marketing-dashboard.html':'Marketing Mission Control'
   };
   if(NAMES[k])return NAMES[k];
   var seg=k.replace(/\/$/,'').split('/').pop().replace(/\.html$/,'').replace(/[-_]+/g,' ').trim();
@@ -81,7 +81,12 @@ function fmtPage(p){
 function ago(d){ var s=(Date.now()-new Date(d).getTime())/1000; if(s<60)return 'just now'; var m=s/60; if(m<60)return Math.floor(m)+'m ago'; var h=m/60; if(h<24)return Math.floor(h)+'h ago'; return Math.floor(h/24)+'d ago'; }
 
 function render(rows){
-  rows=(rows||[]).filter(function(r){return (r.event||'pageview')==='pageview';});
+  rows=(rows||[]).filter(function(r){
+    if((r.event||'pageview')!=='pageview')return false;
+    var nm=(r.name||'').toLowerCase().trim();
+    if(!nm||nm.indexOf('test')>-1)return false;
+    return true;
+  });
   var byPage={}, byUser={}, users={};
   rows.forEach(function(r){
     var pg=fmtPage(r.page); byPage[pg]=(byPage[pg]||0)+1;
