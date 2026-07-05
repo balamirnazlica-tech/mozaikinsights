@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Marketing â Mozaik Insights</title>
+<title>Marketing — Mozaik Insights</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -25,22 +25,7 @@
 </nav>
 
 <main class="viewer-main">
-  <div class="tabbar" id="tabs"></div>
-  <div class="frame-host"><iframe id="frame" title="Marketing dashboard" loading="eager" allow="fullscreen"></iframe></div>
+  <div class="frame-host"><iframe id="frame" title="Marketing dashboard" loading="eager" allow="fullscreen" src="./marketing-dashboard.html"></iframe></div>
 </main>
-
-<script>
-const DASHBOARDS=[
-  {id:'unified-full',label:'Unified (Full)',url:'./mozaik-unified-dashboard-full.html'},
-  {id:'unified',label:'Unified Analytics',url:'./mozaik-unified-dashboard.html'},
-  {id:'customer',label:'Customer Intelligence',url:'./mozaik-customer-intelligence.html'},
-  {id:'product',label:'Product Intelligence',url:'./mozaik-product-intelligence.html'},
-  {id:'orders',label:'Orders',url:'./mozaik-orders-dashboard.html'}
-];
-const frame=document.getElementById('frame'),tabs=document.getElementById('tabs');
-function activate(id){const d=DASHBOARDS.find(x=>x.id===id)||DASHBOARDS[0];frame.src=d.url;[...tabs.children].forEach(b=>b.classList.toggle('active',b.dataset.id===d.id));history.replaceState(null,'','#'+d.id);}
-DASHBOARDS.forEach(d=>{const b=document.createElement('button');b.textContent=d.label;b.dataset.id=d.id;b.onclick=()=>activate(d.id);tabs.appendChild(b);});
-activate(location.hash.replace('#','')||'unified');
-</script>
 </body>
 </html>
