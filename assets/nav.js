@@ -65,3 +65,76 @@
   function init(){document.querySelectorAll('.tabbar').forEach(initBar);}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
+
+/* Mozaik Insights — drag-to-reorder tabs inside .tabbar rows.
+   Order persists per page (localStorage), independent from the
+   click-and-drag horizontal SCROLL feature above. */
+(function(){
+  var css = ".tabbar>*{cursor:grab}.tabbar>*.mzi-tab-dragging{opacity:.35;cursor:grabbing}";
+  var st=document.createElement('style');st.setAttribute('data-mzi-tab-reorder','');st.textContent=css;
+  (document.head||document.documentElement).appendChild(st);
+
+  function keyFor(bar){ return 'mzi-taborder:'+location.pathname+(bar.id?(':'+bar.id):''); }
+  function tabKey(el){ return el.dataset.id || el.getAttribute('href') || el.textContent.trim(); }
+
+  function applyOrder(bar){
+    var raw; try{ raw = localStorage.getItem(keyFor(bar)); }catch(e){ return; }
+    if(!raw) return;
+    var order; try{ order = JSON.parse(raw); }catch(e){ return; }
+    var items = Array.prototype.slice.call(bar.children);
+    if(!items.length) return;
+    var map = {}; items.forEach(function(el){ map[tabKey(el)] = el; });
+    order.forEach(function(k){ if(map[k]) bar.appendChild(map[k]); });
+  }
+  function saveOrder(bar){
+    var order = Array.prototype.slice.call(bar.children).map(tabKey);
+    try{ localStorage.setItem(keyFor(bar), JSON.stringify(order)); }catch(e){}
+  }
+
+  var dragEl=null, barBeingDragged=null;
+  function wire(el, bar){
+    if(el.dataset.mziDragWired) return; el.dataset.mziDragWired='1';
+    el.draggable = true;
+    el.addEventListener('dragstart', function(e){
+      dragEl = el; barBeingDragged = bar;
+      el.classList.add('mzi-tab-dragging');
+      bar.classList.remove('mzi-dragging');
+      window.dispatchEvent(new MouseEvent('mouseup'));
+      e.dataTransfer.effectAllowed = 'move';
+      try{ e.dataTransfer.setData('text/plain', tabKey(el)); }catch(err){}
+    });
+    el.addEventListener('dragend', function(){
+      el.classList.remove('mzi-tab-dragging');
+      if(barBeingDragged===bar) saveOrder(bar);
+      dragEl=null; barBeingDragged=null;
+    });
+    el.addEventListener('dragover', function(e){
+      if(!dragEl || barBeingDragged!==bar) return;
+      e.preventDefault();
+      if(dragEl===el) return;
+      var rect = el.getBoundingClientRect();
+      var before = (e.clientX - rect.left) < rect.width/2;
+      bar.insertBefore(dragEl, before ? el : el.nextSibling);
+    });
+    el.addEventListener('drop', function(e){ e.preventDefault(); });
+  }
+  function wireAll(bar){
+    Array.prototype.forEach.call(bar.children, function(el){ wire(el, bar); });
+  }
+
+  function initBar(bar){
+    if(bar.dataset.mziReorder) return; bar.dataset.mziReorder='1';
+    var populated = bar.children.length>0;
+    if(populated){ applyOrder(bar); wireAll(bar); }
+    var mo = new MutationObserver(function(){
+      wireAll(bar);
+      if(!populated && bar.children.length>0){
+        populated = true;
+        applyOrder(bar);
+      }
+    });
+    mo.observe(bar,{childList:true});
+  }
+  function init(){ document.querySelectorAll('.tabbar').forEach(initBar); }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
