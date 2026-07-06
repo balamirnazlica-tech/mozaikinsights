@@ -80,7 +80,7 @@ td.num{text-align:right;color:#a5b4fc;font-variant-numeric:tabular-nums}
   <button class="store-btn" onclick="switchStore('outlet',this)">
     <span class="store-icon">&#128717;</span>
     <span>Outlet Ma&#287;azas&#305;</span>
-    <span class="store-tag tag-soon">Yak&#305;nda</span>
+    <span class="store-tag tag-active">Aktif</span>
   </button>
 </div>
 
@@ -175,7 +175,7 @@ const fmt=n=>n.toLocaleString('tr-TR');
 const charts={};
 function mk(id,cfg){if(charts[id])charts[id].destroy();charts[id]=new Chart(id,cfg)}
 
-const STORE_FILES={ortakoy:'data.json',ankara:'data-ankara.json'};
+const STORE_FILES={ortakoy:'data.json',ankara:'data-ankara.json',outlet:'data-outlet.json'};
 const STORE_TITLES={ortakoy:'ORTAKÖY',ankara:'ANKARA',outlet:'OUTLET'};
 const STORE_CACHE={};
 function switchStore(store,btn){
