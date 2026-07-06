@@ -5,7 +5,7 @@ var NK='_mzi_name';
 var LK='_mzi_logins';
 
 // People who can log in (alphabetical)
-var NAMES=['Balamir Nazlıca','Banu Nazlıca','Burçin Karaca','Ceren Acar','Hilal Kaban','Özlem Taner','Yaman Erturan','Zeynep Uzel'];
+var NAMES=['Balamir Nazlıca','Banu Nazlıca','Burçin Karaca','Ceren Acar','Hilal Kaban','Özlem Taner','Yaman Erturan','Zeynep Hürcan','Zeynep Uzel'];
 
 // ===== Shared store config =====
 // Leave BIN empty for per-device history (localStorage). To make "last logins"
