@@ -1,4 +1,4 @@
-/* Mozaik Insights — responsive nav hamburger + drag-to-reorder tabs. Self-contained:
+/* Mozaik Insights — responsive nav hamburger. Self-contained:
    injects its own CSS + a toggle button into .nav / .site-nav.
    No-ops on pages without a site nav. */
 (function(){
@@ -10,10 +10,6 @@
   ".nav.nav-open .nav-toggle span:nth-child(1),.site-nav.nav-open .nav-toggle span:nth-child(1){transform:translateY(7px) rotate(45deg)}"+
   ".nav.nav-open .nav-toggle span:nth-child(2),.site-nav.nav-open .nav-toggle span:nth-child(2){opacity:0}"+
   ".nav.nav-open .nav-toggle span:nth-child(3),.site-nav.nav-open .nav-toggle span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}"+
-  ".nav ul li,.site-nav ul li{cursor:grab}"+
-  ".nav ul li:active,.site-nav ul li:active{cursor:grabbing}"+
-  ".nav ul li.mzi-dragging,.site-nav ul li.mzi-dragging{opacity:.35}"+
-  ".nav ul li.mzi-drag-over,.site-nav ul li.mzi-drag-over{box-shadow:inset 2px 0 0 var(--accent,#818cf8)}"+
   "@media(max-width:760px){"+
   ".nav-inner,.site-nav-inner{flex-direction:row;align-items:center;flex-wrap:wrap;justify-content:space-between}"+
   ".nav .nav-toggle,.site-nav .nav-toggle{display:flex}"+
@@ -23,53 +19,6 @@
   "}";
   var st=document.createElement('style');st.setAttribute('data-mzi-nav','');st.textContent=css;
   (document.head||document.documentElement).appendChild(st);
-
-  var ORDER_KEY='_mzi_nav_order';
-
-  function applySavedOrder(list){
-    var saved;
-    try{saved=JSON.parse(localStorage.getItem(ORDER_KEY)||'null');}catch(e){saved=null;}
-    if(!saved||!Array.isArray(saved)||!saved.length)return;
-    var byHref={};
-    Array.prototype.forEach.call(list.children,function(li){
-      var a=li.querySelector('a');if(a)byHref[a.getAttribute('href')]=li;
-    });
-    saved.forEach(function(href){ if(byHref[href]) list.appendChild(byHref[href]); });
-  }
-  function saveOrder(list){
-    var hrefs=Array.prototype.map.call(list.children,function(li){
-      var a=li.querySelector('a');return a?a.getAttribute('href'):'';
-    });
-    try{localStorage.setItem(ORDER_KEY,JSON.stringify(hrefs));}catch(e){}
-  }
-  function initDragReorder(list){
-    var dragEl=null;
-    function clearDragOver(){
-      Array.prototype.forEach.call(list.children,function(li){li.classList.remove('mzi-drag-over');});
-    }
-    Array.prototype.forEach.call(list.children,function(li){
-      li.setAttribute('draggable','true');
-      li.addEventListener('dragstart',function(e){
-        dragEl=li; li.classList.add('mzi-dragging');
-        try{e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain','');}catch(e2){}
-      });
-      li.addEventListener('dragend',function(){
-        li.classList.remove('mzi-dragging'); clearDragOver(); dragEl=null; saveOrder(list);
-      });
-      li.addEventListener('dragover',function(e){
-        e.preventDefault();
-        if(!dragEl||dragEl===li)return;
-        clearDragOver();
-        var rect=li.getBoundingClientRect();
-        var vertical=rect.width<=rect.height;
-        var before=vertical?(e.clientY-rect.top)<rect.height/2:(e.clientX-rect.left)<rect.width/2;
-        li.classList.add('mzi-drag-over');
-        if(before){ list.insertBefore(dragEl,li); } else { list.insertBefore(dragEl,li.nextSibling); }
-      });
-      li.addEventListener('drop',function(e){ e.preventDefault(); clearDragOver(); });
-    });
-  }
-
   function init(){
     var nav=document.querySelector('nav.nav,nav.site-nav');if(!nav)return;
     var list=nav.querySelector('ul');if(!list||nav.querySelector('.nav-toggle'))return;
@@ -78,12 +27,41 @@
     btn.innerHTML='<span></span><span></span><span></span>';
     list.parentNode.insertBefore(btn,list);
     if(!list.querySelector('a[href="/analytics/"]')){var _li=document.createElement("li");var _a=document.createElement("a");_a.className="link"+(location.pathname.indexOf("/analytics")===0?" active":"");_a.href="/analytics/";_a.textContent="Analytics";_li.appendChild(_a);list.appendChild(_li);}
-    applySavedOrder(list);
-    initDragReorder(list);
     btn.addEventListener('click',function(e){e.stopPropagation();var o=nav.classList.toggle('nav-open');btn.setAttribute('aria-expanded',o?'true':'false');});
     list.addEventListener('click',function(e){if(e.target.closest('a'))nav.classList.remove('nav-open');});
     document.addEventListener('click',function(e){if(!nav.contains(e.target))nav.classList.remove('nav-open');});
     window.addEventListener('keydown',function(e){if(e.key==='Escape')nav.classList.remove('nav-open');});
   }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+
+/* Mozaik Insights — click-and-drag horizontal scrolling for .tabbar rows
+   (Sales/Marketing/Projects sub-nav tabs). Native touch/trackpad swipe
+   already works via CSS overflow-x; this adds mouse click-drag on desktop. */
+(function(){
+  var css = ".tabbar{cursor:grab}.tabbar.mzi-dragging{cursor:grabbing;user-select:none}";
+  var st=document.createElement('style');st.setAttribute('data-mzi-tabbar-drag','');st.textContent=css;
+  (document.head||document.documentElement).appendChild(st);
+  function initBar(bar){
+    if(bar.dataset.mziDrag)return;bar.dataset.mziDrag='1';
+    var isDown=false,startX=0,scrollLeft=0,moved=false;
+    bar.addEventListener('mousedown',function(e){
+      isDown=true;moved=false;bar.classList.add('mzi-dragging');
+      startX=e.pageX;scrollLeft=bar.scrollLeft;
+    });
+    window.addEventListener('mouseup',function(){isDown=false;bar.classList.remove('mzi-dragging');});
+    bar.addEventListener('mouseleave',function(){isDown=false;bar.classList.remove('mzi-dragging');});
+    bar.addEventListener('mousemove',function(e){
+      if(!isDown)return;
+      var walk=e.pageX-startX;
+      if(Math.abs(walk)>5)moved=true;
+      if(moved)e.preventDefault();
+      bar.scrollLeft=scrollLeft-walk;
+    });
+    bar.addEventListener('click',function(e){
+      if(moved){e.stopPropagation();e.preventDefault();moved=false;}
+    },true);
+  }
+  function init(){document.querySelectorAll('.tabbar').forEach(initBar);}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
