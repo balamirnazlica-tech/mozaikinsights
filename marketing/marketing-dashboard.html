@@ -39,8 +39,12 @@
     </div>
     <div class="flex items-center gap-3">
       <div>
-        <label class="block text-[11px] uppercase tracking-wide text-slate-400 mb-1">Month</label>
-        <select id="monthFilter" class="text-sm border border-slate-200 rounded-lg px-3 py-1.5 bg-white"></select>
+        <label class="block text-[11px] uppercase tracking-wide text-slate-400 mb-1">From</label>
+        <select id="monthFrom" class="text-sm border border-slate-200 rounded-lg px-3 py-1.5 bg-white"></select>
+      </div>
+      <div>
+        <label class="block text-[11px] uppercase tracking-wide text-slate-400 mb-1">To</label>
+        <select id="monthTo" class="text-sm border border-slate-200 rounded-lg px-3 py-1.5 bg-white"></select>
       </div>
       <div class="text-right">
         <div class="text-[11px] uppercase tracking-wide text-slate-400">Updated</div>
@@ -58,9 +62,14 @@
   <!-- OVERVIEW -->
   <section data-panel="overview">
     <div class="card p-3 mb-4" style="background:#f0fdf4;border-color:#bbf7d0">
-      <p class="text-sm" style="color:#065f46"><b>Everything here is real.</b> Paid metrics are live from your Meta Ads (Mozaik Ad Account) via Supermetrics. Instagram reach (Brand &amp; Social tab) is live from Instagram Insights + Meta Ads. Currency ₺.</p>
+      <p class="text-sm" style="color:#065f46"><b>Everything here is real.</b> Paid metrics are live from your Meta Ads (Mozaik Ad Account) via Supermetrics. Store revenue is live from Metorik. Instagram reach (Brand &amp; Social tab) is live from Instagram Insights + Meta Ads. Currency ₺.</p>
     </div>
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4" id="kpis"></div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4" id="kpis"></div>
+    <div class="card p-4 mb-4" id="ecomCompareCard" hidden>
+      <h3 class="font-semibold mb-3">Store Revenue vs Meta Pixel-Tracked Revenue <span class="text-slate-400 font-normal text-sm">· monthly (₺)</span></h3>
+      <canvas id="ecomCompare"></canvas>
+      <p class="text-xs text-slate-400 mt-2">Pixel-tracked revenue only counts purchases Meta's pixel can see online. Store Revenue (via Metorik) is total real sales across the store — the gap is largely offline/showroom closes plus attribution loss.</p>
+    </div>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
       <div class="card p-4 lg:col-span-2">
         <h3 class="font-semibold mb-3">Meta Ads: Spend vs Attributed Revenue <span class="text-slate-400 font-normal text-sm">· weekly (₺)</span></h3>
@@ -136,33 +145,70 @@ const TLk=n=> n>=1e6?'₺'+(n/1e6).toFixed(2)+'M' : n>=1e3?'₺'+(n/1e3).toFixed
 const num=n=>Math.round(n).toLocaleString('en-US');
 const pct=n=>(n*100).toFixed(1)+'%';
 const PALETTE=['#2563eb','#16a34a','#dc2626','#db2777','#f59e0b','#0891b2','#7c3aed','#65a30d','#e11d48','#0f766e'];
-let charts={}, state={month:'all', paidMetric:'spend', sort:{k:'spend',dir:-1}};
+let charts={}, state={from:DATA.meta.months[0], to:DATA.meta.months[DATA.meta.months.length-1], paidMetric:'spend', sort:{k:'spend',dir:-1}};
 const CAMPS=[...new Set(DATA.paid.map(r=>r.campaign))];
 const CCOL={}; CAMPS.forEach((c,i)=>CCOL[c]=PALETTE[i%PALETTE.length]);
 const short=c=>c.length>26?c.slice(0,24)+'…':c;
 
-function fPaid(){return state.month==='all'?DATA.paid:DATA.paid.filter(r=>r.month===state.month);}
-function weeksInMonth(m){return m==='all'?DATA.meta.weeks:[...new Set(DATA.paid.filter(r=>r.month===m).map(r=>r.week))];}
+// Months are "YYYY-MM" strings, which sort/compare correctly as plain strings.
+function inRange(m){return m>=state.from && m<=state.to;}
+function fPaid(){return DATA.paid.filter(r=>inRange(r.month));}
+function monthsInRange(){return DATA.meta.months.filter(inRange);}
+function weeksInRange(){return DATA.meta.weeks.filter(w=>{const r=DATA.paid.find(p=>p.week===w);return r&&inRange(r.month);});}
 function sum(a,k){return a.reduce((s,r)=>s+(r[k]||0),0);}
 function destroy(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
+
+// Real e-commerce revenue, pulled at runtime from the E-commerce Mission
+// Control's own data file so this dashboard never embeds a stale copy.
+let DATA_ECOM=null;
+fetch('../ecommerce/ecommerce-data.json',{cache:'no-store'})
+  .then(r=>r.ok?r.json():null)
+  .then(json=>{ DATA_ECOM=json; if($('.tab-btn.active') && $('.tab-btn.active').dataset.tab==='overview') renderOverview(); })
+  .catch(()=>{ DATA_ECOM=null; });
+function ecomMonthsInRange(){ return (DATA_ECOM&&DATA_ECOM.months||[]).filter(r=>inRange(r.month)); }
 
 function kpiCard(label,val,sub,cls){return '<div class="card p-3"><div class="text-[11px] uppercase tracking-wide text-slate-400">'+label+'</div><div class="text-xl font-bold kpi-val mt-1">'+val+'</div><div class="text-xs mt-1 '+(cls||'text-slate-400')+'">'+(sub||'')+'</div></div>';}
 
 function renderKPIs(){
   const p=fPaid();
   const spend=sum(p,'spend'),rev=sum(p,'revenue'),impr=sum(p,'impressions'),clicks=sum(p,'clicks');
+  const ecomRows=ecomMonthsInRange();
+  const realRev=DATA_ECOM?sum(ecomRows,'revenue'):null;
+  const ig=DATA.ig_reach||[];
+  const igInRange=ig.filter(r=>inRange(r.month));
+  const last=igInRange[igInRange.length-1], prev=igInRange[igInRange.length-2];
+  const lastTotal=last?(last.organic||0)+(last.paid||0):null;
+  const prevTotal=prev?(prev.organic||0)+(prev.paid||0):null;
+  const reachTrend=(lastTotal!=null&&prevTotal)?((lastTotal-prevTotal)/prevTotal*100):null;
+
   $('#kpis').innerHTML=
-    kpiCard('Meta Spend',TLk(spend),'')+
-    kpiCard('Attributed Revenue',TLk(rev),'pixel-tracked')+
-    kpiCard('Blended ROAS',(rev/spend).toFixed(2)+'x','revenue ÷ spend')+
+    kpiCard('Meta Spend',TLk(spend),'how much we spent')+
+    kpiCard('Store Revenue',realRev!=null?TLk(realRev):'—',realRev!=null?'real · how much we sold':'connect e-commerce')+
+    kpiCard('Attributed Revenue',TLk(rev),'pixel-tracked, Meta only')+
+    kpiCard('Blended ROAS',(rev/spend).toFixed(2)+'x','pixel revenue ÷ spend')+
+    kpiCard('Clicks',num(clicks),'how many clicks we got')+
     kpiCard('Impressions',num(impr),'')+
-    kpiCard('Clicks',num(clicks),'')+
-    kpiCard('CPC',TL(spend/clicks),'cost per click');
+    kpiCard('CPC',TL(spend/clicks),'cost per click')+
+    kpiCard('Brand Reach',lastTotal!=null?num(lastTotal):'—', reachTrend!=null?(reachTrend>=0?'▲ ':'▼ ')+Math.abs(reachTrend).toFixed(0)+'% vs prev mo.':'Instagram, is branding growing?', reachTrend!=null?(reachTrend>=0?'up':'down'):'');
+}
+
+function renderEcomCompare(){
+  if(!DATA_ECOM){ $('#ecomCompareCard').hidden=true; return; }
+  $('#ecomCompareCard').hidden=false;
+  const months=monthsInRange();
+  const pixelByMonth=months.map(mo=>sum(DATA.paid.filter(r=>r.month===mo),'revenue'));
+  const realByMonth=months.map(mo=>{const r=(DATA_ECOM.months||[]).find(x=>x.month===mo);return r?r.revenue:0;});
+  destroy('ecomCompare');
+  charts.ecomCompare=new Chart($('#ecomCompare'),{type:'bar',data:{labels:months,datasets:[
+    {label:'Store Revenue (real, Metorik)',data:realByMonth,backgroundColor:'#0f172a',borderRadius:4},
+    {label:'Pixel-Tracked (Meta)',data:pixelByMonth,backgroundColor:'#93c5fd',borderRadius:4}
+  ]},options:{plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:c=>c.dataset.label+': '+TL(c.parsed.y)}}},scales:{y:{ticks:{callback:v=>TLk(v)}}}}});
 }
 
 function renderOverview(){
   renderKPIs();
-  const wks=weeksInMonth(state.month), p=fPaid();
+  renderEcomCompare();
+  const wks=weeksInRange(), p=fPaid();
   const bySpend=wks.map(w=>sum(p.filter(r=>r.week===w),'spend'));
   const byRev=wks.map(w=>sum(p.filter(r=>r.week===w),'revenue'));
   destroy('ovTrend');
@@ -205,7 +251,7 @@ function renderPaid(){
   $('#paidCards').innerHTML=
     kpiCard('Spend',TLk(spend),'')+kpiCard('Attributed Revenue',TLk(rev),'pixel')+
     kpiCard('ROAS',(rev/spend).toFixed(2)+'x','')+kpiCard('CTR',pct(clicks/impr),'clicks ÷ impr');
-  const wks=weeksInMonth(state.month);
+  const wks=weeksInRange();
   const top=CAMPS.map(c=>({c,s:sum(p.filter(r=>r.campaign===c),'spend')})).sort((a,b)=>b.s-a.s).slice(0,6).map(x=>x.c);
   const ds=top.map(c=>({label:short(c),data:wks.map(w=>sum(p.filter(r=>r.week===w&&r.campaign===c),state.paidMetric)),borderColor:CCOL[c],backgroundColor:CCOL[c]+'22',borderWidth:2,pointRadius:0,tension:.35}));
   destroy('paidTrend');
@@ -252,9 +298,20 @@ function rerenderActive(){show($('.tab-btn.active').dataset.tab);}
 function init(){
   $('#updated').textContent=DATA.meta.generated;
   $('#subtitle').textContent=DATA.meta.company+' · '+DATA.meta.weeks[0]+' – '+DATA.meta.weeks.slice(-1)[0]+' 2026 · '+DATA.meta.live;
-  const mf=$('#monthFilter');
-  mf.innerHTML='<option value="all">All months (YTD)</option>'+DATA.meta.months.map(m=>'<option value="'+m+'">'+m+'</option>').join('');
-  mf.onchange=e=>{state.month=e.target.value;rerenderActive();};
+  const mFrom=$('#monthFrom'), mTo=$('#monthTo');
+  const opts=DATA.meta.months.map(m=>'<option value="'+m+'">'+m+'</option>').join('');
+  mFrom.innerHTML=opts; mTo.innerHTML=opts;
+  mFrom.value=state.from; mTo.value=state.to;
+  mFrom.onchange=()=>{
+    state.from=mFrom.value;
+    if(state.from>state.to){state.to=state.from;mTo.value=state.to;}
+    rerenderActive();
+  };
+  mTo.onchange=()=>{
+    state.to=mTo.value;
+    if(state.to<state.from){state.from=state.to;mFrom.value=state.from;}
+    rerenderActive();
+  };
   $$('.tab-btn').forEach(b=>b.onclick=()=>show(b.dataset.tab));
   $$('#paidMetricSeg button').forEach(b=>b.onclick=()=>{state.paidMetric=b.dataset.m;$$('#paidMetricSeg button').forEach(x=>x.classList.toggle('on',x===b));renderPaid();});
   show('overview');
