@@ -39,6 +39,10 @@ th,td{padding:10px 8px;font-size:13px;white-space:nowrap}
 }
 thead th{text-align:left;color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid #1f2a44}
 tbody td{border-bottom:1px solid #121c34}
+.seg{display:inline-flex;border:1px solid #1f2a44;border-radius:8px;overflow:hidden}
+.seg button{background:#0f1729;color:#94a3b8;border:none;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer}
+.seg button.on{background:#3b82f6;color:#fff}
+.seg button:disabled{opacity:.4;cursor:not-allowed}
 </style>
 </head>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
@@ -55,7 +59,8 @@ tbody td{border-bottom:1px solid #121c34}
     </div>
     <div class="flex gap-2 items-center flex-wrap">
       <span class="text-xs text-green-400 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-400 pulse"></span>Live</span>
-      <select id="metricSel"><option value="revenue">Revenue (€)</option><option value="units">Units Sold</option></select>
+      <select id="metricSel"><option value="revenue">Revenue</option><option value="units">Units Sold</option></select>
+      <div class="seg" id="ccySeg"><button class="on" data-c="TRY">₺</button><button data-c="EUR">€</button></div>
       <select id="rangeSel">
         <option value="all">All Time (18 mo)</option>
         <option value="fy25">FY 2025</option>
@@ -218,9 +223,15 @@ function partnersByMonth(){
 }
 
 const FMT = new Intl.NumberFormat('en-US',{maximumFractionDigits:0});
-const CUR='€';
-const money = v => CUR+FMT.format(Math.round(v||0));
-const moneyK = v => { v=v||0; if(Math.abs(v)>=1e6) return CUR+(v/1e6).toFixed(2)+'M'; if(Math.abs(v)>=1e3) return CUR+(v/1e3).toFixed(0)+'k'; return CUR+Math.round(v); };
+let ccy='TRY', EUR_RATE=null;
+fetch('https://api.frankfurter.dev/v1/latest?from=TRY&to=EUR',{cache:'no-store'})
+  .then(r=>r.ok?r.json():null)
+  .then(j=>{ if(j&&j.rates&&j.rates.EUR){ EUR_RATE=j.rates.EUR; } else { const b=document.querySelector('#ccySeg button[data-c="EUR"]'); if(b)b.disabled=true; } })
+  .catch(()=>{ const b=document.querySelector('#ccySeg button[data-c="EUR"]'); if(b){b.disabled=true;b.title='Rate unavailable';} });
+const conv=n=>(ccy==='EUR'&&EUR_RATE)?n*EUR_RATE:n;
+const sym=()=>ccy==='EUR'?'€':'₺';
+const money = v => sym()+FMT.format(Math.round(conv(v)||0));
+const moneyK = v => { v=conv(v||0); if(Math.abs(v)>=1e6) return sym()+(v/1e6).toFixed(2)+'M'; if(Math.abs(v)>=1e3) return sym()+(v/1e3).toFixed(0)+'k'; return sym()+Math.round(v); };
 const DEPT_COLOR = {Retail:'#3b82f6',Enterprise:'#10b981',Lighting:'#f59e0b',Marketing:'#a855f7'};
 
 let state = {metric:'revenue', range:'all', tab:'overview', selectedRep:null, repSort:'revenue', deptFilter:'all', partnerRange:'all', partnerSort:'total', selectedPartner:null};
@@ -876,6 +887,7 @@ function selectRep(n){state.selectedRep=(state.selectedRep===n||n===null)?null:n
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{state.tab=t.dataset.tab;state.selectedRep=null;state.selectedPartner=null;render();});
 document.getElementById('metricSel').onchange=e=>{state.metric=e.target.value;render();};
 document.getElementById('rangeSel').onchange=e=>{state.range=e.target.value;render();};
+document.querySelectorAll('#ccySeg button').forEach(b=>{b.onclick=()=>{ccy=b.dataset.c;document.querySelectorAll('#ccySeg button').forEach(x=>x.classList.toggle('on',x===b));render();};});
 render();
 </script>
 </body>
