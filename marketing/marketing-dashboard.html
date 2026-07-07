@@ -24,6 +24,7 @@
   .seg button{font-size:12px;font-weight:600;padding:4px 12px;border-radius:7px;color:#475569}
   .seg button.on{background:#fff;color:#0f172a;box-shadow:0 1px 2px rgba(0,0,0,.1)}
   canvas{max-height:300px}
+  #ccySeg button:disabled{opacity:.4;cursor:not-allowed}
 </style>
 </head>
 <body>
@@ -45,6 +46,13 @@
       <div>
         <label class="block text-[11px] uppercase tracking-wide text-slate-400 mb-1">To</label>
         <select id="monthTo" class="text-sm border border-slate-200 rounded-lg px-3 py-1.5 bg-white"></select>
+      </div>
+      <div>
+        <label class="block text-[11px] uppercase tracking-wide text-slate-400 mb-1">Currency</label>
+        <div class="seg" id="ccySeg">
+          <button class="on" data-c="TRY">₺</button>
+          <button data-c="EUR">€</button>
+        </div>
       </div>
       <div class="text-right">
         <div class="text-[11px] uppercase tracking-wide text-slate-400">Updated</div>
@@ -140,8 +148,19 @@ const DATA = {"meta": {"company": "Mozaik Design", "scope": "Marketing", "curren
 </script>
 <script>
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const TL=n=>'₺'+Math.round(n).toLocaleString('en-US');
-const TLk=n=> n>=1e6?'₺'+(n/1e6).toFixed(2)+'M' : n>=1e3?'₺'+(n/1e3).toFixed(0)+'k' : '₺'+Math.round(n);
+
+// Currency toggle: ₺ (Turkish Lira, default/source currency) or € (converted
+// live via a free FX API). All amounts in DATA/DATA_ECOM are in ₺; TL/TLk
+// convert on the fly based on `ccy` so no data needs to change.
+let ccy='TRY', EUR_RATE=null;
+fetch('https://api.frankfurter.dev/v1/latest?from=TRY&to=EUR',{cache:'no-store'})
+  .then(r=>r.ok?r.json():null)
+  .then(j=>{ if(j&&j.rates&&j.rates.EUR){ EUR_RATE=j.rates.EUR; } else { $('#ccySeg button[data-c="EUR"]').disabled=true; } })
+  .catch(()=>{ const b=$('#ccySeg button[data-c="EUR"]'); if(b){b.disabled=true;b.title='Rate unavailable';} });
+const conv=n=>(ccy==='EUR'&&EUR_RATE)?n*EUR_RATE:n;
+const sym=()=>ccy==='EUR'?'€':'₺';
+const TL=n=>sym()+Math.round(conv(n)||0).toLocaleString('en-US');
+const TLk=n=>{ n=conv(n)||0; return Math.abs(n)>=1e6?sym()+(n/1e6).toFixed(2)+'M' : Math.abs(n)>=1e3?sym()+(n/1e3).toFixed(0)+'k' : sym()+Math.round(n); };
 const num=n=>Math.round(n).toLocaleString('en-US');
 const pct=n=>(n*100).toFixed(1)+'%';
 const PALETTE=['#2563eb','#16a34a','#dc2626','#db2777','#f59e0b','#0891b2','#7c3aed','#65a30d','#e11d48','#0f766e'];
@@ -312,6 +331,12 @@ function init(){
     if(state.to<state.from){state.from=state.to;mFrom.value=state.from;}
     rerenderActive();
   };
+  $$('#ccySeg button').forEach(b=>b.onclick=()=>{
+    if(b.disabled) return;
+    ccy=b.dataset.c;
+    $$('#ccySeg button').forEach(x=>x.classList.toggle('on',x===b));
+    rerenderActive();
+  });
   $$('.tab-btn').forEach(b=>b.onclick=()=>show(b.dataset.tab));
   $$('#paidMetricSeg button').forEach(b=>b.onclick=()=>{state.paidMetric=b.dataset.m;$$('#paidMetricSeg button').forEach(x=>x.classList.toggle('on',x===b));renderPaid();});
   show('overview');
