@@ -17,7 +17,6 @@
 <ul>
 <li><a class="link" href="../">Home</a></li>
 <li><a class="link" href="../sales/">Sales</a></li>
-<li><a class="link" href="../ecommerce/">E-commerce</a></li>
 <li><a class="link active" href="./">Marketing</a></li>
 <li><a class="link" href="../operations/">Operations</a></li>
 <li><a class="link" href="../projects/">Projects</a></li>
@@ -26,7 +25,20 @@
 </nav>
 
 <main class="viewer-main">
-<div class="frame-host"><iframe id="frame" title="Marketing dashboard" loading="eager" allow="fullscreen" src="./marketing-dashboard.html"></iframe></div>
+<div class="tabbar" id="tabs"></div>
+<div class="frame-host"><iframe id="frame" title="Marketing dashboard" loading="eager" allow="fullscreen"></iframe></div>
 </main>
+
+<script>
+const DASHBOARDS=[
+{id:'ads',label:'Ads & Brand',url:'./marketing-dashboard.html'},
+{id:'ecom',label:'E-commerce',url:'../ecommerce/ecommerce-dashboard.html'}
+];
+const frame=document.getElementById('frame'),tabs=document.getElementById('tabs');
+function activate(id){const d=DASHBOARDS.find(x=>x.id===id)||DASHBOARDS[0];frame.src=d.url;tabs.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.id===d.id))}
+DASHBOARDS.forEach(d=>{const b=document.createElement('button');b.textContent=d.label;b.dataset.id=d.id;b.onclick=()=>activate(d.id);tabs.appendChild(b)});
+activate(new URLSearchParams(location.search).get('tab')||'ads');
+window.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){const i=DASHBOARDS.findIndex(d=>d.id===(tabs.querySelector('.active')||{}).dataset?.id);const n=e.key==='ArrowRight'?(i+1)%DASHBOARDS.length:(i-1+DASHBOARDS.length)%DASHBOARDS.length;activate(DASHBOARDS[n].id)}});
+</script>
 </body>
 </html>
