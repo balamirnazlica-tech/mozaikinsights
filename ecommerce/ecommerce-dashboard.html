@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mozaik Design &mdash; E-commerce Mission Control</title>
+<title>Mozaik Design — E-commerce Mission Control</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
 <style>
@@ -35,13 +35,23 @@
       </div>
       <p class="text-sm text-slate-500" id="subtitle">Mozaik Design</p>
     </div>
-    <div class="text-right">
-      <div class="text-[11px] uppercase tracking-wide text-slate-400">Updated</div>
-      <div class="text-sm font-semibold" id="updated">—</div>
+    <div class="flex items-center gap-3">
+      <div>
+        <label class="block text-[11px] uppercase tracking-wide text-slate-400 mb-1">From</label>
+        <select id="monthFrom" class="text-sm border border-slate-200 rounded-lg px-3 py-1.5 bg-white"></select>
+      </div>
+      <div>
+        <label class="block text-[11px] uppercase tracking-wide text-slate-400 mb-1">To</label>
+        <select id="monthTo" class="text-sm border border-slate-200 rounded-lg px-3 py-1.5 bg-white"></select>
+      </div>
+      <div class="text-right">
+        <div class="text-[11px] uppercase tracking-wide text-slate-400">Updated</div>
+        <div class="text-sm font-semibold" id="updated">—</div>
+      </div>
     </div>
   </div>
 
-  <div id="loadState">Loading ecommerce-data.json&hellip;</div>
+  <div id="loadState">Loading ecommerce-data.json…</div>
   <div id="errState" hidden>
     <p><b>Couldn't load ecommerce-data.json.</b></p>
     <p class="text-sm mt-1">Run <code>node metorik-sync.mjs</code> (or the scheduled GitHub Action) next to this file, then reload.</p>
@@ -60,11 +70,11 @@
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4" id="kpis"></div>
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
         <div class="card p-4 lg:col-span-2">
-          <h3 class="font-semibold mb-3">Revenue &amp; Orders <span class="text-slate-400 font-normal text-sm">&middot; monthly (₺)</span></h3>
+          <h3 class="font-semibold mb-3">Revenue &amp; Orders <span class="text-slate-400 font-normal text-sm">· monthly (₺)</span></h3>
           <canvas id="revTrend"></canvas>
         </div>
         <div class="card p-4">
-          <h3 class="font-semibold mb-3">Average Order Value <span class="text-slate-400 font-normal text-sm">&middot; monthly (₺)</span></h3>
+          <h3 class="font-semibold mb-3">Average Order Value <span class="text-slate-400 font-normal text-sm">· monthly (₺)</span></h3>
           <canvas id="aovTrend"></canvas>
         </div>
       </div>
@@ -78,7 +88,7 @@
     <section data-panel="customers" hidden>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4" id="custKpis"></div>
       <div class="card p-4">
-        <h3 class="font-semibold mb-3">New vs Returning Customers <span class="text-slate-400 font-normal text-sm">&middot; monthly</span></h3>
+        <h3 class="font-semibold mb-3">New vs Returning Customers <span class="text-slate-400 font-normal text-sm">· monthly</span></h3>
         <canvas id="custTrend"></canvas>
       </div>
     </section>
@@ -86,7 +96,7 @@
     <!-- PRODUCTS -->
     <section data-panel="products" hidden>
       <div class="card p-4">
-        <h3 class="font-semibold mb-1">Top products <span class="text-slate-400 font-normal text-sm">&middot; by net sales, most recent period</span></h3>
+        <h3 class="font-semibold mb-1">Top products <span class="text-slate-400 font-normal text-sm">· by net sales, most recent period</span></h3>
         <div class="overflow-x-auto mt-2"><table id="productTable"><thead></thead><tbody></tbody></table></div>
       </div>
     </section>
@@ -98,7 +108,7 @@
   </div>
 
   <footer class="text-center text-xs text-slate-400 mt-8 pb-4">
-    Mozaik Design &middot; E-commerce Mission Control &middot; ₺ &middot; via Metorik API
+    Mozaik Design · E-commerce Mission Control · ₺ · via Metorik API
   </footer>
 </div>
 
@@ -114,6 +124,7 @@ function destroy(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
 function kpiCard(label,val,sub,cls){return '<div class="card p-3"><div class="text-[11px] uppercase tracking-wide text-slate-400">'+label+'</div><div class="text-xl font-bold kpi-val mt-1">'+val+'</div><div class="text-xs mt-1 '+(cls||'text-slate-400')+'">'+(sub||'')+'</div></div>';}
 
 let DATA = null;
+let state = { from: null, to: null };
 
 fetch('./ecommerce-data.json', {cache:'no-store'})
   .then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
@@ -123,6 +134,11 @@ fetch('./ecommerce-data.json', {cache:'no-store'})
     $('#errState').hidden = false;
     console.error(err);
   });
+
+// Months are "YYYY-MM" strings, which sort/compare correctly as plain strings.
+function fMonths(){
+  return DATA.months.filter(r => r.month >= state.from && r.month <= state.to);
+}
 
 function init(){
   $('#loadState').hidden = true;
@@ -134,6 +150,24 @@ function init(){
     $('#sourcePill').style.background = '#fef3c7';
     $('#sourcePill').style.color = '#92400e';
   }
+
+  state.from = DATA.months[0].month;
+  state.to = DATA.months[DATA.months.length-1].month;
+
+  const mFrom = $('#monthFrom'), mTo = $('#monthTo');
+  const opts = DATA.months.map(r=>'<option value="'+r.month+'">'+r.month+'</option>').join('');
+  mFrom.innerHTML = opts; mTo.innerHTML = opts;
+  mFrom.value = state.from; mTo.value = state.to;
+  mFrom.addEventListener('change', ()=>{
+    state.from = mFrom.value;
+    if(state.from > state.to){ state.to = state.from; mTo.value = state.to; }
+    render();
+  });
+  mTo.addEventListener('change', ()=>{
+    state.to = mTo.value;
+    if(state.to < state.from){ state.from = state.to; mFrom.value = state.from; }
+    render();
+  });
 
   $$('.tab-btn').forEach(b=>b.addEventListener('click', ()=>{
     $$('.tab-btn').forEach(x=>x.classList.remove('active'));
@@ -154,7 +188,7 @@ function render(){
 }
 
 function renderOverview(){
-  const m = DATA.months;
+  const m = fMonths();
   const last = m[m.length-1] || {};
   const totalRevenue = m.reduce((s,r)=>s+(r.revenue||0),0);
   const totalOrders = m.reduce((s,r)=>s+(r.orders||0),0);
@@ -192,7 +226,7 @@ function renderOverview(){
 }
 
 function renderCustomers(){
-  const m = DATA.months;
+  const m = fMonths();
   const last = m[m.length-1] || {};
   const totalNew = m.reduce((s,r)=>s+(r.new_customers||0),0);
   const totalReturning = m.reduce((s,r)=>s+(r.returning_customers||0),0);
@@ -242,4 +276,3 @@ function renderSubscriptions(){
 </script>
 </body>
 </html>
-
