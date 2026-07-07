@@ -1,0 +1,33 @@
+name: Metorik sync
+
+on:
+  schedule:
+    - cron: "0 5 * * *"   # daily at 05:00 UTC (~08:00 Turkey time)
+  workflow_dispatch: {}    # lets you trigger it manually from the Actions tab
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run Metorik sync
+        env:
+          METORIK_API_KEY: ${{ secrets.METORIK_API_KEY }}
+          OUT_FILE: ecommerce/ecommerce-data.json
+        run: node ecommerce/metorik-sync.mjs
+
+      - name: Commit updated data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add ecommerce/ecommerce-data.json
+          git diff --cached --quiet || git commit -m "chore: refresh Metorik data [automated]"
+          git push
+
