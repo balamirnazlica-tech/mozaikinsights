@@ -7,115 +7,137 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
 <style>
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#f1f5f9;color:#0f172a}
-  .card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
-  .tab-btn{transition:all .15s}
-  .tab-btn.active{background:#0f172a;color:#fff}
-  .tab-btn:not(.active):hover{background:#e2e8f0}
-  .kpi-val{font-variant-numeric:tabular-nums;letter-spacing:-.02em}
-  .pill{font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px}
-  .up{color:#15803d;background:#dcfce7}.down{color:#b91c1c;background:#fee2e2}.neu{color:#475569;background:#e2e8f0}
-  table{border-collapse:collapse;width:100%}
-  th{cursor:pointer;user-select:none;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#64748b}
-  th,td{padding:9px 12px;text-align:right;border-bottom:1px solid #f1f5f9;font-variant-numeric:tabular-nums}
-  th:first-child,td:first-child{text-align:left}
-  tr:hover td{background:#f8fafc}
-  canvas{max-height:300px}
-  #loadState,#errState{padding:40px;text-align:center;color:#64748b}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#f1f5f9;color:#0f172a}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.tab-btn{transition:all .15s}
+.tab-btn.active{background:#0f172a;color:#fff}
+.tab-btn:not(.active):hover{background:#e2e8f0}
+.kpi-val{font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.pill{font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px}
+.up{color:#15803d;background:#dcfce7}.down{color:#b91c1c;background:#fee2e2}.neu{color:#475569;background:#e2e8f0}
+table{border-collapse:collapse;width:100%}
+th{cursor:pointer;user-select:none;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#64748b}
+th,td{padding:9px 12px;text-align:right;border-bottom:1px solid #f1f5f9;font-variant-numeric:tabular-nums}
+th:first-child,td:first-child{text-align:left}
+tr:hover td{background:#f8fafc}
+canvas{max-height:300px}
+#loadState,#errState{padding:40px;text-align:center;color:#64748b}
+.seg{display:inline-flex;background:#e2e8f0;border-radius:9px;padding:3px}
+.seg button{font-size:12px;font-weight:600;padding:4px 12px;border-radius:7px;color:#475569}
+.seg button.on{background:#fff;color:#0f172a;box-shadow:0 1px 2px rgba(0,0,0,.1)}
+#ccySeg button:disabled{opacity:.4;cursor:not-allowed}
 </style>
 </head>
 <body>
 <div class="max-w-7xl mx-auto px-4 py-5">
 
-  <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
-    <div>
-      <div class="flex items-center gap-2 flex-wrap">
-        <h1 class="text-2xl font-bold tracking-tight">E-commerce Mission Control</h1>
-        <span class="pill" id="sourcePill" style="background:#dcfce7;color:#15803d">LIVE — METORIK</span>
-      </div>
-      <p class="text-sm text-slate-500" id="subtitle">Mozaik Design</p>
-    </div>
-    <div class="flex items-center gap-3">
-      <div>
-        <label class="block text-[11px] uppercase tracking-wide text-slate-400 mb-1">From</label>
-        <select id="monthFrom" class="text-sm border border-slate-200 rounded-lg px-3 py-1.5 bg-white"></select>
-      </div>
-      <div>
-        <label class="block text-[11px] uppercase tracking-wide text-slate-400 mb-1">To</label>
-        <select id="monthTo" class="text-sm border border-slate-200 rounded-lg px-3 py-1.5 bg-white"></select>
-      </div>
-      <div class="text-right">
-        <div class="text-[11px] uppercase tracking-wide text-slate-400">Updated</div>
-        <div class="text-sm font-semibold" id="updated">—</div>
-      </div>
-    </div>
-  </div>
+<div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+<div>
+<div class="flex items-center gap-2 flex-wrap">
+<h1 class="text-2xl font-bold tracking-tight">E-commerce Mission Control</h1>
+<span class="pill" id="sourcePill" style="background:#dcfce7;color:#15803d">LIVE — METORIK</span>
+</div>
+<p class="text-sm text-slate-500" id="subtitle">Mozaik Design</p>
+</div>
+<div class="flex items-center gap-3">
+<div>
+<label class="block text-[11px] uppercase tracking-wide text-slate-400 mb-1">From</label>
+<select id="monthFrom" class="text-sm border border-slate-200 rounded-lg px-3 py-1.5 bg-white"></select>
+</div>
+<div>
+<label class="block text-[11px] uppercase tracking-wide text-slate-400 mb-1">To</label>
+<select id="monthTo" class="text-sm border border-slate-200 rounded-lg px-3 py-1.5 bg-white"></select>
+</div>
+<div>
+<label class="block text-[11px] uppercase tracking-wide text-slate-400 mb-1">Currency</label>
+<div class="seg" id="ccySeg">
+<button class="on" data-c="TRY">₺</button>
+<button data-c="EUR">€</button>
+</div>
+</div>
+<div class="text-right">
+<div class="text-[11px] uppercase tracking-wide text-slate-400">Updated</div>
+<div class="text-sm font-semibold" id="updated">—</div>
+</div>
+</div>
+</div>
 
-  <div id="loadState">Loading ecommerce-data.json…</div>
-  <div id="errState" hidden>
-    <p><b>Couldn't load ecommerce-data.json.</b></p>
-    <p class="text-sm mt-1">Run <code>node metorik-sync.mjs</code> (or the scheduled GitHub Action) next to this file, then reload.</p>
-  </div>
+<div id="loadState">Loading ecommerce-data.json…</div>
+<div id="errState" hidden>
+<p><b>Couldn't load ecommerce-data.json.</b></p>
+<p class="text-sm mt-1">Run <code>node metorik-sync.mjs</code> (or the scheduled GitHub Action) next to this file, then reload.</p>
+</div>
 
-  <div id="app" hidden>
-    <div class="flex flex-wrap gap-1.5 mb-5 p-1 bg-white card" style="border-radius:12px">
-      <button class="tab-btn active text-sm font-semibold px-4 py-2 rounded-lg" data-tab="overview">Overview</button>
-      <button class="tab-btn text-sm font-semibold px-4 py-2 rounded-lg" data-tab="customers">Customers</button>
-      <button class="tab-btn text-sm font-semibold px-4 py-2 rounded-lg" data-tab="products">Products</button>
-      <button class="tab-btn text-sm font-semibold px-4 py-2 rounded-lg" data-tab="subscriptions">Subscriptions</button>
-    </div>
+<div id="app" hidden>
+<div class="flex flex-wrap gap-1.5 mb-5 p-1 bg-white card" style="border-radius:12px">
+<button class="tab-btn active text-sm font-semibold px-4 py-2 rounded-lg" data-tab="overview">Overview</button>
+<button class="tab-btn text-sm font-semibold px-4 py-2 rounded-lg" data-tab="customers">Customers</button>
+<button class="tab-btn text-sm font-semibold px-4 py-2 rounded-lg" data-tab="products">Products</button>
+<button class="tab-btn text-sm font-semibold px-4 py-2 rounded-lg" data-tab="subscriptions">Subscriptions</button>
+</div>
 
-    <!-- OVERVIEW -->
-    <section data-panel="overview">
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4" id="kpis"></div>
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
-        <div class="card p-4 lg:col-span-2">
-          <h3 class="font-semibold mb-3">Revenue &amp; Orders <span class="text-slate-400 font-normal text-sm">· monthly (₺)</span></h3>
-          <canvas id="revTrend"></canvas>
-        </div>
-        <div class="card p-4">
-          <h3 class="font-semibold mb-3">Average Order Value <span class="text-slate-400 font-normal text-sm">· monthly (₺)</span></h3>
-          <canvas id="aovTrend"></canvas>
-        </div>
-      </div>
-      <div class="card p-4">
-        <h3 class="font-semibold mb-3">Monthly detail</h3>
-        <div class="overflow-x-auto"><table id="monthTable"><thead></thead><tbody></tbody></table></div>
-      </div>
-    </section>
+<!-- OVERVIEW -->
+<section data-panel="overview">
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4" id="kpis"></div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+<div class="card p-4 lg:col-span-2">
+<h3 class="font-semibold mb-3">Revenue &amp; Orders <span class="text-slate-400 font-normal text-sm">· monthly</span></h3>
+<canvas id="revTrend"></canvas>
+</div>
+<div class="card p-4">
+<h3 class="font-semibold mb-3">Average Order Value <span class="text-slate-400 font-normal text-sm">· monthly</span></h3>
+<canvas id="aovTrend"></canvas>
+</div>
+</div>
+<div class="card p-4">
+<h3 class="font-semibold mb-3">Monthly detail</h3>
+<div class="overflow-x-auto"><table id="monthTable"><thead></thead><tbody></tbody></table></div>
+</div>
+</section>
 
-    <!-- CUSTOMERS -->
-    <section data-panel="customers" hidden>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4" id="custKpis"></div>
-      <div class="card p-4">
-        <h3 class="font-semibold mb-3">New vs Returning Customers <span class="text-slate-400 font-normal text-sm">· monthly</span></h3>
-        <canvas id="custTrend"></canvas>
-      </div>
-    </section>
+<!-- CUSTOMERS -->
+<section data-panel="customers" hidden>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4" id="custKpis"></div>
+<div class="card p-4">
+<h3 class="font-semibold mb-3">New vs Returning Customers <span class="text-slate-400 font-normal text-sm">· monthly</span></h3>
+<canvas id="custTrend"></canvas>
+</div>
+</section>
 
-    <!-- PRODUCTS -->
-    <section data-panel="products" hidden>
-      <div class="card p-4">
-        <h3 class="font-semibold mb-1">Top products <span class="text-slate-400 font-normal text-sm">· by net sales, most recent period</span></h3>
-        <div class="overflow-x-auto mt-2"><table id="productTable"><thead></thead><tbody></tbody></table></div>
-      </div>
-    </section>
+<!-- PRODUCTS -->
+<section data-panel="products" hidden>
+<div class="card p-4">
+<h3 class="font-semibold mb-1">Top products <span class="text-slate-400 font-normal text-sm">· by net sales, most recent period</span></h3>
+<div class="overflow-x-auto mt-2"><table id="productTable"><thead></thead><tbody></tbody></table></div>
+</div>
+</section>
 
-    <!-- SUBSCRIPTIONS -->
-    <section data-panel="subscriptions" hidden>
-      <div id="subsContent"></div>
-    </section>
-  </div>
+<!-- SUBSCRIPTIONS -->
+<section data-panel="subscriptions" hidden>
+<div id="subsContent"></div>
+</section>
+</div>
 
-  <footer class="text-center text-xs text-slate-400 mt-8 pb-4">
-    Mozaik Design · E-commerce Mission Control · ₺ · via Metorik API
-  </footer>
+<footer class="text-center text-xs text-slate-400 mt-8 pb-4">
+Mozaik Design · E-commerce Mission Control · via Metorik API
+</footer>
 </div>
 
 <script>
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const TL=n=>'₺'+Math.round(n||0).toLocaleString('en-US');
-const TLk=n=>{n=n||0; return n>=1e6?'₺'+(n/1e6).toFixed(2)+'M' : n>=1e3?'₺'+(n/1e3).toFixed(0)+'k' : '₺'+Math.round(n);};
+
+// Currency toggle: ₺ (Turkish Lira, default/source currency) or € (converted
+// live via a free FX API). All amounts in DATA are in ₺; TL/TLk convert on
+// the fly based on `ccy` so no data needs to change.
+let ccy='TRY', EUR_RATE=null;
+fetch('https://api.frankfurter.dev/v1/latest?from=TRY&to=EUR',{cache:'no-store'})
+  .then(r=>r.ok?r.json():null)
+  .then(j=>{ if(j&&j.rates&&j.rates.EUR){ EUR_RATE=j.rates.EUR; } else { $('#ccySeg button[data-c="EUR"]').disabled=true; } })
+  .catch(()=>{ const b=$('#ccySeg button[data-c="EUR"]'); if(b){b.disabled=true;b.title='Rate unavailable';} });
+const conv=n=>(ccy==='EUR'&&EUR_RATE)?n*EUR_RATE:n;
+const sym=()=>ccy==='EUR'?'€':'₺';
+const TL=n=>sym()+Math.round(conv(n)||0).toLocaleString('en-US');
+const TLk=n=>{ n=conv(n)||0; return Math.abs(n)>=1e6?sym()+(n/1e6).toFixed(2)+'M' : Math.abs(n)>=1e3?sym()+(n/1e3).toFixed(0)+'k' : sym()+Math.round(n); };
 const num=n=>Math.round(n||0).toLocaleString('en-US');
 const pct=n=>n===null||n===undefined?'—':(Math.round(n*10)/10)+'%';
 const PALETTE=['#2563eb','#16a34a','#dc2626','#db2777','#f59e0b','#0891b2','#7c3aed'];
@@ -127,151 +149,158 @@ let DATA = null;
 let state = { from: null, to: null };
 
 fetch('./ecommerce-data.json', {cache:'no-store'})
-  .then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
-  .then(json=>{ DATA = json; init(); })
-  .catch(err=>{
-    $('#loadState').hidden = true;
-    $('#errState').hidden = false;
-    console.error(err);
-  });
+.then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+.then(json=>{ DATA = json; init(); })
+.catch(err=>{
+$('#loadState').hidden = true;
+$('#errState').hidden = false;
+console.error(err);
+});
 
 // Months are "YYYY-MM" strings, which sort/compare correctly as plain strings.
 function fMonths(){
-  return DATA.months.filter(r => r.month >= state.from && r.month <= state.to);
+return DATA.months.filter(r => r.month >= state.from && r.month <= state.to);
 }
 
 function init(){
-  $('#loadState').hidden = true;
-  $('#app').hidden = false;
-  $('#subtitle').textContent = DATA.meta.company + ' · ' + DATA.meta.scope;
-  $('#updated').textContent = DATA.meta.generated;
-  if(DATA.meta.source && DATA.meta.source.startsWith('MOCK')){
-    $('#sourcePill').textContent = 'MOCK DATA';
-    $('#sourcePill').style.background = '#fef3c7';
-    $('#sourcePill').style.color = '#92400e';
-  }
+$('#loadState').hidden = true;
+$('#app').hidden = false;
+$('#subtitle').textContent = DATA.meta.company + ' · ' + DATA.meta.scope;
+$('#updated').textContent = DATA.meta.generated;
+if(DATA.meta.source && DATA.meta.source.startsWith('MOCK')){
+$('#sourcePill').textContent = 'MOCK DATA';
+$('#sourcePill').style.background = '#fef3c7';
+$('#sourcePill').style.color = '#92400e';
+}
 
-  state.from = DATA.months[0].month;
-  state.to = DATA.months[DATA.months.length-1].month;
+state.from = DATA.months[0].month;
+state.to = DATA.months[DATA.months.length-1].month;
 
-  const mFrom = $('#monthFrom'), mTo = $('#monthTo');
-  const opts = DATA.months.map(r=>'<option value="'+r.month+'">'+r.month+'</option>').join('');
-  mFrom.innerHTML = opts; mTo.innerHTML = opts;
-  mFrom.value = state.from; mTo.value = state.to;
-  mFrom.addEventListener('change', ()=>{
-    state.from = mFrom.value;
-    if(state.from > state.to){ state.to = state.from; mTo.value = state.to; }
-    render();
-  });
-  mTo.addEventListener('change', ()=>{
-    state.to = mTo.value;
-    if(state.to < state.from){ state.from = state.to; mFrom.value = state.from; }
-    render();
-  });
+const mFrom = $('#monthFrom'), mTo = $('#monthTo');
+const opts = DATA.months.map(r=>'<option value="'+r.month+'">'+r.month+'</option>').join('');
+mFrom.innerHTML = opts; mTo.innerHTML = opts;
+mFrom.value = state.from; mTo.value = state.to;
+mFrom.addEventListener('change', ()=>{
+state.from = mFrom.value;
+if(state.from > state.to){ state.to = state.from; mTo.value = state.to; }
+render();
+});
+mTo.addEventListener('change', ()=>{
+state.to = mTo.value;
+if(state.to < state.from){ state.from = state.to; mFrom.value = state.from; }
+render();
+});
 
-  $$('.tab-btn').forEach(b=>b.addEventListener('click', ()=>{
-    $$('.tab-btn').forEach(x=>x.classList.remove('active'));
-    b.classList.add('active');
-    $$('[data-panel]').forEach(p=>p.hidden = p.dataset.panel !== b.dataset.tab);
-    render();
-  }));
+$$('#ccySeg button').forEach(b=>b.addEventListener('click', ()=>{
+if(b.disabled) return;
+ccy = b.dataset.c;
+$$('#ccySeg button').forEach(x=>x.classList.toggle('on', x===b));
+render();
+}));
 
-  render();
+$$('.tab-btn').forEach(b=>b.addEventListener('click', ()=>{
+$$('.tab-btn').forEach(x=>x.classList.remove('active'));
+b.classList.add('active');
+$$('[data-panel]').forEach(p=>p.hidden = p.dataset.panel !== b.dataset.tab);
+render();
+}));
+
+render();
 }
 
 function render(){
-  const active = $('.tab-btn.active').dataset.tab;
-  if(active==='overview') renderOverview();
-  if(active==='customers') renderCustomers();
-  if(active==='products') renderProducts();
-  if(active==='subscriptions') renderSubscriptions();
+const active = $('.tab-btn.active').dataset.tab;
+if(active==='overview') renderOverview();
+if(active==='customers') renderCustomers();
+if(active==='products') renderProducts();
+if(active==='subscriptions') renderSubscriptions();
 }
 
 function renderOverview(){
-  const m = fMonths();
-  const last = m[m.length-1] || {};
-  const totalRevenue = m.reduce((s,r)=>s+(r.revenue||0),0);
-  const totalOrders = m.reduce((s,r)=>s+(r.orders||0),0);
-  const avgAov = totalOrders ? totalRevenue/totalOrders : 0;
+const m = fMonths();
+const last = m[m.length-1] || {};
+const totalRevenue = m.reduce((s,r)=>s+(r.revenue||0),0);
+const totalOrders = m.reduce((s,r)=>s+(r.orders||0),0);
+const avgAov = totalOrders ? totalRevenue/totalOrders : 0;
 
-  $('#kpis').innerHTML = [
-    kpiCard('Revenue (period)', TLk(totalRevenue)),
-    kpiCard('Orders (period)', num(totalOrders)),
-    kpiCard('Avg Order Value', TL(avgAov)),
-    kpiCard('This month revenue', TLk(last.revenue), last.month||''),
-    kpiCard('This month orders', num(last.orders), last.month||''),
-    kpiCard('Unique customers (mo.)', num(last.unique_customers), last.month||''),
-  ].join('');
+$('#kpis').innerHTML = [
+kpiCard('Revenue (period)', TLk(totalRevenue)),
+kpiCard('Orders (period)', num(totalOrders)),
+kpiCard('Avg Order Value', TL(avgAov)),
+kpiCard('This month revenue', TLk(last.revenue), last.month||''),
+kpiCard('This month orders', num(last.orders), last.month||''),
+kpiCard('Unique customers (mo.)', num(last.unique_customers), last.month||''),
+].join('');
 
-  destroy('revTrend');
-  charts.revTrend = new Chart($('#revTrend'), {
-    type:'bar',
-    data:{ labels:m.map(r=>r.month), datasets:[
-      {type:'bar', label:'Revenue', data:m.map(r=>r.revenue), backgroundColor:'#2563eb'},
-      {type:'line', label:'Orders', data:m.map(r=>r.orders), yAxisID:'y1', borderColor:'#dc2626', backgroundColor:'#dc2626'}
-    ]},
-    options:{responsive:true, scales:{ y:{beginAtZero:true}, y1:{position:'right', beginAtZero:true, grid:{drawOnChartArea:false}} }}
-  });
+destroy('revTrend');
+charts.revTrend = new Chart($('#revTrend'), {
+type:'bar',
+data:{ labels:m.map(r=>r.month), datasets:[
+{type:'bar', label:'Revenue', data:m.map(r=>conv(r.revenue)), backgroundColor:'#2563eb'},
+{type:'line', label:'Orders', data:m.map(r=>r.orders), yAxisID:'y1', borderColor:'#dc2626', backgroundColor:'#dc2626'}
+]},
+options:{responsive:true, plugins:{tooltip:{callbacks:{label:c=>c.dataset.label==='Revenue'?('Revenue: '+sym()+Math.round(c.parsed.y).toLocaleString('en-US')):('Orders: '+num(c.parsed.y))}}}, scales:{ y:{beginAtZero:true, ticks:{callback:v=>sym()+Math.round(v).toLocaleString('en-US')}}, y1:{position:'right', beginAtZero:true, grid:{drawOnChartArea:false}} }}
+});
 
-  destroy('aovTrend');
-  charts.aovTrend = new Chart($('#aovTrend'), {
-    type:'line',
-    data:{ labels:m.map(r=>r.month), datasets:[{label:'AOV', data:m.map(r=>r.average_order_value), borderColor:'#16a34a', backgroundColor:'#16a34a', tension:.3}] },
-    options:{responsive:true, scales:{y:{beginAtZero:true}}}
-  });
+destroy('aovTrend');
+charts.aovTrend = new Chart($('#aovTrend'), {
+type:'line',
+data:{ labels:m.map(r=>r.month), datasets:[{label:'AOV', data:m.map(r=>conv(r.average_order_value)), borderColor:'#16a34a', backgroundColor:'#16a34a', tension:.3}] },
+options:{responsive:true, plugins:{tooltip:{callbacks:{label:c=>'AOV: '+sym()+Math.round(c.parsed.y).toLocaleString('en-US')}}}, scales:{y:{beginAtZero:true, ticks:{callback:v=>sym()+Math.round(v).toLocaleString('en-US')}}}}
+});
 
-  const cols = ['Month','Revenue','Net','Orders','AOV','Unique Cust.','Refunds'];
-  $('#monthTable thead').innerHTML = '<tr>'+cols.map(c=>'<th>'+c+'</th>').join('')+'</tr>';
-  $('#monthTable tbody').innerHTML = m.map(r=>'<tr><td>'+r.month+'</td><td>'+TL(r.revenue)+'</td><td>'+TL(r.net)+'</td><td>'+num(r.orders)+'</td><td>'+TL(r.average_order_value)+'</td><td>'+num(r.unique_customers)+'</td><td>'+TL(r.total_refunds)+'</td></tr>').join('');
+const cols = ['Month','Revenue','Net','Orders','AOV','Unique Cust.','Refunds'];
+$('#monthTable thead').innerHTML = '<tr>'+cols.map(c=>'<th>'+c+'</th>').join('')+'</tr>';
+$('#monthTable tbody').innerHTML = m.map(r=>'<tr><td>'+r.month+'</td><td>'+TL(r.revenue)+'</td><td>'+TL(r.net)+'</td><td>'+num(r.orders)+'</td><td>'+TL(r.average_order_value)+'</td><td>'+num(r.unique_customers)+'</td><td>'+TL(r.total_refunds)+'</td></tr>').join('');
 }
 
 function renderCustomers(){
-  const m = fMonths();
-  const last = m[m.length-1] || {};
-  const totalNew = m.reduce((s,r)=>s+(r.new_customers||0),0);
-  const totalReturning = m.reduce((s,r)=>s+(r.returning_customers||0),0);
+const m = fMonths();
+const last = m[m.length-1] || {};
+const totalNew = m.reduce((s,r)=>s+(r.new_customers||0),0);
+const totalReturning = m.reduce((s,r)=>s+(r.returning_customers||0),0);
 
-  $('#custKpis').innerHTML = [
-    kpiCard('New customers (period)', num(totalNew)),
-    kpiCard('Returning customers (period)', num(totalReturning)),
-    kpiCard('Returning rate (this mo.)', pct(last.returning_customers_rate), last.month||''),
-    kpiCard('Unique customers (this mo.)', num(last.unique_customers), last.month||''),
-  ].join('');
+$('#custKpis').innerHTML = [
+kpiCard('New customers (period)', num(totalNew)),
+kpiCard('Returning customers (period)', num(totalReturning)),
+kpiCard('Returning rate (this mo.)', pct(last.returning_customers_rate), last.month||''),
+kpiCard('Unique customers (this mo.)', num(last.unique_customers), last.month||''),
+].join('');
 
-  destroy('custTrend');
-  charts.custTrend = new Chart($('#custTrend'), {
-    type:'bar',
-    data:{ labels:m.map(r=>r.month), datasets:[
-      {label:'New', data:m.map(r=>r.new_customers), backgroundColor:'#2563eb', stack:'s'},
-      {label:'Returning', data:m.map(r=>r.returning_customers), backgroundColor:'#16a34a', stack:'s'}
-    ]},
-    options:{responsive:true, scales:{x:{stacked:true}, y:{stacked:true, beginAtZero:true}}}
-  });
+destroy('custTrend');
+charts.custTrend = new Chart($('#custTrend'), {
+type:'bar',
+data:{ labels:m.map(r=>r.month), datasets:[
+{label:'New', data:m.map(r=>r.new_customers), backgroundColor:'#2563eb', stack:'s'},
+{label:'Returning', data:m.map(r=>r.returning_customers), backgroundColor:'#16a34a', stack:'s'}
+]},
+options:{responsive:true, scales:{x:{stacked:true}, y:{stacked:true, beginAtZero:true}}}
+});
 }
 
 function renderProducts(){
-  const p = DATA.products || [];
-  const cols = ['Product','SKU','Net Sales','Net Orders','Items Sold','In Stock'];
-  $('#productTable thead').innerHTML = '<tr>'+cols.map(c=>'<th>'+c+'</th>').join('')+'</tr>';
-  if(!p.length){
-    $('#productTable tbody').innerHTML = '<tr><td colspan="6" class="text-left text-slate-400">No product data yet.</td></tr>';
-    return;
-  }
-  $('#productTable tbody').innerHTML = p.map(r=>'<tr><td>'+(r.name||'—')+'</td><td>'+(r.sku||'—')+'</td><td>'+TL(r.net_sales)+'</td><td>'+num(r.net_orders)+'</td><td>'+num(r.gross_items_sold)+'</td><td>'+(r.in_stock===null?'—':(r.in_stock?'Yes':'No'))+'</td></tr>').join('');
+const p = DATA.products || [];
+const cols = ['Product','SKU','Net Sales','Net Orders','Items Sold','In Stock'];
+$('#productTable thead').innerHTML = '<tr>'+cols.map(c=>'<th>'+c+'</th>').join('')+'</tr>';
+if(!p.length){
+$('#productTable tbody').innerHTML = '<tr><td colspan="6" class="text-left text-slate-400">No product data yet.</td></tr>';
+return;
+}
+$('#productTable tbody').innerHTML = p.map(r=>'<tr><td>'+(r.name||'—')+'</td><td>'+(r.sku||'—')+'</td><td>'+TL(r.net_sales)+'</td><td>'+num(r.net_orders)+'</td><td>'+num(r.gross_items_sold)+'</td><td>'+(r.in_stock===null?'—':(r.in_stock?'Yes':'No'))+'</td></tr>').join('');
 }
 
 function renderSubscriptions(){
-  const s = DATA.subscriptions;
-  if(!s){
-    $('#subsContent').innerHTML = '<div class="card p-4 text-slate-400 text-sm">No subscription data — this store may not use WooCommerce Subscriptions / Metorik Recurring.</div>';
-    return;
-  }
-  $('#subsContent').innerHTML = '<div class="grid grid-cols-2 md:grid-cols-4 gap-3">'+
-    kpiCard('Active subscriptions', num(s.count)) +
-    kpiCard('MRR', TL(s.total_mrr)) +
-    kpiCard('ARR', TL(s.total_arr)) +
-    kpiCard('Avg items / sub', (s.average_subscription_items||0).toFixed(1)) +
-    '</div>';
+const s = DATA.subscriptions;
+if(!s){
+$('#subsContent').innerHTML = '<div class="card p-4 text-slate-400 text-sm">No subscription data — this store may not use WooCommerce Subscriptions / Metorik Recurring.</div>';
+return;
+}
+$('#subsContent').innerHTML = '<div class="grid grid-cols-2 md:grid-cols-4 gap-3">'+
+kpiCard('Active subscriptions', num(s.count)) +
+kpiCard('MRR', TL(s.total_mrr)) +
+kpiCard('ARR', TL(s.total_arr)) +
+kpiCard('Avg items / sub', (s.average_subscription_items||0).toFixed(1)) +
+'</div>';
 }
 </script>
 </body>
