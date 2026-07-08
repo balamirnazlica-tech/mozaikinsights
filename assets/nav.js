@@ -135,6 +135,61 @@
     });
     mo.observe(bar,{childList:true});
   }
-  function init(){ document.querySelectorAll('.tabbar').forEach(initBar); }
+  function initTopNav(){
+  var ul = document.querySelector('.nav .nav-inner > ul');
+  if(!ul || ul.dataset.mziNavDrag) return;
+  ul.dataset.mziNavDrag='1';
+  var KEY='mziTopNavOrder';
+  function labelOf(li){ var a=li.querySelector('a'); return (a?a.textContent:li.textContent).trim(); }
+  function applyOrder(){
+    try{
+      var saved=JSON.parse(localStorage.getItem(KEY)||'null');
+      if(!Array.isArray(saved))return;
+      var byKey={};
+      Array.prototype.slice.call(ul.children).forEach(function(li){ byKey[labelOf(li)]=li; });
+      saved.forEach(function(k){ if(byKey[k]) ul.appendChild(byKey[k]); });
+    }catch(e){}
+  }
+  function saveOrder(){
+    var order=Array.prototype.slice.call(ul.children).map(labelOf);
+    try{ localStorage.setItem(KEY, JSON.stringify(order)); }catch(e){}
+  }
+  applyOrder();
+  var dragEl=null, startX=0, moved=false;
+  function wireLi(li){
+    li.style.cursor='grab';
+    li.addEventListener('mousedown', function(e){
+      if(e.button!==0) return;
+      dragEl=li; startX=e.pageX; moved=false;
+      li.classList.add('mzi-nav-dragging');
+      document.body.style.userSelect='none';
+      e.preventDefault();
+    });
+  }
+  Array.prototype.slice.call(ul.children).forEach(wireLi);
+  document.addEventListener('mousemove', function(e){
+    if(!dragEl) return;
+    if(Math.abs(e.pageX-startX)>4) moved=true;
+    var after=null;
+    Array.prototype.slice.call(ul.children).forEach(function(li){
+      if(li===dragEl) return;
+      var r=li.getBoundingClientRect();
+      var mid=r.left+r.width/2;
+      if(e.clientX<mid && after===null) after=li;
+    });
+    if(after) ul.insertBefore(dragEl, after); else ul.appendChild(dragEl);
+  });
+  document.addEventListener('mouseup', function(){
+    if(!dragEl) return;
+    dragEl.classList.remove('mzi-nav-dragging');
+    document.body.style.userSelect='';
+    if(moved) saveOrder();
+    dragEl=null;
+  });
+  var style=document.createElement('style');
+  style.textContent='.mzi-nav-dragging{opacity:.4}';
+  document.head.appendChild(style);
+}
+function init(){ document.querySelectorAll('.tabbar').forEach(initBar); initTopNav(); }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
