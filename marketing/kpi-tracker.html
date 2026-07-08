@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KPI Tracker — Marketing — Mozaik Insights</title>
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;background:#070b17;color:#e5e7eb;margin:0}
+.wrap{max-width:1100px;margin:0 auto;padding:28px 24px 80px}
+.head h1{font-size:1.6rem;font-weight:700;color:#fff;margin:0 0 6px}
+.head p{color:#94a3b8;margin:0;font-size:14px}
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0}
+.sum-card{background:linear-gradient(180deg,#0f1830,#0c1426);border:1px solid #1f2a44;border-radius:14px;padding:16px 18px}
+.sum-card .n{font-size:26px;font-weight:700;color:#fff;font-variant-numeric:tabular-nums}
+.sum-card .l{color:#94a3b8;font-size:12.5px;font-weight:600;text-transform:uppercase;letter-spacing:.03em;margin-top:2px}
+.sum-card.live{border-color:#10b98155}
+.sum-card.connect{border-color:#3b82f655}
+.sum-card.tbd{border-color:#f59e0b55}
+.sum-card.manual{border-color:#94a3b855}
+.group{margin-bottom:26px}
+.group h2{font-size:14px;font-weight:700;color:#e2e8f0;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+.group p.note{color:#64748b;font-size:12.5px;margin:0 0 12px}
+table{width:100%;border-collapse:collapse;background:linear-gradient(180deg,#0f1830,#0c1426);border:1px solid #1f2a44;border-radius:14px;overflow:hidden}
+th{text-align:left;color:#64748b;font-weight:600;padding:10px 14px;border-bottom:1px solid #1f2a44;font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;background:#0c1426}
+td{padding:11px 14px;border-bottom:1px solid #16203a;font-size:13.5px;color:#cbd5e1}
+tr:last-child td{border-bottom:none}
+.chip{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.02em}
+.chip-live{background:#065f46;color:#a7f3d0}
+.chip-connect{background:#1e3a8a;color:#bfdbfe}
+.chip-tbd{background:#78350f;color:#fed7aa}
+.chip-manual{background:#334155;color:#cbd5e1}
+.channel{color:#94a3b8;font-size:12px}
+.kpi-name{color:#fff;font-weight:600}
+.source{color:#94a3b8}
+footer{color:#475569;font-size:12px;text-align:center;margin-top:20px}
+@media (max-width:700px){.summary{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="head">
+<h1>Brand Awareness KPI Tracker</h1>
+<p>The 16 KPIs from the marketing KPI wishlist — what's live in the dashboard today, what's blocked, and why. Updated as each row gets connected.</p>
+</div>
+
+<div class="summary" id="summary"></div>
+
+<div id="groups"></div>
+
+<footer>Mozaik Insights · Marketing · Source of truth for the KPI walkthrough</footer>
+</div>
+
+<script>
+const KPIS = [
+{"channel":"Instagram","kpi":"Organic Reach","source":"Instagram Insights (Supermetrics)","status":"Live"},
+{"channel":"Instagram","kpi":"Paid Reach","source":"Meta Ads (Supermetrics)","status":"Live"},
+{"channel":"Facebook","kpi":"Organic Reach","source":"Facebook Insights (Supermetrics)","status":"Connect"},
+{"channel":"Facebook","kpi":"Paid Reach","source":"Meta Ads (Supermetrics)","status":"Live"},
+{"channel":"LinkedIn","kpi":"Organic Reach","source":"LinkedIn Pages (Supermetrics)","status":"Connect"},
+{"channel":"LinkedIn","kpi":"Paid Reach","source":"LinkedIn Ads (Supermetrics)","status":"Connect"},
+{"channel":"YouTube","kpi":"Organic Reach","source":"YouTube (Supermetrics)","status":"Connect"},
+{"channel":"YouTube","kpi":"Paid Reach","source":"Google Ads (Supermetrics)","status":"Connect"},
+{"channel":"Instagram","kpi":"# Mozaik Design mentions","source":"Social listening tool","status":"Source TBD"},
+{"channel":"LinkedIn","kpi":"# Mozaik Design mentions","source":"Social listening tool","status":"Source TBD"},
+{"channel":"Facebook","kpi":"# Mozaik Design mentions","source":"Social listening tool","status":"Source TBD"},
+{"channel":"YouTube","kpi":"# Mozaik Design mentions","source":"Social listening tool","status":"Source TBD"},
+{"channel":"Google","kpi":"Branded Search Volume","source":"Google Search Console / GA4","status":"Connect"},
+{"channel":"Google","kpi":"Direct Traffic","source":"Google Analytics (GA4)","status":"Connect"},
+{"channel":"All channels","kpi":"Share of Voice","source":"Social listening tool","status":"Source TBD"},
+{"channel":"Referrals","kpi":"# of Referrals","source":"CRM / manual entry","status":"Manual"}
+];
+
+const STATUS_META = {
+  "Live":    {chip:"chip-live",    label:"Live"},
+  "Connect": {chip:"chip-connect", label:"Connect"},
+  "Source TBD": {chip:"chip-tbd",  label:"Source TBD"},
+  "Manual":  {chip:"chip-manual",  label:"Manual"}
+};
+
+const GROUPS = [
+  {status:"Live", icon:"✅", title:"Live in the dashboard", note:"Already pulling real data — nothing to do."},
+  {status:"Connect", icon:"🔌", title:"Needs a connector authorized", note:"Data source exists (Supermetrics / GA4) — just needs sign-in / authorization to start pulling."},
+  {status:"Source TBD", icon:"❓", title:"No data source picked yet", note:"Needs a social-listening tool (e.g. Ahrefs Brand Radar) before this can be automated."},
+  {status:"Manual", icon:"✋", title:"No automation path", note:"Best tracked by hand / CRM entry — not a connector job."}
+];
+
+function counts(){
+  const c = {Live:0, Connect:0, "Source TBD":0, Manual:0};
+  KPIS.forEach(k=>c[k.status]++);
+  return c;
+}
+
+function renderSummary(){
+  const c = counts();
+  const cards = [
+    ["live","Live",c.Live],
+    ["connect","Connect",c.Connect],
+    ["tbd","Source TBD",c["Source TBD"]],
+    ["manual","Manual",c.Manual]
+  ];
+  document.getElementById('summary').innerHTML = cards.map(([cls,label,n])=>
+    '<div class="sum-card '+cls+'"><div class="n">'+n+'</div><div class="l">'+label+'</div></div>'
+  ).join('');
+}
+
+function renderGroups(){
+  const html = GROUPS.map(g=>{
+    const rows = KPIS.filter(k=>k.status===g.status);
+    if(!rows.length) return '';
+    const meta = STATUS_META[g.status];
+    const trs = rows.map(r=>
+      '<tr><td class="channel">'+r.channel+'</td><td class="kpi-name">'+r.kpi+'</td><td class="source">'+r.source+'</td><td><span class="chip '+meta.chip+'">'+meta.label+'</span></td></tr>'
+    ).join('');
+    return '<div class="group"><h2>'+g.icon+' '+g.title+' <span style="color:#475569;font-weight:400">('+rows.length+')</span></h2>'+
+      '<p class="note">'+g.note+'</p>'+
+      '<table><thead><tr><th>Channel</th><th>KPI</th><th>Intended source</th><th>Status</th></tr></thead><tbody>'+trs+'</tbody></table></div>';
+  }).join('');
+  document.getElementById('groups').innerHTML = html;
+}
+
+renderSummary();
+renderGroups();
+</script>
+</body>
+</html>
