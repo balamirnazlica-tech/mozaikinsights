@@ -43,6 +43,7 @@ tbody td{border-bottom:1px solid #121c34}
 .seg button{background:#0f1729;color:#94a3b8;border:none;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer}
 .seg button.on{background:#3b82f6;color:#fff}
 .seg button:disabled{opacity:.4;cursor:not-allowed}
+#customRangeWrap input[type="month"]{padding:6px 8px;font-size:12px;color-scheme:dark}
 </style>
 </head>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
@@ -67,7 +68,13 @@ tbody td{border-bottom:1px solid #121c34}
         <option value="fy26">FY 2026 (YTD)</option>
         <option value="q1_26">Q1 2026</option>
         <option value="last6">Last 6 months</option>
+        <option value="custom">Custom range…</option>
       </select>
+      <div id="customRangeWrap" class="items-center gap-1" style="display:none">
+        <input type="month" id="customFrom">
+        <span class="text-gray-500 text-xs">→</span>
+        <input type="month" id="customTo">
+      </div>
     </div>
   </header>
 
@@ -233,9 +240,19 @@ const money = v => sym()+FMT.format(Math.round(conv(v)||0));
 const moneyK = v => { v=conv(v||0); if(Math.abs(v)>=1e6) return sym()+(v/1e6).toFixed(2)+'M'; if(Math.abs(v)>=1e3) return sym()+(v/1e3).toFixed(0)+'k'; return sym()+Math.round(v); };
 const DEPT_COLOR = {Retail:'#3b82f6',Enterprise:'#10b981',Lighting:'#f59e0b',Marketing:'#a855f7'};
 
-let state = {metric:'revenue', range:'all', tab:'overview', selectedRep:null, repSort:'revenue', deptFilter:'all', partnerRange:'all', partnerSort:'total', selectedPartner:null};
+let state = {metric:'revenue', range:'all', tab:'overview', selectedRep:null, repSort:'revenue', deptFilter:'all', partnerRange:'all', partnerSort:'total', selectedPartner:null, customFrom:null, customTo:null};
+
+// "Jan 25" -> "2025-01" keys for the custom range month pickers
+const MONTH_KEYS=DATA.months.map(s=>{const[mon,yr]=s.split(' ');const mi=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].indexOf(mon)+1;return '20'+yr+'-'+String(mi).padStart(2,'0');});
 
 function monthIdx(){
+  const N=DATA.months.length;
+  if(state.range==='custom'){
+    let a=MONTH_KEYS.indexOf(state.customFrom), b=MONTH_KEYS.indexOf(state.customTo);
+    if(a<0)a=0; if(b<0)b=N-1;
+    if(a>b){const t=a;a=b;b=t;}
+    const out=[];for(let i=a;i<=b;i++)out.push(i);return out;
+  }
   if(state.range==='all') return [...Array(18).keys()];
   if(state.range==='fy25') return [...Array(12).keys()];
   if(state.range==='fy26') return [12,13,14,15,16,17];
@@ -289,7 +306,7 @@ function renderOverview(){
   return `
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
     <div class="card p-5 md:col-span-2">
-      <div class="flex justify-between mb-3"><h3 class="font-semibold">Monthly Trend by Department</h3><span class="text-xs text-gray-400 uppercase">${state.metric}</span></div>
+      <div class="flex justify-between mb-3"><h3 class="font-semibold">Monthly Trend by Department <span class="text-[10px] text-gray-500 font-normal">· hollow dotted tail = Q3 '26 forecast</span></h3><span class="text-xs text-gray-400 uppercase">${state.metric}</span></div>
       <canvas id="trendChart" height="110"></canvas>
     </div>
     <div class="card p-5">
@@ -331,8 +348,24 @@ function renderOverview(){
   </div>`;
 }
 
+// Q3 2026 forecast: blend of seasonality (same month last year × YoY growth) and recent 3-month run-rate
+const FC_MONTHS=['Jul 26ᶠ','Aug 26ᶠ','Sep 26ᶠ'];
+function forecastArr(arr){
+  const h26=arr.slice(12,18).reduce((s,v)=>s+(v||0),0);
+  const h25=arr.slice(0,6).reduce((s,v)=>s+(v||0),0);
+  const yoy=h25>0?h26/h25:1;
+  const recent=((arr[15]||0)+(arr[16]||0)+(arr[17]||0))/3;
+  return [18,19,20].map(i=>{
+    const seas=(arr[i-12]||0)*yoy;
+    return Math.max(0,Math.round(0.5*seas+0.5*recent));
+  });
+}
+
 function drawOverviewCharts(){
-  const mIdx=monthIdx(); const labels=mIdx.map(i=>DATA.months[i]);
+  const mIdx=monthIdx();
+  const showFc=mIdx[mIdx.length-1]===DATA.months.length-1 && mIdx.length>=4;
+  let labels=mIdx.map(i=>DATA.months[i]);
+  if(showFc) labels=labels.concat(FC_MONTHS);
   const datasets=Object.entries(DATA.departments).map(([n,d])=>({
     label:n,data:mIdx.map(i=>d[state.metric][i]||0),
     borderColor:DEPT_COLOR[n],backgroundColor:DEPT_COLOR[n]+'22',tension:.35,fill:true,borderWidth:2,pointRadius:3
@@ -341,8 +374,25 @@ function drawOverviewCharts(){
     label:'Total',data:mIdx.map(i=>Object.values(DATA.departments).reduce((s,d)=>s+(d[state.metric][i]||0),0)),
     borderColor:'#e2e8f0',backgroundColor:'transparent',borderDash:[6,4],tension:.35,fill:false,borderWidth:2,pointRadius:2,order:0
   });
+  if(showFc){
+    const pad=Array(mIdx.length-1).fill(null);
+    const deptFc={};
+    Object.entries(DATA.departments).forEach(([n,d])=>{
+      const arr=d[state.metric];
+      deptFc[n]=forecastArr(arr);
+      datasets.push({label:n+' forecast',data:pad.concat([arr[17]||0],deptFc[n]),
+        borderColor:DEPT_COLOR[n],backgroundColor:'transparent',borderDash:[3,4],tension:.35,fill:false,borderWidth:2,
+        pointRadius:4,pointBackgroundColor:'#070b17',pointBorderColor:DEPT_COLOR[n],pointBorderWidth:2});
+    });
+    const lastTotal=Object.values(DATA.departments).reduce((s,d)=>s+(d[state.metric][17]||0),0);
+    const totalFc=[0,1,2].map(i=>Object.keys(deptFc).reduce((s,n)=>s+deptFc[n][i],0));
+    datasets.push({label:'Total forecast',data:pad.concat([lastTotal],totalFc),
+      borderColor:'#e2e8f0',backgroundColor:'transparent',borderDash:[2,4],tension:.35,fill:false,borderWidth:2,
+      pointRadius:4,pointBackgroundColor:'#070b17',pointBorderColor:'#e2e8f0',pointBorderWidth:2,order:0});
+  }
   charts.push(new Chart(document.getElementById('trendChart'),{type:'line',data:{labels,datasets},
-    options:{responsive:true,plugins:{legend:{labels:{color:'#cbd5e1',font:{size:11}}}},
+    options:{responsive:true,plugins:{legend:{labels:{color:'#cbd5e1',font:{size:11},filter:i=>!i.text.includes('forecast')}},
+    tooltip:{callbacks:{label:c=>c.dataset.label+': '+(state.metric==='revenue'?moneyK(c.parsed.y):FMT.format(c.parsed.y))+(c.dataset.label.includes('forecast')?' (projected)':'')}}},
     scales:{x:{ticks:{color:'#64748b',font:{size:10}},grid:{color:'#1f2a44'}},
     y:{ticks:{color:'#64748b',callback:v=>state.metric==='revenue'?moneyK(v):v},grid:{color:'#1f2a44'}}}}}));
   const dt=deptTotals();
@@ -895,7 +945,20 @@ function selectRep(n){state.selectedRep=(state.selectedRep===n||n===null)?null:n
 
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{state.tab=t.dataset.tab;state.selectedRep=null;state.selectedPartner=null;render();});
 document.getElementById('metricSel').onchange=e=>{state.metric=e.target.value;render();};
-document.getElementById('rangeSel').onchange=e=>{state.range=e.target.value;render();};
+document.getElementById('rangeSel').onchange=e=>{
+  state.range=e.target.value;
+  document.getElementById('customRangeWrap').style.display=state.range==='custom'?'flex':'none';
+  render();
+};
+// Custom date range pickers — bounds follow DATA.months automatically
+(function(){
+  const f=document.getElementById('customFrom'), t=document.getElementById('customTo');
+  f.min=t.min=MONTH_KEYS[0]; f.max=t.max=MONTH_KEYS[MONTH_KEYS.length-1];
+  f.value=MONTH_KEYS[0]; t.value=MONTH_KEYS[MONTH_KEYS.length-1];
+  state.customFrom=f.value; state.customTo=t.value;
+  f.onchange=e=>{state.customFrom=e.target.value;if(state.range==='custom')render();};
+  t.onchange=e=>{state.customTo=e.target.value;if(state.range==='custom')render();};
+})();
 
 render();
 </script>
