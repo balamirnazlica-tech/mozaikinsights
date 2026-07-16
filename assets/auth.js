@@ -171,4 +171,32 @@ if(!isAuthed()){
   }
   if(document.readyState==='complete')setTimeout(logView,400);
   else window.addEventListener('load',function(){setTimeout(logView,400);});
+
+  /* time-on-page tracker: counts only time the tab is visible, then beacons
+     event 'leave:<seconds>:<visitId>'. May fire more than once per visit with
+     a growing total — the analytics page dedupes by visitId keeping the max. */
+  var visitId=Math.random().toString(36).slice(2,10);
+  var acc=0, visStart=(document.visibilityState==='visible')?Date.now():null, lastSent=-1;
+  function secsNow(){
+    var s=acc; if(visStart)s+=Date.now()-visStart;
+    return Math.min(Math.round(s/1000),6*3600);
+  }
+  function sendLeave(){
+    var name=nm(); if(!name)return;
+    var s=secsNow(); if(s<1||s<=lastSent)return;
+    lastSent=s;
+    try{
+      var body=JSON.stringify({name:name,page:location.pathname,title:document.title,event:'leave:'+s+':'+visitId,site:'insights',ref:'',ua:navigator.userAgent});
+      navigator.sendBeacon(EP,new Blob([body],{type:'text/plain;charset=UTF-8'}));
+    }catch(e){}
+  }
+  document.addEventListener('visibilitychange',function(){
+    if(document.visibilityState==='hidden'){
+      if(visStart){acc+=Date.now()-visStart;visStart=null;}
+      sendLeave();
+    }else{
+      visStart=Date.now();
+    }
+  });
+  window.addEventListener('pagehide',sendLeave);
 })();
