@@ -46,7 +46,7 @@ canvas{max-height:260px}
 <div class="wrap">
 <div class="head">
 <h1>Usage Analytics</h1>
-<p id="sub">Who's using the dashboard, and which pages they view.</p>
+<p id="sub">Who's using the dashboard, which pages they view, and how long they stay. <span style="color:#475569">(Duration tracking live since 16 Jul 2026.)</span></p>
 </div>
 <div id="msg"></div>
 <div class="kpis" id="kpis"></div>
@@ -54,8 +54,12 @@ canvas{max-height:260px}
 <div class="card"><h2>Top pages</h2><canvas id="pagesChart"></canvas></div>
 <div class="card"><h2>Views by person</h2><canvas id="usersChart"></canvas></div>
 </div>
+<div class="grid2">
+<div class="card"><h2>Avg time on page (minutes)</h2><canvas id="timePagesChart"></canvas></div>
+<div class="card"><h2>Time spent by person (minutes)</h2><canvas id="timeUsersChart"></canvas></div>
+</div>
 <div class="card" style="margin-bottom:18px"><h2>Recent activity</h2>
-<div style="overflow-x:auto"><table><thead><tr><th>When</th><th>Who</th><th>Page</th></tr></thead><tbody id="recent"></tbody></table></div>
+<div style="overflow-x:auto"><table><thead><tr><th>When</th><th>Who</th><th>Page</th><th>Time on page</th></tr></thead><tbody id="recent"></tbody></table></div>
 </div>
 </div>
 
@@ -80,13 +84,25 @@ return seg.replace(/\b\w/g,function(c){return c.toUpperCase();});
 }
 function ago(d){ var s=(Date.now()-new Date(d).getTime())/1000; if(s<60)return 'just now'; var m=s/60; if(m<60)return Math.floor(m)+'m ago'; var h=m/60; if(h<24)return Math.floor(h)+'h ago'; return Math.floor(h/24)+'d ago'; }
 
+function fmtDur(s){
+s=Math.round(s); if(s<60)return s+'s';
+var m=Math.floor(s/60), rem=s%60;
+if(m<60)return m+'m'+(rem&&m<10?' '+rem+'s':'');
+return Math.floor(m/60)+'h '+(m%60)+'m';
+}
 function render(rows){
-rows=(rows||[]).filter(function(r){
-if((r.event||'pageview')!=='pageview')return false;
-var nm=(r.name||'').toLowerCase().trim();
-if(!nm||nm.indexOf('test')>-1)return false;
-return true;
+rows=rows||[];
+function okName(r){var nm=(r.name||'').toLowerCase().trim();return !!nm&&nm.indexOf('test')<0;}
+/* duration visits: event 'leave:<seconds>:<visitId>' — dedupe by visitId keeping max */
+var byVisit={};
+rows.forEach(function(r){
+if(!okName(r))return;
+var m=/^leave:(\d+):(\S+)$/.exec(r.event||''); if(!m)return;
+var s=Math.min(parseInt(m[1],10)||0,7200);
+if(!byVisit[m[2]]||s>byVisit[m[2]].secs)byVisit[m[2]]={secs:s,name:r.name,page:r.page,ts:r.ts};
 });
+var visits=Object.keys(byVisit).map(function(k){return byVisit[k];});
+rows=rows.filter(function(r){return (r.event||'pageview')==='pageview'&&okName(r);});
 var byPage={}, byUser={}, users={};
 rows.forEach(function(r){
 var pg=fmtPage(r.page); byPage[pg]=(byPage[pg]||0)+1;
@@ -94,7 +110,9 @@ var u=r.name||'(unknown)'; byUser[u]=(byUser[u]||0)+1; users[u]=1;
 });
 var dayAgo=Date.now()-86400000;
 var today=rows.filter(function(r){return new Date(r.ts).getTime()>dayAgo;}).length;
-var kpis=[['Total views',rows.length],['Unique people',Object.keys(users).length],['Pages tracked',Object.keys(byPage).length],['Views (24h)',today]];
+var totalSecs=visits.reduce(function(a,v){return a+v.secs;},0);
+var avgSecs=visits.length?totalSecs/visits.length:0;
+var kpis=[['Total views',rows.length],['Unique people',Object.keys(users).length],['Pages tracked',Object.keys(byPage).length],['Views (24h)',today],['Avg time / visit',visits.length?fmtDur(avgSecs):'—'],['Total time',visits.length?fmtDur(totalSecs):'—']];
 document.getElementById('kpis').innerHTML=kpis.map(function(k){return '<div class="kpi"><div class="l">'+k[0]+'</div><div class="v">'+k[1].toLocaleString()+'</div></div>';}).join('');
 
 var pe=Object.entries(byPage).sort(function(a,b){return b[1]-a[1];}).slice(0,10);
@@ -102,8 +120,32 @@ var ue=Object.entries(byUser).sort(function(a,b){return b[1]-a[1];});
 bar('pagesChart',pe.map(x=>x[0]),pe.map(x=>x[1]),'#818cf8');
 bar('usersChart',ue.map(x=>x[0]),ue.map(x=>x[1]),'#34d399');
 
+/* time charts */
+var tPage={}, tUser={};
+visits.forEach(function(v){
+var pg=fmtPage(v.page); (tPage[pg]=tPage[pg]||{s:0,n:0}); tPage[pg].s+=v.secs; tPage[pg].n++;
+var u=v.name||'(unknown)'; tUser[u]=(tUser[u]||0)+v.secs;
+});
+var tpe=Object.entries(tPage).map(function(x){return [x[0],Math.round(x[1].s/x[1].n/6)/10];}).sort(function(a,b){return b[1]-a[1];}).slice(0,10);
+var tue=Object.entries(tUser).map(function(x){return [x[0],Math.round(x[1]/6)/10];}).sort(function(a,b){return b[1]-a[1];});
+bar('timePagesChart',tpe.map(x=>x[0]),tpe.map(x=>x[1]),'#f59e0b');
+bar('timeUsersChart',tue.map(x=>x[0]),tue.map(x=>x[1]),'#f472b6');
+
+/* match visits to pageviews for the recent table (same person+page, leave within -90s..+4h of the view) */
+var pool={};
+visits.forEach(function(v){var k=(v.name||'')+'|'+(v.page||'');(pool[k]=pool[k]||[]).push(v);});
+Object.keys(pool).forEach(function(k){pool[k].sort(function(a,b){return new Date(a.ts)-new Date(b.ts);});});
+rows.slice().sort(function(a,b){return new Date(a.ts)-new Date(b.ts);}).forEach(function(r){
+var a=pool[(r.name||'')+'|'+(r.page||'')]; if(!a)return;
+var t=new Date(r.ts).getTime();
+for(var i=0;i<a.length;i++){
+var lt=new Date(a[i].ts).getTime();
+if(!a[i]._used&&lt>=t-90000&&lt<=t+4*3600000){a[i]._used=true;r._dur=a[i].secs;break;}
+}
+});
+
 var rec=rows.slice().sort(function(a,b){return new Date(b.ts)-new Date(a.ts);}).slice(0,50);
-document.getElementById('recent').innerHTML=rec.map(function(r){return '<tr><td class="muted">'+ago(r.ts)+'</td><td>'+(r.name||'—')+'</td><td>'+fmtPage(r.page)+'</td></tr>';}).join('')||'<tr><td colspan="3" class="muted">No activity yet</td></tr>';
+document.getElementById('recent').innerHTML=rec.map(function(r){return '<tr><td class="muted">'+ago(r.ts)+'</td><td>'+(r.name||'—')+'</td><td>'+fmtPage(r.page)+'</td><td class="num">'+(r._dur!=null?fmtDur(r._dur):'<span class="muted">—</span>')+'</td></tr>';}).join('')||'<tr><td colspan="4" class="muted">No activity yet</td></tr>';
 }
 function bar(id,labels,data,color){
 new Chart(document.getElementById(id),{type:'bar',data:{labels:labels,datasets:[{data:data,backgroundColor:color,borderRadius:6}]},options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#64748b'},grid:{color:'rgba(255,255,255,.05)'}},y:{ticks:{color:'#cbd5e1'},grid:{display:false}}}}});
