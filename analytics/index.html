@@ -92,7 +92,7 @@ return Math.floor(m/60)+'h '+(m%60)+'m';
 }
 function render(rows){
 rows=rows||[];
-function okName(r){var nm=(r.name||'').toLowerCase().trim();return !!nm&&nm.indexOf('test')<0;}
+function okName(r){var nm=(r.name||'').toLowerCase().trim();if(!nm||nm.indexOf('test')>-1)return false;var pg=(r.page||'');return pg.indexOf('/probe')!==0&&pg.indexOf('/debug')!==0;}
 /* duration visits: event 'leave:<seconds>:<visitId>' — dedupe by visitId keeping max */
 var byVisit={};
 rows.forEach(function(r){
