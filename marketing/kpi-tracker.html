@@ -65,21 +65,25 @@ footer{color:#475569;font-size:12px;text-align:center;margin-top:20px}
 </div>
 
 <script>
-// Real actuals wired from marketing-dashboard.html's live Supermetrics data (May 2026, latest complete month).
+// Real actuals wired from marketing-dashboard.html's live Supermetrics data (June 2026, latest complete month).
+// Facebook Organic = unique media viewers (Meta retired the old "page reach" metric — this is its successor).
+// LinkedIn Organic = impressions (LinkedIn doesn't report unique reach for company pages).
 // Facebook Paid Reach is NOT separately tracked yet — Meta Ads reach is ~99% Instagram, so it's shown against
 // the same combined Meta paid-reach number until FB is broken out on its own.
 const ACTUALS = {
-  "Instagram|Organic Reach": {value: 1378283, period: "May 2026", note: null},
-  "Instagram|Paid Reach":    {value: 1366102, period: "May 2026", note: null},
-  "Facebook|Paid Reach":     {value: 1366102, period: "May 2026", note: "Combined Meta paid reach — Facebook isn't broken out separately yet (≈2-3K/mo of the total)."}
+  "Instagram|Organic Reach": {value: 1375999, period: "Jun 2026", note: null},
+  "Instagram|Paid Reach":    {value: 1428107, period: "Jun 2026", note: null},
+  "Facebook|Paid Reach":     {value: 1428107, period: "Jun 2026", note: "Combined Meta paid reach — Facebook isn't broken out separately yet (≈1-3K/mo of the total)."},
+  "Facebook|Organic Reach":  {value: 305819, period: "Jun 2026", note: "Unique media viewers — Meta retired the old page-reach metric; this is its closest successor."},
+  "LinkedIn|Organic Reach":  {value: 5782, period: "Jun 2026", note: "Impressions — LinkedIn doesn't report unique reach for company pages."}
 };
 
 const KPIS = [
 {"channel":"Instagram","kpi":"Organic Reach","source":"Instagram Insights (Supermetrics)","status":"Live"},
 {"channel":"Instagram","kpi":"Paid Reach","source":"Meta Ads (Supermetrics)","status":"Live"},
-{"channel":"Facebook","kpi":"Organic Reach","source":"Facebook Insights (Supermetrics)","status":"Connect"},
+{"channel":"Facebook","kpi":"Organic Reach","source":"Facebook Insights (Supermetrics)","status":"Live"},
 {"channel":"Facebook","kpi":"Paid Reach","source":"Meta Ads (Supermetrics)","status":"Live"},
-{"channel":"LinkedIn","kpi":"Organic Reach","source":"LinkedIn Pages (Supermetrics)","status":"Connect"},
+{"channel":"LinkedIn","kpi":"Organic Reach","source":"LinkedIn Pages (Supermetrics)","status":"Live"},
 {"channel":"LinkedIn","kpi":"Paid Reach","source":"LinkedIn Ads (Supermetrics)","status":"Connect"},
 {"channel":"YouTube","kpi":"Organic Reach","source":"YouTube (Supermetrics)","status":"Connect"},
 {"channel":"YouTube","kpi":"Paid Reach","source":"Google Ads (Supermetrics)","status":"Connect"},
