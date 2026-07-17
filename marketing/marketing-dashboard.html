@@ -57,6 +57,7 @@
     <button class="tab-btn active text-sm font-semibold px-4 py-2 rounded-lg" data-tab="overview">Overview</button>
     <button class="tab-btn text-sm font-semibold px-4 py-2 rounded-lg" data-tab="paid">Paid Ads</button>
     <button class="tab-btn text-sm font-semibold px-4 py-2 rounded-lg" data-tab="social">Brand &amp; Social</button>
+    <button class="tab-btn text-sm font-semibold px-4 py-2 rounded-lg" data-tab="insights">💡 Insights &amp; Actions</button>
   </div>
 
   <!-- OVERVIEW -->
@@ -144,6 +145,18 @@
     </div>
   </section>
 
+  <!-- INSIGHTS & ACTIONS -->
+  <section data-panel="insights" hidden>
+    <div class="card p-3 mb-4" style="background:#eff6ff;border-color:#bfdbfe">
+      <p class="text-sm" style="color:#1e3a8a"><b>Your marketing manager's read.</b> Every item below is computed live from the data in this dashboard — priorities re-rank automatically after each weekly refresh. <b>P1</b> = act this week · <b>P2</b> = plan this month · <b>P3</b> = keep an eye on it. Use the month filter above to focus the analysis.</p>
+    </div>
+    <div id="insightList" class="space-y-3 mb-4"></div>
+    <div class="card p-4">
+      <h3 class="font-semibold mb-3">🔍 Questions worth digging into</h3>
+      <div id="insightQuestions" class="space-y-2"></div>
+    </div>
+  </section>
+
   <footer class="text-center text-xs text-slate-400 mt-8 pb-4">
     Mozaik Design · Marketing Mission Control · ₺ · live via Supermetrics (Meta Ads + Instagram + Facebook + LinkedIn)
   </footer>
@@ -177,7 +190,7 @@ function destroy(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
 let DATA_ECOM=null;
 fetch('../ecommerce/ecommerce-data.json',{cache:'no-store'})
   .then(r=>r.ok?r.json():null)
-  .then(json=>{ DATA_ECOM=json; if($('.tab-btn.active') && $('.tab-btn.active').dataset.tab==='overview') renderOverview(); })
+  .then(json=>{ DATA_ECOM=json; const t=$('.tab-btn.active'); if(t && (t.dataset.tab==='overview'||t.dataset.tab==='insights')) rerenderActive(); })
   .catch(()=>{ DATA_ECOM=null; });
 function ecomMonthsInRange(){ return (DATA_ECOM&&DATA_ECOM.months||[]).filter(r=>inRange(r.month)); }
 
@@ -315,10 +328,63 @@ function renderSocial(){
   $('#brandKpiTable tbody').innerHTML=kk.map(r=>'<tr><td class="font-medium" style="text-align:left">'+r.kpi+'</td><td style="text-align:left">'+r.channel+'</td><td class="text-slate-500" style="text-align:left">'+r.source+'</td><td style="text-align:left"><span class="pill" style="'+(sb[r.status]||sb.Manual)+'">'+r.status+'</span></td></tr>').join('');
 }
 
+function renderInsights(){
+  const MN={"2026-01":"January","2026-02":"February","2026-03":"March","2026-04":"April","2026-05":"May","2026-06":"June","2026-07":"July","2026-08":"August","2026-09":"September","2026-10":"October","2026-11":"November","2026-12":"December"};
+  const mlabL=m=>MN[m]||m;
+  const p=fPaid();
+  const totSpend=sum(p,'spend'),totRev=sum(p,'revenue'),totClicks=sum(p,'clicks');
+  const agg=CAMPS.map(c=>{const f=p.filter(r=>r.campaign===c);return {c,spend:sum(f,'spend'),rev:sum(f,'revenue'),clicks:sum(f,'clicks'),impr:sum(f,'impressions')};}).filter(x=>x.spend>0);
+  agg.forEach(a=>{a.roas=a.rev/a.spend;a.cpc=a.clicks?a.spend/a.clicks:0;});
+  const items=[];
+  const earners=agg.filter(a=>a.rev>0).sort((a,b)=>b.roas-a.roas);
+  if(earners.length){const t=earners[0];
+    items.push({p:'P1',area:'Paid',head:'Scale '+t.c,body:'It returns '+t.roas.toFixed(2)+'x pixel ROAS ('+TLk(t.rev)+' tracked revenue on '+TLk(t.spend)+' spend, '+pct(t.spend/totSpend)+' of budget). Test a +20–30% budget raise in Ads Manager and only raise again once ROAS holds above 3x for two weeks.'});}
+  if(sum(p,'leads')===0){
+    items.push({p:'P1',area:'Funnel',head:'Zero leads tracked all year',body:'Across '+TLk(totSpend)+' of spend, Meta reports 0 website or on-Facebook leads. For high-ticket furniture the real conversion is a showroom visit or quote request — either no lead campaign is live or the Lead event is not firing. Action: launch a lead-gen campaign (showroom appointment / catalogue download) and verify the Lead event in Events Manager.'});}
+  const ecomRows=ecomMonthsInRange();
+  if(DATA_ECOM&&ecomRows.length){const realRev=sum(ecomRows,'revenue');
+    if(realRev>0&&totRev/realRev<0.6){
+      items.push({p:'P1',area:'Attribution',head:pct(1-totRev/realRev)+' of real revenue is invisible to Meta',body:'Store revenue (Metorik) is '+TLk(realRev)+' but the pixel only sees '+TLk(totRev)+'. Meta optimizes on what it can see. Action: feed showroom/offline sales back via the Conversions API (offline event upload) so the algorithm learns from real buyers, not just online checkouts.'});}}
+  if(earners.length>1){const w=earners[earners.length-1];
+    if(w.roas<2)items.push({p:'P2',area:'Paid',head:'Rework or cut '+w.c,body:'Only '+w.roas.toFixed(2)+'x ROAS on '+TLk(w.spend)+'. Refresh creative and tighten the audience first; if it stays under ~2x for 2–3 more weeks, move that budget to the top performer.'});}
+  const noRev=agg.filter(a=>a.rev===0);const zSpend=noRev.reduce((s,a)=>s+a.spend,0);
+  if(zSpend>0&&totClicks>0)items.push({p:'P2',area:'Paid',head:pct(zSpend/totSpend)+' of budget has no tracked revenue',body:TLk(zSpend)+' across '+noRev.length+' awareness/traffic campaigns. Fine if intentional — but set a guardrail: review cost-per-1k-reach and CPC monthly and cut the worst ad sets. Blended CPC is now '+TL(totSpend/totClicks)+'.'});
+  const blendedCpc=totClicks?totSpend/totClicks:0;
+  const outlier=agg.filter(a=>a.clicks>0&&a.cpc>2*blendedCpc&&a.spend/totSpend>0.08).sort((a,b)=>b.cpc-a.cpc)[0];
+  if(outlier)items.push({p:'P2',area:'Paid',head:'Expensive clicks in '+outlier.c,body:'CPC '+TL(outlier.cpc)+' vs '+TL(blendedCpc)+' blended ('+(outlier.cpc/blendedCpc).toFixed(1)+'x). Check placements and creative fatigue; consider narrowing to the placements that convert.'});
+  const wks=weeksInRange();
+  if(wks.length>=6){const lastW=wks[wks.length-2];const prev4=wks.slice(-6,-2);
+    const lastS=sum(p.filter(r=>r.week===lastW),'spend');
+    const avg4=prev4.reduce((s,w)=>s+sum(p.filter(r=>r.week===w),'spend'),0)/prev4.length;
+    if(avg4>0){const d=(lastS-avg4)/avg4;
+      if(Math.abs(d)>0.25)items.push({p:'P2',area:'Pacing',head:'Weekly spend '+(d>0?'jumped':'dropped')+' '+Math.abs(d*100).toFixed(0)+'%',body:'Week of '+lastW+' spent '+TLk(lastS)+' vs a '+TLk(avg4)+' four-week average. '+(d>0?'Make sure the extra budget is flowing to campaigns above 3x ROAS.':'If unintentional, check for rejected ads, budget caps or paused campaigns.')});}}
+  const ig=(DATA.ig_reach||[]).filter(r=>inRange(r.month)&&r.organic!=null);
+  if(ig.length>=4){const last=ig[ig.length-1];const prior=ig.slice(-4,-1);const avg=prior.reduce((s,r)=>s+r.organic,0)/prior.length;const d=(last.organic-avg)/avg;
+    items.push({p:d<-0.15?'P2':'P3',area:'Instagram',head:'Organic reach '+(d>=0?'+':'')+(d*100).toFixed(0)+'% vs 3-month average',body:mlabL(last.month)+' organic reach was '+num(last.organic)+' vs a '+num(avg)+' average. '+(d>=0?'Something in the recent content mix is working — pull the top posts of the month in Instagram Insights and double down on that format.':'Review which formats dropped (Reels vs statics) and revisit posting cadence.')});}
+  const li=(DATA.li_page||[]).filter(r=>inRange(r.month));
+  if(li.length>=3){const best=[...li].sort((a,b)=>b.new_followers-a.new_followers)[0];const avgF=li.reduce((s,r)=>s+r.new_followers,0)/li.length;
+    if(best.new_followers>1.5*avgF)items.push({p:'P2',area:'LinkedIn',head:mlabL(best.month)+' was a LinkedIn outlier — find out why',body:'+'+num(best.new_followers)+' followers and '+num(best.impressions)+' impressions vs a '+num(avgF)+'/month follower average. Pull up what was posted that month (project reveal? press? campaign?) and turn it into a repeatable playbook.'});}
+  const fb=(DATA.fb_page||[]).filter(r=>inRange(r.month));
+  if(fb.length>=4){const f=fb[0],l=fb[fb.length-1];const vd=(l.visits-f.visits)/f.visits, ed=(l.engagements-f.engagements)/f.engagements;
+    if(vd<-0.3&&ed>0.1)items.push({p:'P3',area:'Facebook',head:'People engage in feed but stopped visiting the Page',body:'Post engagements are '+(ed>=0?'+':'')+(ed*100).toFixed(0)+'% since '+mlabL(f.month)+' while Page visits fell '+Math.abs(vd*100).toFixed(0)+'% ('+num(f.visits)+' → '+num(l.visits)+'). Add stronger CTAs from posts to the Page/site and keep the Page showcase fresh.'});}
+  if(totSpend>0)items.push({p:'P3',area:'Measurement',head:'Blended pixel ROAS '+(totRev/totSpend).toFixed(2)+'x understates reality',body:'Furniture largely closes offline. Until offline conversions are wired in, treat pixel ROAS as a floor — judge awareness campaigns on reach & CPC, and conversion campaigns on the ROAS trend rather than its absolute level.'});
+  const order={P1:0,P2:1,P3:2};items.sort((a,b)=>order[a.p]-order[b.p]);
+  const pc={P1:'background:#fee2e2;color:#b91c1c',P2:'background:#fef3c7;color:#92400e',P3:'background:#e2e8f0;color:#475569'};
+  $('#insightList').innerHTML=items.map(it=>'<div class="card p-4 flex gap-3 items-start"><span class="pill" style="'+pc[it.p]+';margin-top:2px">'+it.p+'</span><div><div class="font-semibold text-sm">'+it.head+' <span class="text-slate-400 font-normal">· '+it.area+'</span></div><div class="text-sm text-slate-600 mt-1">'+it.body+'</div></div></div>').join('');
+  const qs=[
+    'Which of the '+num(totClicks)+' clicks turn into showroom visits? Start logging “how did you hear about us” at the showroom.',
+    'What did the top-reach Instagram posts have in common (format, product line, posting time)? Check Instagram Insights → Content.',
+    'Are Kurumsal (contract) prospects reachable on LinkedIn? Follower growth suggests the audience is there — consider a LinkedIn Ads test (source already available in Supermetrics).',
+    'What share of store revenue comes from ad-exposed customers? Requires the offline conversion feed (see the P1 attribution item).',
+    'YouTube is still dark — authorize it in Supermetrics to see whether video is quietly driving brand searches.'
+  ];
+  $('#insightQuestions').innerHTML=qs.map(q=>'<div class="flex gap-2 items-start text-sm"><span>•</span><span class="text-slate-700">'+q+'</span></div>').join('');
+}
+
 function show(tab){
   $$('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
   $$('[data-panel]').forEach(pp=>pp.hidden=pp.dataset.panel!==tab);
-  ({overview:renderOverview,paid:renderPaid,social:renderSocial}[tab])();
+  ({overview:renderOverview,paid:renderPaid,social:renderSocial,insights:renderInsights}[tab])();
 }
 function rerenderActive(){show($('.tab-btn.active').dataset.tab);}
 
