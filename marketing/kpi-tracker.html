@@ -40,10 +40,13 @@ tr:last-child td{border-bottom:none}
 .kpi-name{color:#fff;font-weight:600}
 .source{color:#94a3b8;font-size:12.5px}
 .actual{font-variant-numeric:tabular-nums;color:#e5e7eb;font-weight:600}
-.goal-input{width:100px;background:#0b1220;border:1px solid #1f2a44;border-radius:8px;color:#e5e7eb;padding:6px 8px;font-size:13px;font-variant-numeric:tabular-nums}
-.goal-input:focus{outline:none;border-color:#3b82f6}
-.bar{height:6px;border-radius:999px;background:#16203a;overflow:hidden;width:100px;margin-top:6px}
+.range-vals{font-size:12.5px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.rv-floor{color:#94a3b8}.rv-target{color:#fff;font-weight:700}.rv-stretch{color:#a7f3d0}
+.rv-sep{color:#475569;margin:0 5px}
+.bar{height:6px;border-radius:999px;background:#16203a;width:150px;margin-top:6px;position:relative}
 .bar div{height:100%;border-radius:999px}
+.bar .tick{position:absolute;top:-2px;width:2px;height:10px;background:#64748b;border-radius:1px}
+.bar .tick-stretch{background:#34d399}
 .note-inline{color:#64748b;font-size:11px;display:block;margin-top:3px}
 footer{color:#475569;font-size:12px;text-align:center;margin-top:20px}
 @media (max-width:700px){.summary{grid-template-columns:repeat(2,1fr)}}
@@ -73,9 +76,19 @@ footer{color:#475569;font-size:12px;text-align:center;margin-top:20px}
 const ACTUALS = {
   "Instagram|Organic Reach": {value: 1375999, period: "Jun 2026", note: null},
   "Instagram|Paid Reach":    {value: 1428107, period: "Jun 2026", note: null},
-  "Facebook|Paid Reach":     {value: 1428107, period: "Jun 2026", note: "Combined Meta paid reach — Facebook isn't broken out separately yet (≈1-3K/mo of the total)."},
+  "Facebook|Paid Reach":     {value: 841, period: "Jun 2026", note: "FB-only paid reach (Meta placement split) — placements overwhelmingly favor Instagram; peaked at 3.4k in April."},
   "Facebook|Organic Reach":  {value: 305819, period: "Jun 2026", note: "Unique media viewers — Meta retired the old page-reach metric; this is its closest successor."},
   "LinkedIn|Organic Reach":  {value: 5782, period: "Jun 2026", note: "Impressions — LinkedIn doesn't report unique reach for company pages."}
+};
+
+// Baked-in monthly goal ranges — same for everyone, derived from 2026 actuals:
+// floor = trailing 3-month average, target ≈ +15%, stretch = best month achieved in 2026.
+const RANGES = {
+  "Instagram|Organic Reach": {floor: 1200000, target: 1400000, stretch: 1500000},
+  "Instagram|Paid Reach":    {floor: 1300000, target: 1500000, stretch: 1700000},
+  "Facebook|Organic Reach":  {floor: 430000,  target: 500000,  stretch: 560000},
+  "Facebook|Paid Reach":     {floor: 1000,    target: 2500,    stretch: 3500},
+  "LinkedIn|Organic Reach":  {floor: 10000,   target: 12000,   stretch: 16000}
 };
 
 const KPIS = [
@@ -108,19 +121,11 @@ const STATUS_META = {
 };
 
 const GROUPS = [
-  {status:"Live", icon:"✅", title:"Live in the dashboard", note:"Already pulling real data — set a goal below to track progress."},
+  {status:"Live", icon:"✅", title:"Live in the dashboard", note:"Already pulling real data — goal ranges (floor → target → stretch) are baked in and shared by the whole team."},
   {status:"Connect", icon:"🔌", title:"Needs a connector authorized", note:"Data source exists (Supermetrics / GA4) — just needs sign-in / authorization to start pulling."},
   {status:"Source TBD", icon:"❓", title:"No data source picked yet", note:"Needs a social-listening tool (e.g. Ahrefs Brand Radar) before this can be automated."},
   {status:"Manual", icon:"✋", title:"No automation path", note:"Best tracked by hand / CRM entry — not a connector job."}
 ];
-
-const GOALS_KEY = 'mziKpiGoals';
-function loadGoals(){ try{ return JSON.parse(localStorage.getItem(GOALS_KEY) || '{}'); }catch(e){ return {}; } }
-function saveGoal(key, val){
-  const g = loadGoals();
-  if(val === null || val === '' || isNaN(val)) delete g[key]; else g[key] = Number(val);
-  localStorage.setItem(GOALS_KEY, JSON.stringify(g));
-}
 
 function fmt(n){
   if(n>=1e6) return (n/1e6).toFixed(2)+'M';
@@ -147,53 +152,59 @@ function renderSummary(){
   ).join('');
 }
 
-function statusFor(actual, goal){
+function statusFor(actual, range){
   if(actual == null) return {chip:'chip-nodata', label:'Awaiting data'};
-  if(goal == null || goal === '') return {chip:'chip-nogoal', label:'Set a goal'};
-  const pct = actual / goal * 100;
-  if(pct >= 100) return {chip:'chip-ontarget', label:'On target', pct};
-  if(pct >= 80) return {chip:'chip-near', label:'Near target', pct};
-  return {chip:'chip-off', label:'Off target', pct};
+  if(!range) return {chip:'chip-nogoal', label:'No goal set'};
+  const pct = actual / range.target * 100;
+  if(actual >= range.stretch) return {chip:'chip-ontarget', label:'Stretch hit 🎯', pct};
+  if(actual >= range.target) return {chip:'chip-ontarget', label:'On target', pct};
+  if(actual >= range.floor) return {chip:'chip-near', label:'Above floor', pct};
+  return {chip:'chip-off', label:'Below floor', pct};
 }
 
 function renderGroups(){
-  const goals = loadGoals();
   const html = GROUPS.map(g=>{
     const rows = KPIS.filter(k=>k.status===g.status);
     if(!rows.length) return '';
-    const meta = STATUS_META[g.status];
     const trs = rows.map(r=>{
-      const goal = goals[r.key];
+      const range = RANGES[r.key] || null;
       const actualVal = r.actual ? r.actual.value : null;
-      const st = statusFor(actualVal, goal);
+      const st = statusFor(actualVal, range);
       const actualCell = actualVal
         ? '<span class="actual">'+fmt(actualVal)+'</span><span class="note-inline">'+r.actual.period+(r.actual.note ? ' · '+r.actual.note : '')+'</span>'
         : '<span style="color:#475569">—</span>';
-      const goalCell = '<input class="goal-input" type="number" min="0" placeholder="Set goal" value="'+(goal!=null?goal:'')+'" data-key="'+r.key+'">';
-      const barPct = st.pct != null ? Math.min(100, st.pct) : 0;
-      const barColor = st.chip==='chip-ontarget' ? '#10b981' : st.chip==='chip-near' ? '#f59e0b' : st.chip==='chip-off' ? '#ef4444' : '#334155';
-      const bar = (actualVal!=null && goal!=null) ? '<div class="bar"><div style="width:'+barPct+'%;background:'+barColor+'"></div></div>' : '';
+      let goalCell = '<span style="color:#475569">—</span>';
+      if(range){
+        const barPct = st.pct != null ? Math.min(100, st.pct) : 0;
+        const stretchPct = Math.min(100, range.stretch / range.target * 100);
+        const floorPct = Math.min(100, range.floor / range.target * 100);
+        const barColor = st.chip==='chip-ontarget' ? '#10b981' : st.chip==='chip-near' ? '#f59e0b' : '#ef4444';
+        goalCell =
+          '<span class="range-vals"><span class="rv rv-floor" title="Floor — trailing 3-month average">'+fmt(range.floor)+'</span>' +
+          '<span class="rv-sep">→</span><span class="rv rv-target" title="Target — floor +15%">'+fmt(range.target)+'</span>' +
+          '<span class="rv-sep">→</span><span class="rv rv-stretch" title="Stretch — best month of 2026">'+fmt(range.stretch)+'</span></span>' +
+          '<div class="bar" title="Bar = actual vs target. Ticks = floor and stretch.">' +
+            '<div style="width:'+barPct+'%;background:'+barColor+'"></div>' +
+            '<span class="tick" style="left:'+floorPct+'%"></span>' +
+            '<span class="tick tick-stretch" style="left:'+stretchPct+'%"></span>' +
+          '</div>';
+      }
       return '<tr><td class="channel">'+r.channel+'</td><td class="kpi-name">'+r.kpi+'</td><td class="source">'+r.source+'</td>'+
-        '<td>'+actualCell+'</td><td>'+goalCell+bar+'</td>'+
+        '<td>'+actualCell+'</td><td>'+goalCell+'</td>'+
         '<td><span class="chip '+st.chip+'">'+st.label+'</span></td></tr>';
     }).join('');
     return '<div class="group"><h2>'+g.icon+' '+g.title+' <span style="color:#475569;font-weight:400">('+rows.length+')</span></h2>'+
       '<p class="note">'+g.note+'</p>'+
-      '<table><thead><tr><th>Channel</th><th>KPI</th><th>Intended source</th><th>Actual</th><th>Goal</th><th>On target?</th></tr></thead><tbody>'+trs+'</tbody></table></div>';
+      '<table><thead><tr><th>Channel</th><th>KPI</th><th>Intended source</th><th>Actual</th><th>Goal · floor → target → stretch</th><th>On target?</th></tr></thead><tbody>'+trs+'</tbody></table></div>';
   }).join('');
   document.getElementById('groups').innerHTML = html;
-
-  document.querySelectorAll('.goal-input').forEach(inp=>{
-    inp.addEventListener('change', function(){
-      saveGoal(this.dataset.key, this.value);
-      renderGroups();
-    });
-  });
 }
 
 document.getElementById('banner').innerHTML =
-  '<b>Goals are saved in this browser</b> (not shared across the team yet). Type a goal, press Enter or click away — ' +
-  'tell me the target numbers you want and I\'ll bake them into the page so everyone sees the same target.';
+  '<b>Goals are baked into the page — everyone sees the same ranges.</b> Monthly goals per KPI: ' +
+  '<b>floor</b> (trailing 3-month average — falling below this means something broke), ' +
+  '<b>target</b> (≈ floor +15%) and <b>stretch</b> (best month achieved in 2026). ' +
+  'Chip: red = below floor · amber = above floor · green = target hit · 🎯 = stretch hit. Ask Claude to raise the ranges as months finalize.';
 
 renderSummary();
 renderGroups();
