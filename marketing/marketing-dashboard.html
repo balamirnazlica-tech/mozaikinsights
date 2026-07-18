@@ -83,7 +83,7 @@
   <!-- OVERVIEW -->
   <section data-panel="overview">
     <div class="card p-3 mb-4" style="background:#f0fdf4;border-color:#bbf7d0">
-      <p class="text-sm" style="color:#065f46"><b>Everything here is real.</b> Paid metrics are live from your Meta Ads (Mozaik Ad Account) via Supermetrics. Store revenue is live from Metorik. Instagram, Facebook &amp; LinkedIn (Brand &amp; Social tab) are live via Supermetrics. Currency ₺. July 2026 is partial (through Jul 16).</p>
+      <p class="text-sm" style="color:#065f46"><b>Everything here is real.</b> Paid metrics are live from your Meta Ads (Mozaik Ad Account) via Supermetrics. Store revenue is live from Metorik. Instagram, Facebook &amp; LinkedIn (Brand &amp; Social tab) are live via Supermetrics. Currency ₺. <span id="liveNote"></span></p>
     </div>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4" id="kpis"></div>
     <div class="card p-4 mb-4" id="ecomCompareCard" hidden>
@@ -461,7 +461,9 @@ function rerenderActive(){show($('.tab-btn.active').dataset.tab);}
 
 function init(){
   $('#updated').textContent=DATA.meta.generated;
-  $('#subtitle').textContent=DATA.meta.company+' · '+DATA.meta.weeks[0]+' – '+DATA.meta.weeks.slice(-1)[0]+' 2026 · '+DATA.meta.live;
+  $('#subtitle').textContent=DATA.meta.company+' · Marketing ('+DATA.meta.weeks[0]+' – '+DATA.meta.weeks.slice(-1)[0]+' 2026)';
+  $('#subtitle').title=DATA.meta.live;
+  const ln=$('#liveNote'); if(ln)ln.textContent=(DATA.meta.live.split('. ').pop()||'');
   const mFrom=$('#monthFrom'), mTo=$('#monthTo');
   const opts=DATA.meta.months.map(m=>'<option value="'+m+'">'+m+'</option>').join('');
   mFrom.innerHTML=opts; mTo.innerHTML=opts;
