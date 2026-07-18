@@ -49,6 +49,14 @@ canvas{max-height:300px}
 <select id="monthTo" class="text-sm border border-slate-200 rounded-lg px-3 py-1.5 bg-white"></select>
 </div>
 <div>
+<label class="block text-[11px] uppercase tracking-wide text-slate-400 mb-1">Quick range</label>
+<div class="seg" id="rangeSeg">
+<button data-r="fy" title="Fiscal year (Aug–Jul)">FY</button>
+<button data-r="ytd" title="Calendar year to date">YTD</button>
+<button data-r="qtr" title="Current quarter">QTR</button>
+</div>
+</div>
+<div>
 <label class="block text-[11px] uppercase tracking-wide text-slate-400 mb-1">Currency</label>
 <div class="seg" id="ccySeg">
 <button class="on" data-c="TRY">₺</button>
@@ -90,7 +98,7 @@ canvas{max-height:300px}
 </div>
 </div>
 <div class="card p-4">
-<h3 class="font-semibold mb-3">Monthly detail</h3>
+<h3 class="font-semibold mb-3">Monthly detail <span class="text-slate-400 font-normal text-sm">· click a column to sort</span></h3>
 <div class="overflow-x-auto"><table id="monthTable"><thead></thead><tbody></tbody></table></div>
 </div>
 </section>
@@ -131,9 +139,9 @@ const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 // the fly based on `ccy` so no data needs to change.
 let ccy='TRY', EUR_RATE=null;
 fetch('https://api.frankfurter.dev/v1/latest?from=TRY&to=EUR',{cache:'no-store'})
-  .then(r=>r.ok?r.json():null)
-  .then(j=>{ if(j&&j.rates&&j.rates.EUR){ EUR_RATE=j.rates.EUR; } else { $('#ccySeg button[data-c="EUR"]').disabled=true; } })
-  .catch(()=>{ const b=$('#ccySeg button[data-c="EUR"]'); if(b){b.disabled=true;b.title='Rate unavailable';} });
+.then(r=>r.ok?r.json():null)
+.then(j=>{ if(j&&j.rates&&j.rates.EUR){ EUR_RATE=j.rates.EUR; } else { $('#ccySeg button[data-c="EUR"]').disabled=true; } })
+.catch(()=>{ const b=$('#ccySeg button[data-c="EUR"]'); if(b){b.disabled=true;b.title='Rate unavailable';} });
 const conv=n=>(ccy==='EUR'&&EUR_RATE)?n*EUR_RATE:n;
 const sym=()=>ccy==='EUR'?'€':'₺';
 const TL=n=>sym()+Math.round(conv(n)||0).toLocaleString('en-US');
@@ -147,6 +155,7 @@ function kpiCard(label,val,sub,cls){return '<div class="card p-3"><div class="te
 
 let DATA = null;
 let state = { from: null, to: null };
+let monthSort = { k:'month', dir:1 };
 
 fetch('./ecommerce-data.json', {cache:'no-store'})
 .then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
@@ -183,13 +192,37 @@ mFrom.value = state.from; mTo.value = state.to;
 mFrom.addEventListener('change', ()=>{
 state.from = mFrom.value;
 if(state.from > state.to){ state.to = state.from; mTo.value = state.to; }
+clearRangeSeg();
 render();
 });
 mTo.addEventListener('change', ()=>{
 state.to = mTo.value;
 if(state.to < state.from){ state.from = state.to; mFrom.value = state.from; }
+clearRangeSeg();
 render();
 });
+
+// Quick ranges. FY = fiscal year Aug–Jul (the store's data year starts in August);
+// YTD = calendar year to date; QTR = current calendar quarter. All clamped to
+// the months that actually exist in the data.
+const monthList = DATA.months.map(r=>r.month);
+function clearRangeSeg(){ $$('#rangeSeg button').forEach(x=>x.classList.remove('on')); }
+function applyRange(from, to){
+const avail = monthList.filter(mm=>mm>=from && mm<=to);
+if(!avail.length) return;
+state.from = avail[0]; state.to = avail[avail.length-1];
+mFrom.value = state.from; mTo.value = state.to;
+render();
+}
+$$('#rangeSeg button').forEach(b=>b.addEventListener('click', ()=>{
+const last = monthList[monthList.length-1];
+const y = +last.slice(0,4), mo = +last.slice(5);
+if(b.dataset.r==='ytd') applyRange(y+'-01', last);
+if(b.dataset.r==='fy'){ const fy = mo>=8 ? y : y-1; applyRange(fy+'-08', (fy+1)+'-07'); }
+if(b.dataset.r==='qtr'){ const qs = Math.floor((mo-1)/3)*3+1; applyRange(y+'-'+String(qs).padStart(2,'0'), last); }
+clearRangeSeg();
+b.classList.add('on');
+}));
 
 $$('#ccySeg button').forEach(b=>b.addEventListener('click', ()=>{
 if(b.disabled) return;
@@ -249,9 +282,22 @@ data:{ labels:m.map(r=>r.month), datasets:[{label:'AOV', data:m.map(r=>conv(r.av
 options:{responsive:true, plugins:{tooltip:{callbacks:{label:c=>'AOV: '+sym()+Math.round(c.parsed.y).toLocaleString('en-US')}}}, scales:{y:{beginAtZero:true, ticks:{callback:v=>sym()+Math.round(v).toLocaleString('en-US')}}}}
 });
 
-const cols = ['Month','Revenue','Net','Orders','AOV','Unique Cust.','Refunds'];
-$('#monthTable thead').innerHTML = '<tr>'+cols.map(c=>'<th>'+c+'</th>').join('')+'</tr>';
+renderMonthTable();
+}
+
+function renderMonthTable(){
+const m = fMonths().slice();
+const cols = [['month','Month'],['revenue','Revenue'],['net','Net'],['orders','Orders'],['average_order_value','AOV'],['unique_customers','Unique Cust.'],['total_refunds','Refunds']];
+const k = monthSort.k, dir = monthSort.dir;
+m.sort((a,b)=>{ const av=a[k]==null?0:a[k], bv=b[k]==null?0:b[k]; return (av>bv?1:av<bv?-1:0)*dir; });
+$('#monthTable thead').innerHTML = '<tr>'+cols.map(c=>'<th data-k="'+c[0]+'">'+c[1]+(k===c[0]?(dir<0?' ▼':' ▲'):'')+'</th>').join('')+'</tr>';
 $('#monthTable tbody').innerHTML = m.map(r=>'<tr><td>'+r.month+'</td><td>'+TL(r.revenue)+'</td><td>'+TL(r.net)+'</td><td>'+num(r.orders)+'</td><td>'+TL(r.average_order_value)+'</td><td>'+num(r.unique_customers)+'</td><td>'+TL(r.total_refunds)+'</td></tr>').join('');
+$$('#monthTable th').forEach(th=>th.onclick=()=>{
+const key = th.dataset.k;
+monthSort.dir = monthSort.k===key ? -monthSort.dir : -1;
+monthSort.k = key;
+renderMonthTable();
+});
 }
 
 function renderCustomers(){
