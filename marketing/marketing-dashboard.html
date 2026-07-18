@@ -510,7 +510,7 @@ function init(){
   $$('#paidMetricSeg button').forEach(b=>b.onclick=()=>{state.paidMetric=b.dataset.m;$$('#paidMetricSeg button').forEach(x=>x.classList.toggle('on',x===b));renderPaid();});
   $$('#ccySeg button').forEach(b=>b.onclick=()=>{ if(b.disabled)return; ccy=b.dataset.c; $$('#ccySeg button').forEach(x=>x.classList.toggle('on',x===b)); rerenderActive(); });
   const urlTab=new URLSearchParams(location.search).get('tab');
-  if(urlTab==='insights'){ $('#tabbar').hidden=true; document.body.classList.add('theme-insights'); show('insights'); }
+  if(urlTab==='insights'){ $('#tabbar').style.display='none'; document.body.classList.add('theme-insights'); show('insights'); }
   else show(['overview','paid','social'].includes(urlTab)?urlTab:'overview');
 }
 init();
