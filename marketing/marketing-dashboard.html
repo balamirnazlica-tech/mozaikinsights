@@ -368,6 +368,15 @@ function renderInsights(){
   if(fb.length>=4){const f=fb[0],l=fb[fb.length-1];const vd=(l.visits-f.visits)/f.visits, ed=(l.engagements-f.engagements)/f.engagements;
     if(vd<-0.3&&ed>0.1)items.push({p:'P3',area:'Facebook',head:'People engage in feed but stopped visiting the Page',body:'Post engagements are '+(ed>=0?'+':'')+(ed*100).toFixed(0)+'% since '+mlabL(f.month)+' while Page visits fell '+Math.abs(vd*100).toFixed(0)+'% ('+num(f.visits)+' → '+num(l.visits)+'). Add stronger CTAs from posts to the Page/site and keep the Page showcase fresh.'});}
   if(totSpend>0)items.push({p:'P3',area:'Measurement',head:'Blended pixel ROAS '+(totRev/totSpend).toFixed(2)+'x understates reality',body:'Furniture largely closes offline. Until offline conversions are wired in, treat pixel ROAS as a floor — judge awareness campaigns on reach & CPC, and conversion campaigns on the ROAS trend rather than its absolute level.'});
+  // E-commerce (Metorik) — store momentum & refunds, using complete months only
+  if(DATA_ECOM&&DATA_ECOM.months&&DATA_ECOM.months.length>=5){
+    const em=DATA_ECOM.months.slice(0,-1); // drop current (partial) month
+    const eLast=em[em.length-1], ePrior=em.slice(-4,-1);
+    const eAvg=ePrior.reduce((s,r)=>s+(r.revenue||0),0)/ePrior.length;
+    if(eAvg>0){const ed=((eLast.revenue||0)-eAvg)/eAvg;
+      items.push({p:ed<-0.2?'P2':'P3',area:'E-commerce',head:'Store revenue '+(ed>=0?'+':'')+(ed*100).toFixed(0)+'% vs 3-month average',body:mlabL(eLast.month)+' store revenue (Metorik) was '+TLk(eLast.revenue)+' vs a '+TLk(eAvg)+' average, on '+num(eLast.orders)+' orders (AOV '+TLk(eLast.average_order_value)+'). '+(ed>=0?'Momentum is positive — check which campaigns/products drove it and keep them funded.':'Cross-check against ad spend pacing and seasonality; if spend held steady, the drop is conversion-side (site, pricing, stock).')});}
+    const refShare=(eLast.total_refunds||0)/((eLast.revenue||0)||1);
+    if(refShare>0.05)items.push({p:'P2',area:'E-commerce',head:'Refunds at '+pct(refShare)+' of revenue in '+mlabL(eLast.month),body:TLk(eLast.total_refunds)+' refunded vs '+TLk(eLast.revenue)+' revenue. Pull the refunded orders in Metorik and look for a common product, damage-in-transit or expectation gap.'});}
   const order={P1:0,P2:1,P3:2};items.sort((a,b)=>order[a.p]-order[b.p]);
   const pc={P1:'background:#fee2e2;color:#b91c1c',P2:'background:#fef3c7;color:#92400e',P3:'background:#e2e8f0;color:#475569'};
   $('#insightList').innerHTML=items.map(it=>'<div class="card p-4 flex gap-3 items-start"><span class="pill" style="'+pc[it.p]+';margin-top:2px">'+it.p+'</span><div><div class="font-semibold text-sm">'+it.head+' <span class="text-slate-400 font-normal">· '+it.area+'</span></div><div class="text-sm text-slate-600 mt-1">'+it.body+'</div></div></div>').join('');
@@ -407,7 +416,8 @@ function init(){
   };
   $$('.tab-btn').forEach(b=>b.onclick=()=>show(b.dataset.tab));
   $$('#paidMetricSeg button').forEach(b=>b.onclick=()=>{state.paidMetric=b.dataset.m;$$('#paidMetricSeg button').forEach(x=>x.classList.toggle('on',x===b));renderPaid();});
-  show('overview');
+  const urlTab=new URLSearchParams(location.search).get('tab');
+  show(['overview','paid','social','insights'].includes(urlTab)?urlTab:'overview');
 }
 init();
 </script>

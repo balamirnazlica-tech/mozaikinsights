@@ -13,6 +13,8 @@
 #tabs button[data-id="ads"]{border-left:3px solid #3b82f6}
 #tabs button[data-id="ecom"]{border-left:3px solid #10b981}
 #tabs button[data-id="kpi"]{border-left:3px solid #a78bfa}
+#tabs button[data-id="insights"]{border-left:3px solid #f59e0b}
+#tabs button[data-id="insights"].active{background:rgba(245,158,11,.15);color:#fcd34d;border-color:#f59e0b}
 #tabs button[data-id="ads"].active{background:rgba(59,130,246,.15);color:#93c5fd;border-color:#3b82f6}
 #tabs button[data-id="ecom"].active{background:rgba(16,185,129,.15);color:#6ee7b7;border-color:#10b981}
 #tabs button[data-id="kpi"].active{background:rgba(167,139,250,.15);color:#c4b5fd;border-color:#a78bfa}
@@ -39,14 +41,15 @@
 
 <script>
 const DASHBOARDS=[
-{id:'ads',label:'Ads & Brand',url:'./marketing-dashboard.html'},
 {id:'ecom',label:'E-commerce',url:'../ecommerce/ecommerce-dashboard.html'},
-{id:'kpi',label:'KPI Tracker',url:'./kpi-tracker.html'}
+{id:'ads',label:'Ads & Brand',url:'./marketing-dashboard.html'},
+{id:'kpi',label:'KPI Tracker',url:'./kpi-tracker.html'},
+{id:'insights',label:'💡 Insights & Actions',url:'./marketing-dashboard.html?tab=insights'}
 ];
 const frame=document.getElementById('frame'),tabs=document.getElementById('tabs');
 function activate(id){const d=DASHBOARDS.find(x=>x.id===id)||DASHBOARDS[0];frame.src=d.url;tabs.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.id===d.id))}
 DASHBOARDS.forEach(d=>{const b=document.createElement('button');b.textContent=d.label;b.dataset.id=d.id;b.onclick=()=>activate(d.id);tabs.appendChild(b)});
-activate(new URLSearchParams(location.search).get('tab')||'ads');
+activate(new URLSearchParams(location.search).get('tab')||'ecom');
 window.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){const i=DASHBOARDS.findIndex(d=>d.id===(tabs.querySelector('.active')||{}).dataset?.id);const n=e.key==='ArrowRight'?(i+1)%DASHBOARDS.length:(i-1+DASHBOARDS.length)%DASHBOARDS.length;activate(DASHBOARDS[n].id)}});
 </script>
 </body>
