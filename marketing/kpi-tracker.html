@@ -78,7 +78,8 @@ const ACTUALS = {
   "Instagram|Paid Reach":    {value: 1428107, period: "Jun 2026", note: null},
   "Facebook|Paid Reach":     {value: 841, period: "Jun 2026", note: "FB-only paid reach (Meta placement split) — placements overwhelmingly favor Instagram; peaked at 3.4k in April."},
   "Facebook|Organic Reach":  {value: 305819, period: "Jun 2026", note: "Unique media viewers — Meta retired the old page-reach metric; this is its closest successor."},
-  "LinkedIn|Organic Reach":  {value: 5782, period: "Jun 2026", note: "Impressions — LinkedIn doesn't report unique reach for company pages."}
+  "LinkedIn|Organic Reach":  {value: 5782, period: "Jun 2026", note: "Impressions — LinkedIn doesn't report unique reach for company pages."},
+  "Google|Branded Search Volume": {value: 20581, period: "Jun 2026", note: "Branded impressions (queries containing 'mozaik') via Google Search Console; 2,267 branded clicks. Peaked at 32.4k in March."}
 };
 
 // Baked-in monthly goal ranges — same for everyone, derived from 2026 actuals:
@@ -88,7 +89,8 @@ const RANGES = {
   "Instagram|Paid Reach":    {floor: 1300000, target: 1500000, stretch: 1700000},
   "Facebook|Organic Reach":  {floor: 430000,  target: 500000,  stretch: 560000},
   "Facebook|Paid Reach":     {floor: 1000,    target: 2500,    stretch: 3500},
-  "LinkedIn|Organic Reach":  {floor: 10000,   target: 12000,   stretch: 16000}
+  "LinkedIn|Organic Reach":  {floor: 10000,   target: 12000,   stretch: 16000},
+  "Google|Branded Search Volume": {floor: 25000, target: 29000, stretch: 32000}
 };
 
 const KPIS = [
@@ -104,7 +106,7 @@ const KPIS = [
 {"channel":"LinkedIn","kpi":"# Mozaik Design mentions","source":"Social listening tool","status":"Source TBD"},
 {"channel":"Facebook","kpi":"# Mozaik Design mentions","source":"Social listening tool","status":"Source TBD"},
 {"channel":"YouTube","kpi":"# Mozaik Design mentions","source":"Social listening tool","status":"Source TBD"},
-{"channel":"Google","kpi":"Branded Search Volume","source":"Google Search Console / GA4","status":"Connect"},
+{"channel":"Google","kpi":"Branded Search Volume","source":"Google Search Console (Supermetrics)","status":"Live"},
 {"channel":"Google","kpi":"Direct Traffic","source":"Google Analytics (GA4)","status":"Connect"},
 {"channel":"All channels","kpi":"Share of Voice","source":"Social listening tool","status":"Source TBD"},
 {"channel":"Referrals","kpi":"# of Referrals","source":"CRM / manual entry","status":"Manual"}
