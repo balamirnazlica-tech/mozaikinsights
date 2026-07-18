@@ -13,6 +13,8 @@
 #tabs button[data-id="ads"]{border-left:3px solid #3b82f6}
 #tabs button[data-id="ecom"]{border-left:3px solid #10b981}
 #tabs button[data-id="kpi"]{border-left:3px solid #a78bfa}
+#tabs button[data-id="google"]{border-left:3px solid #ea4335}
+#tabs button[data-id="google"].active{background:rgba(234,67,53,.15);color:#fca5a5;border-color:#ea4335}
 #tabs button[data-id="insights"]{border-left:3px solid #f59e0b}
 #tabs button[data-id="insights"].active{background:rgba(245,158,11,.15);color:#fcd34d;border-color:#f59e0b}
 #tabs button[data-id="ads"].active{background:rgba(59,130,246,.15);color:#93c5fd;border-color:#3b82f6}
@@ -43,6 +45,7 @@
 const DASHBOARDS=[
 {id:'ecom',label:'E-commerce',url:'../ecommerce/ecommerce-dashboard.html'},
 {id:'ads',label:'Ads & Brand',url:'./marketing-dashboard.html'},
+{id:'google',label:'Google',url:'./google-dashboard.html'},
 {id:'kpi',label:'KPI Tracker',url:'./kpi-tracker.html'},
 {id:'insights',label:'💡 Insights & Actions',url:'./marketing-dashboard.html?tab=insights'}
 ];
