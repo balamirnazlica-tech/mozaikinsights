@@ -233,7 +233,7 @@ function destroy(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
 let DATA_ECOM=null;
 fetch('../ecommerce/ecommerce-data.json',{cache:'no-store'})
   .then(r=>r.ok?r.json():null)
-  .then(json=>{ DATA_ECOM=json; const t=$('.tab-btn.active'); if(t && (t.dataset.tab==='overview'||t.dataset.tab==='insights')) rerenderActive(); })
+  .then(json=>{ DATA_ECOM=json; if(currentTab==='overview'||currentTab==='insights') rerenderActive(); })
   .catch(()=>{ DATA_ECOM=null; });
 function ecomMonthsInRange(){ return (DATA_ECOM&&DATA_ECOM.months||[]).filter(r=>inRange(r.month)); }
 
@@ -402,7 +402,7 @@ function renderInsights(){
   if(earners.length){const t=earners[0];
     items.push({p:'P1',area:'Paid',head:'Scale '+t.c,body:'It returns '+t.roas.toFixed(2)+'x pixel ROAS ('+TLk(t.rev)+' tracked revenue on '+TLk(t.spend)+' spend, '+pct(t.spend/totSpend)+' of budget). Test a +20–30% budget raise in Ads Manager and only raise again once ROAS holds above 3x for two weeks.'});}
   if(sum(p,'leads')===0){
-    items.push({p:'P1',area:'Funnel',head:'Zero leads tracked all year',body:'Across '+TLk(totSpend)+' of spend, Meta reports 0 website or on-Facebook leads. For high-ticket furniture the real conversion is a showroom visit or quote request — either no lead campaign is live or the Lead event is not firing. Action: launch a lead-gen campaign (showroom appointment / catalogue download) and verify the Lead event in Events Manager.'});}
+    items.push({p:'P1',area:'Funnel',head:'Zero leads tracked '+(state.from===DATA.meta.months[0]&&state.to===DATA.meta.months[DATA.meta.months.length-1]?'all year':'in '+mlabL(state.from)+(state.from===state.to?'':'–'+mlabL(state.to))),body:'Across '+TLk(totSpend)+' of spend, Meta reports 0 website or on-Facebook leads. For high-ticket furniture the real conversion is a showroom visit or quote request — either no lead campaign is live or the Lead event is not firing. Action: launch a lead-gen campaign (showroom appointment / catalogue download) and verify the Lead event in Events Manager.'});}
   const ecomRows=ecomMonthsInRange();
   if(DATA_ECOM&&ecomRows.length){const realRev=sum(ecomRows,'revenue');
     if(realRev>0&&totRev/realRev<0.6){
@@ -431,14 +431,16 @@ function renderInsights(){
     if(vd<-0.3&&ed>0.1)items.push({p:'P3',area:'Facebook',head:'People engage in feed but stopped visiting the Page',body:'Post engagements are '+(ed>=0?'+':'')+(ed*100).toFixed(0)+'% since '+mlabL(f.month)+' while Page visits fell '+Math.abs(vd*100).toFixed(0)+'% ('+num(f.visits)+' → '+num(l.visits)+'). Add stronger CTAs from posts to the Page/site and keep the Page showcase fresh.'});}
   if(totSpend>0)items.push({p:'P3',area:'Measurement',head:'Blended pixel ROAS '+(totRev/totSpend).toFixed(2)+'x understates reality',body:'Furniture largely closes offline. Until offline conversions are wired in, treat pixel ROAS as a floor — judge awareness campaigns on reach & CPC, and conversion campaigns on the ROAS trend rather than its absolute level.'});
   // E-commerce (Metorik) — store momentum & refunds, using complete months only
-  if(DATA_ECOM&&DATA_ECOM.months&&DATA_ECOM.months.length>=5){
-    const em=DATA_ECOM.months.slice(0,-1); // drop current (partial) month
+  if(DATA_ECOM&&DATA_ECOM.months&&DATA_ECOM.months.length>=2){
+    const partialEc=DATA_ECOM.months[DATA_ECOM.months.length-1].month;
+    const em=ecomMonthsInRange().filter(r=>r.month!==partialEc); // in selected range, complete months only
+    if(em.length>=4){
     const eLast=em[em.length-1], ePrior=em.slice(-4,-1);
     const eAvg=ePrior.reduce((s,r)=>s+(r.revenue||0),0)/ePrior.length;
     if(eAvg>0){const ed=((eLast.revenue||0)-eAvg)/eAvg;
       items.push({p:ed<-0.2?'P2':'P3',area:'E-commerce',head:'Store revenue '+(ed>=0?'+':'')+(ed*100).toFixed(0)+'% vs 3-month average',body:mlabL(eLast.month)+' store revenue (Metorik) was '+TLk(eLast.revenue)+' vs a '+TLk(eAvg)+' average, on '+num(eLast.orders)+' orders (AOV '+TLk(eLast.average_order_value)+'). '+(ed>=0?'Momentum is positive — check which campaigns/products drove it and keep them funded.':'Cross-check against ad spend pacing and seasonality; if spend held steady, the drop is conversion-side (site, pricing, stock).')});}
     const refShare=(eLast.total_refunds||0)/((eLast.revenue||0)||1);
-    if(refShare>0.05)items.push({p:'P2',area:'E-commerce',head:'Refunds at '+pct(refShare)+' of revenue in '+mlabL(eLast.month),body:TLk(eLast.total_refunds)+' refunded vs '+TLk(eLast.revenue)+' revenue. Pull the refunded orders in Metorik and look for a common product, damage-in-transit or expectation gap.'});}
+    if(refShare>0.05)items.push({p:'P2',area:'E-commerce',head:'Refunds at '+pct(refShare)+' of revenue in '+mlabL(eLast.month),body:TLk(eLast.total_refunds)+' refunded vs '+TLk(eLast.revenue)+' revenue. Pull the refunded orders in Metorik and look for a common product, damage-in-transit or expectation gap.'});}}
   const order={P1:0,P2:1,P3:2};items.sort((a,b)=>order[a.p]-order[b.p]);
   const pc={P1:'background:#fee2e2;color:#b91c1c',P2:'background:#fef3c7;color:#92400e',P3:'background:#e2e8f0;color:#475569'};
   $('#insightList').innerHTML=items.map(it=>'<div class="card p-4 flex gap-3 items-start"><span class="pill" style="'+pc[it.p]+';margin-top:2px">'+it.p+'</span><div><div class="font-semibold text-sm">'+it.head+' <span class="text-slate-400 font-normal">· '+it.area+'</span></div><div class="text-sm text-slate-600 mt-1">'+it.body+'</div></div></div>').join('');
@@ -452,12 +454,14 @@ function renderInsights(){
   $('#insightQuestions').innerHTML=qs.map(q=>'<div class="flex gap-2 items-start text-sm"><span>•</span><span class="text-slate-700">'+q+'</span></div>').join('');
 }
 
+let currentTab='overview';
 function show(tab){
+  currentTab=tab;
   $$('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
   $$('[data-panel]').forEach(pp=>pp.hidden=pp.dataset.panel!==tab);
   ({overview:renderOverview,paid:renderPaid,social:renderSocial,insights:renderInsights}[tab])();
 }
-function rerenderActive(){show($('.tab-btn.active').dataset.tab);}
+function rerenderActive(){show(currentTab);}
 
 function init(){
   $('#updated').textContent=DATA.meta.generated;
