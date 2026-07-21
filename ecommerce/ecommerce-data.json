@@ -17,7 +17,9 @@
       "total_refunds": 0,
       "new_customers": 13,
       "returning_customers": 1,
-      "returning_customers_rate": 0.1
+      "returning_customers_rate": 0.1,
+      "lost_revenue": 183503.44,
+      "lost_orders": 7
     },
     {
       "month": "2025-09",
@@ -29,7 +31,9 @@
       "total_refunds": 6000,
       "new_customers": 7,
       "returning_customers": 1,
-      "returning_customers_rate": 0.1
+      "returning_customers_rate": 0.1,
+      "lost_revenue": 918555,
+      "lost_orders": 5
     },
     {
       "month": "2025-10",
@@ -41,7 +45,9 @@
       "total_refunds": 2700,
       "new_customers": 22,
       "returning_customers": 0,
-      "returning_customers_rate": 0
+      "returning_customers_rate": 0,
+      "lost_revenue": 160166,
+      "lost_orders": 12
     },
     {
       "month": "2025-11",
@@ -53,7 +59,9 @@
       "total_refunds": 0,
       "new_customers": 17,
       "returning_customers": 2,
-      "returning_customers_rate": 0.1
+      "returning_customers_rate": 0.1,
+      "lost_revenue": 213249,
+      "lost_orders": 13
     },
     {
       "month": "2025-12",
@@ -65,7 +73,9 @@
       "total_refunds": 27259,
       "new_customers": 66,
       "returning_customers": 8,
-      "returning_customers_rate": 0.4
+      "returning_customers_rate": 0.4,
+      "lost_revenue": 1399700.57,
+      "lost_orders": 32
     },
     {
       "month": "2026-01",
@@ -77,7 +87,9 @@
       "total_refunds": 223766.4,
       "new_customers": 62,
       "returning_customers": 9,
-      "returning_customers_rate": 0.5
+      "returning_customers_rate": 0.5,
+      "lost_revenue": 490711.04,
+      "lost_orders": 22
     },
     {
       "month": "2026-02",
@@ -89,7 +101,9 @@
       "total_refunds": 1617.32,
       "new_customers": 29,
       "returning_customers": 4,
-      "returning_customers_rate": 0.2
+      "returning_customers_rate": 0.2,
+      "lost_revenue": 325272.48,
+      "lost_orders": 12
     },
     {
       "month": "2026-03",
@@ -101,7 +115,9 @@
       "total_refunds": 10599.59,
       "new_customers": 33,
       "returning_customers": 4,
-      "returning_customers_rate": 0.2
+      "returning_customers_rate": 0.2,
+      "lost_revenue": 1200438.08,
+      "lost_orders": 20
     },
     {
       "month": "2026-04",
@@ -113,7 +129,9 @@
       "total_refunds": 165110.86,
       "new_customers": 48,
       "returning_customers": 5,
-      "returning_customers_rate": 0.3
+      "returning_customers_rate": 0.3,
+      "lost_revenue": 1212371.09,
+      "lost_orders": 19
     },
     {
       "month": "2026-05",
@@ -125,7 +143,9 @@
       "total_refunds": 73342.78,
       "new_customers": 27,
       "returning_customers": 5,
-      "returning_customers_rate": 0.3
+      "returning_customers_rate": 0.3,
+      "lost_revenue": 931806.5,
+      "lost_orders": 8
     },
     {
       "month": "2026-06",
@@ -137,7 +157,9 @@
       "total_refunds": 74155.4,
       "new_customers": 41,
       "returning_customers": 1,
-      "returning_customers_rate": 0.1
+      "returning_customers_rate": 0.1,
+      "lost_revenue": 813846,
+      "lost_orders": 19
     },
     {
       "month": "2026-07",
@@ -149,7 +171,9 @@
       "total_refunds": 0,
       "new_customers": 22,
       "returning_customers": 1,
-      "returning_customers_rate": 0.1
+      "returning_customers_rate": 0.1,
+      "lost_revenue": 150333.7,
+      "lost_orders": 9
     }
   ],
   "products": [
