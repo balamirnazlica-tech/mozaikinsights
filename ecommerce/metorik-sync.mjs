@@ -68,10 +68,17 @@ async function metorikGet(path, params = {}, retries = 4) {
   throw new Error(`Metorik API ${path}: exhausted retries after repeated 429s`);
 }
 
+// Statuses that count as a real sale. Matches Metorik's own dashboard, which
+// excludes pending, cancelled, failed, refunded and test orders — without
+// this filter the totals overstate revenue (e.g. Jan 2026: ₺2.36M vs the
+// correct ₺1.87M gross, 108 vs 86 orders).
+const SALE_STATUSES = ["completed", "processing", "on-hold"];
+
 // Order totals for a date window, using the order_created_at "between" filter.
 async function orderTotalsForRange(start, end) {
   const filters = JSON.stringify([
     { field: "order_created_at", operator: "between", value: [start, end] },
+    { field: "status", operator: "in", value: SALE_STATUSES },
   ]);
   const json = await metorikGet("/orders/totals", { filters });
   return json.data;
@@ -239,4 +246,3 @@ main().catch((err) => {
   console.error("Sync failed:", err.message);
   process.exit(1);
 });
-
