@@ -69,16 +69,34 @@ async function metorikGet(path, params = {}, retries = 4) {
 }
 
 // Statuses that count as a real sale. Matches Metorik's own dashboard, which
-// excludes pending, cancelled, failed, refunded and test orders — without
-// this filter the totals overstate revenue (e.g. Jan 2026: ₺2.36M vs the
-// correct ₺1.87M gross, 108 vs 86 orders).
-const SALE_STATUSES = ["completed", "processing", "on-hold"];
+// excludes pending, cancelled and failed orders — without this filter the
+// totals overstate revenue (e.g. Jan 2026: ₺2.36M vs the correct ₺1.87M
+// gross, 108 vs 86 orders). NOTE: "refunded" IS included, exactly like
+// Metorik: refunded orders stay in gross sales and their refund amounts are
+// subtracted via total_refunds/net instead (verified against Metorik's
+// dashboard for Jan 2026 to the lira).
+const SALE_STATUSES = ["completed", "processing", "on-hold", "refunded"];
 
 // Order totals for a date window, using the order_created_at "between" filter.
 async function orderTotalsForRange(start, end) {
   const filters = JSON.stringify([
     { field: "order_created_at", operator: "between", value: [start, end] },
     { field: "status", operator: "in", value: SALE_STATUSES },
+  ]);
+  const json = await metorikGet("/orders/totals", { filters });
+  return json.data;
+}
+
+// Orders that never became a sale: failed payments, cancellations and
+// checkouts stuck in pending (e.g. abandoned bank transfers). This is
+// checkout leakage — partly recoverable revenue — surfaced on the dashboard
+// as "Lost orders".
+const LOST_STATUSES = ["pending", "cancelled", "failed"];
+
+async function lostOrderTotalsForRange(start, end) {
+  const filters = JSON.stringify([
+    { field: "order_created_at", operator: "between", value: [start, end] },
+    { field: "status", operator: "in", value: LOST_STATUSES },
   ]);
   const json = await metorikGet("/orders/totals", { filters });
   return json.data;
@@ -143,6 +161,8 @@ function mockData() {
       new_customers: newCust,
       returning_customers: returning,
       returning_customers_rate: Math.round((returning / (newCust + returning)) * 1000) / 10,
+      lost_revenue: Math.round(revenue * 0.2),
+      lost_orders: Math.round(orders * 0.2),
     };
   });
   return {
@@ -179,10 +199,11 @@ async function main() {
   const monthly = [];
 
   for (const m of months) {
-    const [orderTotals, customerTotals, newCustomers] = await Promise.all([
+    const [orderTotals, customerTotals, newCustomers, lostTotals] = await Promise.all([
       orderTotalsForRange(m.start, m.end),
       customerTotalsForRange(m.start, m.end),
       newCustomersInRange(m.start, m.end),
+      lostOrderTotalsForRange(m.start, m.end),
     ]);
     const returning = customerTotals?.returning_customers ?? null;
     monthly.push({
@@ -196,6 +217,8 @@ async function main() {
       new_customers: newCustomers,
       returning_customers: returning,
       returning_customers_rate: customerTotals?.returning_customers_rate ?? null,
+      lost_revenue: lostTotals?.total ?? 0,
+      lost_orders: lostTotals?.count ?? 0,
     });
     // Small delay between months to stay comfortably under Metorik's rate limit.
     await new Promise((r) => setTimeout(r, 400));

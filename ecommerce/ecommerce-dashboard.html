@@ -89,7 +89,7 @@ canvas{max-height:300px}
 
 <!-- OVERVIEW -->
 <section data-panel="overview">
-<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4" id="kpis"></div>
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-3 mb-4" id="kpis"></div>
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
 <div class="card p-4 lg:col-span-2">
 <h3 class="font-semibold mb-3">Revenue &amp; Orders <span class="text-slate-400 font-normal text-sm">· monthly</span></h3>
@@ -282,6 +282,14 @@ return [(d>=0?'▲ ':'▼ ')+Math.abs(d).toFixed(0)+'% '+MN[+B.month.slice(5)]+'
 }
 const tRev=trend(r=>r.revenue), tOrd=trend(r=>r.orders), tAov=trend(r=>r.average_order_value), tCust=trend(r=>r.unique_customers);
 
+// Lost orders = pending + cancelled + failed checkouts (never became a sale).
+// Partly recoverable revenue, so RISING is bad → trend colors are inverted.
+const hasLost = m.some(r=>r.lost_revenue!=null);
+const totalLost = m.reduce((s,r)=>s+(r.lost_revenue||0),0);
+const totalLostOrders = m.reduce((s,r)=>s+(r.lost_orders||0),0);
+const tLost = trend(r=>r.lost_revenue);
+const tLostCls = tLost[1]==='up'?'down':tLost[1]==='down'?'up':'';
+
 $('#kpis').innerHTML = [
 kpiCard('Revenue (period)', TLk(totalRevenue), tRev[0], tRev[1]),
 kpiCard('Orders (period)', num(totalOrders), tOrd[0], tOrd[1]),
@@ -289,6 +297,9 @@ kpiCard('Avg Order Value', TL(avgAov), tAov[0], tAov[1]),
 kpiCard('This month revenue', TLk(last.revenue), (last.month||'')+' · partial'),
 kpiCard('This month orders', num(last.orders), (last.month||'')+' · partial'),
 kpiCard('Unique customers (mo.)', num(last.unique_customers), tCust[0]||last.month||'', tCust[1]),
+hasLost
+? kpiCard('Lost orders (period)', TLk(totalLost), num(totalLostOrders)+' orders · '+(tLost[0]||'failed/cancelled/pending'), tLostCls)
+: kpiCard('Lost orders (period)', '—', 'awaiting next sync'),
 ].join('');
 
 destroy('revTrend');
@@ -313,11 +324,11 @@ renderMonthTable();
 
 function renderMonthTable(){
 const m = fMonths().slice();
-const cols = [['month','Month'],['revenue','Revenue'],['net','Net'],['orders','Orders'],['average_order_value','AOV'],['unique_customers','Unique Cust.'],['total_refunds','Refunds']];
+const cols = [['month','Month'],['revenue','Revenue'],['net','Net'],['orders','Orders'],['average_order_value','AOV'],['unique_customers','Unique Cust.'],['total_refunds','Refunds'],['lost_revenue','Lost']];
 const k = monthSort.k, dir = monthSort.dir;
 m.sort((a,b)=>{ const av=a[k]==null?0:a[k], bv=b[k]==null?0:b[k]; return (av>bv?1:av<bv?-1:0)*dir; });
 $('#monthTable thead').innerHTML = '<tr>'+cols.map(c=>'<th data-k="'+c[0]+'">'+c[1]+(k===c[0]?(dir<0?' ▼':' ▲'):'')+'</th>').join('')+'</tr>';
-$('#monthTable tbody').innerHTML = m.map(r=>'<tr><td>'+r.month+'</td><td>'+TL(r.revenue)+'</td><td>'+TL(r.net)+'</td><td>'+num(r.orders)+'</td><td>'+TL(r.average_order_value)+'</td><td>'+num(r.unique_customers)+'</td><td>'+TL(r.total_refunds)+'</td></tr>').join('');
+$('#monthTable tbody').innerHTML = m.map(r=>'<tr><td>'+r.month+'</td><td>'+TL(r.revenue)+'</td><td>'+TL(r.net)+'</td><td>'+num(r.orders)+'</td><td>'+TL(r.average_order_value)+'</td><td>'+num(r.unique_customers)+'</td><td>'+TL(r.total_refunds)+'</td><td>'+(r.lost_revenue==null?'—':TL(r.lost_revenue)+' <span class="text-slate-400">('+num(r.lost_orders)+')</span>')+'</td></tr>').join('');
 $$('#monthTable th').forEach(th=>th.onclick=()=>{
 const key = th.dataset.k;
 monthSort.dir = monthSort.k===key ? -monthSort.dir : -1;
