@@ -69,10 +69,13 @@ async function metorikGet(path, params = {}, retries = 4) {
 }
 
 // Statuses that count as a real sale. Matches Metorik's own dashboard, which
-// excludes pending, cancelled, failed, refunded and test orders — without
-// this filter the totals overstate revenue (e.g. Jan 2026: ₺2.36M vs the
-// correct ₺1.87M gross, 108 vs 86 orders).
-const SALE_STATUSES = ["completed", "processing", "on-hold"];
+// excludes pending, cancelled and failed orders — without this filter the
+// totals overstate revenue (e.g. Jan 2026: ₺2.36M vs the correct ₺1.87M
+// gross, 108 vs 86 orders). NOTE: "refunded" IS included, exactly like
+// Metorik: refunded orders stay in gross sales and their refund amounts are
+// subtracted via total_refunds/net instead (verified against Metorik's
+// dashboard for Jan 2026 to the lira).
+const SALE_STATUSES = ["completed", "processing", "on-hold", "refunded"];
 
 // Order totals for a date window, using the order_created_at "between" filter.
 async function orderTotalsForRange(start, end) {
