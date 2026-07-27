@@ -331,7 +331,18 @@ function renderAlerts(){
   if(noRev.length){const z=noRev.reduce((s,a)=>s+a.spend,0);
     out.push(['neu',TLk(z)+' spent on awareness/traffic campaigns ('+noRev.length+') with no pixel-tracked sales — value is reach &amp; clicks, not tracked revenue.']);}
   out.push(['neu','Blended pixel ROAS '+(totRev/totSpend).toFixed(2)+'x on '+TLk(totSpend)+' spend. Note: furniture largely closes offline, so true ROAS is likely higher than pixel shows.']);
-  $('#alerts').innerHTML=out.map(x=>'<div class="flex gap-2 items-start text-sm"><span class="pill '+x[0]+'" style="margin-top:2px">'+(x[0]==='up'?'OPP':x[0]==='down'?'WATCH':'NOTE')+'</span><span class="text-slate-700">'+x[1]+'</span></div>').join('');
+  const sigKey=x=>'mkdone:'+x[0]+':'+x[1].replace(/<[^>]*>/g,'').replace(/[\d.,]+[kMx%]?/g,'#').slice(0,80);
+  $('#alerts').innerHTML=out.map((x,i)=>{
+    const done=localStorage.getItem(sigKey(x))==='1';
+    return '<div class="flex gap-2 items-start text-sm'+(done?' opacity-50':'')+'" data-sig="'+i+'"><input type="checkbox" class="sig-done mt-0.5 accent-emerald-600 cursor-pointer shrink-0" '+(done?'checked':'')+'><span class="pill '+x[0]+'" style="margin-top:2px">'+(x[0]==='up'?'OPP':x[0]==='down'?'WATCH':'NOTE')+'</span><span class="text-slate-700'+(done?' line-through':'')+'">'+x[1]+'</span></div>';
+  }).join('');
+  $('#alerts').querySelectorAll('.sig-done').forEach((cb,idx)=>{
+    cb.addEventListener('change',()=>{
+      const row=cb.closest('[data-sig]'),txt=row.querySelector('span.text-slate-700, span.line-through');
+      if(cb.checked){localStorage.setItem(sigKey(out[idx]),'1');row.classList.add('opacity-50');txt.classList.add('line-through');}
+      else{localStorage.removeItem(sigKey(out[idx]));row.classList.remove('opacity-50');txt.classList.remove('line-through');}
+    });
+  });
 }
 
 function renderPaid(){
