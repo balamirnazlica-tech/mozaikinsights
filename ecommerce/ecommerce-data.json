@@ -3,7 +3,7 @@
     "company": "Mozaik Design",
     "scope": "E-commerce (Metorik)",
     "currency": "TRY",
-    "generated": "2026-07-28",
+    "generated": "2026-07-29",
     "source": "Live via Metorik API"
   },
   "months": [
@@ -136,11 +136,11 @@
     {
       "month": "2026-05",
       "revenue": 1038416.21,
-      "net": 799130.32,
+      "net": 776353.12,
       "orders": 44,
       "average_order_value": 23600.4,
       "unique_customers": 39,
-      "total_refunds": 73342.78,
+      "total_refunds": 96119.98,
       "new_customers": 27,
       "returning_customers": 5,
       "returning_customers_rate": 0.3,
@@ -163,13 +163,13 @@
     },
     {
       "month": "2026-07",
-      "revenue": 508069.5,
-      "net": 414166.5,
-      "orders": 31,
-      "average_order_value": 16389.3,
-      "unique_customers": 29,
+      "revenue": 613695.9,
+      "net": 509833.5,
+      "orders": 35,
+      "average_order_value": 17534.2,
+      "unique_customers": 33,
       "total_refunds": 0,
-      "new_customers": 24,
+      "new_customers": 28,
       "returning_customers": 2,
       "returning_customers_rate": 0.1,
       "lost_revenue": 837553.2,
@@ -202,6 +202,15 @@
       "net_orders": 5,
       "gross_items_sold": 6,
       "in_stock": true,
+      "stock_quantity": 0
+    },
+    {
+      "name": "Courier Yazı Masası",
+      "sku": "212061000412",
+      "net_sales": 91740,
+      "net_orders": 1,
+      "gross_items_sold": 1,
+      "in_stock": false,
       "stock_quantity": 0
     },
     {
@@ -255,15 +264,6 @@
       "net_sales": 58938,
       "net_orders": 3,
       "gross_items_sold": 3,
-      "in_stock": true,
-      "stock_quantity": 0
-    },
-    {
-      "name": "Eames Plastic PACC Sandalye",
-      "sku": "",
-      "net_sales": 57750,
-      "net_orders": 1,
-      "gross_items_sold": 1,
       "in_stock": true,
       "stock_quantity": 0
     }
