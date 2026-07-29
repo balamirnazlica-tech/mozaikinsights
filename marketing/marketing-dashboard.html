@@ -401,6 +401,11 @@ function renderSocial(){
   $('#brandKpiTable tbody').innerHTML=kk.map(r=>'<tr><td class="font-medium" style="text-align:left">'+r.kpi+'</td><td style="text-align:left">'+r.channel+'</td><td class="text-slate-500" style="text-align:left">'+r.source+'</td><td style="text-align:left"><span class="pill" style="'+(sb[r.status]||sb.Manual)+'">'+r.status+'</span></td></tr>').join('');
 }
 
+// Verified findings — conclusions confirmed by ad-hoc analysis, pinned until superseded.
+const FINDINGS=[
+  {date:'2026-07-29',head:'March brand peak explained: İtalyan Büyükelçiliği event',body:'Branded search (32.4k impressions — the 2026 peak) and LinkedIn (+319/+528 new followers in Mar/Apr) spiked together with the boosted “İtalyan Büyükelçiliği…” Instagram post (boosted in March, re-boosted April). Embassy-style brand partnership events + boosted coverage are the one proven brand lever this year — plan the next one. Warning: branded search has declined every month since March (June 20.6k, below floor).'},
+  {date:'2026-07-29',head:'GA4 “Direct” traffic is polluted by bots — the March direct-traffic peak was fake',body:'Mar 9–11 alone had ~8.1k bot sessions from Singapore and Lanzhou (China), and CN/SG bot traffic hits every month (Jan 3.9k, Mar 10.3k, Jun 2.9k sessions). Real (Türkiye-dominated) direct traffic is flat-to-declining: Jan 5.7k → Jun 3.0k. All GA4 pulls in the weekly refresh now exclude China & Singapore, and the Direct Traffic KPI ranges were corrected to 3.6k / 4.2k / 5.7k.'}
+];
 function renderInsights(){
   const MN={"2026-01":"January","2026-02":"February","2026-03":"March","2026-04":"April","2026-05":"May","2026-06":"June","2026-07":"July","2026-08":"August","2026-09":"September","2026-10":"October","2026-11":"November","2026-12":"December"};
   const mlabL=m=>MN[m]||m;
@@ -455,7 +460,8 @@ function renderInsights(){
   const order={P1:0,P2:1,P3:2};items.sort((a,b)=>order[a.p]-order[b.p]);
   const pc={P1:'background:#fee2e2;color:#b91c1c',P2:'background:#fef3c7;color:#92400e',P3:'background:#e2e8f0;color:#475569'};
   const insKey=it=>'mkdone:ins:'+it.area+':'+it.head.replace(/[\d.,]+[kMx%]?/g,'#').slice(0,80);
-  $('#insightList').innerHTML=items.map((it,i)=>{
+  const fHtml=FINDINGS.map(f=>'<div class="card p-4 flex gap-3 items-start" style="border-left:4px solid #0ea5e9"><span class="pill" style="background:#e0f2fe;color:#0369a1;margin-top:2px">📌 Verified</span><div><div class="font-semibold text-sm">'+f.head+' <span class="text-slate-400 font-normal">· '+f.date+'</span></div><div class="text-sm text-slate-600 mt-1">'+f.body+'</div></div></div>').join('');
+  $('#insightList').innerHTML=fHtml+items.map((it,i)=>{
     const done=localStorage.getItem(insKey(it))==='1';
     return '<div class="card p-4 flex gap-3 items-start'+(done?' opacity-50':'')+'" data-ins="'+i+'"><input type="checkbox" class="ins-done mt-1 accent-emerald-600 cursor-pointer shrink-0" style="width:16px;height:16px" '+(done?'checked':'')+'><span class="pill" style="'+pc[it.p]+';margin-top:2px">'+it.p+'</span><div'+(done?' style="text-decoration:line-through"':'')+'><div class="font-semibold text-sm">'+it.head+' <span class="text-slate-400 font-normal">· '+it.area+'</span></div><div class="text-sm text-slate-600 mt-1">'+it.body+'</div></div></div>';
   }).join('');
