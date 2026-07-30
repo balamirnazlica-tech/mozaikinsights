@@ -3,7 +3,7 @@
     "company": "Mozaik Design",
     "scope": "E-commerce (Metorik)",
     "currency": "TRY",
-    "generated": "2026-07-29",
+    "generated": "2026-07-30",
     "source": "Live via Metorik API"
   },
   "months": [
@@ -163,17 +163,17 @@
     },
     {
       "month": "2026-07",
-      "revenue": 613695.9,
-      "net": 509833.5,
-      "orders": 35,
-      "average_order_value": 17534.2,
-      "unique_customers": 33,
-      "total_refunds": 0,
-      "new_customers": 28,
-      "returning_customers": 2,
-      "returning_customers_rate": 0.1,
-      "lost_revenue": 837553.2,
-      "lost_orders": 11
+      "revenue": 667632.78,
+      "net": 521137.16,
+      "orders": 39,
+      "average_order_value": 17118.8,
+      "unique_customers": 36,
+      "total_refunds": 32168.34,
+      "new_customers": 30,
+      "returning_customers": 3,
+      "returning_customers_rate": 0.2,
+      "lost_revenue": 845682.2,
+      "lost_orders": 12
     }
   ],
   "products": [
@@ -189,9 +189,9 @@
     {
       "name": "Bellhop Portatif Aydınlatma",
       "sku": "",
-      "net_sales": 115185,
-      "net_orders": 6,
-      "gross_items_sold": 7,
+      "net_sales": 131410,
+      "net_orders": 7,
+      "gross_items_sold": 8,
       "in_stock": true,
       "stock_quantity": 0
     },
