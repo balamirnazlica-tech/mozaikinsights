@@ -85,9 +85,13 @@
     <div class="card p-3 mb-4" style="background:#f0fdf4;border-color:#bbf7d0">
       <p class="text-sm" style="color:#065f46"><b>Everything here is real.</b> Paid metrics are live from your Meta Ads (Mozaik Ad Account) via Supermetrics. Store revenue is live from Metorik. Instagram, Facebook &amp; LinkedIn (Brand &amp; Social tab) are live via Supermetrics. Currency ₺. <span id="liveNote"></span></p>
     </div>
+    <div class="card p-4 mb-4" id="moneyCard" hidden style="background:#0f172a;border-color:#0f172a">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="moneyCards"></div>
+      <p class="text-xs mt-3" style="color:#94a3b8" id="moneyNote"></p>
+    </div>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4" id="kpis"></div>
     <div class="card p-4 mb-4" id="ecomCompareCard" hidden>
-      <h3 class="font-semibold mb-3">Store Revenue vs Meta Pixel-Tracked Revenue <span class="text-slate-400 font-normal text-sm">· monthly (₺)</span></h3>
+      <h3 class="font-semibold mb-3">Sales vs Ad Spend <span class="text-slate-400 font-normal text-sm">· monthly (₺) — Store Revenue (real), Meta pixel-tracked, Ad Spend</span></h3>
       <canvas id="ecomCompare"></canvas>
       <p class="text-xs text-slate-400 mt-2">Pixel-tracked revenue only counts purchases Meta's pixel can see online. Store Revenue (via Metorik) is total real sales across the store — the gap is largely offline/showroom closes plus attribution loss.</p>
     </div>
@@ -292,14 +296,29 @@ function renderEcomCompare(){
   const months=monthsInRange();
   const pixelByMonth=months.map(mo=>sum(DATA.paid.filter(r=>r.month===mo),'revenue'));
   const realByMonth=months.map(mo=>{const r=(DATA_ECOM.months||[]).find(x=>x.month===mo);return r?r.revenue:0;});
+  const spendByMonth=months.map(mo=>sum(DATA.paid.filter(r=>r.month===mo),'spend'));
   destroy('ecomCompare');
   charts.ecomCompare=new Chart($('#ecomCompare'),{type:'bar',data:{labels:months,datasets:[
     {label:'Store Revenue (real, Metorik)',data:realByMonth,backgroundColor:'#0f172a',borderRadius:4},
-    {label:'Pixel-Tracked (Meta)',data:pixelByMonth,backgroundColor:'#93c5fd',borderRadius:4}
+    {label:'Pixel-Tracked (Meta)',data:pixelByMonth,backgroundColor:'#93c5fd',borderRadius:4},
+    {label:'Ad Spend (Meta)',data:spendByMonth,backgroundColor:'#f59e0b',borderRadius:4}
   ]},options:{plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:c=>c.dataset.label+': '+TL(c.parsed.y)}}},scales:{y:{ticks:{callback:v=>TLk(v)}}}}});
+}
+function renderMoney(){
+  const card=$('#moneyCard'); if(!DATA_ECOM){card.hidden=true;return;} card.hidden=false;
+  const sales=sum(ecomMonthsInRange(),'revenue');
+  const spend=sum(fPaid(),'spend');
+  const mer=spend>0?sales/spend:0;
+  const big=(label,val,sub)=>'<div><div class="text-[11px] uppercase tracking-wide" style="color:#94a3b8">'+label+'</div><div class="text-3xl font-bold kpi-val mt-1" style="color:#fff">'+val+'</div><div class="text-xs mt-1" style="color:#94a3b8">'+sub+'</div></div>';
+  $('#moneyCards').innerHTML=
+    big('Sales (online store)',TLk(sales),'real Metorik revenue, selected period')+
+    big('Ad Spend',TLk(spend),'Meta Ads · Google Ads not connected yet')+
+    big('Return per ₺1 of ads',mer?sym()+mer.toFixed(1):'—','MER = sales ÷ ad spend');
+  $('#moneyNote').textContent='Showroom sales are NOT included (see the commercial dashboard). MER shows correlation, not proof of causation — but months with higher spend can be compared against sales in the chart below.';
 }
 
 function renderOverview(){
+  renderMoney();
   renderKPIs();
   renderEcomCompare();
   const wks=weeksInRange(), p=fPaid();
