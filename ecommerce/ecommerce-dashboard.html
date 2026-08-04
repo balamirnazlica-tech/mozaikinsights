@@ -89,6 +89,10 @@ canvas{max-height:300px}
 
 <!-- OVERVIEW -->
 <section data-panel="overview">
+<div class="card p-4 mb-4" id="moneyCard" style="background:#0f172a;border-color:#0f172a">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="moneyCards"></div>
+<p class="text-xs mt-3" style="color:#94a3b8">Ad spend = Meta + Google Ads (2026 onwards, refreshed weekly from the Ads &amp; Brand dashboard). Showroom sales NOT included. MER shows correlation, not proof of causation.</p>
+</div>
 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-3 mb-4" id="kpis"></div>
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
 <div class="card p-4 lg:col-span-2">
@@ -260,8 +264,21 @@ if(active==='products') renderProducts();
 if(active==='subscriptions') renderSubscriptions();
 }
 
+// Monthly ad spend (Meta + Google Ads), embedded from the marketing dashboard's Supermetrics pull - update on each weekly refresh.
+const AD_SPEND={"2026-01":180889,"2026-02":187491,"2026-03":285872,"2026-04":249640,"2026-05":277537,"2026-06":386344,"2026-07":222341};
+function renderMoney(m){
+  const sales=m.reduce((s,r)=>s+(r.revenue||0),0);
+  const spend=m.reduce((s,r)=>s+(AD_SPEND[r.month]||0),0);
+  const haveAll=m.every(r=>AD_SPEND[r.month]!=null);
+  const big=(l,v,sub)=>'<div><div class="text-[11px] uppercase tracking-wide" style="color:#94a3b8">'+l+'</div><div class="text-3xl font-bold kpi-val mt-1" style="color:#fff">'+v+'</div><div class="text-xs mt-1" style="color:#94a3b8">'+sub+'</div></div>';
+  document.getElementById('moneyCards').innerHTML=
+    big('Sales (online store)',TLk(sales),'real Metorik revenue, selected period')+
+    big('Ad Spend',spend?TLk(spend):'\u2014',spend?('Meta + Google Ads'+(haveAll?'':' \u00b7 ad data starts Jan 2026')):'ad data starts Jan 2026')+
+    big('Return per '+sym()+'1 of ads',spend?sym()+(sales/spend).toFixed(1):'\u2014','MER = sales \u00f7 ad spend');
+}
 function renderOverview(){
 const m = fMonths();
+renderMoney(m);
 const last = m[m.length-1] || {};
 const totalRevenue = m.reduce((s,r)=>s+(r.revenue||0),0);
 const totalOrders = m.reduce((s,r)=>s+(r.orders||0),0);
