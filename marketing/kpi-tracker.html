@@ -68,19 +68,19 @@ footer{color:#475569;font-size:12px;text-align:center;margin-top:20px}
 </div>
 
 <script>
-// Real actuals wired from marketing-dashboard.html's live Supermetrics data (June 2026, latest complete month).
+// Real actuals wired from marketing-dashboard.html's live Supermetrics data (July 2026 where the source is licensed; FB/LinkedIn frozen at June \u2014 license issue).
 // Facebook Organic = unique media viewers (Meta retired the old "page reach" metric — this is its successor).
 // LinkedIn Organic = impressions (LinkedIn doesn't report unique reach for company pages).
 // Facebook Paid Reach is NOT separately tracked yet — Meta Ads reach is ~99% Instagram, so it's shown against
 // the same combined Meta paid-reach number until FB is broken out on its own.
 const ACTUALS = {
-  "Instagram|Organic Reach": {value: 1375999, period: "Jun 2026", note: null},
-  "Instagram|Paid Reach":    {value: 1428107, period: "Jun 2026", note: null},
-  "Facebook|Paid Reach":     {value: 841, period: "Jun 2026", note: "FB-only paid reach (Meta placement split) — placements overwhelmingly favor Instagram; peaked at 3.4k in April."},
-  "Facebook|Organic Reach":  {value: 305819, period: "Jun 2026", note: "Unique media viewers — Meta retired the old page-reach metric; this is its closest successor."},
-  "LinkedIn|Organic Reach":  {value: 5782, period: "Jun 2026", note: "Impressions — LinkedIn doesn't report unique reach for company pages."},
-  "Google|Branded Search Volume": {value: 20581, period: "Jun 2026", note: "Branded impressions (queries containing 'mozaik') via Google Search Console; 2,267 branded clicks. Peaked at 32.4k in March."},
-  "Google|Direct Traffic": {value: 6487, period: "Jun 2026", note: "Direct sessions (GA4, Mozaik Design property); 5,753 users. Peaked at 13.6k in March."}
+  "Instagram|Organic Reach": {value: 440340, period: "Jul 2026", note: "Sharp drop from June's 1.38M \u2014 reach collapsed the week of Jul 13 when ad campaigns were paused (weekly organic: ~500k/wk in June \u2192 44\u201370k/wk mid-late July)."},
+  "Instagram|Paid Reach":    {value: 553613, period: "Jul 2026", note: "July spend was cut to \u20ba73k (vs \u20ba160k in June) and campaigns paused mid-month."},
+  "Facebook|Paid Reach":     {value: 841, period: "Jun 2026", note: "Frozen at June \u2014 Facebook Insights blocked by Supermetrics license. FB-only paid reach; placements overwhelmingly favor Instagram."},
+  "Facebook|Organic Reach":  {value: 305819, period: "Jun 2026", note: "Frozen at June \u2014 Facebook Insights blocked by Supermetrics license. Unique media viewers."},
+  "LinkedIn|Organic Reach":  {value: 5782, period: "Jun 2026", note: "Frozen at June \u2014 LinkedIn Pages blocked by Supermetrics license. Impressions."},
+  "Google|Branded Search Volume": {value: 20393, period: "Jul 2026", note: "Branded impressions via GSC; 2,243 branded clicks. 5th consecutive month below the March peak (32.4k)."},
+  "Google|Direct Traffic": {value: 4420, period: "Jul 2026", note: "Direct sessions (GA4), bot traffic from CN/SG excluded \u2014 series and goals recalibrated 2026-08 after discovering bot pollution."}
 };
 
 // Baked-in monthly goal ranges — same for everyone, derived from 2026 actuals:
@@ -92,7 +92,7 @@ const RANGES = {
   "Facebook|Paid Reach":     {floor: 1000,    target: 2500,    stretch: 3500},
   "LinkedIn|Organic Reach":  {floor: 10000,   target: 12000,   stretch: 16000},
   "Google|Branded Search Volume": {floor: 25000, target: 29000, stretch: 32000},
-  "Google|Direct Traffic": {floor: 6000, target: 7000, stretch: 13500}
+  "Google|Direct Traffic": {floor: 3600, target: 4200, stretch: 5700}
 };
 
 const KPIS = [

@@ -97,7 +97,7 @@
     </div>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
       <div class="card p-4 lg:col-span-2">
-        <h3 class="font-semibold mb-3">Meta Ads: Spend vs Attributed Revenue <span class="text-slate-400 font-normal text-sm">· weekly (₺)</span></h3>
+        <h3 class="font-semibold mb-3">Ad Spend (Meta + Google) vs Meta Attributed Revenue <span class="text-slate-400 font-normal text-sm">· weekly (₺)</span></h3>
         <canvas id="ovTrend"></canvas>
       </div>
       <div class="card p-4">
@@ -252,7 +252,9 @@ function kpiCard(label,val,sub,cls){return '<div class="card p-3"><div class="te
 
 function renderKPIs(){
   const p=fPaid();
-  const spend=sum(p,'spend'),rev=sum(p,'revenue'),impr=sum(p,'impressions'),clicks=sum(p,'clicks');
+  const pm=p.filter(r=>r.channel==='Meta Ads');
+  const spend=sum(p,'spend'),rev=sum(pm,'revenue'),impr=sum(p,'impressions'),clicks=sum(p,'clicks');
+  const mSpend=sum(pm,'spend');
   const ecomRows=ecomMonthsInRange();
   const realRev=DATA_ECOM?sum(ecomRows,'revenue'):null;
 
@@ -271,21 +273,22 @@ function renderKPIs(){
     return [(d>=0?'▲ ':'▼ ')+Math.abs(d).toFixed(0)+'% '+(MSHORT[mB]||mB)+' vs '+(MSHORT[mA]||mA), good?'up':'down'];
   }
   const byMo=(k)=>(mo)=>sum(DATA.paid.filter(r=>r.month===mo),k);
+  const byMoMeta=(k)=>(mo)=>sum(DATA.paid.filter(r=>r.month===mo&&r.channel==='Meta Ads'),k);
   const ecomByMo=mo=>{const r=DATA_ECOM&&(DATA_ECOM.months||[]).find(x=>x.month===mo);return r?r.revenue:null;};
-  const roasByMo=mo=>{const s=byMo('spend')(mo);return s?byMo('revenue')(mo)/s:null;};
+  const roasByMo=mo=>{const s=byMoMeta('spend')(mo);return s?byMoMeta('revenue')(mo)/s:null;};
   const cpcByMo=mo=>{const c=byMo('clicks')(mo);return c?byMo('spend')(mo)/c:null;};
   const igByMo=mo=>{const r=(DATA.ig_reach||[]).find(x=>x.month===mo);return (r&&r.organic!=null)?(r.organic+(r.paid||0)):null;};
 
-  const tSpend=trend(byMo('spend')), tStore=trend(ecomByMo), tRev=trend(byMo('revenue')), tRoas=trend(roasByMo),
+  const tSpend=trend(byMo('spend')), tStore=trend(ecomByMo), tRev=trend(byMoMeta('revenue')), tRoas=trend(roasByMo),
         tClicks=trend(byMo('clicks')), tImpr=trend(byMo('impressions')), tCpc=trend(cpcByMo,true), tReach=trend(igByMo);
   const igLastC=[...(DATA.ig_reach||[])].reverse().find(r=>inRange(r.month)&&r.month!==partial&&r.organic!=null);
   const reachVal=igLastC?(igLastC.organic+(igLastC.paid||0)):null;
 
   $('#kpis').innerHTML=
-    kpiCard('Meta Spend',TLk(spend),tSpend[0]||'how much we spent',tSpend[1])+
+    kpiCard('Ad Spend',TLk(spend),tSpend[0]||'Meta + Google Ads',tSpend[1])+
     kpiCard('Store Revenue',realRev!=null?TLk(realRev):'—',realRev!=null?(tStore[0]||'real · how much we sold'):'connect e-commerce',tStore[1])+
     kpiCard('Attributed Revenue',TLk(rev),tRev[0]||'pixel-tracked, Meta only',tRev[1])+
-    kpiCard('Blended ROAS',(rev/spend).toFixed(2)+'x',tRoas[0]||'pixel revenue ÷ spend',tRoas[1])+
+    kpiCard('Meta ROAS',(mSpend?(rev/mSpend).toFixed(2):'—')+'x',tRoas[0]||'Meta pixel revenue ÷ Meta spend',tRoas[1])+
     kpiCard('Clicks',num(clicks),tClicks[0]||'how many clicks we got',tClicks[1])+
     kpiCard('Impressions',num(impr),tImpr[0]||'',tImpr[1])+
     kpiCard('CPC',TL(spend/clicks),tCpc[0]||'cost per click',tCpc[1])+
@@ -325,7 +328,7 @@ function renderOverview(){
   renderEcomCompare();
   const wks=weeksInRange(), p=fPaid();
   const bySpend=wks.map(w=>sum(p.filter(r=>r.week===w),'spend'));
-  const byRev=wks.map(w=>sum(p.filter(r=>r.week===w),'revenue'));
+  const byRev=wks.map(w=>sum(p.filter(r=>r.week===w&&r.channel==='Meta Ads'),'revenue'));
   destroy('ovTrend');
   charts.ovTrend=new Chart($('#ovTrend'),{data:{labels:wks,datasets:[
     {type:'bar',label:'Spend',data:bySpend,backgroundColor:'#cbd5e1',borderRadius:4,order:2},
@@ -337,7 +340,7 @@ function renderOverview(){
   charts.ovMix=new Chart($('#ovMix'),{type:'doughnut',data:{labels:agg.map(a=>short(a.c)),datasets:[{data:agg.map(a=>a.spend),backgroundColor:agg.map(a=>CCOL[a.c]),borderWidth:2,borderColor:'#fff'}]},
     options:{plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}},tooltip:{callbacks:{label:c=>c.label+': '+TLk(c.parsed)}}},cutout:'55%'}});
 
-  const ro=agg.filter(a=>a.rev>0).map(a=>({c:a.c,roas:a.rev/a.spend})).sort((a,b)=>b.roas-a.roas);
+  const ro=agg.filter(a=>a.rev>0&&!a.c.startsWith('G: ')).map(a=>({c:a.c,roas:a.rev/a.spend})).sort((a,b)=>b.roas-a.roas);
   destroy('ovRoas');
   charts.ovRoas=new Chart($('#ovRoas'),{type:'bar',data:{labels:ro.map(a=>short(a.c)),datasets:[{data:ro.map(a=>a.roas),backgroundColor:ro.map(a=>CCOL[a.c]),borderRadius:6}]},
     options:{indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.x.toFixed(2)+'x'}}},scales:{x:{ticks:{callback:v=>v+'x'}}}}});
@@ -346,7 +349,7 @@ function renderOverview(){
 }
 
 function renderAlerts(){
-  const p=fPaid();
+  const p=fPaid().filter(r=>r.channel!=='Google Ads'); // Google conv value unreliable
   const agg=CAMPS.map(c=>({c,spend:sum(p.filter(r=>r.campaign===c),'spend'),rev:sum(p.filter(r=>r.campaign===c),'revenue')})).filter(x=>x.spend>0);
   const totSpend=sum(p,'spend'),totRev=sum(p,'revenue');
   const out=[];
@@ -409,7 +412,7 @@ function renderCampTable(){
   const k=state.sort.k,dir=state.sort.dir;rows.sort((a,b)=>(a[k]>b[k]?1:-1)*dir);
   const cols=[['campaign','Campaign'],['spend','Spend'],['impressions','Impr'],['clicks','Clicks'],['ctr','CTR'],['cpc','CPC'],['revenue','Revenue'],['roas','ROAS']];
   $('#campTable thead').innerHTML='<tr>'+cols.map(c=>'<th data-k="'+c[0]+'">'+c[1]+(state.sort.k===c[0]?(dir<0?' ▼':' ▲'):'')+'</th>').join('')+'</tr>';
-  $('#campTable tbody').innerHTML=rows.map(r=>'<tr><td class="font-medium">'+campCell(r.campaign)+'</td><td>'+TL(r.spend)+'</td><td>'+num(r.impressions)+'</td><td>'+num(r.clicks)+'</td><td>'+pct(r.ctr)+'</td><td>'+TL(r.cpc)+'</td><td>'+TL(r.revenue)+'</td><td class="font-semibold" style="color:'+(r.roas>=3?'#15803d':r.roas>0?'#b45309':'#94a3b8')+'">'+(r.roas>0?r.roas.toFixed(2)+'x':'—')+'</td></tr>').join('');
+  $('#campTable tbody').innerHTML=rows.map(r=>'<tr><td class="font-medium">'+campCell(r.campaign)+'</td><td>'+TL(r.spend)+'</td><td>'+num(r.impressions)+'</td><td>'+num(r.clicks)+'</td><td>'+pct(r.ctr)+'</td><td>'+TL(r.cpc)+'</td><td>'+TL(r.revenue)+'</td><td class="font-semibold" style="color:'+(r.campaign.startsWith('G: ')?'#94a3b8':r.roas>=3?'#15803d':r.roas>0?'#b45309':'#94a3b8')+'">'+(r.campaign.startsWith('G: ')?'n/a':r.roas>0?r.roas.toFixed(2)+'x':'—')+'</td></tr>').join('');
   $$('#campTable th').forEach(th=>th.onclick=()=>{const key=th.dataset.k;state.sort.dir=state.sort.k===key?-state.sort.dir:-1;state.sort.k=key;renderCampTable();});
 }
 
@@ -424,7 +427,7 @@ function renderSocial(){
   destroy('igReach');
   charts.igReach=new Chart($('#igReach'),{type:'bar',data:{labels,datasets:dsets},
     options:{plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:c=>c.dataset.label+': '+num(c.parsed.y)}}},scales:{x:{stacked:true},y:{stacked:true,ticks:{callback:v=>num(v)}}}}});
-  $('#igReachNote').innerHTML=hasOrg?'Total = organic (Instagram Insights) + paid (Meta Ads), both live. Bars stack the two; they overlap (same person may see both), so true unique reach is slightly lower. July organic not yet finalized by Instagram; July paid is partial.':'Paid only; organic pending.';
+  $('#igReachNote').innerHTML=hasOrg?'Total = organic (Instagram Insights) + paid (Meta Ads), both live. Bars stack the two; they overlap (same person may see both), so true unique reach is slightly lower. August is partial; the latest complete month\u2019s organic figure can still settle for a few days after month end.':'Paid only; organic pending.';
   const fb=DATA.fb_page||[];
   destroy('fbChart');
   charts.fbChart=new Chart($('#fbChart'),{type:'bar',data:{labels:fb.map(r=>mlab[r.month]||r.month),
