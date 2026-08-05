@@ -61,7 +61,8 @@ tbody td{border-bottom:1px solid #121c34}
     <div class="flex gap-2 items-center flex-wrap">
       <span class="text-xs text-green-400 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-400 pulse"></span>Live</span>
       <select id="metricSel"><option value="revenue">Revenue</option><option value="units">Units Sold</option></select>
-      <div class="seg"><button class="on">€ EUR</button></div>
+      <div class="seg" id="curSeg"><button class="on" data-cur="EUR">€ EUR</button><button data-cur="TRY">₺ TRY</button></div>
+      <span id="rateNote" class="text-[10px] text-gray-500"></span>
       <select id="rangeSel">
         <option value="all">All Time (18 mo)</option>
         <option value="fy25">FY 2025</option>
@@ -234,10 +235,15 @@ function partnersByMonth(){
 }
 
 const FMT = new Intl.NumberFormat('en-US',{maximumFractionDigits:0});
-const conv=n=>n;
-const sym=()=>'€';
+// ₺/€ toggle — data is EUR-native; TRY view converts at the live daily ECB rate (frankfurter), fetched on first switch
+let CUR='EUR', TRY_RATE=null, TRY_DATE=null;
+const conv=n=>CUR==='TRY'&&TRY_RATE?n*TRY_RATE:n;
+const sym=()=>CUR==='TRY'&&TRY_RATE?'₺':'€';
+// Partners commissions are real ₺ payments — always ₺, never converted
+const moneyTL = v => '₺'+FMT.format(Math.round(v||0));
+const moneyKTL = v => { v=v||0; if(Math.abs(v)>=1e6) return '₺'+(v/1e6).toFixed(2)+'M'; if(Math.abs(v)>=1e3) return '₺'+(v/1e3).toFixed(0)+'k'; return '₺'+Math.round(v); };
 const money = v => sym()+FMT.format(Math.round(conv(v)||0));
-const moneyK = v => { v=conv(v||0); if(Math.abs(v)>=1e6) return sym()+(v/1e6).toFixed(2)+'M'; if(Math.abs(v)>=1e3) return sym()+(v/1e3).toFixed(0)+'k'; return sym()+Math.round(v); };
+const moneyK = v => { v=conv(v||0); if(Math.abs(v)>=1e9) return sym()+(v/1e9).toFixed(2)+'B'; if(Math.abs(v)>=1e6) return sym()+(v/1e6).toFixed(2)+'M'; if(Math.abs(v)>=1e3) return sym()+(v/1e3).toFixed(0)+'k'; return sym()+Math.round(v); };
 const DEPT_COLOR = {Retail:'#3b82f6',Enterprise:'#10b981',Lighting:'#f59e0b',Marketing:'#a855f7'};
 
 let state = {metric:'revenue', range:'all', tab:'overview', selectedRep:null, repSort:'revenue', deptFilter:'all', partnerRange:'all', partnerSort:'total', selectedPartner:null, customFrom:null, customTo:null};
@@ -454,7 +460,7 @@ function renderReps(){
             <option value="Marketing" ${state.deptFilter==='Marketing'?'selected':''}>Marketing</option>
           </select>
           <select onchange="state.repSort=this.value;render();">
-            <option value="revenue" ${sortKey==='revenue'?'selected':''}>Sort: Revenue (€)</option>
+            <option value="revenue" ${sortKey==='revenue'?'selected':''}>Sort: Revenue (${sym()})</option>
             <option value="deals" ${sortKey==='deals'?'selected':''}>Sort: Deals / Orders</option>
             <option value="units" ${sortKey==='units'?'selected':''}>Sort: Units Sold</option>
             <option value="aov" ${sortKey==='aov'?'selected':''}>Sort: Avg Order Value</option>
@@ -796,10 +802,10 @@ function renderPartners(){
 
   return `
   <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-    <div class="card kpi p-4"><div class="text-[10px] text-gray-400 uppercase tracking-wider">Total Commission Paid</div><div class="text-2xl font-bold mt-2 text-blue-400">${moneyK(total)}</div><div class="text-[10px] text-gray-500 mt-1">across ${totalCount} payments</div></div>
+    <div class="card kpi p-4"><div class="text-[10px] text-gray-400 uppercase tracking-wider">Total Commission Paid</div><div class="text-2xl font-bold mt-2 text-blue-400">${moneyKTL(total)}</div><div class="text-[10px] text-gray-500 mt-1">across ${totalCount} payments</div></div>
     <div class="card kpi p-4"><div class="text-[10px] text-gray-400 uppercase tracking-wider">Unique Partners</div><div class="text-2xl font-bold mt-2 text-emerald-400">${all.length}</div><div class="text-[10px] text-gray-500 mt-1">architects · consultants · firms</div></div>
-    <div class="card kpi p-4"><div class="text-[10px] text-gray-400 uppercase tracking-wider">Avg per Partner</div><div class="text-2xl font-bold mt-2 text-amber-400">${moneyK(avgPerPartner)}</div><div class="text-[10px] text-gray-500 mt-1">total commission ÷ # partners</div></div>
-    <div class="card kpi p-4"><div class="text-[10px] text-gray-400 uppercase tracking-wider">Top Partner</div><div class="text-lg font-bold mt-2 text-purple-400 truncate" title="${top.name}">${top.name}</div><div class="text-[10px] text-gray-500 mt-1">${moneyK(top.total)} · ${top.count} pmts</div></div>
+    <div class="card kpi p-4"><div class="text-[10px] text-gray-400 uppercase tracking-wider">Avg per Partner</div><div class="text-2xl font-bold mt-2 text-amber-400">${moneyKTL(avgPerPartner)}</div><div class="text-[10px] text-gray-500 mt-1">total commission ÷ # partners</div></div>
+    <div class="card kpi p-4"><div class="text-[10px] text-gray-400 uppercase tracking-wider">Top Partner</div><div class="text-lg font-bold mt-2 text-purple-400 truncate" title="${top.name}">${top.name}</div><div class="text-[10px] text-gray-500 mt-1">${moneyKTL(top.total)} · ${top.count} pmts</div></div>
   </div>
 
   <div class="flex gap-2 mb-4 flex-wrap items-center">
@@ -830,8 +836,8 @@ function renderPartners(){
       <h3 class="font-semibold mb-3">2025 vs 2026 Split</h3>
       <canvas id="partnersYearChart" height="180"></canvas>
       <div class="mt-3 space-y-2 text-sm">
-        <div class="flex justify-between p-2 bg-blue-900/20 rounded"><span>📅 2025</span><span class="font-bold text-blue-400">${moneyK(y2025)}</span></div>
-        <div class="flex justify-between p-2 bg-amber-900/20 rounded"><span>📅 2026 (5 mo)</span><span class="font-bold text-amber-400">${moneyK(y2026)}</span></div>
+        <div class="flex justify-between p-2 bg-blue-900/20 rounded"><span>📅 2025</span><span class="font-bold text-blue-400">${moneyKTL(y2025)}</span></div>
+        <div class="flex justify-between p-2 bg-amber-900/20 rounded"><span>📅 2026 (5 mo)</span><span class="font-bold text-amber-400">${moneyKTL(y2026)}</span></div>
       </div>
     </div>
   </div>
@@ -853,9 +859,9 @@ function renderPartners(){
         <tr class="row ${sel===p.name?'selected':''}" onclick="selectPartner('${p.name.replace(/'/g,"\\'")}')">
           <td class="text-gray-500">${i+1}</td>
           <td class="font-semibold" style="max-width:280px;white-space:normal">${p.name}</td>
-          <td class="text-right font-semibold ${(sortKey==='total'||sortKey==='total_asc')?'text-blue-400':''}">${moneyK(p.total)}</td>
+          <td class="text-right font-semibold ${(sortKey==='total'||sortKey==='total_asc')?'text-blue-400':''}">${moneyKTL(p.total)}</td>
           <td class="text-right ${(sortKey==='count'||sortKey==='count_asc')?'text-emerald-400 font-semibold':''}">${p.count}</td>
-          <td class="text-right ${(sortKey==='avg'||sortKey==='avg_asc')?'text-amber-400 font-semibold':'text-gray-400'}">${moneyK(avg)}</td>
+          <td class="text-right ${(sortKey==='avg'||sortKey==='avg_asc')?'text-amber-400 font-semibold':'text-gray-400'}">${moneyKTL(avg)}</td>
           <td class="text-right text-gray-500">${share}%</td>
           <td class="text-right text-gray-400">${p.last}</td>
         </tr>`}).join('')}
@@ -868,9 +874,9 @@ function renderPartners(){
           <button onclick="selectPartner(null)" class="text-gray-500 hover:text-white text-xl">×</button>
         </div>
         <div class="grid grid-cols-2 gap-2 mt-4">
-          <div class="bg-blue-900/20 p-3 rounded-lg"><div class="text-[10px] text-gray-400 uppercase">Total Paid</div><div class="text-xl font-bold text-blue-400">${moneyK(selData.total)}</div></div>
+          <div class="bg-blue-900/20 p-3 rounded-lg"><div class="text-[10px] text-gray-400 uppercase">Total Paid</div><div class="text-xl font-bold text-blue-400">${moneyKTL(selData.total)}</div></div>
           <div class="bg-emerald-900/20 p-3 rounded-lg"><div class="text-[10px] text-gray-400 uppercase">Payments</div><div class="text-xl font-bold text-emerald-400">${selData.count}</div></div>
-          <div class="bg-amber-900/20 p-3 rounded-lg"><div class="text-[10px] text-gray-400 uppercase">Avg Payment</div><div class="text-lg font-bold text-amber-400">${moneyK(selData.total/selData.count)}</div></div>
+          <div class="bg-amber-900/20 p-3 rounded-lg"><div class="text-[10px] text-gray-400 uppercase">Avg Payment</div><div class="text-lg font-bold text-amber-400">${moneyKTL(selData.total/selData.count)}</div></div>
           <div class="bg-purple-900/20 p-3 rounded-lg"><div class="text-[10px] text-gray-400 uppercase">Span</div><div class="text-xs font-bold text-purple-400">${selData.first}<br>→ ${selData.last}</div></div>
         </div>
         <div class="mt-4 border-t border-gray-800 pt-3">
@@ -879,7 +885,7 @@ function renderPartners(){
           ${[...selData.payments].sort((a,b)=>parseDate(b.date)-parseDate(a.date)).map(p=>`
             <div class="flex justify-between items-center py-2 border-b border-gray-800 text-sm">
               <span class="text-gray-400">${p.date}</span>
-              <span class="font-semibold">${money(p.amount)}</span>
+              <span class="font-semibold">${moneyTL(p.amount)}</span>
             </div>`).join('')}
           </div>
         </div>
@@ -891,13 +897,13 @@ function renderPartners(){
     <h3 class="font-semibold mb-2">🔎 Partner Insights</h3>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
       <div class="p-3 bg-blue-900/20 border-l-2 border-blue-500 rounded">
-        <b>Top 5 partners drive ${((all.slice(0,5).reduce((s,p)=>s+p.total,0)/total)*100).toFixed(1)}%</b> of all commission paid (${moneyK(all.slice(0,5).reduce((s,p)=>s+p.total,0))} of ${moneyK(total)}). Heavy concentration — these relationships matter most.
+        <b>Top 5 partners drive ${((all.slice(0,5).reduce((s,p)=>s+p.total,0)/total)*100).toFixed(1)}%</b> of all commission paid (${moneyKTL(all.slice(0,5).reduce((s,p)=>s+p.total,0))} of ${moneyKTL(total)}). Heavy concentration — these relationships matter most.
       </div>
       <div class="p-3 bg-emerald-900/20 border-l-2 border-emerald-500 rounded">
         <b>${all.filter(p=>p.count>=3).length} partners are repeat collaborators</b> (3+ payments). The strongest long-term partners are the ones bringing recurring deal flow.
       </div>
       <div class="p-3 bg-amber-900/20 border-l-2 border-amber-500 rounded">
-        <b>2026 ramp:</b> ${moneyK(y2026)} paid in just 5 months of 2026 vs ${moneyK(y2025)} for all of 2025 — annualized 2026 is on track to be ~${moneyK(y2026*12/5)}.
+        <b>2026 ramp:</b> ${moneyKTL(y2026)} paid in just 5 months of 2026 vs ${moneyKTL(y2025)} for all of 2025 — annualized 2026 is on track to be ~${moneyKTL(y2026*12/5)}.
       </div>
       <div class="p-3 bg-purple-900/20 border-l-2 border-purple-500 rounded">
         <b>Profile:</b> Most partners are mimarlık (architecture) firms and design consultancies, suggesting commissions flow predominantly through the Kurumsal (Enterprise) channel — design-led projects.
@@ -912,18 +918,18 @@ function drawPartnersCharts(){
   const top15=all.slice(0,15);
   charts.push(new Chart(document.getElementById('partnersTopChart'),{type:'bar',
     data:{labels:top15.map(p=>p.name.length>22?p.name.slice(0,22)+'…':p.name),datasets:[{data:top15.map(p=>p.total),backgroundColor:'#3b82f6',borderRadius:4}]},
-    options:{indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>moneyK(c.parsed.x)+' ('+top15[c.dataIndex].count+' payments)',title:c=>top15[c[0].dataIndex].name}}},
-    scales:{x:{ticks:{color:'#64748b',callback:v=>moneyK(v)},grid:{color:'#1f2a44'}},y:{ticks:{color:'#cbd5e1',font:{size:10}},grid:{display:false}}}}}));
+    options:{indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>moneyKTL(c.parsed.x)+' ('+top15[c.dataIndex].count+' payments)',title:c=>top15[c[0].dataIndex].name}}},
+    scales:{x:{ticks:{color:'#64748b',callback:v=>moneyKTL(v)},grid:{color:'#1f2a44'}},y:{ticks:{color:'#cbd5e1',font:{size:10}},grid:{display:false}}}}}));
   const y2025=PARTNERS_RAW.filter(([d])=>parseDate(d).getFullYear()===2025).reduce((s,[,,a])=>s+a,0);
   const y2026=PARTNERS_RAW.filter(([d])=>parseDate(d).getFullYear()===2026).reduce((s,[,,a])=>s+a,0);
   charts.push(new Chart(document.getElementById('partnersYearChart'),{type:'doughnut',
     data:{labels:['2025 (12 mo)','2026 (5 mo)'],datasets:[{data:[y2025,y2026],backgroundColor:['#3b82f6','#f59e0b'],borderWidth:0}]},
-    options:{plugins:{legend:{position:'bottom',labels:{color:'#cbd5e1',font:{size:11}}},tooltip:{callbacks:{label:c=>c.label+': '+moneyK(c.parsed)}}}}}));
+    options:{plugins:{legend:{position:'bottom',labels:{color:'#cbd5e1',font:{size:11}}},tooltip:{callbacks:{label:c=>c.label+': '+moneyKTL(c.parsed)}}}}}));
   const trend=partnersByMonth();
   charts.push(new Chart(document.getElementById('partnersTrendChart'),{type:'bar',
     data:{labels:trend.labels,datasets:[{label:'Commission Paid',data:trend.totals,backgroundColor:trend.labels.map(l=>l.includes('26')?'#f59e0b':'#3b82f6'),borderRadius:4}]},
-    options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>moneyK(c.parsed.y)}}},
-    scales:{x:{ticks:{color:'#64748b',font:{size:10}},grid:{display:false}},y:{ticks:{color:'#64748b',callback:v=>moneyK(v)},grid:{color:'#1f2a44'}}}}}));
+    options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>moneyKTL(c.parsed.y)}}},
+    scales:{x:{ticks:{color:'#64748b',font:{size:10}},grid:{display:false}},y:{ticks:{color:'#64748b',callback:v=>moneyKTL(v)},grid:{color:'#1f2a44'}}}}}));
 }
 
 function selectPartner(n){const _y=window.scrollY;state.selectedPartner=(state.selectedPartner===n||n===null)?null:n;render();window.scrollTo({top:_y,left:0,behavior:'instant'});}
@@ -945,6 +951,26 @@ function selectRep(n){state.selectedRep=(state.selectedRep===n||n===null)?null:n
 
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{state.tab=t.dataset.tab;state.selectedRep=null;state.selectedPartner=null;render();});
 document.getElementById('metricSel').onchange=e=>{state.metric=e.target.value;render();};
+// Currency toggle — live EUR→TRY daily rate (ECB via frankfurter, cached per visit)
+async function fetchTryRate(){
+  const urls=['https://api.frankfurter.dev/v1/latest?base=EUR&symbols=TRY','https://api.frankfurter.app/latest?from=EUR&to=TRY'];
+  for(const u of urls){ try{ const j=await (await fetch(u)).json(); if(j&&j.rates&&j.rates.TRY) return j; }catch(e){} }
+  return null;
+}
+document.querySelectorAll('#curSeg button').forEach(b=>b.onclick=async()=>{
+  if(b.dataset.cur===CUR)return;
+  const note=document.getElementById('rateNote');
+  if(b.dataset.cur==='TRY'&&!TRY_RATE){
+    note.textContent='kur alınıyor…';
+    const j=await fetchTryRate();
+    if(!j){ note.textContent='⚠ kur alınamadı — € gösteriliyor'; return; }
+    TRY_RATE=j.rates.TRY; TRY_DATE=j.date;
+  }
+  CUR=b.dataset.cur;
+  document.querySelectorAll('#curSeg button').forEach(x=>x.classList.toggle('on',x.dataset.cur===CUR));
+  note.textContent=CUR==='TRY'?('1€ = '+TRY_RATE.toFixed(2)+'₺ · ECB '+(TRY_DATE||'')):'';
+  render();
+});
 document.getElementById('rangeSel').onchange=e=>{
   state.range=e.target.value;
   document.getElementById('customRangeWrap').style.display=state.range==='custom'?'flex':'none';
