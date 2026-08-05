@@ -16,6 +16,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;ba
 .row{transition:background .15s;cursor:pointer}.row:hover{background:#162039}
 .row.selected{background:#1e2b4d;border-left:3px solid #3b82f6}
 .chip{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600}
+.dep-tag{display:inline-block;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#94a3b8;border:1px solid #475569;border-radius:4px;padding:0 5px;margin-left:5px;white-space:nowrap;vertical-align:middle;line-height:1.5}
+.departed{opacity:.5}
 .chip-retail{background:#1e3a8a;color:#bfdbfe}
 .chip-enterprise{background:#065f46;color:#a7f3d0}
 .chip-lighting{background:#7c2d12;color:#fed7aa}
@@ -101,6 +103,11 @@ const DATA = {"months":["Jan 25","Feb 25","Mar 25","Apr 25","May 25","Jun 25","J
 const FOOT_MONTHS=["Jan 26","Feb 26","Mar 26","Apr 26","May 26","Jun 26","Jul 26"];
 const FOOTFALL={"Banu": [44, 45, 32, 17, 10, 16, 7], "İdil": [26, 37, 27, 36, 21, 42, 23], "Sena": [45, 47, 48, 45, 20, 38, 32], "Ceren": [24, 38, 43, 29, 30, 32, 20], "Derin": [46, 46, 48, 44, 35, 48, 40], "Bener": [50, 57, 59, 39, 32, 47, 30], "Aleyna": [22, 23, 37, 53, 45, 32, 0], "Burçin": [10, 14, 5, 9, 7, 2, 8], "Zeynep": [21, 19, 23, 10, 12, 16, 12], "Elif": [26, 23, 19, 20, 12, 10, 13], "İrem": [15, 20, 17, 19, 18, 21, 9], "Biricik": [22, 25, 33, 26, 30, 20, 20], "Artun": [20, 23, 48, 40, 21, 20, 20], "Ecem": [29, 25, 4, 0, 0, 0, 0], "Ceren M.": [2, 4, 5, 1, 7, 2, 4], "Candan": [0, 0, 0, 0, 7, 51, 31], "Betül": [14, 21, 31, 32, 12, 8, 8], "Beliz": [7, 9, 31, 10, 9, 4, 6], "Simge": [39, 30, 41, 22, 37, 51, 31]};
 const FOOT_STORE={"Betül":"Ankara + Ortaköy","Beliz":"Ankara","Simge":"Outlet"};FOOT_STORE_NOTE={"Betül":" (based at Ankara store)","Beliz":" (based at Ankara store)","Simge":" (based at Outlet)"};
+// Former team members — kept for historical accuracy, flagged as inactive in every view
+const DEPARTED={"Ecem":{joined:"Jan '25 or earlier",left:"Apr '26"},"Aleyna":{joined:"Dec '25",left:"Jul '26"}};
+const depTag=n=>DEPARTED[n]?` <span class="dep-tag">Inactive since ${DEPARTED[n].left}</span>`:'';
+const depDim=n=>DEPARTED[n]?' departed':'';
+const depLabel=n=>DEPARTED[n]?n+' (inactive)':n;
 const ACADEMY={"Banu": {"logins": 4, "mins": 1964, "last": "10 Jul 26"}, "İdil": {"logins": 2, "mins": 1, "last": "6 Jul 26"}, "Ceren M.": {"logins": 3, "mins": 8, "last": "19 Jul 26"}, "Betül": {"logins": 2, "mins": 3, "last": "6 Jul 26"}, "Candan": {"logins": 3, "mins": 2, "last": "17 Jul 26"}, "Burçin": {"logins": 3, "mins": 8, "last": "7 Jul 26"}, "Zeynep": {"logins": 2, "mins": 346, "last": "4 Jul 26"}, "Elif": {"logins": 1, "mins": 1, "last": "30 Jun 26"}, "İrem": {"logins": 1, "mins": 1, "last": "30 Jun 26"}, "Biricik": {"logins": 2, "mins": 3, "last": "6 Jul 26"}, "Artun": {"logins": 3, "mins": 5, "last": "20 Jul 26"}, "Beliz": {"logins": 2, "mins": 3, "last": "6 Jul 26"}, "Derin": {"logins": 1, "mins": 2, "last": "20 Jul 26"}};
 // Partner commission data — Danışman ödemeleri (Jan 2025 – May 2026) · Total ₺33.76M across 80 partners / 138 payments
 const PARTNERS_RAW = [
@@ -322,9 +329,9 @@ function renderOverview(){
     <div class="card p-5">
       <h3 class="font-semibold mb-3">🏆 Top Reps by Revenue</h3>
       ${[...DATA.reps].map(r=>({name:r.name,dept:r.dept,revenue:sumIdx(r.revenue),units:sumIdx(r.units)})).sort((a,b)=>b.revenue-a.revenue).slice(0,10).map((r,i,arr)=>{const pct=(r.revenue/(arr[0].revenue||1)*100).toFixed(0);return `
-        <div class="mb-2">
+        <div class="mb-2${depDim(r.name)}">
           <div class="flex justify-between text-xs mb-1">
-            <span><span class="text-gray-500 mr-1">#${i+1}</span>${r.name} <span class="chip chip-${r.dept.toLowerCase()} ml-1">${r.dept}</span></span>
+            <span><span class="text-gray-500 mr-1">#${i+1}</span>${r.name}${depTag(r.name)} <span class="chip chip-${r.dept.toLowerCase()} ml-1">${r.dept}</span></span>
             <span class="font-bold">${moneyK(r.revenue)}</span>
           </div>
           <div class="bar"><div style="width:${pct}%"></div></div>
@@ -333,9 +340,9 @@ function renderOverview(){
     <div class="card p-5">
       <h3 class="font-semibold mb-3">📦 Top Reps by Orders (Units)</h3>
       ${[...DATA.reps].map(r=>({name:r.name,dept:r.dept,revenue:sumIdx(r.revenue),units:sumIdx(r.units)})).sort((a,b)=>b.units-a.units).slice(0,10).map((r,i,arr)=>{const pct=(r.units/(arr[0].units||1)*100).toFixed(0);return `
-        <div class="mb-2">
+        <div class="mb-2${depDim(r.name)}">
           <div class="flex justify-between text-xs mb-1">
-            <span><span class="text-gray-500 mr-1">#${i+1}</span>${r.name} <span class="chip chip-${r.dept.toLowerCase()} ml-1">${r.dept}</span></span>
+            <span><span class="text-gray-500 mr-1">#${i+1}</span>${r.name}${depTag(r.name)} <span class="chip chip-${r.dept.toLowerCase()} ml-1">${r.dept}</span></span>
             <span class="font-bold">${FMT.format(r.units)} orders</span>
           </div>
           <div class="bar"><div style="width:${pct}%;background:linear-gradient(90deg,#10b981,#34d399)"></div></div>
@@ -430,8 +437,8 @@ function renderDepartments(){
         <div class="border-t border-gray-800 pt-3">
           <div class="text-[10px] text-gray-500 uppercase mb-2">Team · ${reps.length} reps</div>
           ${reps.map(r=>{const p=(r.total/(reps[0].total||1)*100).toFixed(0);return `
-            <div class="mb-2">
-              <div class="flex justify-between text-xs mb-1"><span>${r.name}</span><span class="font-semibold">${state.metric==='revenue'?moneyK(r.total):FMT.format(r.total)}</span></div>
+            <div class="mb-2${depDim(r.name)}">
+              <div class="flex justify-between text-xs mb-1"><span>${r.name}${depTag(r.name)}</span><span class="font-semibold">${state.metric==='revenue'?moneyK(r.total):FMT.format(r.total)}</span></div>
               <div class="bar"><div style="width:${p}%;background:${DEPT_COLOR[d.name]}"></div></div>
             </div>`}).join('')}
         </div>
@@ -469,9 +476,9 @@ function renderReps(){
       </div>
       <div class="scroll-x"><table><thead><tr><th>#</th><th>Rep</th><th>Dept</th><th class="text-right">Revenue</th><th class="text-right">Deals / Units</th><th class="text-right">AOV</th><th class="text-right">Share</th></tr></thead><tbody>
       ${rt.map((r,i)=>{const tot=rt.reduce((s,x)=>s+x.revenue,0)||1;const share=(r.revenue/tot*100).toFixed(1);return `
-        <tr class="row ${sel===r.name?'selected':''}" onclick="selectRep('${r.name}')">
+        <tr class="row${depDim(r.name)} ${sel===r.name?'selected':''}" onclick="selectRep('${r.name}')">
           <td class="text-gray-500">${i+1}</td>
-          <td class="font-semibold">${r.name}</td>
+          <td class="font-semibold">${r.name}${depTag(r.name)}</td>
           <td><span class="chip chip-${r.dept.toLowerCase()}">${r.dept}</span></td>
           <td class="text-right font-semibold ${sortKey==='revenue'?'text-blue-400':''}">${moneyK(r.revenue)}</td>
           <td class="text-right ${(sortKey==='deals'||sortKey==='units')?'text-emerald-400 font-semibold':''}">${FMT.format(r.deals)}</td>
@@ -483,7 +490,7 @@ function renderReps(){
     <div class="card p-5">
       ${sel?`
         <div class="flex justify-between items-start mb-3">
-          <div><h3 class="font-bold text-lg">${sel}</h3><span class="chip chip-${selData.dept.toLowerCase()}">${selData.dept}</span></div>
+          <div><h3 class="font-bold text-lg">${sel}${depTag(sel)}</h3><span class="chip chip-${selData.dept.toLowerCase()}">${selData.dept}</span>${DEPARTED[sel]?`<div class="text-[11px] text-gray-400 mt-1.5">Joined ${DEPARTED[sel].joined} · Inactive since ${DEPARTED[sel].left} — no longer with the team</div>`:''}</div>
           <button onclick="selectRep(null)" class="text-gray-500 hover:text-white text-xl">×</button>
         </div>
         <div class="grid grid-cols-2 gap-2 mt-4">
@@ -499,7 +506,7 @@ function renderReps(){
           <div class="bg-gray-800/50 p-2 rounded-lg"><div class="text-lg font-bold text-blue-400">${ACADEMY[sel].logins}</div><div class="text-[10px] text-gray-500 uppercase">Logins</div></div>
           <div class="bg-gray-800/50 p-2 rounded-lg"><div class="text-lg font-bold text-emerald-400">${ACADEMY[sel].mins}<span class="text-xs">m</span></div><div class="text-[10px] text-gray-500 uppercase">Time on site</div></div>
           <div class="bg-gray-800/50 p-2 rounded-lg"><div class="text-sm font-bold text-purple-400 leading-6">${ACADEMY[sel].last}</div><div class="text-[10px] text-gray-500 uppercase">Last login</div></div>
-        </div>`:`<div class="text-xs text-gray-500">No Academy logins recorded yet.</div>`}</div>
+        </div>`:`<div class="text-xs text-gray-500">${DEPARTED[sel]?'No Academy activity — inactive team member.':'No Academy logins recorded yet.'}</div>`}</div>
       `:`<div class="text-gray-500 text-sm text-center py-12">👈 Click a rep to see their details, monthly performance, and KPIs</div>`}
     </div>
   </div>`;
@@ -623,7 +630,7 @@ function drawAnalysis(){
     options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#64748b',callback:v=>moneyK(v)},grid:{color:'#1f2a44'}},y:{ticks:{color:'#cbd5e1'},grid:{display:false}}}}}));
   const rt=repTotals();
   charts.push(new Chart(document.getElementById('repDist'),{type:'bar',
-    data:{labels:rt.map(r=>r.name),datasets:[{data:rt.map(r=>r.revenue),backgroundColor:rt.map(r=>DEPT_COLOR[r.dept]),borderRadius:4}]},
+    data:{labels:rt.map(r=>depLabel(r.name)),datasets:[{data:rt.map(r=>r.revenue),backgroundColor:rt.map(r=>DEPARTED[r.name]?'#475569':DEPT_COLOR[r.dept]),borderRadius:4}]},
     options:{plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#64748b',font:{size:9}},grid:{display:false}},y:{ticks:{color:'#64748b',callback:v=>moneyK(v)},grid:{color:'#1f2a44'}}}}}));
   const yrs=Object.keys(DATA.yearlyTotals||{});const yvals=yrs.map(y=>DATA.yearlyTotals[y]);
   charts.push(new Chart(document.getElementById('yearChart'),{type:'bar',
@@ -631,7 +638,7 @@ function drawAnalysis(){
     options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>moneyK(c.parsed.y)}}},scales:{x:{ticks:{color:'#64748b'},grid:{display:false}},y:{ticks:{color:'#64748b',callback:v=>moneyK(v)},grid:{color:'#1f2a44'}}}}}));
   const soReps=DATA.reps.filter(r=>(r.stock||0)+(r.order||0)>0).sort((a,b)=>((b.stock||0)+(b.order||0))-((a.stock||0)+(a.order||0)));
   charts.push(new Chart(document.getElementById('stockOrderChart'),{type:'bar',
-    data:{labels:soReps.map(r=>r.name),datasets:[
+    data:{labels:soReps.map(r=>depLabel(r.name)),datasets:[
       {label:'Stock (existing inventory)',data:soReps.map(r=>r.stock||0),backgroundColor:'#f59e0b',borderRadius:4},
       {label:'Orders / Sipariş (custom)',data:soReps.map(r=>r.order||0),backgroundColor:'#3b82f6',borderRadius:4}
     ]},
