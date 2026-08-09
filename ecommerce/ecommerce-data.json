@@ -3,7 +3,7 @@
     "company": "Mozaik Design",
     "scope": "E-commerce (Metorik)",
     "currency": "TRY",
-    "generated": "2026-08-08",
+    "generated": "2026-08-09",
     "source": "Live via Metorik API"
   },
   "months": [
@@ -150,11 +150,11 @@
     {
       "month": "2026-07",
       "revenue": 719538.25,
-      "net": 457428.19,
+      "net": 441471.59,
       "orders": 44,
       "average_order_value": 16353.1,
       "unique_customers": 41,
-      "total_refunds": 138788.31,
+      "total_refunds": 154744.91,
       "new_customers": 34,
       "returning_customers": 3,
       "returning_customers_rate": 0.2,
@@ -163,26 +163,26 @@
     },
     {
       "month": "2026-08",
-      "revenue": 343676.99,
-      "net": 273905.5,
-      "orders": 11,
-      "average_order_value": 31243.4,
-      "unique_customers": 11,
+      "revenue": 394383.59,
+      "net": 316816.5,
+      "orders": 16,
+      "average_order_value": 24649,
+      "unique_customers": 16,
       "total_refunds": 9900,
-      "new_customers": 8,
+      "new_customers": 12,
       "returning_customers": 0,
       "returning_customers_rate": 0,
-      "lost_revenue": 588933.4,
-      "lost_orders": 12
+      "lost_revenue": 1325845.4,
+      "lost_orders": 14
     }
   ],
   "products": [
     {
       "name": "Panton Sandalye",
       "sku": "",
-      "net_sales": 304480,
-      "net_orders": 5,
-      "gross_items_sold": 16,
+      "net_sales": 323510,
+      "net_orders": 6,
+      "gross_items_sold": 17,
       "in_stock": true,
       "stock_quantity": 0
     },
