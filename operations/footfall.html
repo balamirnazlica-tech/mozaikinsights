@@ -203,7 +203,7 @@
   <div class="r2">
     <div class="cd">
       <div class="ct">Yillik Ziyaretci Trendi</div>
-      <div class="cs">2012&ndash;2026 &mdash; guclu buyume hikayesi</div>
+      <div class="cs">2012&ndash;2026 &mdash; 2026 kismi yil (10 Agustos); kesikli cizgi ayni donem kiyaslamasi. 2012/2016 eksik kayit.</div>
       <div class="h260"><canvas id="c1"></canvas></div>
     </div>
     <div class="cd">
@@ -530,6 +530,17 @@ const G={color:'rgba(255,255,255,0.04)'};
 // VERIFIED DATA
 const YR=[2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026];
 const YC=[995, 2018, 2333, 2068, 1455, 2024, 1863, 1856, 2357, 3159, 3472, 3659, 3867, 4465, 3045];
+// 2026 is a PARTIAL year (through 10 Aug). YC_FULL drops it from the full-year series;
+// YC_YTD is the comparable 1 Jan-10 Aug window per year (2012/2016 null: incomplete records).
+const YC_FULL=[995, 2018, 2333, 2068, 1455, 2024, 1863, 1856, 2357, 3159, 3472, 3659, 3867, 4465, null];
+const YC_YTD=[null, 1286, 1485, 1587, null, 1267, 1195, 1047, 1154, 1789, 2041, 2315, 2262, 2581, 3045];
+const YC_PROJ=[null,null,null,null,null,null,null,null,null,null,null,null,null,null,5087];
+const LEGY={display:true,position:'bottom',labels:{boxWidth:12,usePointStyle:true,font:{size:10.5},padding:10}};
+function lineSets(c1,c2){return [
+  {label:'Tam yil',data:YC_FULL,borderColor:c1,backgroundColor:'rgba(129,140,248,.12)',tension:.4,fill:true,pointRadius:5,pointBackgroundColor:c1},
+  {label:'1 Oca-10 Agu (ayni donem)',data:YC_YTD,borderColor:'#34d399',borderDash:[6,4],tension:.4,fill:false,pointRadius:YR.map((y,i)=>i===YR.length-1?7:3),pointBackgroundColor:'#34d399'},
+  {label:'2026 yil sonu tahmini',data:YC_PROJ,borderColor:'#fb923c',showLine:false,pointRadius:YR.map((y,i)=>i===YR.length-1?8:0),pointBorderWidth:2,pointBackgroundColor:'rgba(251,146,60,.3)'}];}
+
 const MO=['Oca','Sub','Mar','Nis','May','Haz','Tem','Agu','Eyl','Eki','Kas','Ara'];
 const MC=[3340, 3581, 3861, 3478, 3277, 2948, 2497, 2546, 3150, 3306, 3461, 3191];
 const DA=['Pzt','Sal','Car','Per','Cum','Cmt','Paz'];
@@ -581,14 +592,14 @@ const SY = {
 const YEAR_STAFF_TOTALS=[894, 1491, 2202, 2070, 1347, 1852, 1645, 1698, 2232, 3090, 3396, 3489, 3875, 4363, 1739];
 
 // OVERVIEW CHARTS
-new Chart('c1',{type:'line',data:{labels:YR,datasets:[{data:YC,borderColor:'#818cf8',backgroundColor:'rgba(129,140,248,.12)',tension:.4,fill:true,pointRadius:5,pointBackgroundColor:YC.map(v=>v===Math.max(...YC)?'#34d399':'#818cf8')}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:G},y:{grid:G}}}});
+new Chart('c1',{type:'line',data:{labels:YR,datasets:lineSets('#818cf8')},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:LEGY},scales:{x:{grid:G},y:{grid:G}}}});
 new Chart('c2',{type:'bar',data:{labels:MO,datasets:[{data:MC,backgroundColor:MC.map(v=>v===Math.max(...MC)?'#34d399cc':v===Math.min(...MC)?'#f87171cc':'#818cf899'),borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:G}}}});
 new Chart('c3',{type:'doughnut',data:{labels:['Aracla','Yaya','Motor','Bilinmiyor'],datasets:[{data:[28082,2802,175,7577],backgroundColor:['#818cf8','#34d399','#fb923c','#334155'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'bottom',labels:{color:'#64748b',boxWidth:10,font:{size:10}}}}}});
 new Chart('c4',{type:'bar',data:{labels:DA,datasets:[{data:DC,backgroundColor:DC.map((_,i)=>i===5?'#34d399bb':i===6?'#f87171bb':'#818cf899'),borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:G}}}});
 new Chart('c5',{type:'bar',data:{labels:["Mercedes", "BMW", "Land Rover", "Audi", "Volkswagen"],datasets:[{data:[2398, 1439, 1373, 1174, 705],backgroundColor:P.slice(0,5).map(c=>c+'cc'),borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{grid:G},y:{grid:{display:false}}}}});
 
 // TRAFFIC CHARTS
-new Chart('c6',{type:'bar',data:{labels:YR,datasets:[{data:YC,backgroundColor:YC.map(v=>v===Math.max(...YC)?'#34d399cc':v===Math.min(...YC)?'#f87171cc':'#818cf888'),borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:G}}}});
+new Chart('c6',{type:'bar',data:{labels:YR,datasets:[{label:'Tam yil',data:YC_FULL,backgroundColor:YC_FULL.map(v=>v===Math.max(...YC_FULL.filter(x=>x!==null))?'#34d399cc':'#818cf888'),borderRadius:6},{label:'1 Oca-10 Agu (ayni donem)',data:YC_YTD,backgroundColor:YC_YTD.map((v,i)=>i===YR.length-1?'#34d399ee':'#34d39955'),borderRadius:6},{label:'2026 yil sonu tahmini',data:YC_PROJ,backgroundColor:'rgba(251,146,60,.35)',borderColor:'#fb923c',borderWidth:1,borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:LEGY},scales:{x:{grid:{display:false}},y:{grid:G}}}});
 new Chart('c7',{type:'line',data:{labels:MO,datasets:[{data:MC,borderColor:'#38bdf8',backgroundColor:'rgba(56,189,248,.1)',tension:.4,fill:true,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:G},y:{grid:G}}}});
 new Chart('c8',{type:'bar',data:{labels:DA,datasets:[{data:DC,backgroundColor:DC.map((_,i)=>i===5?'#34d399bb':i===6?'#f87171bb':'#818cf888'),borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:G}}}});
 
@@ -601,7 +612,7 @@ new Chart('c13',{type:'bar',data:{labels:["Ç.Eren","C.Kurt","S.Cengiç","C.Kara
 new Chart('c14',{type:'doughnut',data:{labels:['1 ziyaret','2-5 kez','6-20 kez','21-50 kez','50+ kez'],datasets:[{data:[14855, 3338, 705, 69, 26],backgroundColor:['#334155','#818cf855','#818cf8aa','#34d399bb','#facc15cc'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{position:'bottom',labels:{color:'#64748b',boxWidth:10,font:{size:10}}}}}});
 
 // INSIGHT CHARTS
-new Chart('c15',{type:'line',data:{labels:YR,datasets:[{data:YC,borderColor:'#34d399',backgroundColor:'rgba(52,211,153,.1)',tension:.4,fill:true,pointRadius:5,pointBackgroundColor:YC.map(v=>v===Math.max(...YC)?'#facc15':v===Math.min(...YC)?'#f87171':'#34d399')}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:G},y:{grid:G}}}});
+new Chart('c15',{type:'line',data:{labels:YR,datasets:lineSets('#818cf8')},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:LEGY},scales:{x:{grid:G},y:{grid:G}}}});
 // 2026 staff distribution
 const s26=STAFF_NAMES.map(n=>SY[n][14]).filter(v=>v>0);
 const l26=STAFF_NAMES.filter(n=>SY[n][14]>0);
