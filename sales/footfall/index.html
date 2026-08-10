@@ -221,18 +221,25 @@ function render(repKey){
 
   var ovKpis;
   if(yIdx>=0){
-    var prevVal = yIdx>0 ? (d.YC[yIdx-1]||0) : null;
+    var isCur = selYear===YR[YR.length-1];
+    var prevIsYtd = isCur && d.prev_ytd!=null;
+    var prevVal = prevIsYtd ? d.prev_ytd : (yIdx>0 ? (d.YC[yIdx-1]||0) : null);
     var chg = (prevVal!==null && prevVal>0) ? ((yVal-prevVal)/prevVal*100) : null;
     var share = d.total>0 ? (yVal/d.total*100) : 0;
     var rank = d.YC.slice().sort(function(a,b){return b-a;}).indexOf(yVal)+1;
-    var isCur = selYear===YR[YR.length-1];
+    var cutLbl = DATA.cutoff_label||'YTD';
+    var chgNote = prevVal===null ? 'Önceki yıl verisi yok'
+      : prevIsYtd ? (prevVal>0 ? (selYear-1)+' aynı dönem ('+cutLbl+' itibariyle): '+fmt(prevVal) : (selYear-1)+' aynı dönemde kayıt yok')
+      : (selYear-1)+': '+fmt(prevVal);
+    var mDiv = (isCur && DATA.elapsed_months) ? DATA.elapsed_months : ((DATA.year_months||{})[selYear]||12);
+    var mNote = isCur ? 'YTD ort. · '+cutLbl+' itibariyle' : (mDiv!==12 ? selYear+' · '+mDiv+' ay' : selYear+' · 12 ay');
     ovKpis =
       '<div class="kpi" style="--c:#818cf8"><div class="kpi-l">'+selYear+' Ziyaret</div><div class="kpi-v">'+fmt(yVal)+'</div><div class="kpi-n">Se\u00e7ili y\u0131l'+(isCur?' \u00b7 devam ediyor':'')+'</div></div>'+
-      '<div class="kpi" style="--c:#34d399"><div class="kpi-l">De\u011fi\u015fim</div><div class="kpi-v">'+(chg===null?'\u2014':(chg>=0?'+':'')+chg.toFixed(1).replace('.',',')+'%')+'</div><div class="kpi-n">'+(prevVal===null?'\u00d6nceki y\u0131l verisi yok':(selYear-1)+': '+fmt(prevVal))+'</div></div>'+
+      '<div class="kpi" style="--c:#34d399"><div class="kpi-l">De\u011fi\u015fim'+(prevIsYtd?' (YTD)':'')+'</div><div class="kpi-v">'+(chg===null?'\u2014':(chg>=0?'+':'')+chg.toFixed(1).replace('.',',')+'%')+'</div><div class="kpi-n">'+chgNote+'</div></div>'+
       '<div class="kpi" style="--c:#38bdf8"><div class="kpi-l">T\u00fcm Zaman Pay\u0131</div><div class="kpi-v">'+share.toFixed(1).replace('.',',')+'%</div><div class="kpi-n">Toplam '+fmt(d.total)+'</div></div>'+
       '<div class="kpi" style="--c:#facc15"><div class="kpi-l">Y\u0131l S\u0131ralamas\u0131</div><div class="kpi-v">#'+rank+'</div><div class="kpi-n">'+YR.length+' y\u0131l i\u00e7inde</div></div>'+
       '<div class="kpi" style="--c:#fb923c"><div class="kpi-l">Zirve Y\u0131l\u0131</div><div class="kpi-v">'+(peakYear||'\u2014')+'</div><div class="kpi-n">'+fmt(maxY)+' ziyaret</div></div>'+
-      '<div class="kpi" style="--c:#f472b6"><div class="kpi-l">Ayl\u0131k Ortalama</div><div class="kpi-v">'+fmt(Math.round(yVal/12))+'</div><div class="kpi-n">'+(isCur?'K\u0131smi y\u0131l (YTD)':selYear+' \u00b7 12 ay')+'</div></div>';
+      '<div class="kpi" style="--c:#f472b6"><div class="kpi-l">Ayl\u0131k Ortalama</div><div class="kpi-v">'+fmt(Math.round(yVal/mDiv))+'</div><div class="kpi-n">'+mNote+'</div></div>';
   } else {
   ovKpis =
     '<div class="kpi" style="--c:#818cf8"><div class="kpi-l">Toplam Ziyaret</div><div class="kpi-v">'+fmt(d.total)+'</div><div class="kpi-n">2012\u20132026</div></div>'+
