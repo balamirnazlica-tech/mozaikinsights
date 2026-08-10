@@ -176,6 +176,7 @@ const fmt=n=>n.toLocaleString('tr-TR');
 const charts={};
 function mk(id,cfg){if(charts[id])charts[id].destroy();charts[id]=new Chart(id,cfg)}
 
+const DATA_VER='20260810-ytd2';
 const STORE_FILES={ortakoy:'data.json',ankara:'data-ankara.json',outlet:'data-outlet.json'};
 const STORE_TITLES={ortakoy:'ORTAKÖY',ankara:'ANKARA',outlet:'OUTLET'};
 const STORE_CACHE={};
@@ -188,7 +189,8 @@ function switchStore(store,btn){
   var t=document.getElementById('storeTitle');if(t)t.textContent='MOZAIK SHOWROOM — '+(STORE_TITLES[store]||store);
   function go(d){DATA=d;YR=d.YR;init();render('');}
   if(STORE_CACHE[store])return go(STORE_CACHE[store]);
-  fetch(STORE_FILES[store]).then(function(r){return r.json();}).then(function(d){STORE_CACHE[store]=d;go(d);});
+  // version-tag the data fetch so a CDN-cached JSON can never pair with newer HTML
+  fetch(STORE_FILES[store]+'?v='+DATA_VER).then(function(r){return r.json();}).then(function(d){STORE_CACHE[store]=d;go(d);});
 }
 
 function sw(btn){document.querySelectorAll('.pnl').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));document.getElementById('p-'+btn.dataset.p).classList.add('on');btn.classList.add('on')}
