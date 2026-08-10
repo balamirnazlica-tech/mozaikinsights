@@ -176,7 +176,7 @@ const fmt=n=>n.toLocaleString('tr-TR');
 const charts={};
 function mk(id,cfg){if(charts[id])charts[id].destroy();charts[id]=new Chart(id,cfg)}
 
-const DATA_VER='20260810-ytd3';
+const DATA_VER='20260810-ytd4';
 const STORE_FILES={ortakoy:'data.json',ankara:'data-ankara.json',outlet:'data-outlet.json'};
 const STORE_TITLES={ortakoy:'ORTAKÖY',ankara:'ANKARA',outlet:'OUTLET'};
 const STORE_CACHE={};
@@ -193,9 +193,11 @@ function switchStore(store,btn){
   fetch(STORE_FILES[store]+'?v='+DATA_VER).then(function(r){return r.json();}).then(function(d){STORE_CACHE[store]=d;go(d);});
 }
 
+var LAST_REP='';
 function sw(btn){document.querySelectorAll('.pnl').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));document.getElementById('p-'+btn.dataset.p).classList.add('on');btn.classList.add('on');
-  // charts drawn while their panel was display:none lay out at zero width — re-measure on reveal
-  requestAnimationFrame(function(){Object.keys(charts).forEach(function(k){try{charts[k].resize();}catch(e){}});});}
+  // a chart built while its panel was display:none keeps a zero-width layout in its element meta;
+  // resize() alone won't rebuild that, so redraw once the panel is actually visible
+  if(typeof DATA!=='undefined'&&DATA)requestAnimationFrame(function(){render(LAST_REP);});}
 
 function init(){
   const sel=document.getElementById('repSel');
@@ -207,6 +209,7 @@ function init(){
   ys.onchange=function(){render(sel.value);};}
 
 function render(repKey){
+  LAST_REP = repKey||'';
   var d = repKey ? DATA.reps[repKey] : DATA.all;
   var label = repKey || 'T\u00FCm Personel';
   var ysEl = document.getElementById('yearSel');
