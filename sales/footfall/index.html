@@ -119,7 +119,7 @@ td.num{text-align:right;color:#a5b4fc;font-variant-numeric:tabular-nums}
 
 <div class="pnl" id="p-tr">
   <div class="kpis" id="trKpis"></div>
-  <div class="cd"><div class="ct">Y&#305;ll&#305;k Trend</div><div class="cs">2012&#8211;2026</div><div class="h320"><canvas id="cTrY"></canvas></div></div>
+  <div class="cd"><div class="ct">Y&#305;ll&#305;k Trend</div><div class="cs" id="trYSub">2012&#8211;2026</div><div class="h320"><canvas id="cTrY"></canvas></div></div>
   <div class="r2">
     <div class="cd"><div class="ct">Ayl&#305;k Mevsimsellik</div><div class="cs">T&#252;m y&#305;llar toplam&#305;</div><div class="h260"><canvas id="cTrM"></canvas></div></div>
     <div class="cd"><div class="ct">G&#252;nl&#252;k Da&#287;&#305;l&#305;m</div><div class="cs">Pzt&#8211;Paz</div><div class="h260"><canvas id="cTrD"></canvas></div></div>
@@ -147,7 +147,7 @@ td.num{text-align:right;color:#a5b4fc;font-variant-numeric:tabular-nums}
 <div class="pnl" id="p-in">
   <div class="ins"><h3>&#214;ng&#246;r&#252;ler</h3><ul id="insList"></ul></div>
   <div class="r2">
-    <div class="cd"><div class="ct">B&#252;y&#252;me E&#287;risi</div><div class="cs">Y&#305;ll&#305;k trend</div><div class="h260"><canvas id="cInG"></canvas></div></div>
+    <div class="cd"><div class="ct">B&#252;y&#252;me E&#287;risi</div><div class="cs" id="inGSub">Y&#305;ll&#305;k trend</div><div class="h260"><canvas id="cInG"></canvas></div></div>
     <div class="cd"><div class="ct">Peak Analizi</div><div class="cs">En yo&#287;un ay &amp; g&#252;n</div><div class="h260"><canvas id="cInP"></canvas></div></div>
   </div>
 </div>
@@ -226,8 +226,16 @@ function render(repKey){
     var prevVal = prevIsYtd ? d.prev_ytd : (yIdx>0 ? (d.YC[yIdx-1]||0) : null);
     var chg = (prevVal!==null && prevVal>0) ? ((yVal-prevVal)/prevVal*100) : null;
     var share = d.total>0 ? (yVal/d.total*100) : 0;
-    var rank = d.YC.slice().sort(function(a,b){return b-a;}).indexOf(yVal)+1;
     var cutLbl = DATA.cutoff_label||'YTD';
+    var rank, rankNote;
+    if(prevIsYtd && d.YC_ytd){
+      var yv2 = d.YC_ytd[yIdx]||0;
+      rank = d.YC_ytd.slice().sort(function(a,b){return b-a;}).indexOf(yv2)+1;
+      rankNote = 'aynı dönem · '+YR.length+' yıl içinde';
+    } else {
+      rank = d.YC.slice().sort(function(a,b){return b-a;}).indexOf(yVal)+1;
+      rankNote = YR.length+' yıl içinde';
+    }
     var chgNote = prevVal===null ? 'Önceki yıl verisi yok'
       : prevIsYtd ? (prevVal>0 ? (selYear-1)+' aynı dönem ('+cutLbl+' itibariyle): '+fmt(prevVal) : (selYear-1)+' aynı dönemde kayıt yok')
       : (selYear-1)+': '+fmt(prevVal);
@@ -237,7 +245,7 @@ function render(repKey){
       '<div class="kpi" style="--c:#818cf8"><div class="kpi-l">'+selYear+' Ziyaret</div><div class="kpi-v">'+fmt(yVal)+'</div><div class="kpi-n">Se\u00e7ili y\u0131l'+(isCur?' \u00b7 devam ediyor':'')+'</div></div>'+
       '<div class="kpi" style="--c:#34d399"><div class="kpi-l">De\u011fi\u015fim'+(prevIsYtd?' (YTD)':'')+'</div><div class="kpi-v">'+(chg===null?'\u2014':(chg>=0?'+':'')+chg.toFixed(1).replace('.',',')+'%')+'</div><div class="kpi-n">'+chgNote+'</div></div>'+
       '<div class="kpi" style="--c:#38bdf8"><div class="kpi-l">T\u00fcm Zaman Pay\u0131</div><div class="kpi-v">'+share.toFixed(1).replace('.',',')+'%</div><div class="kpi-n">Toplam '+fmt(d.total)+'</div></div>'+
-      '<div class="kpi" style="--c:#facc15"><div class="kpi-l">Y\u0131l S\u0131ralamas\u0131</div><div class="kpi-v">#'+rank+'</div><div class="kpi-n">'+YR.length+' y\u0131l i\u00e7inde</div></div>'+
+      '<div class="kpi" style="--c:#facc15"><div class="kpi-l">Y\u0131l S\u0131ralamas\u0131</div><div class="kpi-v">#'+rank+'</div><div class="kpi-n">'+rankNote+'</div></div>'+
       '<div class="kpi" style="--c:#fb923c"><div class="kpi-l">Zirve Y\u0131l\u0131</div><div class="kpi-v">'+(peakYear||'\u2014')+'</div><div class="kpi-n">'+fmt(maxY)+' ziyaret</div></div>'+
       '<div class="kpi" style="--c:#f472b6"><div class="kpi-l">Ayl\u0131k Ortalama</div><div class="kpi-v">'+fmt(Math.round(yVal/mDiv))+'</div><div class="kpi-n">'+mNote+'</div></div>';
   } else {
@@ -251,14 +259,39 @@ function render(repKey){
   }
   document.getElementById('ovKpis').innerHTML = ovKpis;
   document.getElementById('trKpis').innerHTML = ovKpis;
-  document.getElementById('ovYSub').textContent = label+(yIdx>=0?' \u00B7 se\u00E7ili y\u0131l '+selYear:' \u00B7 zirve '+peakYear);
+  document.getElementById('ovYSub').textContent = label+(yIdx>=0?' \u00B7 se\u00E7ili y\u0131l '+selYear:' \u00B7 zirve '+peakYear)+
+    (DATA.cutoff_label?' \u00B7 '+YR[YR.length-1]+' k\u0131smi ('+DATA.cutoff_label+')':'');
 
-  mk('cOvY',{type:'line',data:{labels:YR,datasets:[{data:d.YC,borderColor:'#818cf8',backgroundColor:'rgba(129,140,248,.12)',tension:.4,fill:true,pointRadius:YR.map(function(y,i){return i===yIdx?7:4;}),pointBackgroundColor:YR.map(function(y,i){return i===yIdx?'#facc15':'#818cf8';})}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:G},y:{grid:G}}}});
+  // ---- yearly series: current year is PARTIAL, so never plot it on the full-year line ----
+  var curI = YR.length-1, curY = YR[curI];
+  var cutL = DATA.cutoff_label||'';
+  var ytdArr = d.YC_ytd||null;
+  var projV = d.proj||null;
+  var fullY = d.YC.map(function(v,i){return i===curI?null:v;});
+  var LEG = {display:true,position:'bottom',labels:{boxWidth:12,usePointStyle:true,font:{size:10.5},padding:12}};
+  var exYrs = DATA.ytd_excluded||[];
+  var partialNote = cutL ? YR[0]+'–'+curY+' · '+curY+' kısmi yıl ('+cutL+'), kesikli çizgi aynı dönem karşılaştırması'
+      +(exYrs.length?' · '+exYrs.join(', ')+' eksik kayıt nedeniyle kıyaslamaya dahil değil':'') : YR[0]+'–'+curY;
+  var e1=document.getElementById('trYSub'); if(e1) e1.textContent = partialNote;
+  var e2=document.getElementById('inGSub'); if(e2) e2.textContent = partialNote;
+  function yearLine(){
+    var ds=[{label:'Tam y\u0131l',data:fullY,borderColor:'#818cf8',backgroundColor:'rgba(129,140,248,.12)',tension:.4,fill:true,spanGaps:false,
+      pointRadius:YR.map(function(y,i){return i===yIdx?7:4;}),pointBackgroundColor:YR.map(function(y,i){return i===yIdx?'#facc15':'#818cf8';})}];
+    if(ytdArr) ds.push({label:'1 Oca\u2013'+cutL+' (ayn\u0131 d\u00F6nem)',data:ytdArr,borderColor:'#34d399',borderDash:[6,4],tension:.4,fill:false,
+      pointRadius:YR.map(function(y,i){return i===curI?7:3;}),pointBackgroundColor:'#34d399'});
+    if(projV) ds.push({label:curY+' y\u0131l sonu tahmini',data:YR.map(function(y,i){return i===curI?projV:null;}),borderColor:'#fb923c',
+      pointStyle:'circle',showLine:false,pointRadius:YR.map(function(y,i){return i===curI?8:0;}),pointBorderWidth:2,pointBackgroundColor:'rgba(251,146,60,.3)'});
+    return ds;
+  }
+  mk('cOvY',{type:'line',data:{labels:YR,datasets:yearLine()},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:LEG},scales:{x:{grid:G},y:{grid:G}}}});
   mk('cOvM',{type:'bar',data:{labels:MO,datasets:[{data:d.MC,backgroundColor:'#818cf8cc',borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:G}}}});
   mk('cOvT',{type:'doughnut',data:{labels:['Ara\u00E7la','Yaya','Motor','Bilinmiyor'],datasets:[{data:[tr.arac,tr.yaya,tr.motor,tr.unk],backgroundColor:['#818cf8','#34d399','#fb923c','#334155'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:11}}}}}});
   mk('cOvD',{type:'bar',data:{labels:DA,datasets:[{data:d.DC,backgroundColor:d.DC.map(function(v,i){return i===5?'#34d399cc':i===6?'#f87171cc':'#818cf899';}),borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:G}}}});
 
-  mk('cTrY',{type:'bar',data:{labels:YR,datasets:[{data:d.YC,backgroundColor:d.YC.map(function(v,i){return i===yIdx?'#facc15cc':(v===maxY?'#34d399cc':'#818cf899');}),borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:G}}}});
+  var barSets=[{label:'Tam yıl',data:fullY,backgroundColor:fullY.map(function(v,i){return i===yIdx?'#facc15cc':(v===maxY?'#34d399cc':'#818cf899');}),borderRadius:6}];
+  if(ytdArr) barSets.push({label:'1 Oca–'+cutL+' (aynı dönem)',data:ytdArr,backgroundColor:ytdArr.map(function(v,i){return i===curI?'#34d399ee':'#34d39955';}),borderRadius:6});
+  if(projV) barSets.push({label:curY+' yıl sonu tahmini',data:YR.map(function(y,i){return i===curI?projV:null;}),backgroundColor:'rgba(251,146,60,.35)',borderColor:'#fb923c',borderWidth:1,borderDash:[4,3],borderRadius:6});
+  mk('cTrY',{type:'bar',data:{labels:YR,datasets:barSets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:LEG},scales:{x:{grid:{display:false}},y:{grid:G}}}});
   mk('cTrM',{type:'line',data:{labels:MO,datasets:[{data:d.MC,borderColor:'#38bdf8',backgroundColor:'rgba(56,189,248,.12)',tension:.4,fill:true,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:G},y:{grid:G}}}});
   mk('cTrD',{type:'bar',data:{labels:DA,datasets:[{data:d.DC,backgroundColor:'#a78bfacc',borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:G}}}});
 
@@ -295,12 +328,14 @@ function render(repKey){
   var topVisitor = tv[0]?tv[0][0]:'\u2014';
   document.getElementById('insList').innerHTML =
     '<li><strong>'+label+'</strong> toplam '+fmt(d.total)+' ziyaret\u00E7i etkile\u015Fimi \u2014 '+fmt(d.unique_visitors)+' benzersiz ki\u015Fi.</li>'+
-    '<li>Zirve y\u0131l\u0131: <strong>'+peakYear+'</strong> ('+fmt(maxY)+' ziyaret). 2026 YTD: <strong>'+fmt(ytd)+'</strong>.</li>'+
+    '<li>Zirve y\u0131l\u0131: <strong>'+peakYear+'</strong> ('+fmt(maxY)+' ziyaret). '+curY+' YTD: <strong>'+fmt(ytd)+'</strong> &mdash; k\u0131smi y\u0131l, tam y\u0131llarla do\u011frudan k\u0131yaslanmaz.</li>'+
+    (ytdArr&&ytdArr[curI-1]>0?'<li>Ayn\u0131 d\u00f6nem (1 Oca&ndash;'+cutL+'): '+(curY-1)+' <strong>'+fmt(ytdArr[curI-1])+'</strong> &rarr; '+curY+' <strong>'+fmt(ytdArr[curI])+'</strong> ('+(ytdArr[curI]>=ytdArr[curI-1]?'+':'')+((ytdArr[curI]-ytdArr[curI-1])/ytdArr[curI-1]*100).toFixed(1).replace('.',',')+'%).</li>':'')+
+    (projV?'<li>Bu tempoyla '+curY+' y\u0131l sonu tahmini: <strong>'+fmt(projV)+'</strong> ziyaret (son 3 y\u0131l\u0131n mevsimsel da\u011f\u0131l\u0131m\u0131na g\u00f6re).</li>':'')+
     '<li>En yo\u011Fun ay: <strong>'+peakMo+'</strong> \u2014 en yo\u011Fun g\u00FCn: <strong>'+peakDay+'</strong>.</li>'+
     '<li>Ula\u015F\u0131m profili: %'+araPct+' ara\u00E7la ('+fmt(tr.arac)+' kay\u0131t). '+(topBrand!=='\u2014'?'En pop\u00FCler marka: <strong>'+topBrand+'</strong>.':'')+'</li>'+
     (topVisitor!=='\u2014'?'<li>#1 VIP: <strong>'+topVisitor+'</strong> ('+fmt(tv[0][1])+' ziyaret).</li>':'')+
     (growth!==null?'<li>2012\u21922025 b\u00FCy\u00FCme: <strong>'+growth+'%</strong>.</li>':'');
-  mk('cInG',{type:'line',data:{labels:YR,datasets:[{data:d.YC,borderColor:'#34d399',backgroundColor:'rgba(52,211,153,.12)',tension:.4,fill:true,pointRadius:YR.map(function(y,i){return i===yIdx?7:4;}),pointBackgroundColor:YR.map(function(y,i){return i===yIdx?'#facc15':'#34d399';})}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:G},y:{grid:G}}}});
+  mk('cInG',{type:'line',data:{labels:YR,datasets:yearLine()},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:LEG},scales:{x:{grid:G},y:{grid:G}}}});
   mk('cInP',{type:'bar',data:{labels:MO,datasets:[{label:'Ay',data:d.MC,backgroundColor:d.MC.map(function(v,i){return i===d.peak_mo_idx?'#facc15cc':'#818cf866';}),borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:G}}}});
 }
 
