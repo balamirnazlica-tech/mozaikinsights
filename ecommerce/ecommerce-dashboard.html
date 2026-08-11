@@ -265,7 +265,7 @@ if(active==='subscriptions') renderSubscriptions();
 }
 
 // Monthly ad spend (Meta + Google Ads), embedded from the marketing dashboard's Supermetrics pull - update on each weekly refresh.
-const AD_SPEND={"2026-01":180889,"2026-02":187491,"2026-03":285872,"2026-04":249640,"2026-05":277537,"2026-06":386344,"2026-07":222282,"2026-08":76485};
+const AD_SPEND={"2026-01":180889,"2026-02":187491,"2026-03":285872,"2026-04":249640,"2026-05":277537,"2026-06":386344,"2026-07":222282,"2026-08":76486};
 function renderMoney(m){
   const sales=m.reduce((s,r)=>s+(r.revenue||0),0);
   const spend=m.reduce((s,r)=>s+(AD_SPEND[r.month]||0),0);
