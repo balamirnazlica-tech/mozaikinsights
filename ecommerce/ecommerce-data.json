@@ -3,7 +3,7 @@
     "company": "Mozaik Design",
     "scope": "E-commerce (Metorik)",
     "currency": "TRY",
-    "generated": "2026-08-11",
+    "generated": "2026-08-12",
     "source": "Live via Metorik API"
   },
   "months": [
@@ -163,13 +163,13 @@
     },
     {
       "month": "2026-08",
-      "revenue": 405313.19,
-      "net": 325924.5,
-      "orders": 17,
-      "average_order_value": 23842,
-      "unique_customers": 17,
+      "revenue": 480687.75,
+      "net": 387384.25,
+      "orders": 20,
+      "average_order_value": 24034.4,
+      "unique_customers": 20,
       "total_refunds": 9900,
-      "new_customers": 12,
+      "new_customers": 15,
       "returning_customers": 0,
       "returning_customers_rate": 0,
       "lost_revenue": 1919713.4,
@@ -250,6 +250,15 @@
       "stock_quantity": 3
     },
     {
+      "name": "Arne Jacobsen Döner Küllük",
+      "sku": "",
+      "net_sales": 51672.5,
+      "net_orders": 3,
+      "gross_items_sold": 10,
+      "in_stock": true,
+      "stock_quantity": 0
+    },
+    {
       "name": "Panton Çocuk Sandalyesi",
       "sku": "",
       "net_sales": 45100,
@@ -257,15 +266,6 @@
       "gross_items_sold": 4,
       "in_stock": true,
       "stock_quantity": 0
-    },
-    {
-      "name": "Cestita Alubat Portatif Aydınlatma",
-      "sku": "CESTF01",
-      "net_sales": 44275,
-      "net_orders": 1,
-      "gross_items_sold": 1,
-      "in_stock": true,
-      "stock_quantity": 2
     }
   ],
   "subscriptions": {
