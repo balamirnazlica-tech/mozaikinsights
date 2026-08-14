@@ -45,7 +45,16 @@ tbody td{border-bottom:1px solid #121c34}
 .seg button{background:#0f1729;color:#94a3b8;border:none;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer}
 .seg button.on{background:#3b82f6;color:#fff}
 .seg button:disabled{opacity:.4;cursor:not-allowed}
-#customRangeWrap input[type="month"]{padding:6px 8px;font-size:12px;color-scheme:dark}
+#customRangeWrap select{padding:6px 8px;font-size:12px;color-scheme:dark}
+    th.th-sort{cursor:pointer;user-select:none;white-space:nowrap}
+    th.th-sort:hover{color:#e2e8f0}
+    th.th-active{color:#93c5fd}
+    .sort-caret{font-size:9px;margin-left:4px;opacity:.9}
+    .sort-caret.sort-idle{opacity:.25}
+    #repSearch{padding:5px 8px;font-size:12px;border-radius:6px;background:#0f172a;border:1px solid #1f2a44;color:#cbd5e1;width:120px}
+    .mini-toggle{padding:5px 9px;font-size:11px;border-radius:6px;background:#0f172a;border:1px solid #1f2a44;color:#94a3b8;cursor:pointer}
+    .mini-toggle:hover{color:#e2e8f0;border-color:#334155}
+    .mini-toggle.on{background:#1d4ed8;border-color:#3b82f6;color:#fff}
 </style>
 </head>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
@@ -57,7 +66,7 @@ tbody td{border-bottom:1px solid #121c34}
       <div>
         <div class="text-[10px] uppercase tracking-widest text-blue-400">Mozaik Design · Sales Platform</div>
         <h1 class="text-2xl font-bold leading-tight">Luxury Furniture — Sales Dashboard</h1>
-        <p class="text-gray-500 text-xs">Jan 2025 – Jun 2026 · Live interactive analytics</p>
+        <p class="text-gray-500 text-xs">Jan 2025 – Jul 2026 · Live interactive analytics</p>
       </div>
     </div>
     <div class="flex gap-2 items-center flex-wrap">
@@ -66,7 +75,7 @@ tbody td{border-bottom:1px solid #121c34}
       <div class="seg" id="curSeg"><button class="on" data-cur="EUR">€ EUR</button><button data-cur="TRY">₺ TRY</button></div>
       <span id="rateNote" class="text-[10px] text-gray-500"></span>
       <select id="rangeSel">
-        <option value="all">All Time (18 mo)</option>
+        <option value="all">All Time (19 mo)</option>
         <option value="fy25">FY 2025</option>
         <option value="fy26">FY 2026 (YTD)</option>
         <option value="q1_26">Q1 2026</option>
@@ -74,9 +83,9 @@ tbody td{border-bottom:1px solid #121c34}
         <option value="custom">Custom range…</option>
       </select>
       <div id="customRangeWrap" class="items-center gap-1" style="display:none">
-        <input type="month" id="customFrom">
+        <select id="customFrom" title="From month"></select>
         <span class="text-gray-500 text-xs">→</span>
-        <input type="month" id="customTo">
+        <select id="customTo" title="To month"></select>
       </div>
     </div>
   </header>
@@ -95,11 +104,11 @@ tbody td{border-bottom:1px solid #121c34}
 
   <div id="panels"></div>
 
-  <footer class="text-center text-gray-600 text-xs mt-10 pb-4">Source: Sales Data (1).xlsx + Enterprise Sales Funnel (WON) · Click any department, rep, or row for drill-down</footer>
+  <footer class="text-center text-gray-600 text-xs mt-10 pb-4">Source: Sales Data.xlsx (through Jul 2026) + Enterprise Sales Funnel (WON) · Click any department, rep, or row for drill-down</footer>
 </div>
 
 <script>
-const DATA = {"months":["Jan 25","Feb 25","Mar 25","Apr 25","May 25","Jun 25","Jul 25","Aug 25","Sep 25","Oct 25","Nov 25","Dec 25","Jan 26","Feb 26","Mar 26","Apr 26","May 26","Jun 26"],"departments":{"Retail":{"revenue":[1452181,1508709,1190281,1868402,1807220,1485332,2203964,1395066,1979165,1756252,1576506,2080048,3179580,1794777,1724325,2881890,1201655,2052571.0],"units":[56,63,71,67,122,57,89,65,63,70,73,87,94,86,82,108,66,92.0],"customers":[54,50,69,49,69,62,62,62,74,60,69,73,84,62,74,73,48,81.0],"new":[30,23,32,20,33,31,32,31,40,27,24,26,28,24,20,17,9,23.0],"old":[24,27,37,29,36,31,30,31,34,33,45,47,56,38,54,56,39,58.0],"headcount":[8.0,8.0,8.0,8.0,7.0,7.0,7.0,7.0,7.0,7.0,7.0,7.0,7.0,7.0,7.0,7.0,9.0,9.0]},"Enterprise":{"revenue":[1459275,781163.93,732093,1166503,643089,473637,1981194,323951,313366,319627,672745,3048543.78,1322759,1436048,741488,1604379,2211781,1059259.0],"units":[22,18,24,23,24,17,28,15,15,18,23,27,29,21,27,27,29,34.0],"customers":[21,18,23,21,20,16,27,15,15,15,27,28,28,14,27,27,29,34.0],"new":[7,7,11,13,11,10,14,9,6,6,5,6,9,4,7,11,11,13.0],"old":[14,11,12,8,9,6,13,6,9,9,22,22,19,10,20,16,18,21.0],"headcount":[4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0]},"Lighting":{"revenue":[491879.34,790041.89,374298.77,427805.55,501227.45,439259.98,379764.73,813659.04,519257.15,407776.75,361735,548875.8,407393.5,426049.25,403508,292785.5,134121,483784.0],"units":[25,22,28,31,45,40,34,27,43,58,46,79,60,58,0,0,0,0.0],"customers":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"new":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"old":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"headcount":[5.0,5.0,5.0,5.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0]},"Marketing":{"revenue":[5437.6,11299.02222,9431.288889,11935.84444,11558.06667,5857.755556,15793.46667,6991.622222,8664.511111,12086.13333,10320.0,62043.0,26986,24868.0,35247.0,35943.0,14887.0,18788.0],"units":[19.0,27.0,26.0,25.0,20.0,15.0,24.0,18.0,17.0,29.0,29.0,29.0,85.0,42.0,49.0,64.0,64.0,0],"customers":[19.0,27.0,26.0,25.0,20.0,15.0,24.0,18.0,17.0,29.0,29.0,85.0,75.0,38.0,45.0,58.0,58.0,0],"new":[3.0,18.0,21.0,18.0,13.0,6.0,15.0,13.0,7.0,22.0,16.0,67.0,62.0,28.0,28.0,28.0,28.0,0],"old":[10.0,5,3,7,3,3,12,1,1,0.0,12.0,18.0,13.0,10.0,10.0,10.0,10.0,10.0],"headcount":[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,3.0,3.0,3.0]}},"reps":[{"name":"Banu","dept":"Retail","revenue":[275998.0,347957.0,320520.0,140258.0,447101.0,9956.0,143847.0,188529.0,99095.0,54039.0,20227.0,40250.0,332126.0,135106.0,148955.0,9000.0,0.0,0.0],"units":[5.0,8.0,7.0,6.0,13.0,4.0,7.0,7.0,10.0,3.0,3.0,4.0,6.0,7.0,3.0,1.0,0.0,0.0],"stock":1024986.0,"order":1647971.0},{"name":"İdil","dept":"Retail","revenue":[522966.0,304624.0,75429.0,156705.0,259843.0,408895.0,283717.0,169125.0,318317.0,383228.0,406592.0,419397.0,498432.0,480044.0,287100.0,305112.0,164379.0,359936.0],"units":[20.0,17.0,11.0,6.0,11.0,12.0,8.0,13.0,12.0,8.0,11.0,6.0,12.0,15.0,9.0,13.0,10.0,18.0],"stock":1427480.0,"order":4332635.0},{"name":"Sena","dept":"Retail","revenue":[60320.0,357261.0,176517.0,102906.0,245968.0,315728.0,218636.0,346359.0,924088.0,360096.0,348498.0,566363.0,373167.0,332320.0,250968.0,259102.0,118955.0,611583.0],"units":[3.0,10.0,9.0,7.0,11.0,9.0,16.0,13.0,0.0,17.0,20.0,24.0,19.0,16.0,15.0,15.0,7.0,11.0],"stock":1626071.0,"order":4342764.0},{"name":"Ceren","dept":"Retail","revenue":[136212.0,93099.0,22553.0,1010670.0,314717.0,341146.0,506888.0,350933.0,125485.0,480896.0,328400.0,251995.0,378677.0,262491.0,138953.0,475559.0,237010.0,194561.0],"units":[9.0,5.0,3.0,7.0,8.0,4.0,4.0,5.0,5.0,8.0,3.0,9.0,9.0,8.0,9.0,0.0,9.0,8.0],"stock":677179.0,"order":4973817.0},{"name":"Derin","dept":"Retail","revenue":[144936.0,79265.0,435502.0,255024.0,137107.0,234543.0,367933.0,115932.0,256340.0,255090.0,115599.0,343552.0,1081749.0,232218.0,126241.0,339797.0,239460.0,388576.0],"units":[7.0,8.0,16.0,10.0,12.0,13.0,8.0,9.0,17.0,15.0,12.0,0.0,11.0,7.0,14.0,14.0,12.0,15.0],"stock":2458777.0,"order":2649075.0},{"name":"Bener","dept":"Retail","revenue":[311631.0,322382.0,140879.0,136808.0,187451.0,165919.0,527731.0,218220.0,249626.0,158706.0,338578.0,334197.0,312593.0,74063.0,489349.0,1142114.0,157006.0,337063.0],"units":[11.0,8.0,12.0,7.0,13.0,9.0,15.0,16.0,17.0,11.0,14.0,15.0,19.0,8.0,13.0,25.0,6.0,26.0],"stock":1600291.0,"order":4003755.0},{"name":"Betül","dept":"Retail","revenue":[118.0,4121.0,18881.0,66031.0,215033.0,9145.0,155212.0,5968.0,6214.0,64197.0,18612.0,124294.0,29777.0,103604.0,80455.0,119841.0,69798.0,52512.0],"units":[1.0,7.0,13.0,24.0,54.0,6.0,31.0,2.0,2.0,8.0,10.0,29.0,18.0,25.0,19.0,40.0,22.0,14.0],"stock":256730.0,"order":827945.0},{"name":"Aleyna","dept":"Retail","revenue":[0,0,0,0,0,0,0,0,0,0,0,19876.0,75876.0,119411.0,84181.0,212415.0,179391.0,0],"units":[0,0,0,0,0,0,0,0,0,0,0,4.0,2.0,3.0,4.0,11.0,8.0,0],"stock":288774.0,"order":388290.0},{"name":"Simge","dept":"Retail","revenue":[0,0,0,0,0,0,0,0,0,0,0,0,97183.0,55520.0,118123.0,18950.0,15656.0,82555.0],"units":[0,0,0,0,0,0,0,0,0,0,0,0,15.0,9.0,10.0,0.0,8.0,21.0],"stock":387987.0,"order":0},{"name":"Candan","dept":"Retail","revenue":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,20000.0,25785.0],"units":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3.0,7.0],"stock":40000.0,"order":16286.0},{"name":"Burçin","dept":"Enterprise","revenue":[341978.0,375053.0,149700.0,227156.0,94553.0,77205.0,592301.0,4000.0,0.0,0.0,6555.0,2250667.0,33757.0,738038.0,44722.0,672585.0,643315.0,51652.0],"units":[5.0,3.0,2.0,5.0,3.0,4.0,3.0,1.0,0.0,0.0,2.0,4.0,3.0,2.0,3.0,5.0,5.0,3.0],"stock":65805.0,"order":5881868.835},{"name":"Zeynep","dept":"Enterprise","revenue":[1058109.0,169751.0,430168.0,524520.0,473116.0,286875.0,675992.0,91662.0,174298.0,16375.0,483057.0,579975.0,978556.0,586639.0,437563.0,290950.0,1340112.0,638508.0],"units":[9.0,5.0,11.0,12.0,10.0,7.0,6.0,4.0,4.0,4.0,9.0,8.0,11.0,8.0,8.0,6.0,7.0,11.0],"stock":354597.0,"order":8881629.0},{"name":"Elif","dept":"Enterprise","revenue":[59188.0,186141.0,127005.0,391400.0,50454.0,97532.0,201538.0,108276.0,118695.0,199506.0,52825.0,168394.0,76850.0,34035.0,232370.0,537198.0,155478.0,193555.0],"units":[8.0,6.0,6.0,6.0,7.0,3.0,6.0,5.0,5.0,7.0,3.0,8.0,7.0,4.0,9.0,7.0,7.0,6.0],"stock":902285.0,"order":2154082.0},{"name":"İrem","dept":"Enterprise","revenue":[0.0,50219.0,25220.0,23427.0,24966.0,12025.0,511363.0,120013.0,20373.0,103746.0,130308.0,49508.0,233596.0,77336.0,26833.0,103646.0,72876.0,175544.0],"units":[0,4.0,5.0,0,4.0,3.0,13.0,5.0,6.0,7.0,9.0,7.0,8.0,7.0,7.0,9.0,10.0,14.0],"stock":342153.0,"order":1427800.0},{"name":"Biricik","dept":"Lighting","revenue":[296173.0,663027.0,217688.0,320731.0,305782.0,185328.0,145553.0,565085.0,207034.0,293202.0,151930.0,271854.0,242476.0,115012.0,245729.0,152481.0,111251.0,394828.0],"units":[36.0,24.0,39.0,25.0,25.0,24.0,16.0,34.0,28.0,24.0,18.0,31.0,29.0,17.0,22.0,36.0,15.0,43.0],"stock":643154.5,"order":4242011.0},{"name":"Artun","dept":"Lighting","revenue":[152939.0,48249.0,114164.0,29917.0,61464.0,160053.0,59229.0,97094.0,116938.0,38972.0,103210.0,118261.0,88721.0,220009.0,80184.0,85049.0,17422.0,61717.0],"units":[11.0,7.0,16.0,10.0,10.0,12.0,11.0,11.0,18.0,7.0,12.0,14.0,10.0,18.0,15.0,13.0,4.0,8.0],"stock":175635.0,"order":1477957.62},{"name":"Ecem","dept":"Lighting","revenue":[22934.0,47549.0,39910.0,57487.0,81126.0,69172.0,110132.0,76688.0,164730.0,38798.0,66690.0,121793.0,40158.0,51272.0,0.0,0.0,0.0,0.0],"units":[6.0,10.0,11.0,12.0,22.0,18.0,17.0,9.0,17.0,10.0,11.0,25.0,9.0,7.0,0,0,0,0],"stock":320959.0,"order":666085.0},{"name":"Beliz","dept":"Lighting","revenue":[19833.0,31217.0,2537.0,19670.0,52855.0,24707.0,64851.0,74792.0,30555.0,36805.0,39905.0,36968.0,36038.0,39756.0,77595.0,55256.0,5448.0,27240.0],"units":[8.0,5.0,1.0,9.0,14.0,10.0,6.0,7.0,8.0,17.0,5.0,9.0,12.0,16.0,21.0,13.0,7.0,11.0],"stock":122565.0,"order":553464.0},{"name":"Ceren M.","dept":"Marketing","revenue":[5438.0,11299.0,9431.0,11936.0,11558.0,5858.0,15793.0,6992.0,8665.0,12086.0,10320.0,62043.0,26986,24868.0,35247.0,35943.0,14887.0,18788.0],"units":[19.0,27.0,26.0,25.0,20.0,15.0,24.0,18.0,17.0,29.0,28.0,90.0,85.0,42.0,49.0,64.0,44.0,51.0],"stock":0,"order":0}],"yearlyTotals":{"2015":13882589,"2016":7111065,"2017":10060317,"2018":9817554,"2019":8035913,"2020":12854873,"2021":11246016,"2022":15938774,"2023":19580773,"2024":28260753,"2025":38445313.471,"2026":23487913.236}};
+const DATA = {"months":["Jan 25","Feb 25","Mar 25","Apr 25","May 25","Jun 25","Jul 25","Aug 25","Sep 25","Oct 25","Nov 25","Dec 25","Jan 26","Feb 26","Mar 26","Apr 26","May 26","Jun 26","Jul 26"],"departments":{"Retail":{"revenue":[1452181.0,1508709.0,1190281.0,1868402.0,1807220.0,1485332.0,2203964.0,1395066.0,1979165.0,1756252.0,1576506.0,2099924.0,3179580.0,1794777.0,1724325.0,2901724.0,1201655.0,2052571.0,2537105.0],"units":[56,63,71,67,122,57,89,65,63,70,73,91,111,98,96,119,85,120,121],"customers":[54,50,69,49,69,62,62,62,74,60,69,77,101,74,87,84,67,109,93],"new":[30,23,32,20,33,31,32,31,40,27,24,28,37,31,30,25,15,41,29],"old":[24,27,37,29,36,31,30,31,34,33,45,49,64,43,57,59,52,68,64],"headcount":[8,8,8,8,7,7,7,7,7,7,7,7,7,7,7,7,9,9,10]},"Enterprise":{"revenue":[1459275.0,781163.93,732093.0,1166503.0,643089.0,473637.0,1981194.0,323951.0,313366.0,319627.0,672745.0,3048543.78,1322759.0,1436048.0,741488.0,1604379.0,2211781.0,1059259.0,1063815.86],"units":[22,18,24,23,24,17,28,15,15,18,23,27,29,21,27,27,29,34,20],"customers":[21,18,23,21,20,16,27,15,15,15,27,28,28,14,27,27,29,34,18],"new":[7,7,11,13,11,10,14,9,6,6,5,6,9,4,7,11,11,13,5],"old":[14,11,12,8,9,6,13,6,9,9,22,22,19,10,20,16,18,21,13],"headcount":[4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4]},"Lighting":{"revenue":[491879.34,790041.89,374298.77,427805.55,501227.45,439259.98,379764.73,813659.04,519257.15,407776.75,361735.0,548875.8,407393.5,426049.25,403508.0,292785.5,134121.0,483784.25,510890.5],"units":[61,46,67,56,71,64,50,61,71,58,46,79,60,58,58,62,26,62,43],"customers":[20,22,28,31,46,40,34,27,43,34,28,48,60,58,58,62,26,62,43],"new":[12,8,11,17,16,14,12,10,16,6,8,19,17,9,10,9,4,11,6],"old":[8,14,17,14,30,26,22,17,27,28,20,29,43,49,48,53,22,51,37],"headcount":[5,5,5,5,4,4,4,4,4,4,4,4,4,4,4,4,4,4,3]},"Marketing":{"revenue":[5437.6,11299.02,9431.29,11935.84,11558.07,5857.76,15793.47,6991.62,8664.51,12086.13,10320.0,62043.0,26986.0,24868.0,35247.0,35943.0,14887.0,18788.0,0.0],"units":[19,27,26,25,20,15,24,18,17,29,28,90,85,42,49,64,44,51,0],"customers":[13,23,24,25,16,9,27,14,8,24,28,85,75,38,45,58,43,37,0],"new":[10,18,21,18,13,6,15,13,7,22,16,67,62,28,33,47,27,37,0],"old":[3,5,3,7,3,3,12,1,1,2,12,18,13,10,12,11,16,0,0],"headcount":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,3,3,3]}},"reps":[{"name":"Banu","dept":"Retail","revenue":[275998.0,347957.0,320520.0,140258.0,447101.0,9956.0,143847.0,188529.0,99095.0,54039.0,20227.0,40250.0,332126.0,135106.0,148955.0,9000.0,0.0,0.0,12837.0],"units":[5,8,7,6,13,4,7,7,10,3,3,4,6,7,3,1,0,0,2],"stock":1037823.0,"order":1644042.0},{"name":"İdil","dept":"Retail","revenue":[522966.0,304624.0,75429.0,156705.0,259843.0,408895.0,283717.0,169125.0,318317.0,383228.0,406592.0,419397.0,498432.0,480044.0,287100.0,324946.0,164379.0,359936.0,1080609.0],"units":[20,17,11,6,11,12,8,13,12,8,11,6,12,15,9,13,10,18,17],"stock":1453110.0,"order":5387614.0},{"name":"Sena","dept":"Retail","revenue":[60320.0,357261.0,176517.0,102906.0,245968.0,315728.0,218636.0,346359.0,924088.0,360096.0,348498.0,566363.0,373167.0,332320.0,250968.0,259102.0,118955.0,611583.0,260123.0],"units":[3,10,9,7,11,9,16,13,0,17,20,24,19,16,15,15,7,11,12],"stock":1778413.0,"order":4450545.0},{"name":"Ceren","dept":"Retail","revenue":[136212.0,93099.0,22553.0,1010670.0,314717.0,341146.0,506888.0,350933.0,125485.0,480896.0,328400.0,251995.0,378677.0,262491.0,138953.0,475559.0,237010.0,194561.0,273578.0],"units":[9,5,3,7,8,4,4,5,5,8,3,9,9,8,9,0,9,8,8],"stock":710784.0,"order":5213790.0},{"name":"Derin","dept":"Retail","revenue":[144936.0,79265.0,435502.0,255024.0,137107.0,234543.0,367933.0,115932.0,256340.0,255090.0,115599.0,343552.0,1081749.0,232218.0,126241.0,339797.0,239460.0,388576.0,309727.0],"units":[7,8,16,10,12,13,8,9,17,15,12,0,11,7,14,14,12,15,14],"stock":2496364.0,"order":2921215.0},{"name":"Bener","dept":"Retail","revenue":[311631.0,322382.0,140879.0,136808.0,187451.0,165919.0,527731.0,218220.0,249626.0,158706.0,338578.0,334197.0,312593.0,74063.0,489349.0,1142114.0,157006.0,337063.0,345537.0],"units":[11,8,12,7,13,9,15,16,17,11,14,15,19,8,13,25,6,26,19],"stock":1651827.0,"order":4297755.0},{"name":"Betül","dept":"Retail","revenue":[118.0,4121.0,18881.0,66031.0,215033.0,9145.0,155212.0,5968.0,6214.0,64197.0,18612.0,124294.0,29777.0,103604.0,80455.0,119841.0,69798.0,52512.0,66609.0],"units":[1,7,13,24,54,6,31,2,2,8,10,29,18,25,19,40,22,14,31],"stock":260245.0,"order":891039.0},{"name":"Aleyna","dept":"Retail","revenue":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,19876.0,75876.0,119411.0,84181.0,212415.0,179391.0,0.0,0.0],"units":[0,0,0,0,0,0,0,0,0,0,0,4,2,3,4,11,8,0,0],"stock":288774.0,"order":388290.0},{"name":"Simge","dept":"Retail","revenue":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,97183.0,55520.0,118123.0,18950.0,15656.0,82555.0,15414.0],"units":[0,0,0,0,0,0,0,0,0,0,0,0,15,9,10,0,8,21,5],"stock":403401.0,"order":0},{"name":"Candan","dept":"Retail","revenue":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,20000.0,25785.0,70015.0],"units":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,7,10],"stock":88686.0,"order":27115.0},{"name":"Zeynep H.","dept":"Retail","revenue":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,102656.0],"units":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3],"stock":11000.0,"order":91656.0},{"name":"Burçin","dept":"Enterprise","revenue":[341978.0,375052.93,149700.0,227156.0,94553.0,77205.0,592301.0,4000.0,0.0,0.0,6555.0,2250667.0,33757.0,738038.0,44722.0,672585.0,643315.0,51652.0,114194.54],"units":[5,3,2,5,3,4,3,1,0,0,2,4,3,2,3,5,5,3,2],"stock":65804.8,"order":5996063.37},{"name":"Zeynep","dept":"Enterprise","revenue":[1058109.0,169751.0,430168.0,524520.0,473116.0,286875.0,675992.0,91662.0,174298.0,16375.0,483057.0,579974.78,978556.0,586639.0,437563.0,290950.0,1340112.0,638508.0,523225.32],"units":[9,5,11,12,10,7,6,4,4,4,9,8,11,8,8,6,7,11,6],"stock":354597.0,"order":9404854.1},{"name":"Elif","dept":"Enterprise","revenue":[59188.0,186141.0,127005.0,391400.0,50454.0,97532.0,201538.0,108276.0,118695.0,199506.0,52825.0,168394.0,76850.0,34035.0,232370.0,537198.0,155478.0,193555.0,246965.0],"units":[8,6,6,6,7,3,6,5,5,7,3,8,7,4,9,7,7,6,6],"stock":935756.0,"order":2367576.0},{"name":"İrem","dept":"Enterprise","revenue":[0.0,50219.0,25220.0,23427.0,24966.0,12025.0,511363.0,120013.0,20373.0,103746.0,130308.0,49508.0,233596.0,77336.0,26833.0,103646.0,72876.0,175544.0,179431.0],"units":[0,4,5,0,4,3,13,5,6,7,9,7,8,7,7,9,10,14,6],"stock":441408.0,"order":1507976.0},{"name":"Biricik","dept":"Lighting","revenue":[296172.95,663026.74,217688.27,320731.3,305782.2,185328.23,145553.23,565084.96,207034.15,293202.0,151930.0,271854.0,242476.0,115012.0,245729.0,152481.0,111251.0,394828.0,263858.0],"units":[36,24,39,25,25,24,16,34,28,24,18,31,29,17,22,36,15,43,17],"stock":651647.5,"order":4497375.45},{"name":"Artun","dept":"Lighting","revenue":[152939.39,48249.15,114163.5,29917.25,61464.25,160052.75,59228.5,97094.08,116938.0,38971.75,103210.0,118260.8,88721.25,220009.0,80184.0,85049.0,17422.0,61716.5,209000.0],"units":[11,7,16,10,10,12,11,11,18,7,12,14,10,18,15,13,4,8,11],"stock":203874.5,"order":1658717.62},{"name":"Ecem","dept":"Lighting","revenue":[22934.0,47549.0,39910.0,57487.0,81126.0,69172.0,110132.0,76688.0,164730.0,38798.0,66690.0,121793.0,40158.0,51272.0,0.0,0.0,0.0,0.0,0.0],"units":[6,10,11,12,22,18,17,9,17,10,11,25,9,7,0,0,0,0,0],"stock":320959.0,"order":666085.0},{"name":"Beliz","dept":"Lighting","revenue":[19833.0,31217.0,2537.0,19670.0,52855.0,24707.0,64851.0,74792.0,30555.0,36805.0,39905.0,36968.0,36038.25,39756.25,77595.0,55255.5,5448.0,27239.75,38032.5],"units":[8,5,1,9,14,10,6,7,8,17,5,9,12,16,21,13,7,11,15],"stock":135014.25,"order":579046.25},{"name":"Ceren M.","dept":"Marketing","revenue":[5437.6,11299.02,9431.29,11935.84,11558.07,5857.76,15793.47,6991.62,8664.51,12086.13,10320.0,62043.0,26986.0,24868.0,35247.0,35943.0,14887.0,18788.0,0.0],"units":[19,27,26,25,20,15,24,18,17,29,28,90,85,42,49,64,44,51,0],"stock":0.0,"order":0.0}],"yearlyTotals":{"2015":13882589.0,"2016":7111065.0,"2017":10060317.0,"2018":9817554.0,"2019":8035913.0,"2020":12854873.0,"2021":11246016.0,"2022":15938774.0,"2023":19580773.0,"2024":28260753.0,"2025":38465189.47,"2026":27646517.86}};
 const FOOT_MONTHS=["Jan 26","Feb 26","Mar 26","Apr 26","May 26","Jun 26","Jul 26","Aug 26"];
 const FOOTFALL={"Banu": [44, 45, 32, 17, 10, 16, 7, 6], "İdil": [26, 37, 27, 36, 21, 42, 23, 4], "Sena": [45, 47, 48, 45, 20, 38, 33, 9], "Ceren": [24, 38, 43, 29, 30, 32, 24, 6], "Derin": [46, 46, 48, 44, 35, 48, 45, 3], "Bener": [50, 57, 59, 39, 32, 47, 34, 7], "Aleyna": [22, 23, 37, 53, 45, 32, 0, 0], "Burçin": [10, 14, 5, 9, 7, 2, 10, 0], "Zeynep": [21, 19, 23, 10, 12, 16, 13, 0], "Elif": [26, 23, 19, 20, 12, 10, 13, 0], "İrem": [15, 20, 17, 19, 18, 21, 11, 6], "Biricik": [24, 32, 36, 34, 35, 20, 24, 6], "Artun": [20, 23, 48, 40, 21, 20, 21, 2], "Ecem": [29, 25, 4, 0, 0, 0, 0, 0], "Ceren M.": [2, 4, 5, 1, 7, 2, 5, 0], "Candan": [0, 0, 0, 0, 7, 51, 35, 7], "Betül": [14, 21, 31, 32, 12, 8, 9, 3], "Beliz": [7, 9, 31, 10, 9, 4, 8, 4], "Simge": [39, 30, 41, 22, 37, 51, 36, 12]};
 const FOOT_STORE={"Betül":"Ankara + Ortaköy","Beliz":"Ankara + Ortaköy","Simge":"Outlet"};FOOT_STORE_NOTE={"Betül":" (based at Ankara store)","Beliz":" (based at Ankara store)","Simge":" (based at Outlet)"};
@@ -253,7 +262,7 @@ const money = v => sym()+FMT.format(Math.round(conv(v)||0));
 const moneyK = v => { v=conv(v||0); if(Math.abs(v)>=1e9) return sym()+(v/1e9).toFixed(2)+'B'; if(Math.abs(v)>=1e6) return sym()+(v/1e6).toFixed(2)+'M'; if(Math.abs(v)>=1e3) return sym()+(v/1e3).toFixed(0)+'k'; return sym()+Math.round(v); };
 const DEPT_COLOR = {Retail:'#3b82f6',Enterprise:'#10b981',Lighting:'#f59e0b',Marketing:'#a855f7'};
 
-let state = {metric:'revenue', range:'all', tab:'overview', selectedRep:null, repSort:'revenue', deptFilter:'all', partnerRange:'all', partnerSort:'total', selectedPartner:null, customFrom:null, customTo:null};
+let state = {metric:'revenue', range:'all', tab:'overview', selectedRep:null, repSort:'revenue', repDir:'desc', repQuery:'', repActiveOnly:false, deptFilter:'all', partnerRange:'all', partnerSort:'total', selectedPartner:null, customFrom:null, customTo:null};
 
 // "Jan 25" -> "2025-01" keys for the custom range month pickers
 const MONTH_KEYS=DATA.months.map(s=>{const[mon,yr]=s.split(' ');const mi=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].indexOf(mon)+1;return '20'+yr+'-'+String(mi).padStart(2,'0');});
@@ -266,12 +275,12 @@ function monthIdx(){
     if(a>b){const t=a;a=b;b=t;}
     const out=[];for(let i=a;i<=b;i++)out.push(i);return out;
   }
-  if(state.range==='all') return [...Array(18).keys()];
-  if(state.range==='fy25') return [...Array(12).keys()];
-  if(state.range==='fy26') return [12,13,14,15,16,17];
-  if(state.range==='q1_26') return [12,13,14];
-  if(state.range==='last6') return [12,13,14,15,16,17];
-  return [...Array(18).keys()];
+  const rng=(a,b)=>{const o=[];for(let i=Math.max(0,a);i<=Math.min(N-1,b);i++)o.push(i);return o;};
+  if(state.range==='fy25') return rng(0,11);
+  if(state.range==='fy26') return rng(12,N-1);
+  if(state.range==='q1_26') return rng(12,14);
+  if(state.range==='last6') return rng(N-6,N-1);
+  return rng(0,N-1);
 }
 const sumIdx = (arr) => monthIdx().reduce((s,i)=>s+(arr[i]||0),0);
 
@@ -362,16 +371,36 @@ function renderOverview(){
 }
 
 // Q3 2026 forecast: blend of seasonality (same month last year × YoY growth) and recent 3-month run-rate
-const FC_MONTHS=['Jul 26ᶠ','Aug 26ᶠ','Sep 26ᶠ'];
+const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const LAST_IDX=DATA.months.length-1;
+const FC_MONTHS=(()=>{const[m,y]=DATA.months[LAST_IDX].split(' ');let mi=MN.indexOf(m),yr=+y;
+  return [1,2,3].map(k=>{let t=mi+k,ny=yr+Math.floor(t/12);return MN[t%12]+' '+String(ny).padStart(2,'0')+'ᶠ';});})();
 function forecastArr(arr){
-  const h26=arr.slice(12,18).reduce((s,v)=>s+(v||0),0);
-  const h25=arr.slice(0,6).reduce((s,v)=>s+(v||0),0);
-  const yoy=h25>0?h26/h25:1;
-  const recent=((arr[15]||0)+(arr[16]||0)+(arr[17]||0))/3;
-  return [18,19,20].map(i=>{
+  const L=arr.length, cy=L-12;                       // months elapsed in the current year
+  const cur=arr.slice(12,L).reduce((s,v)=>s+(v||0),0);
+  const prev=arr.slice(0,cy).reduce((s,v)=>s+(v||0),0);
+  const yoy=prev>0?cur/prev:1;
+  const recent=(arr.slice(L-3).reduce((s,v)=>s+(v||0),0))/3;
+  return [L,L+1,L+2].map(i=>{
     const seas=(arr[i-12]||0)*yoy;
     return Math.max(0,Math.round(0.5*seas+0.5*recent));
   });
+}
+
+// Full-year projection for the current (partial) year: keeps the actual YTD figure and
+// projects each remaining month with the same blend forecastArr uses.
+function projectRestOfYear(){
+  const N=DATA.months.length, elapsed=N-12;          // months of the current year with actuals
+  if(elapsed<=0||elapsed>=12) return null;
+  const tot=i=>Object.values(DATA.departments).reduce((s,d)=>s+(d.revenue[i]||0),0);
+  const ytd=Array.from({length:elapsed},(_,k)=>tot(12+k)).reduce((a,b)=>a+b,0);
+  const same=Array.from({length:elapsed},(_,k)=>tot(k)).reduce((a,b)=>a+b,0);
+  const yoy=same>0?ytd/same:1;
+  const recent=[N-3,N-2,N-1].reduce((s,i)=>s+tot(i),0)/3;
+  let rest=0;
+  for(let m=elapsed;m<12;m++) rest+=Math.max(0,0.5*tot(m)*yoy+0.5*recent);
+  return {ytd,rest,full:ytd+rest,elapsed,yoy,
+          monthsLeft:MN.slice(elapsed).join(', ')+' '+DATA.months[N-1].split(' ')[1]};
 }
 
 function drawOverviewCharts(){
@@ -393,11 +422,11 @@ function drawOverviewCharts(){
     Object.entries(DATA.departments).forEach(([n,d])=>{
       const arr=d[state.metric];
       deptFc[n]=forecastArr(arr);
-      datasets.push({label:n+' forecast',data:pad.concat([arr[17]||0],deptFc[n]),
+      datasets.push({label:n+' forecast',data:pad.concat([arr[LAST_IDX]||0],deptFc[n]),
         borderColor:DEPT_COLOR[n],backgroundColor:'transparent',borderDash:[3,4],tension:.35,fill:false,borderWidth:2,
         pointRadius:4,pointBackgroundColor:'#070b17',pointBorderColor:DEPT_COLOR[n],pointBorderWidth:2});
     });
-    const lastTotal=Object.values(DATA.departments).reduce((s,d)=>s+(d[state.metric][17]||0),0);
+    const lastTotal=Object.values(DATA.departments).reduce((s,d)=>s+(d[state.metric][LAST_IDX]||0),0);
     const totalFc=[0,1,2].map(i=>Object.keys(deptFc).reduce((s,n)=>s+deptFc[n][i],0));
     datasets.push({label:'Total forecast',data:pad.concat([lastTotal],totalFc),
       borderColor:'#e2e8f0',backgroundColor:'transparent',borderDash:[2,4],tension:.35,fill:false,borderWidth:2,
@@ -447,11 +476,28 @@ function renderDepartments(){
   </div>`;
 }
 
+const REP_TEXT_KEYS=['name','dept'];
+function sortReps(key){
+  if(state.repSort===key) state.repDir = state.repDir==='desc'?'asc':'desc';
+  else { state.repSort=key; state.repDir = REP_TEXT_KEYS.includes(key)?'asc':'desc'; }
+  render();
+}
 function renderReps(){
   let rt=DATA.reps.map(r=>({name:r.name,dept:r.dept,revenue:sumIdx(r.revenue),units:sumIdx(r.units),deals:sumIdx(r.units)}));
   if(state.deptFilter && state.deptFilter!=='all') rt=rt.filter(r=>r.dept===state.deptFilter);
-  const sortKey=state.repSort||'revenue';
-  rt.sort((a,b)=> sortKey==='aov' ? ((b.units?b.revenue/b.units:0)-(a.units?a.revenue/a.units:0)) : (b[sortKey]-a[sortKey]));
+  if(state.repActiveOnly) rt=rt.filter(r=>!DEPARTED[r.name]);
+  if(state.repQuery) { const q=state.repQuery.toLocaleLowerCase('tr'); rt=rt.filter(r=>r.name.toLocaleLowerCase('tr').includes(q)); }
+  const sortKey=state.repSort||'revenue', dir=state.repDir==='asc'?-1:1;
+  // Share is always measured against total company revenue, so it stays comparable while filtering
+  const grand=DATA.reps.reduce((s,x)=>s+sumIdx(x.revenue),0)||1;
+  const val=(r)=> sortKey==='aov' ? (r.units?r.revenue/r.units:0)
+              : sortKey==='share' ? r.revenue/grand
+              : r[sortKey];
+  rt.sort((a,b)=> REP_TEXT_KEYS.includes(sortKey)
+      ? -dir*String(a[sortKey]).localeCompare(String(b[sortKey]),'tr')
+      : dir*(val(b)-val(a)));
+  const caret=k=>state.repSort===k?`<span class="sort-caret">${state.repDir==='asc'?'▲':'▼'}</span>`:'<span class="sort-caret sort-idle">↕</span>';
+  const th=(k,label,cls='')=>`<th class="th-sort ${cls} ${state.repSort===k?'th-active':''}" onclick="sortReps('${k}')" title="Sort by ${label}">${label}${caret(k)}</th>`;
   const sel = state.selectedRep;
   const selData = sel?DATA.reps.find(r=>r.name===sel):null;
   return `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -466,16 +512,25 @@ function renderReps(){
             <option value="Lighting" ${state.deptFilter==='Lighting'?'selected':''}>Lighting</option>
             <option value="Marketing" ${state.deptFilter==='Marketing'?'selected':''}>Marketing</option>
           </select>
-          <select onchange="state.repSort=this.value;render();">
+          <input id="repSearch" type="search" placeholder="Search rep…" value="${state.repQuery||''}"
+            oninput="state.repQuery=this.value;render();document.getElementById('repSearch')?.focus();">
+          <select onchange="state.repSort=this.value;state.repDir=REP_TEXT_KEYS.includes(this.value)?'asc':'desc';render();">
             <option value="revenue" ${sortKey==='revenue'?'selected':''}>Sort: Revenue (${sym()})</option>
             <option value="deals" ${sortKey==='deals'?'selected':''}>Sort: Deals / Orders</option>
             <option value="units" ${sortKey==='units'?'selected':''}>Sort: Units Sold</option>
             <option value="aov" ${sortKey==='aov'?'selected':''}>Sort: Avg Order Value</option>
+            <option value="share" ${sortKey==='share'?'selected':''}>Sort: Share of revenue</option>
+            <option value="name" ${sortKey==='name'?'selected':''}>Sort: Name (A→Z)</option>
+            <option value="dept" ${sortKey==='dept'?'selected':''}>Sort: Department</option>
           </select>
+          <button class="mini-toggle ${state.repActiveOnly?'on':''}" onclick="state.repActiveOnly=!state.repActiveOnly;render();"
+            title="Hide reps who have left the company">${state.repActiveOnly?'✓ Active only':'Active only'}</button>
+          <button class="mini-toggle" onclick="state.repQuery='';state.deptFilter='all';state.repActiveOnly=false;state.repSort='revenue';state.repDir='desc';render();" title="Clear all rep filters">Reset</button>
         </div>
       </div>
-      <div class="scroll-x"><table><thead><tr><th>#</th><th>Rep</th><th>Dept</th><th class="text-right">Revenue</th><th class="text-right">Deals / Units</th><th class="text-right">AOV</th><th class="text-right">Share</th></tr></thead><tbody>
-      ${rt.map((r,i)=>{const tot=rt.reduce((s,x)=>s+x.revenue,0)||1;const share=(r.revenue/tot*100).toFixed(1);return `
+      <div class="scroll-x"><table><thead><tr><th>#</th>${th('name','Rep')}${th('dept','Dept')}${th('revenue','Revenue','text-right')}${th('deals','Deals / Units','text-right')}${th('aov','AOV','text-right')}${th('share','Share','text-right')}</tr></thead><tbody>
+      ${rt.length?'':`<tr><td colspan="7" class="text-center text-gray-500 py-4">No reps match these filters.</td></tr>`}
+      ${rt.map((r,i)=>{const tot=grand;const share=(r.revenue/tot*100).toFixed(1);return `
         <tr class="row${depDim(r.name)} ${sel===r.name?'selected':''}" onclick="selectRep('${r.name}')">
           <td class="text-gray-500">${i+1}</td>
           <td class="font-semibold">${r.name}${depTag(r.name)}</td>
@@ -483,7 +538,7 @@ function renderReps(){
           <td class="text-right font-semibold ${sortKey==='revenue'?'text-blue-400':''}">${moneyK(r.revenue)}</td>
           <td class="text-right ${(sortKey==='deals'||sortKey==='units')?'text-emerald-400 font-semibold':''}">${FMT.format(r.deals)}</td>
           <td class="text-right ${sortKey==='aov'?'text-amber-400 font-semibold':'text-gray-400'}">${r.units?moneyK(r.revenue/r.units):'—'}</td>
-          <td class="text-right text-gray-500">${share}%</td>
+          <td class="text-right ${sortKey==='share'?'text-purple-400 font-semibold':'text-gray-500'}">${share}%</td>
         </tr>`}).join('')}
       </tbody></table></div>
     </div>
@@ -597,10 +652,10 @@ function renderAnalysis(){
           <b>Best month: ${bestMonth}</b> (${moneyK(Math.max(...monthlyTotals))}) · <b>Weakest: ${worstMonth}</b> (${moneyK(Math.min(...monthlyTotals))})
         </div>
         <div class="p-3 bg-red-900/20 border-l-2 border-red-500 rounded">
-          <b>YTD vs Target:</b> 2026 YTD revenue €23.49M (Jan–Jun) vs €33.0M full-year target. Pro-rated 6-month target is €16.5M, so YTD pace is +42% above plan.
+          <b>YTD vs Target:</b> 2026 YTD revenue €27.65M (Jan–Jul) vs €33.0M full-year target. Pro-rated 7-month target is €19.25M, so YTD pace is +44% above plan. Full-year run-rate ≈ €47.4M.
           </div>
         <div class="p-3 bg-cyan-900/20 border-l-2 border-cyan-500 rounded">
-          <b>Customer mix:</b> Retail 55%/45% repeat/new, Enterprise 59%/41% (sticky contracts), Marketing 30%/70% (acquisition engine).
+          <b>Customer mix:</b> Retail 59%/41% repeat/new, Enterprise 61%/39% (sticky contracts), Lighting 72%/28%, Marketing 22%/78% (acquisition engine).
         </div>
       </div>
     </div>
@@ -612,7 +667,7 @@ function renderAnalysis(){
     </div>
     <div class="card p-6 md:col-span-2">
       <h3 class="font-semibold mb-1">📅 Revenue by Year (2015–2026)</h3>
-      <p class="text-xs text-gray-500 mb-3">Company-wide yearly totals. 2026 is YTD (Jan–May).</p>
+      <p class="text-xs text-gray-500 mb-3">Company-wide yearly totals. 2026 is YTD (Jan–Jul) in solid amber; the faded block on top is the projected rest of the year${(()=>{const p=projectRestOfYear();return p?` — full-year projection <b class="text-amber-400">${moneyK(p.full)}</b>`:'';})()}. Same blend as the monthly forecast: half seasonality (same month last year × YTD YoY growth), half recent 3-month run-rate.</p>
       <canvas id="yearChart" height="80"></canvas>
     </div>
     <div class="card p-6 md:col-span-2">
@@ -633,9 +688,21 @@ function drawAnalysis(){
     data:{labels:rt.map(r=>depLabel(r.name)),datasets:[{data:rt.map(r=>r.revenue),backgroundColor:rt.map(r=>DEPARTED[r.name]?'#475569':DEPT_COLOR[r.dept]),borderRadius:4}]},
     options:{plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#64748b',font:{size:9}},grid:{display:false}},y:{ticks:{color:'#64748b',callback:v=>moneyK(v)},grid:{color:'#1f2a44'}}}}}));
   const yrs=Object.keys(DATA.yearlyTotals||{});const yvals=yrs.map(y=>DATA.yearlyTotals[y]);
+  const pj=projectRestOfYear();
+  const yDatasets=[{label:'Actual',data:yvals,backgroundColor:yrs.map((y,i)=>i===yrs.length-1?'#f59e0b':'#3b82f6'),borderRadius:6}];
+  if(pj) yDatasets.push({label:'Projected rest of year',
+    data:yrs.map((y,i)=>i===yrs.length-1?pj.rest:0),
+    backgroundColor:'rgba(245,158,11,.28)',borderColor:'#f59e0b',borderWidth:{top:2,left:1,right:1,bottom:0},
+    borderSkipped:false,borderRadius:6});
   charts.push(new Chart(document.getElementById('yearChart'),{type:'bar',
-    data:{labels:yrs,datasets:[{data:yvals,backgroundColor:yrs.map((y,i)=>i===yrs.length-1?'#f59e0b':'#3b82f6'),borderRadius:6}]},
-    options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>moneyK(c.parsed.y)}}},scales:{x:{ticks:{color:'#64748b'},grid:{display:false}},y:{ticks:{color:'#64748b',callback:v=>moneyK(v)},grid:{color:'#1f2a44'}}}}}));
+    data:{labels:yrs,datasets:yDatasets},
+    options:{plugins:{legend:{display:!!pj,labels:{color:'#cbd5e1',font:{size:11},boxHeight:8}},
+      tooltip:{callbacks:{label:c=>{
+        if(c.datasetIndex===1) return 'Projected '+pj.monthsLeft+': '+moneyK(c.parsed.y);
+        return (pj&&c.dataIndex===yrs.length-1?'YTD actual: ':'')+moneyK(c.parsed.y);
+      },footer:items=>(pj&&items.some(i=>i.dataIndex===yrs.length-1))?'Projected full year '+moneyK(pj.full):''}}},
+      scales:{x:{stacked:true,ticks:{color:'#64748b'},grid:{display:false}},
+              y:{stacked:true,ticks:{color:'#64748b',callback:v=>moneyK(v)},grid:{color:'#1f2a44'}}}}}));
   const soReps=DATA.reps.filter(r=>(r.stock||0)+(r.order||0)>0).sort((a,b)=>((b.stock||0)+(b.order||0))-((a.stock||0)+(a.order||0)));
   charts.push(new Chart(document.getElementById('stockOrderChart'),{type:'bar',
     data:{labels:soReps.map(r=>depLabel(r.name)),datasets:[
@@ -983,10 +1050,12 @@ document.getElementById('rangeSel').onchange=e=>{
   document.getElementById('customRangeWrap').style.display=state.range==='custom'?'flex':'none';
   render();
 };
-// Custom date range pickers — bounds follow DATA.months automatically
+// Custom date range pickers — every month in DATA.months is listed explicitly,
+// so there is no native month-picker year scrolling to hunt through.
 (function(){
   const f=document.getElementById('customFrom'), t=document.getElementById('customTo');
-  f.min=t.min=MONTH_KEYS[0]; f.max=t.max=MONTH_KEYS[MONTH_KEYS.length-1];
+  const opts=MONTH_KEYS.map((k,i)=>`<option value="${k}">${DATA.months[i]}</option>`).join('');
+  f.innerHTML=opts; t.innerHTML=opts;
   f.value=MONTH_KEYS[0]; t.value=MONTH_KEYS[MONTH_KEYS.length-1];
   state.customFrom=f.value; state.customTo=t.value;
   f.onchange=e=>{state.customFrom=e.target.value;if(state.range==='custom')render();};
