@@ -3,7 +3,7 @@
     "company": "Mozaik Design",
     "scope": "E-commerce (Metorik)",
     "currency": "TRY",
-    "generated": "2026-08-15",
+    "generated": "2026-08-16",
     "source": "Live via Metorik API"
   },
   "months": [
@@ -163,11 +163,11 @@
     },
     {
       "month": "2026-08",
-      "revenue": 1043018.92,
-      "net": 848207.25,
-      "orders": 30,
-      "average_order_value": 34767.3,
-      "unique_customers": 30,
+      "revenue": 1066295.47,
+      "net": 866434.25,
+      "orders": 32,
+      "average_order_value": 33321.7,
+      "unique_customers": 32,
       "total_refunds": 9900,
       "new_customers": 26,
       "returning_customers": 0,
@@ -214,21 +214,21 @@
       "stock_quantity": 0
     },
     {
+      "name": "Lido Spaghetti Sandalye",
+      "sku": "",
+      "net_sales": 77275,
+      "net_orders": 3,
+      "gross_items_sold": 5,
+      "in_stock": true,
+      "stock_quantity": 0
+    },
+    {
       "name": "Dondolina Sandalye",
       "sku": "",
       "net_sales": 72600,
       "net_orders": 4,
       "gross_items_sold": 8,
       "in_stock": false,
-      "stock_quantity": 0
-    },
-    {
-      "name": "Lido Spaghetti Sandalye",
-      "sku": "",
-      "net_sales": 61820,
-      "net_orders": 2,
-      "gross_items_sold": 4,
-      "in_stock": true,
       "stock_quantity": 0
     },
     {
