@@ -3,7 +3,7 @@
     "company": "Mozaik Design",
     "scope": "E-commerce (Metorik)",
     "currency": "TRY",
-    "generated": "2026-08-18",
+    "generated": "2026-08-19",
     "source": "Live via Metorik API"
   },
   "months": [
@@ -150,11 +150,11 @@
     {
       "month": "2026-07",
       "revenue": 719538.25,
-      "net": 441471.59,
+      "net": 432825.59,
       "orders": 44,
       "average_order_value": 16353.1,
       "unique_customers": 41,
-      "total_refunds": 154744.91,
+      "total_refunds": 163390.91,
       "new_customers": 34,
       "returning_customers": 3,
       "returning_customers_rate": 0.2,
@@ -163,17 +163,17 @@
     },
     {
       "month": "2026-08",
-      "revenue": 1111642.87,
-      "net": 903986.25,
-      "orders": 35,
-      "average_order_value": 31761.2,
-      "unique_customers": 35,
+      "revenue": 1205817.85,
+      "net": 989832.65,
+      "orders": 37,
+      "average_order_value": 32589.7,
+      "unique_customers": 36,
       "total_refunds": 9900,
       "new_customers": 28,
-      "returning_customers": 0,
-      "returning_customers_rate": 0,
-      "lost_revenue": 2035420.12,
-      "lost_orders": 21
+      "returning_customers": 1,
+      "returning_customers_rate": 0.1,
+      "lost_revenue": 2077178.32,
+      "lost_orders": 22
     }
   ],
   "products": [
@@ -223,6 +223,15 @@
       "stock_quantity": 0
     },
     {
+      "name": "Eames Plastic RAR Sandalye",
+      "sku": "",
+      "net_sales": 76464,
+      "net_orders": 2,
+      "gross_items_sold": 3,
+      "in_stock": false,
+      "stock_quantity": 0
+    },
+    {
       "name": "Dondolina Sandalye",
       "sku": "",
       "net_sales": 72600,
@@ -257,15 +266,6 @@
       "gross_items_sold": 1,
       "in_stock": true,
       "stock_quantity": 0
-    },
-    {
-      "name": "Sylvestrina Portatif Aydınlatma",
-      "sku": "SYLTA01",
-      "net_sales": 56650,
-      "net_orders": 1,
-      "gross_items_sold": 2,
-      "in_stock": true,
-      "stock_quantity": 3
     }
   ],
   "subscriptions": {
