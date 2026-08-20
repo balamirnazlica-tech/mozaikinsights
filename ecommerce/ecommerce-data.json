@@ -3,7 +3,7 @@
     "company": "Mozaik Design",
     "scope": "E-commerce (Metorik)",
     "currency": "TRY",
-    "generated": "2026-08-19",
+    "generated": "2026-08-20",
     "source": "Live via Metorik API"
   },
   "months": [
@@ -163,13 +163,13 @@
     },
     {
       "month": "2026-08",
-      "revenue": 1205817.85,
-      "net": 989832.65,
-      "orders": 37,
-      "average_order_value": 32589.7,
-      "unique_customers": 36,
+      "revenue": 1415973.06,
+      "net": 1172581.65,
+      "orders": 44,
+      "average_order_value": 32181.2,
+      "unique_customers": 43,
       "total_refunds": 9900,
-      "new_customers": 28,
+      "new_customers": 32,
       "returning_customers": 1,
       "returning_customers_rate": 0.1,
       "lost_revenue": 2077178.32,
@@ -198,9 +198,9 @@
     {
       "name": "PH 5 Sarkıt Aydınlatma",
       "sku": "",
-      "net_sales": 199650,
-      "net_orders": 1,
-      "gross_items_sold": 3,
+      "net_sales": 268620,
+      "net_orders": 2,
+      "gross_items_sold": 4,
       "in_stock": true,
       "stock_quantity": 0
     },
@@ -241,6 +241,15 @@
       "stock_quantity": 0
     },
     {
+      "name": "Wiggle Stool Tabure",
+      "sku": "21022601",
+      "net_sales": 63612,
+      "net_orders": 2,
+      "gross_items_sold": 2,
+      "in_stock": false,
+      "stock_quantity": 0
+    },
+    {
       "name": "River Aluminium Şezlong",
       "sku": "",
       "net_sales": 59400,
@@ -255,15 +264,6 @@
       "net_sales": 58938,
       "net_orders": 3,
       "gross_items_sold": 3,
-      "in_stock": true,
-      "stock_quantity": 0
-    },
-    {
-      "name": "Eames Plastic PACC Sandalye",
-      "sku": "",
-      "net_sales": 57750,
-      "net_orders": 1,
-      "gross_items_sold": 1,
       "in_stock": true,
       "stock_quantity": 0
     }
