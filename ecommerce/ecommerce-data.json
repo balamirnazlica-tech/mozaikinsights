@@ -3,7 +3,7 @@
     "company": "Mozaik Design",
     "scope": "E-commerce (Metorik)",
     "currency": "TRY",
-    "generated": "2026-08-20",
+    "generated": "2026-08-21",
     "source": "Live via Metorik API"
   },
   "months": [
@@ -172,8 +172,8 @@
       "new_customers": 32,
       "returning_customers": 1,
       "returning_customers_rate": 0.1,
-      "lost_revenue": 2077178.32,
-      "lost_orders": 22
+      "lost_revenue": 2094329.62,
+      "lost_orders": 23
     }
   ],
   "products": [
