@@ -3,7 +3,7 @@
     "company": "Mozaik Design",
     "scope": "E-commerce (Metorik)",
     "currency": "TRY",
-    "generated": "2026-08-21",
+    "generated": "2026-08-22",
     "source": "Live via Metorik API"
   },
   "months": [
@@ -163,17 +163,17 @@
     },
     {
       "month": "2026-08",
-      "revenue": 1415973.06,
-      "net": 1172581.65,
-      "orders": 44,
-      "average_order_value": 32181.2,
+      "revenue": 1476854.76,
+      "net": 1227928.65,
+      "orders": 45,
+      "average_order_value": 32819,
       "unique_customers": 43,
       "total_refunds": 9900,
       "new_customers": 32,
-      "returning_customers": 1,
+      "returning_customers": 2,
       "returning_customers_rate": 0.1,
-      "lost_revenue": 2094329.62,
-      "lost_orders": 23
+      "lost_revenue": 2139319.72,
+      "lost_orders": 25
     }
   ],
   "products": [
@@ -210,6 +210,15 @@
       "net_sales": 111540,
       "net_orders": 4,
       "gross_items_sold": 6,
+      "in_stock": true,
+      "stock_quantity": 0
+    },
+    {
+      "name": "Luxembourg Dış Mekan Servis Arabası",
+      "sku": "",
+      "net_sales": 110694,
+      "net_orders": 2,
+      "gross_items_sold": 2,
       "in_stock": true,
       "stock_quantity": 0
     },
@@ -254,15 +263,6 @@
       "sku": "",
       "net_sales": 59400,
       "net_orders": 2,
-      "gross_items_sold": 3,
-      "in_stock": true,
-      "stock_quantity": 0
-    },
-    {
-      "name": "Uten Silo Düzenleyici",
-      "sku": "",
-      "net_sales": 58938,
-      "net_orders": 3,
       "gross_items_sold": 3,
       "in_stock": true,
       "stock_quantity": 0
