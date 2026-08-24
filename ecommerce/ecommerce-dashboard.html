@@ -295,9 +295,23 @@ const A=cm[cm.length-2], B=cm[cm.length-1];
 const a=fn(A), b=fn(B);
 if(!a||a<=0||b==null) return ['',''];
 const d=(b-a)/a*100;
-return [(d>=0?'▲ ':'▼ ')+Math.abs(d).toFixed(0)+'% '+MN[+B.month.slice(5)]+' vs '+MN[+A.month.slice(5)], d>=0?'up':'down'];
+return [(d>=0?'▲ ':'▼ ')+Math.abs(d).toFixed(0)+'% '+MN[+B.month.slice(5)]+' vs '+MN[+A.month.slice(5)]+' · last 2 full months', d>=0?'up':'down'];
 }
-const tRev=trend(r=>r.revenue), tOrd=trend(r=>r.orders), tAov=trend(r=>r.average_order_value), tCust=trend(r=>r.unique_customers);
+const tRev=trend(r=>r.revenue), tOrd=trend(r=>r.orders), tAov=trend(r=>r.average_order_value);
+
+// How complete is the newest month? Data runs to the sync date (meta.generated).
+const gen=DATA.meta.generated||'';
+const genDay=+gen.slice(8,10)||0, genY=+gen.slice(0,4), genM=+gen.slice(5,7);
+const daysInMo=(genY&&genM)?new Date(genY,genM,0).getDate():30;
+const isPartial=(last.month===partialMo)&&genDay>0&&genDay<daysInMo;
+function paceSub(val,pick,fmt){
+if(!last.month) return '';
+if(!isPartial) return last.month+' · full month';
+const proj=val?val/genDay*daysInMo:0;
+const prev=cm[cm.length-1];
+const vs=prev?(' vs '+fmt(pick(prev))+' in '+MN[+prev.month.slice(5)]):'';
+return last.month+' · day '+genDay+' of '+daysInMo+' · on pace '+fmt(proj)+vs;
+}
 
 // Lost orders = pending + cancelled + failed checkouts (never became a sale).
 // Partly recoverable revenue, so RISING is bad → trend colors are inverted.
@@ -311,9 +325,12 @@ $('#kpis').innerHTML = [
 kpiCard('Revenue (period)', TLk(totalRevenue), tRev[0], tRev[1]),
 kpiCard('Orders (period)', num(totalOrders), tOrd[0], tOrd[1]),
 kpiCard('Avg Order Value', TL(avgAov), tAov[0], tAov[1]),
-kpiCard('This month revenue', TLk(last.revenue), (last.month||'')+' · partial'),
-kpiCard('This month orders', num(last.orders), (last.month||'')+' · partial'),
-kpiCard('Unique customers (mo.)', num(last.unique_customers), tCust[0]||last.month||'', tCust[1]),
+// Current-month cards: the sync only covers days 1..genDay, so show how far
+// through the month the data goes and a straight-line pace for the full month,
+// compared against the last COMPLETE month (never a full-vs-partial delta).
+kpiCard('This month revenue', TLk(last.revenue), paceSub(last.revenue, r=>r.revenue, TLk)),
+kpiCard('This month orders', num(last.orders), paceSub(last.orders, r=>r.orders, v=>num(Math.round(v)))),
+kpiCard('Unique customers (mo.)', num(last.unique_customers), paceSub(last.unique_customers, r=>r.unique_customers, v=>num(Math.round(v)))),
 hasLost
 ? kpiCard('Lost orders (period)', TLk(totalLost), num(totalLostOrders)+' orders · '+(tLost[0]||'failed/cancelled/pending'), tLostCls)
 : kpiCard('Lost orders (period)', '—', 'awaiting next sync'),
