@@ -76,17 +76,17 @@ footer{color:#475569;font-size:12px;text-align:center;margin-top:20px}
 // blocked — it is live and refreshes every run.
 // PLACEMENT SHIFT (Jul 2026 onward): Meta paid reach used to be ~99% Instagram, which is why FB paid reach sat
 // near zero. The "ROI -" campaign restructure moved heavily into Facebook/Threads/WhatsApp placements —
-// Instagram was 95.5% of Meta paid reach in July but only 48.5% in August, and FB paid reach went
-// 841 (Jun) -> 22,554 (Jul) -> 115,622 (Aug MTD). The Facebook|Paid Reach range below predates this shift and
+// Instagram was 95.5% of Meta paid reach in July but only 68.8% in August, and FB paid reach went
+// 841 (Jun) -> 22,554 (Jul) -> 190,788 (Aug MTD). The Facebook|Paid Reach range below predates this shift and
 // is now far too low; it needs recalibrating against the new placement mix before it means anything.
 const ACTUALS = {
   "Instagram|Organic Reach": {value: 440340, period: "Jul 2026", note: "Sharp drop from June's 1.38M \u2014 reach collapsed the week of Jul 13 when ad campaigns were paused (weekly organic: ~500k/wk in June \u2192 44\u201370k/wk mid-late July)."},
   "Instagram|Paid Reach":    {value: 553613, period: "Jul 2026", note: "July spend was cut to \u20ba73k (vs \u20ba160k in June) and campaigns paused mid-month."},
-  "Facebook|Paid Reach":     {value: 22554, period: "Jul 2026", note: "LIVE via Meta Ads (not license-blocked \u2014 only Facebook Insights is). FB-only paid reach, up 27x from June's 841 as the \"ROI -\" campaigns moved into Facebook placements. Aug MTD is already 115,622, so the goal range below is obsolete and needs recalibrating."},
+  "Facebook|Paid Reach":     {value: 22554, period: "Jul 2026", note: "LIVE via Meta Ads (not license-blocked \u2014 only Facebook Insights is). FB-only paid reach, up 27x from June's 841 as the \"ROI -\" campaigns moved into Facebook placements. Aug MTD (through 23rd) is 190,788, so the goal range below is obsolete and needs recalibrating."},
   "Facebook|Organic Reach":  {value: 305819, period: "Jun 2026", note: "Frozen at June \u2014 Facebook Insights blocked by Supermetrics license. Unique media viewers."},
   "LinkedIn|Organic Reach":  {value: 5782, period: "Jun 2026", note: "Frozen at June \u2014 LinkedIn Pages blocked by Supermetrics license. Impressions. NOTE: the marketing dashboard's li_page series carries a July figure (7,646 impressions) from the last successful pull before the block. This row is deliberately NOT advanced to it \u2014 5,782 does not match any li_page June metric, so the two were built from different definitions and cannot be reconciled until the license is restored."},
-  "Google|Branded Search Volume": {value: 20393, period: "Jul 2026", note: "Branded impressions via GSC; 2,243 branded clicks. 5th consecutive month below the March peak (32.4k)."},
-  "Google|Direct Traffic": {value: 4420, period: "Jul 2026", note: "Direct sessions (GA4), bot traffic from CN/SG excluded \u2014 series and goals recalibrated 2026-08 after discovering bot pollution."}
+  "Google|Branded Search Volume": {value: 20393, period: "Jul 2026", note: "Branded impressions via GSC; 2,243 branded clicks. 5th consecutive month below the March peak (32.4k). Aug month-to-date (through 23rd) is 16,518."},
+  "Google|Direct Traffic": {value: 3509, period: "Jul 2026", note: "Direct sessions (GA4), TURKIYE-ONLY basis as of 2026-08-24. A multi-country bot wave (US, Colombia, Brazil, Indonesia and more, each ~1 session per user) began in Aug 2026 and defeated the old China/Singapore-only filter \u2014 raw Aug Direct read 80,549 sessions vs 2,986 genuine Turkish ones. Jul on the old basis was 4,420; on the new basis it is 3,509. Turkiye-only ran 79-94% of the old series Jan-Jul, so the RANGE below (3,600/4,200/5,700) was calibrated ~10-20% high and should be lowered."}
 };
 
 // Baked-in monthly goal ranges — same for everyone, derived from 2026 actuals:
