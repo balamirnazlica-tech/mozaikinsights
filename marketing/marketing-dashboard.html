@@ -272,7 +272,7 @@ function renderKPIs(){
     if(!a||a<=0||b==null) return ['',''];
     const d=(b-a)/a*100;
     const good=invert?d<=0:d>=0;
-    return [(d>=0?'▲ ':'▼ ')+Math.abs(d).toFixed(0)+'% '+(MSHORT[mB]||mB)+' vs '+(MSHORT[mA]||mA), good?'up':'down'];
+    return [(d>=0?'▲ ':'▼ ')+Math.abs(d).toFixed(0)+'% '+(MSHORT[mB]||mB)+' vs '+(MSHORT[mA]||mA)+' · last 2 full months', good?'up':'down'];
   }
   const byMo=(k)=>(mo)=>sum(DATA.paid.filter(r=>r.month===mo),k);
   const byMoMeta=(k)=>(mo)=>sum(DATA.paid.filter(r=>r.month===mo&&r.channel==='Meta Ads'),k);
