@@ -78,6 +78,7 @@
     <button class="tab-btn active text-sm font-semibold px-4 py-2 rounded-lg" data-tab="overview">Overview</button>
     <button class="tab-btn text-sm font-semibold px-4 py-2 rounded-lg" data-tab="paid">Paid Ads</button>
     <button class="tab-btn text-sm font-semibold px-4 py-2 rounded-lg" data-tab="social">Brand &amp; Social</button>
+    <button class="tab-btn text-sm font-semibold px-4 py-2 rounded-lg" data-tab="outlet">Outlet</button>
   </div>
 
   <!-- OVERVIEW -->
@@ -174,6 +175,48 @@
     </div>
   </section>
 
+  <!-- OUTLET (catalogue) -->
+  <section data-panel="outlet" hidden>
+    <div class="card p-3 mb-4" style="background:#fff7ed;border-color:#fed7aa">
+      <p class="text-sm" style="color:#9a3412"><b>Mozaik Outlet is a catalogue, not a shop.</b> Its job is to put the range in front of people and hand warm interest to the sales team &mdash; so there is deliberately no basket, no checkout and no revenue on this tab. Success here means: how many people saw the catalogue, how far through it they got, and how many asked to be contacted. <span id="outletLive"></span></p>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4" id="outletCards"></div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+      <div class="card p-4 lg:col-span-2">
+        <h3 class="font-semibold mb-1">Catalogue reach vs ad spend <span class="text-slate-400 font-normal text-sm">&middot; monthly</span></h3>
+        <p class="text-xs text-slate-500 mb-3">Bars = visits to the catalogue. Line = what was spent driving them.</p>
+        <canvas id="outletTrend"></canvas>
+      </div>
+      <div class="card p-4">
+        <h3 class="font-semibold mb-1">How people arrive</h3>
+        <p class="text-xs text-slate-500 mb-3">Google Demand Gen dominates once it switches on in July.</p>
+        <canvas id="outletChannels"></canvas>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+      <div class="card p-4">
+        <h3 class="font-semibold mb-1">How far they get</h3>
+        <p class="text-xs text-slate-500 mb-3">Share of visitors who scroll the catalogue (bars) and average time on the page (line). Scroll is used instead of GA4&rsquo;s engagement rate &mdash; see Measurement health.</p>
+        <canvas id="outletEngage"></canvas>
+      </div>
+      <div class="card p-4">
+        <h3 class="font-semibold mb-1">Device</h3>
+        <p class="text-xs text-slate-500 mb-3">Almost entirely phones &mdash; the catalogue should be designed mobile-first.</p>
+        <canvas id="outletDevice"></canvas>
+      </div>
+      <div class="card p-4">
+        <h3 class="font-semibold mb-1">&#9888; Measurement health</h3>
+        <p class="text-xs text-slate-500 mb-3">What this tab can and cannot tell you yet.</p>
+        <div id="outletQuality" class="space-y-2"></div>
+      </div>
+    </div>
+    <div class="card p-4">
+      <h3 class="font-semibold mb-3">Outlet campaigns <span class="text-slate-400 font-normal text-sm">&middot; 2026 YTD</span></h3>
+      <div class="overflow-x-auto"><table id="outletCamp"><thead></thead><tbody></tbody></table></div>
+      <p class="text-xs text-slate-400 mt-2">Spend is real. Platform-reported clicks (122,279) far exceed GA4 visits (~86k) because Demand Gen counts engagements generously &mdash; treat GA4 visits as the honest arrival number and the click column as directional only.</p>
+    </div>
+  </section>
+
   <!-- INSIGHTS & ACTIONS -->
   <section data-panel="insights" hidden>
     <div class="card p-3 mb-4" style="background:#eff6ff;border-color:#bfdbfe">
@@ -234,6 +277,10 @@ const CAMP_LINKS={
 "ROI - Engagement - Mozaik Design ve Outlet":"https://www.facebook.com/adsmanager/manage/adsets?act=798265432580388&selected_campaign_ids=120251032454410323",
 "Instagram post: Bugün, ortak yaratıcı vizyonları...":"https://www.facebook.com/adsmanager/manage/adsets?act=798265432580388&selected_campaign_ids=120241054576600323"
 };
+// Mozaik Outlet (mozaikoutlet.com) - catalogue site, GA4 property 537316032.
+// Deliberately a separate const: the weekly refresh rebuilds the DATA line wholesale,
+// so anything living inside DATA would be lost on the next run.
+const OUTLET = {"meta":{"property":"537316032","site":"mozaikoutlet.com","generated":"2026-08-24","live":"GA4 property 537316032 (two sibling properties exist: 537255955 is empty, 537274619 is a near-identical twin). 98.4% Turkiye, no bot pollution. Launched May 2026. August is partial - through the 23rd."},"months":["2026-05","2026-06","2026-07","2026-08"],"traffic":[{"month":"2026-05","sessions":330,"users":224,"views":376,"avg_sec":114.6,"vps":1.14},{"month":"2026-06","sessions":4011,"users":3313,"views":4871,"avg_sec":117.7,"vps":1.21},{"month":"2026-07","sessions":36514,"users":29415,"views":45829,"avg_sec":66.6,"vps":1.26},{"month":"2026-08","sessions":44952,"users":38780,"views":52475,"avg_sec":73.4,"vps":1.17}],"engagement":[{"month":"2026-05","scroll_users":215,"contact_users":null,"form_starts":0},{"month":"2026-06","scroll_users":2671,"contact_users":null,"form_starts":0},{"month":"2026-07","scroll_users":17029,"contact_users":null,"form_starts":10},{"month":"2026-08","scroll_users":23945,"contact_users":23,"form_starts":6}],"spend":[{"month":"2026-05","meta":0,"google":0},{"month":"2026-06","meta":0,"google":12856},{"month":"2026-07","meta":0,"google":42556},{"month":"2026-08","meta":26268,"google":17462}],"channels":[{"month":"2026-05","Cross-network":0,"Paid Social":0,"Paid Search":0,"Direct":194,"Organic Social":115,"Organic Search":21,"Other":0},{"month":"2026-06","Cross-network":3,"Paid Social":2713,"Paid Search":99,"Direct":394,"Organic Social":245,"Organic Search":168,"Other":362},{"month":"2026-07","Cross-network":32354,"Paid Social":1569,"Paid Search":568,"Direct":909,"Organic Social":321,"Organic Search":484,"Other":517},{"month":"2026-08","Cross-network":30466,"Paid Social":0,"Paid Search":607,"Direct":592,"Organic Social":305,"Organic Search":206,"Other":12617}],"devices":[{"month":"2026-05","mobile":211,"desktop":116,"tablet":3},{"month":"2026-06","mobile":3573,"desktop":397,"tablet":57},{"month":"2026-07","mobile":34536,"desktop":1779,"tablet":68},{"month":"2026-08","mobile":43645,"desktop":1290,"tablet":101}],"campaigns":[{"campaign":"G: ROI - DGEN - Mozaik Outlet","channel":"Google Ads","spend":44241,"impressions":2042844,"clicks":108392},{"campaign":"ROI - Traffic - Mozaik Outlet","channel":"Meta Ads","spend":24871,"impressions":911788,"clicks":12828},{"campaign":"G: KTP - Mozaik Outlet - Website traffic-Search","channel":"Google Ads","spend":18592,"impressions":7235,"clicks":352},{"campaign":"G: ROI - SRC - Brand - Mozaik Design Outlet","channel":"Google Ads","spend":10041,"impressions":1337,"clicks":668},{"campaign":"ROI - Reach - Mozaik Outlet - Kuruçeşme","channel":"Meta Ads","spend":699,"impressions":85457,"clicks":26},{"campaign":"ROI - Engagement - Mozaik Design ve Outlet","channel":"Meta Ads","spend":698,"impressions":31087,"clicks":13}],"quality":[{"sev":"bad","head":"The catalogue's main CTA is not being measured","body":"reserve_click fires on essentially every page view (52,471 events vs 52,475 page views in August, and the same all the way back to June) - it is firing on page load, not on a click. Whatever the reserve button is actually doing, nobody can see it. This is the single highest-value fix: it is the hand-off from catalogue to sales team."},{"sev":"bad","head":"Ignore GA4's engagement rate here","body":"It reads 99% because the broken reserve_click is counted as a key event, so every session qualifies as engaged. The scroll-through figure on the left is the honest engagement measure until this is fixed."},{"sev":"warn","head":"Contact tracking only starts in August","body":"bize_ulasin_click first reported in August 2026 (23 people). May-July show no contact data at all, so hand-off history cannot be compared before then."},{"sev":"warn","head":"A quarter of August traffic is untagged","body":"11,854 August visits land in 'Unassigned' - campaign URLs are missing UTM tags, so that spend cannot be credited to a source."},{"sev":"info","head":"No Search Console property for mozaikoutlet.com","body":"Only mozaikdesign.com is connected, so branded search demand for Outlet is invisible. Adding the property in Search Console would light this up."}]};
 const campCell=c=>CAMP_LINKS[c]?'<a href="'+CAMP_LINKS[c]+'" target="_blank" rel="noopener" class="camp-link" title="Open in Meta Ads Manager">'+short(c)+' ↗</a>':short(c);
 
 // Months are "YYYY-MM" strings, which sort/compare correctly as plain strings.
@@ -534,12 +581,77 @@ function renderInsights(){
   $('#insightQuestions').innerHTML=qs.map(q=>'<div class="flex gap-2 items-start text-sm"><span>•</span><span class="text-slate-700">'+q+'</span></div>').join('');
 }
 
+function renderOutlet(){
+  const ml={'2026-05':'May','2026-06':'Jun','2026-07':'Jul','2026-08':'Aug'};
+  const T=OUTLET.traffic.filter(r=>inRange(r.month));
+  const E=OUTLET.engagement.filter(r=>inRange(r.month));
+  const S=OUTLET.spend.filter(r=>inRange(r.month));
+  const C=OUTLET.channels.filter(r=>inRange(r.month));
+  const V=OUTLET.devices.filter(r=>inRange(r.month));
+  const labels=T.map(r=>ml[r.month]||r.month);
+  const on=$('#outletLive'); if(on) on.textContent=OUTLET.meta.live;
+  if(!T.length){
+    $('#outletCards').innerHTML='<div class="card p-3 col-span-2 md:col-span-4 text-sm text-slate-500">No Outlet data in the selected months \u2014 the catalogue launched in May 2026.</div>';
+    ['outletTrend','outletChannels','outletEngage','outletDevice'].forEach(destroy);
+    $('#outletQuality').innerHTML=''; $('#outletCamp thead').innerHTML=''; $('#outletCamp tbody').innerHTML='';
+    return;
+  }
+  const sess=sum(T,'sessions'), users=sum(T,'users');
+  const spend=S.reduce((a,r)=>a+r.meta+r.google,0);
+  const scrollU=sum(E,'scroll_users');
+  const hasContact=E.some(r=>r.contact_users!=null);
+  const contact=E.reduce((a,r)=>a+(r.contact_users||0)+(r.form_starts||0),0);
+  const last=T[T.length-1];
+  const cards=[
+    kpiCard('Catalogue visits',num(sess),labels.length>1?labels[0]+'\u2013'+labels[labels.length-1]:labels[0]),
+    kpiCard('Unique visitors',num(users),'people who opened the catalogue'),
+    kpiCard('Ad spend',TLk(spend),'Meta + Google, Outlet campaigns only'),
+    kpiCard('Cost per visit',sess?TL(spend/sess):'\u2014','what one catalogue view costs'),
+    kpiCard('Scroll-through',users?pct(scrollU/users):'\u2014',num(scrollU)+' of '+num(users)+' scrolled'),
+    kpiCard('Avg time on catalogue',Math.round(last.avg_sec)+'s',(ml[last.month]||last.month)+' \u00b7 '+last.vps.toFixed(2)+' views/visit'),
+    hasContact?kpiCard('Sales hand-offs',num(contact),'contact clicks + form starts','text-slate-400')
+              :kpiCard('Sales hand-offs','\u2014','not tracked before Aug 2026','text-amber-600'),
+    (hasContact&&contact)?kpiCard('Cost per hand-off',TL(spend/contact),'measured hand-offs only \u2014 see health','text-amber-600')
+              :kpiCard('Cost per hand-off','\u2014','needs the reserve CTA fixed','text-amber-600')
+  ];
+  $('#outletCards').innerHTML=cards.join('');
+  destroy('outletTrend');
+  charts.outletTrend=new Chart($('#outletTrend'),{data:{labels,datasets:[
+    {type:'bar',label:'Catalogue visits',data:T.map(r=>r.sessions),backgroundColor:'#f97316',borderRadius:4,yAxisID:'y'},
+    {type:'line',label:'Ad spend',data:S.map(r=>conv(r.meta+r.google)),borderColor:'#0f172a',backgroundColor:'#0f172a',tension:.3,yAxisID:'y1'}]},
+    options:{plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:c=>c.dataset.label==='Ad spend'?c.dataset.label+': '+sym()+num(c.parsed.y):c.dataset.label+': '+num(c.parsed.y)}}},
+      scales:{y:{ticks:{callback:v=>num(v)}},y1:{position:'right',grid:{drawOnChartArea:false},ticks:{callback:v=>sym()+num(v)}}}}});
+  const CH=['Cross-network','Paid Social','Paid Search','Direct','Organic Social','Organic Search','Other'];
+  destroy('outletChannels');
+  charts.outletChannels=new Chart($('#outletChannels'),{type:'bar',data:{labels:C.map(r=>ml[r.month]||r.month),
+    datasets:CH.map((c,i)=>({label:c,data:C.map(r=>r[c]||0),backgroundColor:PALETTE[i%PALETTE.length],borderRadius:3}))},
+    options:{plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+num(c.parsed.y)}}},
+      scales:{x:{stacked:true},y:{stacked:true,ticks:{callback:v=>num(v)}}}}});
+  destroy('outletEngage');
+  charts.outletEngage=new Chart($('#outletEngage'),{data:{labels:E.map(r=>ml[r.month]||r.month),datasets:[
+    {type:'bar',label:'Scrolled the catalogue',data:E.map((r,i)=>{const u=T[i]?T[i].users:0;return u?+(r.scroll_users/u*100).toFixed(1):0;}),backgroundColor:'#16a34a',borderRadius:4,yAxisID:'y'},
+    {type:'line',label:'Avg seconds on page',data:T.map(r=>Math.round(r.avg_sec)),borderColor:'#7c3aed',backgroundColor:'#7c3aed',tension:.3,yAxisID:'y1'}]},
+    options:{plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:c=>c.dataset.label==='Avg seconds on page'?c.parsed.y+'s':c.parsed.y+'%'}}},
+      scales:{y:{max:100,ticks:{callback:v=>v+'%'}},y1:{position:'right',grid:{drawOnChartArea:false},ticks:{callback:v=>v+'s'}}}}});
+  const dv=['mobile','desktop','tablet'].map(k=>V.reduce((a,r)=>a+(r[k]||0),0));
+  destroy('outletDevice');
+  charts.outletDevice=new Chart($('#outletDevice'),{type:'doughnut',
+    data:{labels:['Mobile','Desktop','Tablet'],datasets:[{data:dv,backgroundColor:['#f97316','#2563eb','#94a3b8']}]},
+    options:{plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:c=>c.label+': '+num(c.parsed)+' ('+(dv.reduce((a,b)=>a+b,0)?(c.parsed/dv.reduce((a,b)=>a+b,0)*100).toFixed(1):0)+'%)'}}}}});
+  const sevc={bad:'background:#fee2e2;color:#b91c1c',warn:'background:#fef3c7;color:#92400e',info:'background:#e2e8f0;color:#475569'};
+  const sevl={bad:'Broken',warn:'Gap',info:'Missing source'};
+  $('#outletQuality').innerHTML=OUTLET.quality.map(q=>'<div class="text-xs"><span class="pill" style="'+sevc[q.sev]+'">'+sevl[q.sev]+'</span> <b class="text-slate-700">'+q.head+'</b><div class="text-slate-500 mt-0.5">'+q.body+'</div></div>').join('');
+  const cs=OUTLET.campaigns;
+  $('#outletCamp thead').innerHTML='<tr><th style="text-align:left">Campaign</th><th style="text-align:left">Channel</th><th>Spend</th><th>Impressions</th><th>Clicks</th><th>CPC</th></tr>';
+  $('#outletCamp tbody').innerHTML=cs.map(r=>'<tr><td style="text-align:left">'+campCell(r.campaign.replace(/^G: /,''))+'</td><td style="text-align:left" class="text-slate-500">'+r.channel+'</td><td>'+TL(r.spend)+'</td><td>'+num(r.impressions)+'</td><td>'+num(r.clicks)+'</td><td>'+(r.clicks?TL(r.spend/r.clicks):'\u2014')+'</td></tr>').join('');
+}
+
 let currentTab='overview';
 function show(tab){
   currentTab=tab;
   $$('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
   $$('[data-panel]').forEach(pp=>pp.hidden=pp.dataset.panel!==tab);
-  ({overview:renderOverview,paid:renderPaid,social:renderSocial,insights:renderInsights}[tab])();
+  ({overview:renderOverview,paid:renderPaid,social:renderSocial,outlet:renderOutlet,insights:renderInsights}[tab])();
 }
 function rerenderActive(){show(currentTab);}
 
