@@ -263,7 +263,7 @@ const money = v => sym()+FMT.format(Math.round(conv(v)||0));
 const moneyK = v => { v=conv(v||0); if(Math.abs(v)>=1e9) return sym()+(v/1e9).toFixed(2)+'B'; if(Math.abs(v)>=1e6) return sym()+(v/1e6).toFixed(2)+'M'; if(Math.abs(v)>=1e3) return sym()+(v/1e3).toFixed(0)+'k'; return sym()+Math.round(v); };
 const DEPT_COLOR = {Retail:'#3b82f6',Enterprise:'#10b981',Lighting:'#f59e0b',Marketing:'#a855f7'};
 
-let state = {metric:'revenue', range:'all', tab:'overview', selectedRep:null, repSort:'revenue', repDir:'desc', repQuery:'', repActiveOnly:false, deptFilter:'all', partnerRange:'all', partnerSort:'total', selectedPartner:null, customFrom:null, customTo:null};
+let state = {trendMode:'abs',metric:'revenue', range:'all', tab:'overview', selectedRep:null, repSort:'revenue', repDir:'desc', repQuery:'', repActiveOnly:false, deptFilter:'all', partnerRange:'all', partnerSort:'total', selectedPartner:null, customFrom:null, customTo:null};
 
 // "Jan 25" -> "2025-01" keys for the custom range month pickers
 const MONTH_KEYS=DATA.months.map(s=>{const[mon,yr]=s.split(' ');const mi=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].indexOf(mon)+1;return '20'+yr+'-'+String(mi).padStart(2,'0');});
@@ -329,7 +329,7 @@ function renderOverview(){
   return `
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
     <div class="card p-5 md:col-span-2">
-      <div class="flex justify-between mb-3"><h3 class="font-semibold">Monthly Trend by Department <span class="text-[10px] text-gray-500 font-normal">· hollow dotted tail = Q3 '26 forecast</span></h3><span class="text-xs text-gray-400 uppercase">${state.metric}</span></div>
+      <div class="flex items-start justify-between gap-3 mb-3"><h3 class="font-semibold min-w-0 flex-1">Monthly Trend by Department <span class="text-[10px] text-gray-500 font-normal">${state.trendMode==='pct'?"· share of each month's total":"· stacked · hollow dotted tail = Q3 '26 forecast"}</span></h3><div class="flex items-center gap-1.5 shrink-0"><span class="text-xs text-gray-400 uppercase mr-1">${state.metric}</span><button class="mini-toggle ${state.trendMode==='abs'?'on':''}" onclick="setTrendMode('abs')">Absolute</button><button class="mini-toggle ${state.trendMode==='pct'?'on':''}" onclick="setTrendMode('pct')">% Share</button></div></div>
       <canvas id="trendChart" height="110"></canvas>
     </div>
     <div class="card p-5">
@@ -406,38 +406,42 @@ function projectRestOfYear(){
 
 function drawOverviewCharts(){
   const mIdx=monthIdx();
-  const showFc=mIdx[mIdx.length-1]===DATA.months.length-1 && mIdx.length>=4;
+  const isPct = state.trendMode==='pct';
+  const showFc = !isPct && mIdx[mIdx.length-1]===DATA.months.length-1 && mIdx.length>=4;
   let labels=mIdx.map(i=>DATA.months[i]);
   if(showFc) labels=labels.concat(FC_MONTHS);
-  const datasets=Object.entries(DATA.departments).map(([n,d])=>({
-    label:n,data:mIdx.map(i=>d[state.metric][i]||0),
-    borderColor:DEPT_COLOR[n],backgroundColor:DEPT_COLOR[n]+'22',tension:.35,fill:true,borderWidth:2,pointRadius:3
+  const DEPTS=Object.entries(DATA.departments);
+  const monthTot=mIdx.map(i=>DEPTS.reduce((s,[,d])=>s+(d[state.metric][i]||0),0));
+  const datasets=DEPTS.map(([n,d])=>({
+    label:n,
+    data:mIdx.map((i,k)=> isPct ? (monthTot[k]? (d[state.metric][i]||0)/monthTot[k]*100 : 0) : (d[state.metric][i]||0)),
+    borderColor:DEPT_COLOR[n],backgroundColor:DEPT_COLOR[n]+'99',tension:.3,fill:true,borderWidth:1.5,pointRadius:2,stack:'a'
   }));
-  datasets.push({
-    label:'Total',data:mIdx.map(i=>Object.values(DATA.departments).reduce((s,d)=>s+(d[state.metric][i]||0),0)),
-    borderColor:'#e2e8f0',backgroundColor:'transparent',borderDash:[6,4],tension:.35,fill:false,borderWidth:2,pointRadius:2,order:0
-  });
   if(showFc){
     const pad=Array(mIdx.length-1).fill(null);
-    const deptFc={};
-    Object.entries(DATA.departments).forEach(([n,d])=>{
-      const arr=d[state.metric];
-      deptFc[n]=forecastArr(arr);
-      datasets.push({label:n+' forecast',data:pad.concat([arr[LAST_IDX]||0],deptFc[n]),
-        borderColor:DEPT_COLOR[n],backgroundColor:'transparent',borderDash:[3,4],tension:.35,fill:false,borderWidth:2,
-        pointRadius:4,pointBackgroundColor:'#070b17',pointBorderColor:DEPT_COLOR[n],pointBorderWidth:2});
+    DEPTS.forEach(([n,d])=>{
+      const arr=d[state.metric], fc=forecastArr(arr);
+      datasets.push({label:n+' forecast',data:pad.concat([arr[LAST_IDX]||0],fc),
+        borderColor:DEPT_COLOR[n],backgroundColor:DEPT_COLOR[n]+'55',borderDash:[3,4],tension:.3,fill:true,
+        borderWidth:1.5,pointRadius:3,pointBackgroundColor:'#070b17',pointBorderColor:DEPT_COLOR[n],pointBorderWidth:2,stack:'b'});
     });
-    const lastTotal=Object.values(DATA.departments).reduce((s,d)=>s+(d[state.metric][LAST_IDX]||0),0);
-    const totalFc=[0,1,2].map(i=>Object.keys(deptFc).reduce((s,n)=>s+deptFc[n][i],0));
-    datasets.push({label:'Total forecast',data:pad.concat([lastTotal],totalFc),
-      borderColor:'#e2e8f0',backgroundColor:'transparent',borderDash:[2,4],tension:.35,fill:false,borderWidth:2,
-      pointRadius:4,pointBackgroundColor:'#070b17',pointBorderColor:'#e2e8f0',pointBorderWidth:2,order:0});
   }
+  const stackTot=(c)=>c.chart.data.datasets.filter(d=>d.stack===c.dataset.stack).reduce((s,d)=>s+(+d.data[c.dataIndex]||0),0);
   charts.push(new Chart(document.getElementById('trendChart'),{type:'line',data:{labels,datasets},
-    options:{responsive:true,plugins:{legend:{labels:{color:'#cbd5e1',font:{size:11},filter:i=>!i.text.includes('forecast')}},
-    tooltip:{callbacks:{label:c=>c.dataset.label+': '+(state.metric==='revenue'?moneyK(c.parsed.y):FMT.format(c.parsed.y))+(c.dataset.label.includes('forecast')?' (projected)':'')}}},
-    scales:{x:{ticks:{color:'#64748b',font:{size:10}},grid:{color:'#1f2a44'}},
-    y:{ticks:{color:'#64748b',callback:v=>state.metric==='revenue'?moneyK(v):v},grid:{color:'#1f2a44'}}}}}));
+    options:{responsive:true,interaction:{mode:'index',intersect:false},
+    plugins:{legend:{labels:{color:'#cbd5e1',font:{size:11},filter:i=>!i.text.includes('forecast')}},
+      tooltip:{callbacks:{
+        label:c=>{
+          const fc=c.dataset.label.includes('forecast'), nm=c.dataset.label.replace(' forecast','');
+          if(isPct) return nm+': '+(c.parsed.y||0).toFixed(1)+'%';
+          const v=c.parsed.y||0, tot=stackTot(c), sh=tot?(v/tot*100):0;
+          return nm+': '+(state.metric==='revenue'?moneyK(v):FMT.format(v))+'  ·  '+sh.toFixed(1)+'%'+(fc?' (projected)':'');
+        },
+        footer:items=>{ if(isPct||!items.length) return ''; const tot=stackTot(items[0]);
+          return 'Total: '+(state.metric==='revenue'?moneyK(tot):FMT.format(tot)); }
+      }}},
+    scales:{x:{stacked:true,ticks:{color:'#64748b',font:{size:10}},grid:{color:'#1f2a44'}},
+      y:{stacked:true,beginAtZero:true,max:isPct?100:undefined,ticks:{color:'#64748b',callback:v=> isPct? v+'%' : (state.metric==='revenue'?moneyK(v):v)},grid:{color:'#1f2a44'}}}}}));
   const dt=deptTotals();
   charts.push(new Chart(document.getElementById('mixChart'),{type:'doughnut',
     data:{labels:dt.map(d=>d.name),datasets:[{data:dt.map(d=>d[state.metric]),backgroundColor:dt.map(d=>DEPT_COLOR[d.name]),borderWidth:0}]},
@@ -1009,7 +1013,8 @@ function drawPartnersCharts(){
 
 function selectPartner(n){const _y=window.scrollY;state.selectedPartner=(state.selectedPartner===n||n===null)?null:n;render();window.scrollTo({top:_y,left:0,behavior:'instant'});}
 
-function render(){
+function setTrendMode(m){if(state.trendMode===m)return;const _y=window.scrollY;state.trendMode=m;render();window.scrollTo({top:_y,left:0,behavior:'instant'});}
+  function render(){
   destroyCharts();
   renderKpis();
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===state.tab));
