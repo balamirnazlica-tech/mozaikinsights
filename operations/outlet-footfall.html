@@ -146,6 +146,87 @@
   .site-nav a.link.active{color:#e8ecf5;background:#16223d;box-shadow:inset 0 0 0 1px #233352}
 </style>
 <script src="/assets/auth.js"></script>
+
+<style>
+  .flt{background:#111120;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px 22px;margin-bottom:20px}
+  .flt-t{font-size:13.5px;font-weight:700;color:#818cf8;text-transform:uppercase;letter-spacing:.9px}
+  .flt-n{font-size:12.5px;color:#475569;margin:3px 0 14px}
+  .yr-filters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .yr-btn{padding:7px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#64748b;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+  .yr-btn:hover{border-color:rgba(129,140,248,.4);color:#818cf8}
+  .yr-btn.active{background:rgba(129,140,248,.15);border-color:#818cf8;color:#818cf8}
+  .rng{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .rng label{font-size:12px;color:#64748b;display:flex;gap:6px;align-items:center;text-transform:uppercase;letter-spacing:.6px}
+  .rng select{background:#0f172a;border:1px solid #1f2a44;color:#cbd5e1;border-radius:8px;padding:7px 9px;font-size:13px;color-scheme:dark}
+  .hr{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .hr-l{font-size:13px;color:#64748b;width:90px;text-align:right;flex:none}
+  .hr-bar{flex:1;background:rgba(255,255,255,.05);border-radius:4px;height:24px;overflow:hidden}
+  .hr-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:12px;font-weight:700;color:rgba(255,255,255,.75)}
+  .hr-n{font-size:13px;color:#475569;width:48px;flex:none}
+  .h260{height:260px;position:relative}
+  .empty{padding:22px 0;text-align:center;color:#475569;font-size:14px}
+  @media (max-width:680px){
+    .flt{padding:14px 14px}
+    .yr-btn{padding:5px 10px;font-size:11px}
+    .rng{gap:8px}.rng label{font-size:10px}.rng select{font-size:12px;padding:5px 7px}
+    .hr-l{width:56px;font-size:10px}.hr-bar{height:18px}.hr-fill{font-size:9px}.hr-n{width:34px;font-size:10px}
+    .h260{height:220px}
+  }
+</style>
+
+<style>
+  .flt{background:#111120;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px 22px;margin-bottom:20px}
+  .flt-t{font-size:13.5px;font-weight:700;color:#818cf8;text-transform:uppercase;letter-spacing:.9px}
+  .flt-n{font-size:12.5px;color:#475569;margin:3px 0 14px}
+  .yr-filters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .yr-btn{padding:7px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#64748b;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+  .yr-btn:hover{border-color:rgba(129,140,248,.4);color:#818cf8}
+  .yr-btn.active{background:rgba(129,140,248,.15);border-color:#818cf8;color:#818cf8}
+  .rng{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .rng label{font-size:12px;color:#64748b;display:flex;gap:6px;align-items:center;text-transform:uppercase;letter-spacing:.6px}
+  .rng select{background:#0f172a;border:1px solid #1f2a44;color:#cbd5e1;border-radius:8px;padding:7px 9px;font-size:13px;color-scheme:dark}
+  .hr{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .hr-l{font-size:13px;color:#64748b;width:90px;text-align:right;flex:none}
+  .hr-bar{flex:1;background:rgba(255,255,255,.05);border-radius:4px;height:24px;overflow:hidden}
+  .hr-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:12px;font-weight:700;color:rgba(255,255,255,.75)}
+  .hr-n{font-size:13px;color:#475569;width:48px;flex:none}
+  .h260{height:260px;position:relative}
+  .empty{padding:22px 0;text-align:center;color:#475569;font-size:14px}
+  @media (max-width:680px){
+    .flt{padding:14px 14px}
+    .yr-btn{padding:5px 10px;font-size:11px}
+    .rng{gap:8px}.rng label{font-size:10px}.rng select{font-size:12px;padding:5px 7px}
+    .hr-l{width:56px;font-size:10px}.hr-bar{height:18px}.hr-fill{font-size:9px}.hr-n{width:34px;font-size:10px}
+    .h260{height:220px}
+  }
+</style>
+
+<style>
+  .flt{background:#111120;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px 22px;margin-bottom:20px}
+  .flt-t{font-size:13.5px;font-weight:700;color:#818cf8;text-transform:uppercase;letter-spacing:.9px}
+  .flt-n{font-size:12.5px;color:#475569;margin:3px 0 14px}
+  .yr-filters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .yr-btn{padding:7px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#64748b;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+  .yr-btn:hover{border-color:rgba(129,140,248,.4);color:#818cf8}
+  .yr-btn.active{background:rgba(129,140,248,.15);border-color:#818cf8;color:#818cf8}
+  .rng{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .rng label{font-size:12px;color:#64748b;display:flex;gap:6px;align-items:center;text-transform:uppercase;letter-spacing:.6px}
+  .rng select{background:#0f172a;border:1px solid #1f2a44;color:#cbd5e1;border-radius:8px;padding:7px 9px;font-size:13px;color-scheme:dark}
+  .hr{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .hr-l{font-size:13px;color:#64748b;width:90px;text-align:right;flex:none}
+  .hr-bar{flex:1;background:rgba(255,255,255,.05);border-radius:4px;height:24px;overflow:hidden}
+  .hr-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:12px;font-weight:700;color:rgba(255,255,255,.75)}
+  .hr-n{font-size:13px;color:#475569;width:48px;flex:none}
+  .h260{height:260px;position:relative}
+  .empty{padding:22px 0;text-align:center;color:#475569;font-size:14px}
+  @media (max-width:680px){
+    .flt{padding:14px 14px}
+    .yr-btn{padding:5px 10px;font-size:11px}
+    .rng{gap:8px}.rng label{font-size:10px}.rng select{font-size:12px;padding:5px 7px}
+    .hr-l{width:56px;font-size:10px}.hr-bar{height:18px}.hr-fill{font-size:9px}.hr-n{width:34px;font-size:10px}
+    .h260{height:220px}
+  }
+</style>
 </head>
 <body>
 
@@ -179,81 +260,236 @@
 
 <div class="page">
 
-<div class="kpis">
-  <div class="kpi" style="--c:#818cf8"><div class="kpi-l">Toplam Ziyaret</div><div class="kpi-v">469</div><div class="kpi-n">Ekim 2025&ndash;Agustos 2026</div></div>
-  <div class="kpi" style="--c:#38bdf8"><div class="kpi-l">Aylik Ortalama</div><div class="kpi-v">43</div><div class="kpi-n">11 aktif ay</div></div>
-  <div class="kpi" style="--c:#f472b6"><div class="kpi-l">Pik Ay</div><div class="kpi-v">Kas</div><div class="kpi-n">80 ziyaret (acilis)</div></div>
-  <div class="kpi" style="--c:#fb923c"><div class="kpi-l">Pik Gun</div><div class="kpi-v">Cmt</div><div class="kpi-n">161 ziyaret (%34)</div></div>
-  <div class="kpi" style="--c:#facc15"><div class="kpi-l">Benzersiz Ziyaretci</div><div class="kpi-v">424</div><div class="kpi-n">Isimle tanimlanan</div></div>
-  <div class="kpi" style="--c:#34d399"><div class="kpi-l">Tekrar Eden</div><div class="kpi-v">30</div><div class="kpi-n">2+ kez gelen musteri</div></div>
-</div>
-
-<div class="r2">
-  <div class="cd">
-    <div class="ct">Aylik Ziyaret Trendi</div>
-    <div class="cs">Ekim 2025 &ndash; Agustos 2026 &mdash; Kasim acilis piki</div>
-    <div class="h260"><canvas id="oMonthly"></canvas></div>
+  <div class="flt">
+    <div class="flt-t">Tarih Filtresi</div>
+    <div class="flt-n" id="fltNote">&nbsp;</div>
+    <div class="yr-filters" id="presets"></div>
+    <div class="rng">
+      <label>Baslangic <select id="fFrom"></select></label>
+      <label>Bitis <select id="fTo"></select></label>
+      <button class="yr-btn" id="fReset">Sifirla</button>
+    </div>
   </div>
-  <div class="cd">
-    <div class="ct">Haftanin Gunleri</div>
-    <div class="cs">Cumartesi acik ara en yogun (161 &mdash; %34)</div>
-    <div class="h260"><canvas id="oDow"></canvas></div>
-  </div>
-</div>
 
-<div class="cd">
-  <div class="ct">Aylik Yogunluk</div>
-  <div class="cs">Kasim (80) zirve, Nisan (22) en sakin</div>
-  <div style="padding-top:8px">
-    <div class="hr"><div class="hr-l">Eki 25</div><div class="hr-bar"><div class="hr-fill" style="width:49%;background:linear-gradient(90deg,#fb923c,#facc15)">39</div></div><div class="hr-n">39</div></div><div class="hr"><div class="hr-l">Kas 25</div><div class="hr-bar"><div class="hr-fill" style="width:100%;background:linear-gradient(90deg,#34d399,#818cf8)">80</div></div><div class="hr-n">80</div></div><div class="hr"><div class="hr-l">Ara 25</div><div class="hr-bar"><div class="hr-fill" style="width:64%;background:linear-gradient(90deg,#818cf8,#38bdf8)">51</div></div><div class="hr-n">51</div></div><div class="hr"><div class="hr-l">Oca 26</div><div class="hr-bar"><div class="hr-fill" style="width:49%;background:linear-gradient(90deg,#fb923c,#facc15)">39</div></div><div class="hr-n">39</div></div><div class="hr"><div class="hr-l">Sub 26</div><div class="hr-bar"><div class="hr-fill" style="width:38%;background:linear-gradient(90deg,#fb923c,#facc15)">30</div></div><div class="hr-n">30</div></div><div class="hr"><div class="hr-l">Mar 26</div><div class="hr-bar"><div class="hr-fill" style="width:51%;background:linear-gradient(90deg,#818cf8,#38bdf8)">41</div></div><div class="hr-n">41</div></div><div class="hr"><div class="hr-l">Nis 26</div><div class="hr-bar"><div class="hr-fill" style="width:28%;background:linear-gradient(90deg,#fb923c,#facc15)">22</div></div><div class="hr-n">22</div></div><div class="hr"><div class="hr-l">May 26</div><div class="hr-bar"><div class="hr-fill" style="width:46%;background:linear-gradient(90deg,#fb923c,#facc15)">37</div></div><div class="hr-n">37</div></div><div class="hr"><div class="hr-l">Haz 26</div><div class="hr-bar"><div class="hr-fill" style="width:64%;background:linear-gradient(90deg,#818cf8,#38bdf8)">51</div></div><div class="hr-n">51</div></div><div class="hr"><div class="hr-l">Tem 26</div><div class="hr-bar"><div class="hr-fill" style="width:45%;background:linear-gradient(90deg,#fb923c,#facc15)">36</div></div><div class="hr-n">36</div></div><div class="hr"><div class="hr-l">Agu 26</div><div class="hr-bar"><div class="hr-fill" style="width:54%;background:linear-gradient(90deg,#fb923c,#facc15)">43</div></div><div class="hr-n">43</div></div>
-  </div>
-</div>
+  <div class="kpis" id="kpis"></div>
 
-<div class="r2" style="margin-top:20px">
+  <div class="r2">
+    <div class="cd">
+      <div class="ct">Aylik Ziyaret Trendi</div><div class="cs" id="csTrend">&nbsp;</div>
+      <div class="h260"><canvas id="cTrend"></canvas></div>
+    </div>
+    <div class="cd">
+      <div class="ct">Haftanin Gunleri</div><div class="cs" id="csDow">&nbsp;</div>
+      <div class="h260"><canvas id="cDow"></canvas></div>
+    </div>
+  </div>
+
+  <div class="r2">
+    <div class="cd">
+      <div class="ct">Mevsimsellik &mdash; Ay Bazinda</div><div class="cs" id="csSeason">&nbsp;</div>
+      <div class="h260"><canvas id="cSeason"></canvas></div>
+    </div>
+    <div class="cd">
+      <div class="ct">Yil Karsilastirmasi</div><div class="cs" id="csCmp">&nbsp;</div>
+      <div class="h260"><canvas id="cCmp"></canvas></div>
+    </div>
+  </div>
+
   <div class="cd">
-    <div class="ct">Tekrar Eden Ziyaretciler</div>
-    <div class="cs">2+ kez gelen 30 musteri &mdash; sadakat adaylari</div>
+    <div class="ct">Aylik Yogunluk</div><div class="cs" id="csBars">&nbsp;</div>
+    <div id="bars" style="padding-top:8px"></div>
+  </div>
+
+  <div class="cd">
+    <div class="ct">Top 20 Ziyaretci</div><div class="cs" id="csTop">&nbsp;</div>
     <div style="overflow-x:auto"><table>
-      <thead><tr><th>#</th><th>Isim</th><th>Ziyaret</th></tr></thead>
-      <tbody>
-        <tr><td class="rank">1</td><td class="big">Pinar Koselioren</td><td class="num">6</td></tr>
-        <tr><td class="rank">2</td><td class="big">Esra Asikoglu</td><td class="num">5</td></tr>
-        <tr><td class="rank">3</td><td class="big">Onur Ersoy</td><td class="num">4</td></tr>
-        <tr><td class="rank">4</td><td class="big">Idil Ozdogan</td><td class="num">4</td></tr>
-        <tr><td class="rank">5</td><td class="big">Nazli Tonuk Capan</td><td class="num">3</td></tr>
-        <tr><td class="rank">6</td><td class="big">Sera Somay</td><td class="num">3</td></tr>
-        <tr><td class="rank">7</td><td class="big">Eren Gundemir</td><td class="num">3</td></tr>
-        <tr><td class="rank">8</td><td class="big">Hande Cicek</td><td class="num">3</td></tr>
-        <tr><td class="rank">9</td><td class="big">Murat Ozgumus</td><td class="num">2</td></tr>
-        <tr><td class="rank">10</td><td class="big">Kadriye Uckardes</td><td class="num">2</td></tr>
-        <tr><td class="rank">11</td><td class="big">Sercan Kolan</td><td class="num">2</td></tr>
-        <tr><td class="rank">12</td><td class="big">Meltem Mutlu Guler</td><td class="num">2</td></tr>
-        <tr><td class="rank">13</td><td class="big">Yasam Talu</td><td class="num">2</td></tr>
-        <tr><td class="rank">14</td><td class="big">Deren Eripek</td><td class="num">2</td></tr>
-        <tr><td class="rank">15</td><td class="big">Seyyare Ozbasli</td><td class="num">2</td></tr>
-      </tbody>
+      <thead><tr><th>#</th><th>Isim</th><th>Ziyaret</th><th>Profil</th></tr></thead>
+      <tbody id="topBody"></tbody>
     </table></div>
   </div>
-  <div class="cd">
-    <div class="ct">Outlet Ozet Bulgular</div>
-    <div class="cs">Ilk 10 ayin one cikanlari</div>
-    <ul style="margin-top:10px;padding-left:18px;color:#cbd5e1;font-size:13.5px;line-height:1.9">
-      <li><strong>438 ziyaret</strong> ilk 11 ayda &mdash; aylik ~43 ziyaret istikrarli seyir.</li>
-      <li><strong>Kasim acilis piki (80)</strong> sonrasi normallesme; ilkbaharda hafif yavaslamaa.</li>
-      <li><strong>Cumartesi tek basina ziyaretlerin %36'si</strong> (161) &mdash; hafta sonu personel planlamasi kritik.</li>
-      <li><strong>Pazar kapali</strong> (0 kayit).</li>
-      <li><strong>424 benzersiz isim</strong>, 30 tekrar eden &mdash; erken sadakat sinyali.</li>
-      <li>Kayitlarin neredeyse tamami <strong>Simge</strong> tarafindan karsilandi.</li>
-    </ul>
+
+  <div class="ins">
+    <h3>Secilen Donem &mdash; Ozet</h3>
+    <ul id="insights"></ul>
   </div>
+
 </div>
-
-</div><!-- /page -->
-
 <script>
-const oG={color:'rgba(255,255,255,0.06)'};
-new Chart('oMonthly',{type:'line',data:{labels:['Eki 25', 'Kas 25', 'Ara 25', 'Oca 26', 'Sub 26', 'Mar 26', 'Nis 26', 'May 26', 'Haz 26', 'Tem 26', 'Agu 26'],datasets:[{data:[39, 80, 51, 39, 30, 41, 22, 37, 51, 36, 43],borderColor:'#818cf8',backgroundColor:'rgba(129,140,248,0.15)',fill:true,tension:0.35,pointRadius:4,pointBackgroundColor:'#38bdf8',borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:oG,ticks:{color:'#64748b',font:{size:10}}},y:{grid:oG,ticks:{color:'#64748b'},beginAtZero:true}}}});
-new Chart('oDow',{type:'bar',data:{labels:['Pzt','Sal','Car','Per','Cum','Cmt','Paz'],datasets:[{data:[54, 62, 56, 77, 59, 161, 0],backgroundColor:['#818cf8cc','#818cf8cc','#818cf8cc','#818cf8cc','#818cf8cc','#facc15cc','#33415588'],borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#64748b'}},y:{grid:oG,ticks:{color:'#64748b'},beginAtZero:true}}}});
+const ROWS = [["2025-10-18", "Murat Özgümüş", "Simge"], ["2025-10-18", "Cansu Kuş", "Simge"], ["2025-10-18", "Mert Bostancıoğlu", "Simge"], ["2025-10-18", "Ensar Altun", "Simge"], ["2025-10-18", "Doruk İşeri", "Simge"], ["2025-10-18", "Pınar Günden", "Simge"], ["2025-10-18", "Seval Taşar", "Simge"], ["2025-10-18", "Cihan Ömer Koç", "Simge"], ["2025-10-21", "Sena Çebi", "Simge"], ["2025-10-21", "Nisa Akar", "Simge"], ["2025-10-22", "Kadriye Saral", "Simge"], ["2025-10-22", "İsmail Boybey", "Simge"], ["2025-10-22", "Banu Üzel", "Simge"], ["2025-10-23", "Tuğçe Rizeli Bilgi", "Simge"], ["2025-10-23", "Okan Ergene", "Simge"], ["2025-10-23", "Ecem Ezmeci", "Simge"], ["2025-10-23", "Kadriye Üçkardeş", "Simge"], ["2025-10-23", "Alara Çilek", "Simge"], ["2025-10-23", "Benal Ayna", "Simge"], ["2025-10-24", "Mina Suhioğlu", "Simge"], ["2025-10-24", "Seda Zaim", "Simge"], ["2025-10-24", "Berrin Gökçen", "Simge"], ["2025-10-24", "Kadriye Üçkardeş", "Simge"], ["2025-10-27", "Hasan Sayın", "Simge"], ["2025-10-27", "Burcu Çilingir", "Simge"], ["2025-10-27", "Dilek Tekin", "Simge"], ["2025-10-30", "Hamza Ermiş", "Simge"], ["2025-10-30", "Eda Erdoğmuş", "Simge"], ["2025-10-30", "Olcay Darılmaz", "Simge"], ["2025-10-30", "Nuray Oto", "Simge"], ["2025-10-30", "Sercan Kolan", "Simge"], ["2025-10-30", "Nazlı Tönük Çapan", "Simge"], ["2025-10-30", "Yağmur Metin", "Simge"], ["2025-10-30", "Sinem Aydın", "Simge"], ["2025-10-30", "Mustafa Nurdoğdu", "Simge"], ["2025-10-31", "Ali Ömer Erener", "Simge"], ["2025-10-31", "Sait Ensarioğlu", "Simge"], ["2025-10-31", "Zehra Sertaç Haznedaroğlu", "Simge"], ["2025-10-31", "Meltem Mutlu Güler", "Simge"], ["2025-11-01", "Yasemin-Yücel Mermer", "Simge"], ["2025-11-01", "Oktay Oygut", "Simge"], ["2025-11-01", "İpek Ayaydın", "Simge"], ["2025-11-01", "Dicle Hökenek", "Simge"], ["2025-11-01", "Zeki Kadirbeyoğlu", "Simge"], ["2025-11-01", "Engin Aksu", "Simge"], ["2025-11-05", "İnci Eviner", "Simge"], ["2025-11-05", "Hikmet Mizanoğlu", "Simge"], ["2025-11-05", "Barış Ural", "Simge"], ["2025-11-07", "Meliz Seçkin- Batuhan Seçkin", "Simge"], ["2025-11-07", "Yaşam Talu", "Simge"], ["2025-11-07", "Birsel Saygılı", "Simge"], ["2025-11-08", "Soner Tatlıdede- Aslı Tatlıdede", "Simge"], ["2025-11-08", "Reyhan Baylan", "Simge"], ["2025-11-08", "Gözde Mintaş", "Simge"], ["2025-11-08", "Mücahit Enes Deniz", "Simge"], ["2025-11-08", "Dilay Yurga", "Simge"], ["2025-11-08", "Ahmet Kınacı", "Simge"], ["2025-11-08", "Tuvana Müftoğlu", "Simge"], ["2025-11-08", "Deren Eripek", "Simge"], ["2025-11-11", "Berrin Akar", "Simge"], ["2025-11-11", "Murat Özgümüş", "Simge"], ["2025-11-11", "Yağmur Tanrısevsin", "Simge"], ["2025-11-13", "Cihan Çömez", "Simge"], ["2025-11-13", "Elif Çolak", "Simge"], ["2025-11-13", "Berru Hanım", "Simge"], ["2025-11-14", "Cengiz Ersay", "Simge"], ["2025-11-14", "Sena Tolanay", "Simge"], ["2025-11-14", "Gila Bardavit", "Simge"], ["2025-11-15", "Koret Rakoş", "Simge"], ["2025-11-15", "Seyyare Özbaşlı", "Simge"], ["2025-11-15", "Berna Suyabatmaz", "Simge"], ["2025-11-15", "Ayda Özçelik", "Simge"], ["2025-11-15", "Hilal Mungan", "Simge"], ["2025-11-15", "Nazlı Güler", "Simge"], ["2025-11-15", "Şebnem Özağ", "Simge"], ["2025-11-15", "İzgi Erik", "Simge"], ["2025-11-15", "Metehan Yılmaz", "Simge"], ["2025-11-15", "Evin Işınman", "Simge"], ["2025-11-17", "Figen Tunçsav", "Simge"], ["2025-11-17", "Leyla Günal", "Simge"], ["2025-11-17", "Cevher Özyavuz", "Simge"], ["2025-11-17", "Neslihan Dörtbudak", "Simge"], ["2025-11-20", "Yavuz Sade", "Simge"], ["2025-11-20", "Meltem Ersöz", "Simge"], ["2025-11-20", "Emine Gülçelik", "Simge"], ["2025-11-20", "Eda Can", "Simge"], ["2025-11-20", "Muhammet Taşlı", "Simge"], ["2025-11-20", "İlkay Gürpınar", "Simge"], ["2025-11-21", "Beyhan Eskiyapan", "Simge"], ["2025-11-21", "Esra Ayın", "Simge"], ["2025-11-21", "Nurgün Bayazıt", "Simge"], ["2025-11-21", "Beyza Uçak", "Simge"], ["2025-11-22", "Selden Erden", "Simge"], ["2025-11-22", "Nilhan Ayan", "Simge"], ["2025-11-22", "Didem Erkan -Çağrı Erkan", "Simge"], ["2025-11-22", "Ecem Kıroğlu", "Simge"], ["2025-11-25", "İlyas Fevzi İnanç", "Simge"], ["2025-11-25", "Serpil Şenyüz", "Simge"], ["2025-11-25", "Onur Özesen", "Simge"], ["2025-11-25", "Aslı Şişman", "Simge"], ["2025-11-26", "Mehtap Kuşcullu", "Simge"], ["2025-11-26", "Gamze Çamoğlu", "Simge"], ["2025-11-26", "Buğra Karaca", "Simge"], ["2025-11-27", "Ahmet Kansu", "Simge"], ["2025-11-27", "Tuğba Develi", "Simge"], ["2025-11-27", "Ayşegül Meriç", "Simge"], ["2025-11-27", "Zeynep Kozanoğlu", "Simge"], ["2025-11-27", "Zeynep Denizci", "Simge"], ["2025-11-27", "Serenay Vahapzade", "Simge"], ["2025-11-27", "Esin Top Güngörmüş", "Simge"], ["2025-11-28", "Yasemin Keskintürk", "Simge"], ["2025-11-28", "İpek Güngör", "Simge"], ["2025-11-28", "Ece Geyik", "Simge"], ["2025-11-28", "Serra Levi", "Simge"], ["2025-11-29", "Çağla Denizaltı", "Simge"], ["2025-11-29", "Esma Yağanoğlu", "Simge"], ["2025-11-29", "Can Hakko", "Simge"], ["2025-11-29", "Suzan Gülenç", "Simge"], ["2025-11-29", "Can Gün Gökkaya", "Simge"], ["2025-12-01", "Dilara Dişli", "Simge"], ["2025-12-01", "Ecem Tulunay", "Simge"], ["2025-12-01", "Baver Karasu", "Simge"], ["2025-12-01", "Yağmur Kıran", "Simge"], ["2025-12-03", "İrem Güney", "Simge"], ["2025-12-03", "Hakan Ezer", "Simge"], ["2025-12-03", "Ahmet Kansu-Serhan Gürkan", "Simge"], ["2025-12-03", "Suzan Keleş", "Simge"], ["2025-12-06", "Mehmet Üstek", "Simge"], ["2025-12-06", "İlhan Tari", "Simge"], ["2025-12-06", "Nilüfer Fazlıoğlu", "Simge"], ["2025-12-06", "Sercan Saral", "Simge"], ["2025-12-06", "Işıl Tok", "Simge"], ["2025-12-06", "Nazan Üntürkün", "Simge"], ["2025-12-06", "Elif ısın", "Simge"], ["2025-12-06", "Barış Polat", "Simge"], ["2025-12-06", "Yaşam Talu", "Simge"], ["2025-12-09", "Nazlı Özdemir - Burcu Özdemir", "Simge"], ["2025-12-12", "Gülçin Sertelli", "Simge"], ["2025-12-12", "Esra Aşıkoğlu", "Simge"], ["2025-12-12", "Sera Somay", "Simge"], ["2025-12-12", "Asude Şengül", "Simge"], ["2025-12-13", "İnci Yurt", "Simge"], ["2025-12-13", "Afra Şen", "Simge"], ["2025-12-13", "Ece Nakışçı", "Simge"], ["2025-12-15", "Merve Tatar", "Simge"], ["2025-12-15", "Eren Gündemir", "Simge"], ["2025-12-15", "Sedef Öztürk Ilgaz", "Simge"], ["2025-12-17", "Esra Aşıkoğlu", "Simge"], ["2025-12-17", "Sara Rezvani", "Simge"], ["2025-12-17", "Başak Çelik", "Simge"], ["2025-12-17", "Mehmet Tunç", "Simge"], ["2025-12-18", "Irmak Seküçoğlu", "Simge"], ["2025-12-18", "Yeşim Önal", "Simge"], ["2025-12-20", "Neşecan Çekici", "Simge"], ["2025-12-20", "Brenda Peso", "Simge"], ["2025-12-20", "Selma Gülbeyaz", "Simge"], ["2025-12-20", "Selin Erçakır", "Simge"], ["2025-12-20", "Ceylan Yaman", "Simge"], ["2025-12-20", "Murat Akar", "Simge"], ["2025-12-20", "Semiha Akar", "Simge"], ["2025-12-24", "Pınar Üstündağ", "Simge"], ["2025-12-24", "Mercan Tara", "Simge"], ["2025-12-25", "Nazlı Oğuz", "Simge"], ["2025-12-25", "Enes Kazancı", "Simge"], ["2025-12-25", "Meltem Mutlu Güler", "Simge"], ["2025-12-27", "Deniz Tunca", "Simge"], ["2025-12-27", "Tanem Eren Belen", "Simge"], ["2025-12-27", "Sabiş İpek", "Simge"], ["2025-12-30", "Beyza Kaya", "Simge"], ["2025-12-30", "Büşra Parmaksız", "Simge"], ["2026-01-02", "Özlem Tan", "Simge"], ["2026-01-02", "Busem Zümrüt", "Simge"], ["2026-01-03", "Serdar Keskin", "Simge"], ["2026-01-03", "Senem Kurutluoğlu", "Simge"], ["2026-01-03", "Işıl Ulaştı", "Simge"], ["2026-01-03", "Ekin Pehlivan", "Simge"], ["2026-01-10", "Sevcan Polat", "Simge"], ["2026-01-10", "Melike Özmen", "Simge"], ["2026-01-10", "Hakan Çil", "Simge"], ["2026-01-10", "Özge Sabuncu", "Simge"], ["2026-01-10", "Burak Yakupoğlu", "Simge"], ["2026-01-10", "Elif Kut", "Simge"], ["2026-01-10", "Oral Yalman", "Simge"], ["2026-01-10", "Deren Eripek", "Simge"], ["2026-01-10", "Emre Mermer", "Simge"], ["2026-01-10", "Alptuğ Çopuroğlu", "Simge"], ["2026-01-13", "Reza Far", "Simge"], ["2026-01-13", "Oğuzhan Şen", "Simge"], ["2026-01-13", "Aysun Telli", "Simge"], ["2026-01-13", "Hande Peker", "Simge"], ["2026-01-13", "Mehmet Tunç", "Simge"], ["2026-01-23", "Nevin Çiner", "Simge"], ["2026-01-23", "Duygu Çalışkan", "Simge"], ["2026-01-23", "Elif Demirkaya", "Simge"], ["2026-01-23", "Derya Akşit", "Simge"], ["2026-01-23", "Reyhan Şefkatlioğlu", "Simge"], ["2026-01-26", "Emine Köksoy", "Simge"], ["2026-01-26", "Zuhal Devres", "Simge"], ["2026-01-26", "Duygu Polat", "Simge"], ["2026-01-26", "Doruk Çınar", "Simge"], ["2026-01-26", "Çiğdem Akyürek", "Simge"], ["2026-01-31", "Gizem Çak", "Simge"], ["2026-01-31", "Nazlı Tönük Çapan", "Simge"], ["2026-01-31", "Halil Can Bengisu", "Simge"], ["2026-01-31", "Murat Özel", "Simge"], ["2026-01-31", "Serkan Gümüş", "Simge"], ["2026-01-31", "Onur Coşan", "Simge"], ["2026-01-31", "Pınar Köseliören", "Simge"], ["2026-01-31", "Berk Yalçın", "Simge"], ["2026-02-03", "Zeynep Karahan", "Simge"], ["2026-02-03", "Emel Şanoğlu", "Simge"], ["2026-02-03", "Simay Gülcan", "Simge"], ["2026-02-03", "Emre Tümer", "Simge"], ["2026-02-07", "Selim Dayıoğlu", "Simge"], ["2026-02-07", "Hande Özbek", "Simge"], ["2026-02-07", "Esra Tuncer", "Simge"], ["2026-02-14", "Nazlı Tönük Çapan", "Simge"], ["2026-02-14", "Derya Demirbüker", "Simge"], ["2026-02-14", "Fernaz Şar", "Simge"], ["2026-02-14", "Pınar Köseliören", "Simge"], ["2026-02-14", "Okan Gürkan", "Simge"], ["2026-02-14", "Ahmet Doğu İpek", "Simge"], ["2026-02-21", "Ece Tüzünoğlu", "Simge"], ["2026-02-21", "Figen Ceyhan", "Simge"], ["2026-02-21", "Gizem Özmen", "Simge"], ["2026-02-21", "Tolga Sencer", "Simge"], ["2026-02-21", "Dilan Dilek Sancak", "Simge"], ["2026-02-21", "Duygu Polat", "Simge"], ["2026-02-21", "Sinem Arslan", "Simge"], ["2026-02-21", "Laçin Doğan", "Simge"], ["2026-02-21", "Tayfun Üner", "Simge"], ["2026-02-21", "Hayal Üner", "Simge"], ["2026-02-25", "Çağdaş Kaya", "Simge"], ["2026-02-25", "Hazal Benli", "Simge"], ["2026-02-25", "Seren İlkan", "Simge"], ["2026-02-25", "Tuğçe Yiğit", "Simge"], ["2026-02-25", "Sercan Kolan", "Simge"], ["2026-02-25", "Gökçe Erdemir", "Simge"], ["2026-02-25", "Cansu Ünal", "Simge"], ["2026-03-05", "Nazlı Yılancıoğlu", "Simge"], ["2026-03-05", "Pınar Köseliören", "Simge"], ["2026-03-05", "Nilüfer Fazıloğlu", "Simge"], ["2026-03-05", "Tuğba Oğuz", "Simge"], ["2026-03-05", "Sinan Danışman", "Simge"], ["2026-03-07", "Serra Söyüncü", "Simge"], ["2026-03-07", "Hasan Günsever", "Simge"], ["2026-03-07", "Ceren Gönenç", "Simge"], ["2026-03-07", "Pınar Meral", "Simge"], ["2026-03-09", "Sera Somay", "Simge"], ["2026-03-09", "Ceyla Borovalı", "Simge"], ["2026-03-09", "Aycan Köktürk", "Simge"], ["2026-03-11", "Yeşim Aktaş", "Simge"], ["2026-03-11", "Seda Türkoğlu", "Simge"], ["2026-03-11", "Ece Kavuk", "Simge"], ["2026-03-11", "Eren Gündemir", "Simge"], ["2026-03-11", "Pınar Köseliören", "Simge"], ["2026-03-12", "Serra Göney", "Simge"], ["2026-03-12", "Muzaffer Erdem", "Simge"], ["2026-03-12", "Ceren Gönenç", "Simge"], ["2026-03-12", "Mahmut Karaman", "Simge"], ["2026-03-14", "Birgül Tümay", "Simge"], ["2026-03-14", "Gökhan Gökçe", "Simge"], ["2026-03-14", "Özlem Ekinci", "Simge"], ["2026-03-14", "İrem Kaydu", "Simge"], ["2026-03-17", "Seda Bakan", "Simge"], ["2026-03-17", "Ceyda Taşpolatoğlu", "Simge"], ["2026-03-17", "Ayşe Egemen", "Simge"], ["2026-03-23", "Leyla Başot", "Simge"], ["2026-03-23", "Duygu Çalışkan", "Simge"], ["2026-03-23", "Müge Çevik", "Simge"], ["2026-03-23", "Güney Baran", "Simge"], ["2026-03-26", "Tuvana Kolcuoğlu", "Simge"], ["2026-03-26", "Ezgi Bayraktar", "Simge"], ["2026-03-26", "Ayşenur Özkan", "Simge"], ["2026-03-26", "Saadet Yavuz", "Simge"], ["2026-03-26", "Onur Eraybar", "Simge"], ["2026-03-31", "Ece Kamçılı", "Simge"], ["2026-03-31", "Semra Çelik", "Simge"], ["2026-03-31", "Sercan Selim Karakuş", "Simge"], ["2026-03-31", "Arzu Çetintaş", "Simge"], ["2026-04-01", "Uraz Tekgöz", "Simge"], ["2026-04-01", "Rengin Atik", "Simge"], ["2026-04-01", "Arda Gürcüoğlu", "Simge"], ["2026-04-18", "Hande Çiçek", "Simge"], ["2026-04-18", "İlke Ünal Balaban", "Simge"], ["2026-04-18", "Zeynep Yuvakuran", "Simge"], ["2026-04-18", "Lara Usluer", "Simge"], ["2026-04-22", "Elif Demirkaya", "Simge"], ["2026-04-22", "Mehtap Umut", "Simge"], ["2026-04-22", "Mercan Tara", "Simge"], ["2026-04-22", "Merve Cerrahoğlu", "Simge"], ["2026-04-25", "Serap Yelten", "Simge"], ["2026-04-25", "Nurhan Cesur", "Simge"], ["2026-04-25", "Şebnem Özağ", "Simge"], ["2026-04-25", "Özle Özyurt", "Simge"], ["2026-04-25", "Kadir Çebi", "Simge"], ["2026-04-28", "Teoman Gülsoy", "Simge"], ["2026-04-28", "Erin Bilmen", "Simge"], ["2026-04-28", "Bahar Erce", "Simge"], ["2026-04-29", "Aydan Yalçın", "Simge"], ["2026-04-29", "Ülkü Ekinci", "Simge"], ["2026-04-29", "Hande Çiçek", "Simge"], ["2026-05-02", "Aydan Yalçın", "Simge"], ["2026-05-02", "Abdullah Şimşek", "Simge"], ["2026-05-02", "Berat Naderi", "Simge"], ["2026-05-02", "Seda Değişmez", "Simge"], ["2026-05-02", "Nur Özel Yılmaz", "Simge"], ["2026-05-04", "Sedef Canbaz Oskay", "Simge"], ["2026-05-04", "Aytül Zengin", "Simge"], ["2026-05-04", "Dilanur Dağlı", "Simge"], ["2026-05-04", "Hande Doğan", "Simge"], ["2026-05-04", "Eren Gündemir", "Simge"], ["2026-05-04", "Esra Aşıkoğlu", "Simge"], ["2026-05-04", "Selin Necipoğlu", "Simge"], ["2026-05-05", "Mehmet Şükrü Toma", "Simge"], ["2026-05-05", "Vivian Elvaşvili", "Simge"], ["2026-05-05", "Enes Karaman", "Simge"], ["2026-05-07", "Ezgi Toros", "Simge"], ["2026-05-07", "Gülseren Onanç", "Simge"], ["2026-05-07", "Şeyda Eroğlu", "Simge"], ["2026-05-08", "Mustafa Tez", "Simge"], ["2026-05-08", "Berfu Şeyhler", "Simge"], ["2026-05-08", "Sultan Erçan", "Simge"], ["2026-05-11", "Gökçe Kulak", "Simge"], ["2026-05-11", "Nurdan Matraş", "Simge"], ["2026-05-12", "Onur Ersoy", "Simge"], ["2026-05-12", "Lale Kısagün", "Simge"], ["2026-05-15", "Alpay Hakgör", "Simge"], ["2026-05-15", "Caner Karaoğul", "Simge"], ["2026-05-15", "Dila Tanrıverdi", "Simge"], ["2026-05-20", "Osman Kılıç", "Simge"], ["2026-05-20", "Ebrar Memişoğlu", "Simge"], ["2026-05-22", "Sevgi Oymak", "Simge"], ["2026-05-22", "Güngör Sana", "Simge"], ["2026-05-22", "Seda Tabanlı Bektaş", "Simge"], ["2026-05-22", "Erinç Ulutürk", "Simge"], ["2026-05-22", "Fehmi Danış", "Simge"], ["2026-05-23", "Berrak Selek", "Simge"], ["2026-05-23", "Haluk yıldırım", "Simge"], ["2026-06-01", "Emre Aktaş", "Simge"], ["2026-06-01", "Selvinaz Başaran", "Simge"], ["2026-06-01", "Begüm Cana Akgünay", "Simge"], ["2026-06-06", "Alpay Hakgör", "Simge"], ["2026-06-06", "Nadide Ayhan", "Simge"], ["2026-06-06", "Melek Akkaş", "Simge"], ["2026-06-06", "Birgül Öztürk", "Simge"], ["2026-06-11", "Selena Özsezikli", "Simge"], ["2026-06-11", "Ozan Sakin", "Simge"], ["2026-06-12", "Asuman Hekim", "Simge"], ["2026-06-12", "Sara Rezvani", "Simge"], ["2026-06-13", "Sera Somay", "Simge"], ["2026-06-13", "Selin Ayanoğlu", "Simge"], ["2026-06-13", "Mustafa Yazıcı", "Simge"], ["2026-06-13", "Yalçın Ayaydın", "Simge"], ["2026-06-13", "Ezgi Yurtbay", "Simge"], ["2026-06-13", "Öykü Ünal", "Simge"], ["2026-06-13", "Nazlı Çelik", "Simge"], ["2026-06-13", "Mert Ünsal", "Simge"], ["2026-06-15", "Hande Taçyıldız", "Simge"], ["2026-06-15", "Yasemin Takış", "Simge"], ["2026-06-16", "Fara Nejat", "Simge"], ["2026-06-16", "Ayşegül Kuşaksız", "Simge"], ["2026-06-16", "Ege Yuyar", "Simge"], ["2026-06-16", "Güneş Gezici", "Simge"], ["2026-06-16", "Zeynep Margarita", "Simge"], ["2026-06-17", "Berke Özcan", "Simge"], ["2026-06-18", "Sarp Özer", "Simge"], ["2026-06-20", "Dicle Ardıç", "Simge"], ["2026-06-20", "Hande Çiçek", "Simge"], ["2026-06-20", "Seda Yalçınkaya", "Simge"], ["2026-06-23", "Emre Özkan", "Simge"], ["2026-06-23", "Esra Yazıcı", "Simge"], ["2026-06-24", "Reyhan Tin", "Simge"], ["2026-06-24", "Erdinç Arık", "Simge"], ["2026-06-24", "Helin Erişik", "Simge"], ["2026-06-24", "Zeynep Paker", "Simge"], ["2026-06-25", "Filiz Seven", "Simge"], ["2026-06-25", "Şebnem Karacaaslan", "Simge"], ["2026-06-25", "Ceren Kaşga", "Simge"], ["2026-06-26", "Esra Aşıkoğlu", "Simge"], ["2026-06-27", "Kerem Piker", "Simge"], ["2026-06-27", "Nazlı Özlenir", "Simge"], ["2026-06-27", "Levent Yıldırım", "Simge"], ["2026-06-27", "Engin Çetinkaya", "Simge"], ["2026-06-29", "Mert Uysal", "Simge"], ["2026-06-29", "Sena Güven", "Simge"], ["2026-06-29", "Onur Ersoy", "Simge"], ["2026-06-29", "Dila Tanrıverdi", "Simge"], ["2026-06-30", "Kerim Kürkçü", "Simge"], ["2026-06-30", "Emek Taşer", "Simge"], ["2026-07-02", "Özer Kaya", "Simge"], ["2026-07-02", "Metin Mızraklı", "Simge"], ["2026-07-03", "Erdinç Arık", "Simge"], ["2026-07-03", "Ali Temel", "Simge"], ["2026-07-07", "Hedi", "Simge"], ["2026-07-07", "Yiğit Baştürk", "Simge"], ["2026-07-08", "Deniz Şahbaz", "Simge"], ["2026-07-08", "İdil Elveriş", "Simge"], ["2026-07-09", "Esra Peker", "Simge"], ["2026-07-10", "İpek Cıncıkçı", "Simge"], ["2026-07-10", "Vahap Avşar", "Simge"], ["2026-07-10", "Nilgün Küçükbıçak", "Simge"], ["2026-07-10", "Lesar Kaya", "Simge"], ["2026-07-11", "Ilgın Erbaş", "Simge"], ["2026-07-11", "İdil Özdoğan", "Simge"], ["2026-07-11", "Nazlı Özkan", "Simge"], ["2026-07-21", "Merve Aslan", "Simge"], ["2026-07-21", "Volkan Artuğ", "Simge"], ["2026-07-22", "Emre Fuat Mirap", "Simge"], ["2026-07-22", "Asuman Ayan", "Simge"], ["2026-07-23", "Esra Çelik", "Simge"], ["2026-07-23", "Ayşegül Kuşaksız", "Simge"], ["2026-07-24", "Nevra Merkezli", "Simge"], ["2026-07-25", "Altan Başaran", "Simge"], ["2026-07-25", "Şaziye Töre", "Simge"], ["2026-07-25", "Ayten Paşayiğit", "Simge"], ["2026-07-27", "İbrahim Eren", "Simge"], ["2026-07-27", "İdil Özdoğan", "Simge"], ["2026-07-27", "Kerem Piker", "Simge"], ["2026-07-28", "Şafak Çak - Aymin Meral", "Simge"], ["2026-07-28", "Cüneyt Ali Turgut", "Simge"], ["2026-07-30", "Burçak Altun", "Simge"], ["2026-07-30", "Serkan Ergenç", "Simge"], ["2026-07-30", "Serap Kayhan", "Simge"], ["2026-07-30", "Pınar Köseliören", "Simge"], ["2026-07-30", "Namık Tanık", "Simge"], ["2026-08-01", "İdil Özdoğan", "Simge"], ["2026-08-01", "Ece Hakarar", "Simge"], ["2026-08-01", "Begüm Kuseyri", "Simge"], ["2026-08-01", "Volkan Çavdarlı", "Simge"], ["2026-08-03", "Çağ Günaçar", "Simge"], ["2026-08-03", "Elmon Pekmez", "Simge"], ["2026-08-04", "Pınar Meral", "Simge"], ["2026-08-04", "Füsun Özcan", "Simge"], ["2026-08-06", "Melike Menemenli", "Simge"], ["2026-08-07", "Murat İlter", "Simge"], ["2026-08-07", "Emel Ünsal", "Simge"], ["2026-08-07", "Erşad Sevinç", "Simge"], ["2026-08-08", "Pınar Köseliören", "Simge"], ["2026-08-08", "Togay Bayrak", "Simge"], ["2026-08-10", "Tuğba Özküçük", "Simge"], ["2026-08-10", "Abdullah Tütüncü", "Simge"], ["2026-08-10", "Buse Üçer", "Simge"], ["2026-08-10", "Tolga Keleş", "Simge"], ["2026-08-10", "Aslı Esin", "Simge"], ["2026-08-11", "Onur Ersoy", "Simge"], ["2026-08-11", "Zekiye Güney", "Simge"], ["2026-08-11", "Nur Karabal", "Simge"], ["2026-08-11", "Şükran-Bülent Şahin", "Simge"], ["2026-08-13", "Başak Konuşur", "Simge"], ["2026-08-14", "Nilay İnce", "Simge"], ["2026-08-15", "Merve Çelikkol", "Simge"], ["2026-08-15", "Serra Erdal", "Simge"], ["2026-08-18", "Şen Can Doğu", "Simge"], ["2026-08-18", "Seval Taşer - Dila Taşer", "Simge"], ["2026-08-18", "Merve Benice", "Simge"], ["2026-08-18", "Ali Yıldırım", "Simge"], ["2026-08-18", "İdil Özdoğan", "Simge"], ["2026-08-19", "Onur Ersoy", "Simge"], ["2026-08-19", "Esra Aşıkoğlu", "Simge"], ["2026-08-19", "Mügem Selimata", "Simge"], ["2026-08-19", "Naz Yasun", "Simge"], ["2026-08-20", "Şule Karagülle", "Simge"], ["2026-08-20", "Ayşin Özkan", "Simge"], ["2026-08-20", "Emirhan Menekşeoğlu", "Simge"], ["2026-08-20", "Seyyare Özbaşlı", "Simge"], ["2026-08-20", "Aslı Atay", "Simge"], ["2026-08-20", "Ece Ulus", "Simge"], ["2026-08-21", "Fatoş Sel", "Simge"]];
+const STORE = 'outlet';
+const MO=['Oca','Sub','Mar','Nis','May','Haz','Tem','Agu','Eyl','Eki','Kas','Ara'];
+const DA=['Pzt','Sal','Car','Per','Cum','Cmt','Paz'];
+const G={color:'rgba(255,255,255,0.05)'};
+const REPS=['Simge'];
+const GENERIC=['bir bayan','bir cift','bir bey','iki bayan','iki bey','bir aile','bir grup'];
+
+function fold(s){s=(s||'').toString();s=s.replace(/İ/g,'i').replace(/I/g,'ı');s=s.toLowerCase();
+  return s.replace(/ı/g,'i').replace(/ş/g,'s').replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ö/g,'o').replace(/ç/g,'c').trim();}
+function tc(s){return (s||'').split(/\s+/).filter(Boolean).map(w=>w[0].toUpperCase()+w.slice(1)).join(' ');}
+function mkey(iso){return iso.slice(0,7);}
+function mlabel(k){const [y,m]=k.split('-');return MO[+m-1]+' '+y.slice(2);}
+function monthsBetween(a,b){const out=[];let [y,m]=a.split('-').map(Number);const [ey,em]=b.split('-').map(Number);
+  while(y<ey||(y===ey&&m<=em)){out.push(y+'-'+String(m).padStart(2,'0'));m++;if(m>12){m=1;y++;}}return out;}
+
+const ALL_MONTHS = (()=>{const ks=ROWS.map(r=>mkey(r[0])).sort();return monthsBetween(ks[0],ks[ks.length-1]);})();
+const YEARS=[...new Set(ROWS.map(r=>r[0].slice(0,4)))].sort();
+let FROM=ALL_MONTHS[0], TO=ALL_MONTHS[ALL_MONTHS.length-1];
+let charts=[];
+
+function buildControls(){
+  const p=document.getElementById('presets');
+  const defs=[{k:'all',t:'Tumu'}].concat(YEARS.slice().reverse().map(y=>({k:y,t:y})))
+    .concat([{k:'l3',t:'Son 3 ay'},{k:'l6',t:'Son 6 ay'},{k:'l12',t:'Son 12 ay'}]);
+  p.innerHTML=defs.map(d=>'<button class="yr-btn" data-p="'+d.k+'">'+d.t+'</button>').join('');
+  p.querySelectorAll('button').forEach(b=>b.onclick=()=>applyPreset(b.dataset.p));
+  const f=document.getElementById('fFrom'), t=document.getElementById('fTo');
+  const opts=ALL_MONTHS.map(k=>'<option value="'+k+'">'+mlabel(k)+'</option>').join('');
+  f.innerHTML=opts; t.innerHTML=opts;
+  f.onchange=()=>{FROM=f.value; if(FROM>TO){TO=FROM;} render();};
+  t.onchange=()=>{TO=t.value; if(TO<FROM){FROM=TO;} render();};
+  document.getElementById('fReset').onclick=()=>applyPreset('all');
+}
+function applyPreset(k){
+  const last=ALL_MONTHS[ALL_MONTHS.length-1];
+  if(k==='all'){FROM=ALL_MONTHS[0];TO=last;}
+  else if(k==='l3'||k==='l6'||k==='l12'){const n=+k.slice(1);const i=Math.max(0,ALL_MONTHS.length-n);FROM=ALL_MONTHS[i];TO=last;}
+  else {const ms=ALL_MONTHS.filter(m=>m.startsWith(k));FROM=ms[0];TO=ms[ms.length-1];}
+  render(k);
+}
+function activePreset(k){
+  document.querySelectorAll('#presets button').forEach(b=>b.classList.toggle('active',b.dataset.p===k));
+}
+function guessPreset(){
+  const last=ALL_MONTHS[ALL_MONTHS.length-1];
+  if(FROM===ALL_MONTHS[0]&&TO===last) return 'all';
+  for(const y of YEARS){const ms=ALL_MONTHS.filter(m=>m.startsWith(y));if(ms.length&&FROM===ms[0]&&TO===ms[ms.length-1])return y;}
+  for(const n of [3,6,12]){const i=Math.max(0,ALL_MONTHS.length-n);if(FROM===ALL_MONTHS[i]&&TO===last)return 'l'+n;}
+  return null;
+}
+function kpi(c,l,v,n){return '<div class="kpi" style="--c:'+c+'"><div class="kpi-l">'+l+'</div><div class="kpi-v">'+v+'</div><div class="kpi-n">'+n+'</div></div>';}
+
+function render(preset){
+  document.getElementById('fFrom').value=FROM;
+  document.getElementById('fTo').value=TO;
+  activePreset(preset!==undefined?preset:guessPreset());
+  const months=monthsBetween(FROM,TO);
+  const inRange=ROWS.filter(r=>{const k=mkey(r[0]);return k>=FROM&&k<=TO;});
+  const rangeTxt=mlabel(FROM)+(FROM===TO?'':' \u2013 '+mlabel(TO));
+  document.getElementById('fltNote').textContent=rangeTxt+' \u00b7 '+inRange.length.toLocaleString('tr-TR')+' ziyaret \u00b7 '+months.length+' ay';
+  charts.forEach(c=>c.destroy()); charts=[];
+  if(!inRange.length){
+    document.getElementById('kpis').innerHTML='';
+    document.getElementById('bars').innerHTML='<div class="empty">Bu donemde kayit yok.</div>';
+    document.getElementById('topBody').innerHTML='';
+    document.getElementById('insights').innerHTML='<li>Secilen donemde ziyaret kaydi bulunmuyor.</li>';
+    ['csTrend','csDow','csBars','csTop','csYear','csRep','csSeason','csCmp'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='';});
+    return;
+  }
+  // series
+  const mc={}; months.forEach(m=>mc[m]=0);
+  const dc=[0,0,0,0,0,0,0];
+  const vis={}, raw={}, repc={};
+  REPS.forEach(r=>repc[r]=0);
+  inRange.forEach(r=>{
+    mc[mkey(r[0])]=(mc[mkey(r[0])]||0)+1;
+    const d=new Date(r[0]+'T00:00:00'); dc[(d.getDay()+6)%7]++;
+    const nm=r[1];
+    if(nm){const k=fold(nm); vis[k]=(vis[k]||0)+1; raw[k]=raw[k]||{}; raw[k][nm]=(raw[k][nm]||0)+1;}
+    const st=r[2]||'';
+    st.split(/[-,&+\/]/).forEach(tok=>{const f=fold(tok);REPS.forEach(rp=>{if(f&&f.startsWith(fold(rp).slice(0,5)))repc[rp]++;});});
+  });
+  const mVals=months.map(m=>mc[m]||0);
+  const activeMonths=mVals.filter(v=>v>0).length;
+  const total=inRange.length;
+  const peakI=mVals.indexOf(Math.max(...mVals));
+  const minI=(()=>{let bi=-1,bv=Infinity;mVals.forEach((v,i)=>{if(v>0&&v<bv){bv=v;bi=i;}});return bi;})();
+  const peakD=dc.indexOf(Math.max(...dc));
+  const uniq=Object.keys(vis).length;
+  const rep2=Object.values(vis).filter(v=>v>=2).length;
+  const avg=activeMonths?Math.round(total/activeMonths):0;
+
+  const shift=(k)=>{const [y,m]=k.split('-');return (+y-1)+'-'+m;};
+  const pFrom=shift(FROM), pTo=shift(TO);
+  const prev=ROWS.filter(r=>{const k=mkey(r[0]);return k>=pFrom&&k<=pTo;}).length;
+  const prevTxt=prev? (mlabel(pFrom)+(pFrom===pTo?'':' – '+mlabel(pTo))+': '+prev+' ('+(total>=prev?'+':'−')+Math.abs(Math.round((total/prev-1)*100))+'%)') : rangeTxt;
+  document.getElementById('kpis').innerHTML=
+    kpi('#818cf8','Toplam Ziyaret',total.toLocaleString('tr-TR'),prevTxt)+
+    kpi('#38bdf8','Aylik Ortalama',avg,activeMonths+' aktif ay')+
+    kpi('#f472b6','Pik Ay',mlabel(months[peakI]),mVals[peakI]+' ziyaret')+
+    kpi('#fb923c','Pik Gun',DA[peakD],dc[peakD]+' ziyaret (%'+Math.round(dc[peakD]/total*100)+')')+
+    kpi('#facc15','Benzersiz Ziyaretci',uniq.toLocaleString('tr-TR'),'Isimle tanimlanan')+
+    kpi('#34d399','Tekrar Eden',rep2.toLocaleString('tr-TR'),'2+ kez gelen musteri');
+
+  // trend
+  document.getElementById('csTrend').textContent=rangeTxt+' \u00b7 pik '+mlabel(months[peakI])+' ('+mVals[peakI]+')';
+  charts.push(new Chart('cTrend',{type:'line',data:{labels:months.map(mlabel),datasets:[{data:mVals,borderColor:'#818cf8',backgroundColor:'rgba(129,140,248,0.15)',fill:true,tension:.35,pointRadius:4,pointBackgroundColor:'#38bdf8',borderWidth:2}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:G,ticks:{color:'#64748b',font:{size:10},maxRotation:0,autoSkip:true}},y:{grid:G,ticks:{color:'#64748b'},beginAtZero:true}}}}));
+
+  // weekday
+  document.getElementById('csDow').textContent=DA[peakD]+' en yogun ('+dc[peakD]+' \u2014 %'+Math.round(dc[peakD]/total*100)+')';
+  charts.push(new Chart('cDow',{type:'bar',data:{labels:DA,datasets:[{data:dc,backgroundColor:dc.map((v,i)=>i===peakD?'#facc15cc':(v?'#818cf8cc':'#33415588')),borderRadius:6}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#64748b'}},y:{grid:G,ticks:{color:'#64748b'},beginAtZero:true}}}}));
+
+  if(document.getElementById('cYear')){
+    const yrs=[...new Set(months.map(m=>m.slice(0,4)))];
+    const yv=yrs.map(y=>months.reduce((s,m,i)=>s+(m.startsWith(y)?mVals[i]:0),0));
+    document.getElementById('csYear').textContent=yrs.join(' \u00b7 ')+' \u2014 secilen aylar';
+    charts.push(new Chart('cYear',{type:'line',data:{labels:yrs,datasets:[{data:yv,borderColor:'#818cf8',backgroundColor:'rgba(129,140,248,.15)',fill:true,tension:.35,pointRadius:5,pointBackgroundColor:'#38bdf8',borderWidth:2}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:G,ticks:{color:'#64748b'}},y:{grid:G,ticks:{color:'#64748b'},beginAtZero:true}}}}));
+  }
+  if(document.getElementById('cRep')){
+    const names=REPS.filter(r=>repc[r]>0);
+    document.getElementById('csRep').textContent=names.map(n=>fold(n)==='betul'?'Betul':n).map((n,i)=>n+' ('+repc[names[i]]+')').join(' \u00b7 ')+' \u2014 ortak karsilanan ziyaretler her ikisine sayilir';
+    charts.push(new Chart('cRep',{type:'doughnut',data:{labels:names.map(n=>n+' ('+repc[n]+')'),datasets:[{data:names.map(n=>repc[n]),backgroundColor:['#818cf8','#34d399','#fb923c'],borderWidth:0}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'bottom',labels:{color:'#64748b',boxWidth:10,font:{size:11}}},
+        tooltip:{callbacks:{label:c=>{const t=c.dataset.data.reduce((a,b)=>a+b,0);return ' '+c.label+' \u00b7 %'+(c.parsed/t*100).toFixed(1);}}}}}}));
+  }
+
+  // seasonality (month-of-year within range) + year-over-year comparison
+  const soy=new Array(12).fill(0);
+  months.forEach((m,i)=>{soy[+m.slice(5,7)-1]+=mVals[i];});
+  const sMax=Math.max(...soy), sPeak=soy.indexOf(sMax);
+  document.getElementById('csSeason').textContent='Secilen donemdeki tum yillar toplami · '+MO[sPeak]+' en yogun ('+sMax+')';
+  charts.push(new Chart('cSeason',{type:'bar',data:{labels:MO,datasets:[{data:soy,backgroundColor:soy.map((v,i)=>i===sPeak?'#34d399bb':(v?'#818cf899':'#33415588')),borderRadius:6}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#64748b',font:{size:10}}},y:{grid:G,ticks:{color:'#64748b'},beginAtZero:true}}}}));
+
+  const cmpYears=[...new Set(months.map(m=>m.slice(0,4)))];
+  const PALETTE=['#818cf8','#34d399','#fb923c','#f472b6','#38bdf8'];
+  const cmpSets=cmpYears.map((y,yi)=>({label:y,data:MO.map((_,mi)=>{const k=y+'-'+String(mi+1).padStart(2,'0');const idx=months.indexOf(k);return idx<0?null:mVals[idx];}),
+    borderColor:PALETTE[yi%PALETTE.length],backgroundColor:'transparent',tension:.35,pointRadius:3,borderWidth:2,spanGaps:false}));
+  document.getElementById('csCmp').textContent=cmpYears.join(' vs ')+' · ayni aylarin karsilastirmasi';
+  charts.push(new Chart('cCmp',{type:'line',data:{labels:MO,datasets:cmpSets},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#64748b',boxWidth:12,font:{size:11}}}},scales:{x:{grid:G,ticks:{color:'#64748b',font:{size:10}}},y:{grid:G,ticks:{color:'#64748b'},beginAtZero:true}}}}));
+
+  // monthly bars
+  const mx=Math.max(...mVals);
+  document.getElementById('csBars').textContent=mlabel(months[peakI])+' ('+mVals[peakI]+') zirve'+(minI>=0?', '+mlabel(months[minI])+' ('+mVals[minI]+') en sakin':'');
+  document.getElementById('bars').innerHTML=months.map((m,i)=>{
+    const v=mVals[i], w=mx?Math.round(v/mx*100):0;
+    const grad=(i===peakI)?'#34d399,#818cf8':(v<=mx*0.5?'#fb923c,#facc15':'#818cf8,#38bdf8');
+    return '<div class="hr"><div class="hr-l">'+mlabel(m)+'</div><div class="hr-bar"><div class="hr-fill" style="width:'+w+'%;background:linear-gradient(90deg,'+grad+')">'+(v||'')+'</div></div><div class="hr-n">'+v+'</div></div>';
+  }).join('');
+
+  // top visitors
+  const top=Object.entries(vis).sort((a,b)=>b[1]-a[1]).slice(0,20)
+    .map(([k,c])=>{const variants=raw[k]||{};const disp=Object.keys(variants).sort((a,b)=>variants[b]-variants[a])[0]||k;return [tc(fold(disp)),c,k];});
+  document.getElementById('csTop').textContent=uniq.toLocaleString('tr-TR')+' benzersiz isimden \u2014 isim varyasyonlari birlestirildi';
+  document.getElementById('topBody').innerHTML=top.map((t,i)=>{
+    const generic=GENERIC.includes(t[2]);
+    const badge=generic?'<span class="b bo">Genel kayit</span>':(t[1]>=Math.max(3,top[0][1]*0.4)?'<span class="b bg">VIP &#11088;</span>':'<span class="b bv">Bireysel</span>');
+    return '<tr><td class="rank">'+(i+1)+'</td><td class="big">'+t[0]+'</td><td class="num">'+t[1]+'</td><td>'+badge+'</td></tr>';
+  }).join('');
+
+  const topSum=top.reduce((s,t)=>s+t[1],0);
+  document.getElementById('insights').innerHTML=[
+    '<li><strong>'+total.toLocaleString('tr-TR')+' ziyaret</strong> '+rangeTxt+' araliginda \u2014 aylik ortalama ~'+avg+'.</li>',
+    '<li><strong>'+mlabel(months[peakI])+'</strong> en yogun ay ('+mVals[peakI]+')'+(minI>=0?', <strong>'+mlabel(months[minI])+'</strong> en sakin ('+mVals[minI]+')':'')+'.</li>',
+    '<li><strong>'+DA[peakD]+'</strong> haftanin en yogun gunu \u2014 ziyaretlerin %'+Math.round(dc[peakD]/total*100)+'\u2019i.</li>',
+    '<li><strong>'+uniq.toLocaleString('tr-TR')+' benzersiz isim</strong>, '+rep2+' tekrar eden musteri; Top 20 toplam '+topSum+' ziyaret.</li>'
+  ].join('');
+}
+buildControls();
+render('all');
 </script>
 </body>
 </html>

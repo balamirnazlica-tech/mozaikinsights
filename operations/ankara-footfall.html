@@ -111,6 +111,87 @@
   .site-nav a.link.active{color:#e8ecf5;background:#16223d;box-shadow:inset 0 0 0 1px #233352}
 </style>
 <script src="/assets/auth.js"></script>
+
+<style>
+  .flt{background:#111120;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px 22px;margin-bottom:20px}
+  .flt-t{font-size:13.5px;font-weight:700;color:#818cf8;text-transform:uppercase;letter-spacing:.9px}
+  .flt-n{font-size:12.5px;color:#475569;margin:3px 0 14px}
+  .yr-filters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .yr-btn{padding:7px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#64748b;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+  .yr-btn:hover{border-color:rgba(129,140,248,.4);color:#818cf8}
+  .yr-btn.active{background:rgba(129,140,248,.15);border-color:#818cf8;color:#818cf8}
+  .rng{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .rng label{font-size:12px;color:#64748b;display:flex;gap:6px;align-items:center;text-transform:uppercase;letter-spacing:.6px}
+  .rng select{background:#0f172a;border:1px solid #1f2a44;color:#cbd5e1;border-radius:8px;padding:7px 9px;font-size:13px;color-scheme:dark}
+  .hr{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .hr-l{font-size:13px;color:#64748b;width:90px;text-align:right;flex:none}
+  .hr-bar{flex:1;background:rgba(255,255,255,.05);border-radius:4px;height:24px;overflow:hidden}
+  .hr-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:12px;font-weight:700;color:rgba(255,255,255,.75)}
+  .hr-n{font-size:13px;color:#475569;width:48px;flex:none}
+  .h260{height:260px;position:relative}
+  .empty{padding:22px 0;text-align:center;color:#475569;font-size:14px}
+  @media (max-width:680px){
+    .flt{padding:14px 14px}
+    .yr-btn{padding:5px 10px;font-size:11px}
+    .rng{gap:8px}.rng label{font-size:10px}.rng select{font-size:12px;padding:5px 7px}
+    .hr-l{width:56px;font-size:10px}.hr-bar{height:18px}.hr-fill{font-size:9px}.hr-n{width:34px;font-size:10px}
+    .h260{height:220px}
+  }
+</style>
+
+<style>
+  .flt{background:#111120;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px 22px;margin-bottom:20px}
+  .flt-t{font-size:13.5px;font-weight:700;color:#818cf8;text-transform:uppercase;letter-spacing:.9px}
+  .flt-n{font-size:12.5px;color:#475569;margin:3px 0 14px}
+  .yr-filters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .yr-btn{padding:7px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#64748b;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+  .yr-btn:hover{border-color:rgba(129,140,248,.4);color:#818cf8}
+  .yr-btn.active{background:rgba(129,140,248,.15);border-color:#818cf8;color:#818cf8}
+  .rng{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .rng label{font-size:12px;color:#64748b;display:flex;gap:6px;align-items:center;text-transform:uppercase;letter-spacing:.6px}
+  .rng select{background:#0f172a;border:1px solid #1f2a44;color:#cbd5e1;border-radius:8px;padding:7px 9px;font-size:13px;color-scheme:dark}
+  .hr{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .hr-l{font-size:13px;color:#64748b;width:90px;text-align:right;flex:none}
+  .hr-bar{flex:1;background:rgba(255,255,255,.05);border-radius:4px;height:24px;overflow:hidden}
+  .hr-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:12px;font-weight:700;color:rgba(255,255,255,.75)}
+  .hr-n{font-size:13px;color:#475569;width:48px;flex:none}
+  .h260{height:260px;position:relative}
+  .empty{padding:22px 0;text-align:center;color:#475569;font-size:14px}
+  @media (max-width:680px){
+    .flt{padding:14px 14px}
+    .yr-btn{padding:5px 10px;font-size:11px}
+    .rng{gap:8px}.rng label{font-size:10px}.rng select{font-size:12px;padding:5px 7px}
+    .hr-l{width:56px;font-size:10px}.hr-bar{height:18px}.hr-fill{font-size:9px}.hr-n{width:34px;font-size:10px}
+    .h260{height:220px}
+  }
+</style>
+
+<style>
+  .flt{background:#111120;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px 22px;margin-bottom:20px}
+  .flt-t{font-size:13.5px;font-weight:700;color:#818cf8;text-transform:uppercase;letter-spacing:.9px}
+  .flt-n{font-size:12.5px;color:#475569;margin:3px 0 14px}
+  .yr-filters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .yr-btn{padding:7px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#64748b;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+  .yr-btn:hover{border-color:rgba(129,140,248,.4);color:#818cf8}
+  .yr-btn.active{background:rgba(129,140,248,.15);border-color:#818cf8;color:#818cf8}
+  .rng{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .rng label{font-size:12px;color:#64748b;display:flex;gap:6px;align-items:center;text-transform:uppercase;letter-spacing:.6px}
+  .rng select{background:#0f172a;border:1px solid #1f2a44;color:#cbd5e1;border-radius:8px;padding:7px 9px;font-size:13px;color-scheme:dark}
+  .hr{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .hr-l{font-size:13px;color:#64748b;width:90px;text-align:right;flex:none}
+  .hr-bar{flex:1;background:rgba(255,255,255,.05);border-radius:4px;height:24px;overflow:hidden}
+  .hr-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:12px;font-weight:700;color:rgba(255,255,255,.75)}
+  .hr-n{font-size:13px;color:#475569;width:48px;flex:none}
+  .h260{height:260px;position:relative}
+  .empty{padding:22px 0;text-align:center;color:#475569;font-size:14px}
+  @media (max-width:680px){
+    .flt{padding:14px 14px}
+    .yr-btn{padding:5px 10px;font-size:11px}
+    .rng{gap:8px}.rng label{font-size:10px}.rng select{font-size:12px;padding:5px 7px}
+    .hr-l{width:56px;font-size:10px}.hr-bar{height:18px}.hr-fill{font-size:9px}.hr-n{width:34px;font-size:10px}
+    .h260{height:220px}
+  }
+</style>
 </head>
 <body>
 
@@ -144,88 +225,246 @@
 
 <div class="page">
 
-<div class="kpis">
-  <div class="kpi" style="--c:#818cf8"><div class="kpi-l">Toplam Ziyaret</div><div class="kpi-v">632</div><div class="kpi-n">Kasim 2023&ndash;Agustos 2026</div></div>
-  <div class="kpi" style="--c:#38bdf8"><div class="kpi-l">2026 YTD</div><div class="kpi-v">194</div><div class="kpi-n">1 Ocak&ndash;26 Agustos &middot; 2025 ayni donem: 141 (+37,6%)</div></div>
-  <div class="kpi" style="--c:#34d399"><div class="kpi-l">Pik Yil</div><div class="kpi-v">2025</div><div class="kpi-n">258 ziyaret</div></div>
-  <div class="kpi" style="--c:#fb923c"><div class="kpi-l">Pik Ay</div><div class="kpi-v">Sub</div><div class="kpi-n">103 ziyaret</div></div>
-  <div class="kpi" style="--c:#f472b6"><div class="kpi-l">Pik Gun</div><div class="kpi-v">Per</div><div class="kpi-n">146 ziyaret</div></div>
-  <div class="kpi" style="--c:#facc15"><div class="kpi-l">Benzersiz Ziyaretci</div><div class="kpi-v">435</div><div class="kpi-n">Isimle tanimlanan</div></div>
-</div>
+  <div class="flt">
+    <div class="flt-t">Tarih Filtresi</div>
+    <div class="flt-n" id="fltNote">&nbsp;</div>
+    <div class="yr-filters" id="presets"></div>
+    <div class="rng">
+      <label>Baslangic <select id="fFrom"></select></label>
+      <label>Bitis <select id="fTo"></select></label>
+      <button class="yr-btn" id="fReset">Sifirla</button>
+    </div>
+  </div>
 
-<div class="r2">
-  <div class="cd">
-    <div class="ct">Yillik Ziyaretci Trendi</div>
-    <div class="cs">2023 acilis &ndash; 2026 YTD</div>
-    <div class="h260"><canvas id="aYear"></canvas></div>
-  </div>
-  <div class="cd">
-    <div class="ct">Aylik Dagilim (Tum Yillar)</div>
-    <div class="cs">Subat en yogun (103), Eylul en sakin (21)</div>
-    <div class="h260"><canvas id="aMonth"></canvas></div>
-  </div>
-</div>
+  <div class="kpis" id="kpis"></div>
 
-<div class="r2">
-  <div class="cd">
-    <div class="ct">Haftanin Gunleri</div>
-    <div class="cs">Persembe en yogun &mdash; Pazar kapali</div>
-    <div class="h260"><canvas id="aDow"></canvas></div>
+  <div class="r2">
+    <div class="cd">
+      <div class="ct">Aylik Ziyaret Trendi</div><div class="cs" id="csTrend">&nbsp;</div>
+      <div class="h260"><canvas id="cTrend"></canvas></div>
+    </div>
+    <div class="cd">
+      <div class="ct">Haftanin Gunleri</div><div class="cs" id="csDow">&nbsp;</div>
+      <div class="h260"><canvas id="cDow"></canvas></div>
+    </div>
   </div>
-  <div class="cd">
-    <div class="ct">Personel Dagilimi</div>
-    <div class="cs">Betul ve Beliz &mdash; ortak ziyaretler her ikisine de sayilir</div>
-    <div class="h260"><canvas id="aRep"></canvas></div>
-  </div>
-</div>
 
-<div class="cd">
-  <div class="ct">Top 20 Ziyaretci</div>
-  <div class="cs">435 benzersiz isimden &mdash; isim varyasyonlari (buyuk/kucuk harf) birlestirildi</div>
-  <div class="tbl-scroll">
-    <table>
+    <div class="r2">
+      <div class="cd">
+        <div class="ct">Yillik Trend</div><div class="cs" id="csYear">&nbsp;</div>
+        <div class="h260"><canvas id="cYear"></canvas></div>
+      </div>
+      <div class="cd">
+        <div class="ct">Personel Dagilimi</div><div class="cs" id="csRep">&nbsp;</div>
+        <div class="h260"><canvas id="cRep"></canvas></div>
+      </div>
+    </div>
+  <div class="r2">
+    <div class="cd">
+      <div class="ct">Mevsimsellik &mdash; Ay Bazinda</div><div class="cs" id="csSeason">&nbsp;</div>
+      <div class="h260"><canvas id="cSeason"></canvas></div>
+    </div>
+    <div class="cd">
+      <div class="ct">Yil Karsilastirmasi</div><div class="cs" id="csCmp">&nbsp;</div>
+      <div class="h260"><canvas id="cCmp"></canvas></div>
+    </div>
+  </div>
+
+  <div class="cd">
+    <div class="ct">Aylik Yogunluk</div><div class="cs" id="csBars">&nbsp;</div>
+    <div id="bars" style="padding-top:8px"></div>
+  </div>
+
+  <div class="cd">
+    <div class="ct">Top 20 Ziyaretci</div><div class="cs" id="csTop">&nbsp;</div>
+    <div style="overflow-x:auto"><table>
       <thead><tr><th>#</th><th>Isim</th><th>Ziyaret</th><th>Profil</th></tr></thead>
-      <tbody>
-        <tr><td class="rank">1</td><td class="big">Bir Bayan</td><td class="num">24</td><td><span class="b bv">Genel kayit</span></td></tr>
-        <tr><td class="rank">2</td><td class="big">Bir Cift</td><td class="num">23</td><td><span class="b bv">Genel kayit</span></td></tr>
-        <tr><td class="rank">3</td><td class="big">Selcuk Turkoz</td><td class="num">20</td><td><span class="b bv">Bireysel</span></td></tr>
-        <tr><td class="rank">4</td><td class="big">Bir Bey</td><td class="num">17</td><td><span class="b bv">Genel kayit</span></td></tr>
-        <tr><td class="rank">5</td><td class="big">Iki Bayan</td><td class="num">12</td><td><span class="b bv">Genel kayit</span></td></tr>
-        <tr><td class="rank">6</td><td class="big">Belgin Koz</td><td class="num">11</td><td><span class="b bv">Bireysel</span></td></tr>
-        <tr><td class="rank">7</td><td class="big">Zubeyde Boysanoglu</td><td class="num">10</td><td><span class="b bv">Bireysel</span></td></tr>
-        <tr><td class="rank">8</td><td class="big">Baran Serefoglu</td><td class="num">8</td><td><span class="b bv">Bireysel</span></td></tr>
-        <tr><td class="rank">9</td><td class="big">Nurol - Fatih Ozcelik</td><td class="num">4</td><td><span class="b bv">Bireysel</span></td></tr>
-        <tr><td class="rank">10</td><td class="big">Ipek Toplu Bilgic</td><td class="num">4</td><td><span class="b bv">Bireysel</span></td></tr>
-        <tr><td class="rank">11</td><td class="big">Mesut Irgi</td><td class="num">4</td><td><span class="b bv">Bireysel</span></td></tr>
-        <tr><td class="rank">12</td><td class="big">Studio86 - Esra Yilmaz</td><td class="num">4</td><td><span class="b bv">Bireysel</span></td></tr>
-        <tr><td class="rank">13</td><td class="big">Yasemin Gocek</td><td class="num">4</td><td><span class="b bv">Bireysel</span></td></tr>
-        <tr><td class="rank">14</td><td class="big">Nihat Onal</td><td class="num">3</td><td><span class="b bv">Bireysel</span></td></tr>
-        <tr><td class="rank">15</td><td class="big">Iki Bey</td><td class="num">3</td><td><span class="b bv">Genel kayit</span></td></tr>
-      </tbody>
-    </table>
+      <tbody id="topBody"></tbody>
+    </table></div>
   </div>
+
+  <div class="ins">
+    <h3>Secilen Donem &mdash; Ozet</h3>
+    <ul id="insights"></ul>
+  </div>
+
 </div>
-
-<div class="ins">
-  <h3>Ankara Ozet Bulgular</h3>
-  <ul>
-    <li><strong>621 ziyaret</strong> Kasim 2023 acilisindan bu yana &mdash; 2024'te 165, 2025'te 258 (zirve yil).</li>
-    <li><strong>Iki kisilik ekip:</strong> Betul (355 ziyaret) ve Beliz (318 ziyaret) &mdash; ortak karsilanan ziyaretler her ikisine de sayildigi icin toplami asiyor.</li>
-    <li><strong>Persembe en yogun gun (146)</strong> &mdash; Ortakoy'daki Cumartesi pikinden farkli bir patern; Ankara musteri profili agirlikli olarak B2B/mimarlik odakli.</li>
-    <li><strong>Subat en yogun ay (103)</strong>, Eylul en sakin (21).</li>
-    <li><strong>Arac/marka verisi tutulmuyor</strong> &mdash; Ankara formunda plaka veya marka kolonu yok, bu yuzden Ulasim sekmesi %100 "Kayit Yok" gosterir.</li>
-    <li><strong>Son haftalarda "Gelenler" (fiziksel ziyaret) kayitlari azaldi</strong> &mdash; Haziran-Agustos 2026'da gunlerin cogunda sadece "Arayanlar" (telefon) aktivitesi var; showroom ziyareti degil, telefon talebi olarak kaydedilmis.</li>
-  </ul>
-</div>
-
-</div><!-- /page -->
-
 <script>
-const aG={color:'rgba(255,255,255,0.06)'};
-new Chart('aYear',{type:'line',data:{labels:['2023','2024','2025','2026 YTD'],datasets:[{data:[15,165,258,194],borderColor:'#818cf8',backgroundColor:'rgba(129,140,248,.15)',fill:true,tension:.35,pointRadius:5,pointBackgroundColor:'#38bdf8'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:aG,ticks:{color:'#64748b'}},y:{grid:aG,ticks:{color:'#64748b'},beginAtZero:true}}}});
-new Chart('aMonth',{type:'bar',data:{labels:['Oca','Sub','Mar','Nis','May','Haz','Tem','Agu','Eyl','Eki','Kas','Ara'],datasets:[{data:[39,103,79,58,54,36,38,52,21,75,33,44],backgroundColor:['#818cf899','#facc15cc','#818cf899','#818cf899','#818cf899','#818cf899','#f8717199','#818cf899','#f8717199','#818cf899','#818cf899','#818cf899'],borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#64748b'}},y:{grid:aG,ticks:{color:'#64748b'},beginAtZero:true}}}});
-new Chart('aDow',{type:'bar',data:{labels:['Pzt','Sal','Car','Per','Cum','Cmt','Paz'],datasets:[{data:[119,112,85,146,80,89,1],backgroundColor:['#818cf899','#818cf899','#818cf899','#facc15cc','#818cf899','#34d399bb','#f8717199'],borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#64748b'}},y:{grid:aG,ticks:{color:'#64748b'},beginAtZero:true}}}});
-new Chart('aRep',{type:'doughnut',data:{labels:['Betul (355)','Beliz (318)'],datasets:[{data:[355,318],backgroundColor:['#818cf8','#34d399'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'bottom',labels:{color:'#64748b',boxWidth:10,font:{size:11}}}}}});
+const ROWS = [["2023-11-27", "Yasemin Özgen", "Betül"], ["2023-11-27", "Nihat Önal", "Beliz"], ["2023-11-27", "Gürkan Bey", "Beliz"], ["2023-11-30", "Aslıhan Yarkut", "Betül - Beliz"], ["2023-12-05", "Seçil Hasçalık Cora", "Beliz - Betül"], ["2023-12-06", "Asım Yüksel- Jul Mimarlık", "Beliz - Betül"], ["2023-12-14", "Aslı Kuruoğlu", "Beliz"], ["2023-12-14", "Eda Gecikmez", "Beliz-Betül"], ["2023-12-14", "Burcu Otlu", "Beliz-Betül"], ["2023-12-23", "Yeşim Kabalak ve Annesi", "Betül"], ["2023-12-23", "Saliha Noyin", "Betül"], ["2023-12-23", "Melih Özkan", "Betül"], ["2023-12-23", "Baran Şerefoğlu", "Betül"], ["2023-12-23", "Mehmet Bey", "Betül"], ["2023-12-23", "Semih Keskil ve eşi", "Betül"], ["2024-01-18", "Melike Demirci ve Annesi", "Betül"], ["2024-01-23", "Meltem Yılal", "Betül"], ["2024-01-25", "Baran Şerefoğlu", "Betül"], ["2024-02-15", "Suzan Özdoğan", "Betül"], ["2024-02-15", "Bir Bayan", "dolaştı"], ["2024-02-16", "İki bey", "dolaştı"], ["2024-02-16", "Figen Uğur", "Beliz"], ["2024-02-19", "Nurol - Fatih Özçelik", "beliz"], ["2024-02-19", "Serpil Şenyüz Mim. - Nihan Duran", "beliz"], ["2024-02-19", "Serpil Şenyüz Mim. - Güngör Poslu", "beliz"], ["2024-02-19", "Lora Alessi", "betül"], ["2024-02-19", "Gizem Abdik", "betül"], ["2024-02-19", "Lale Taşman", "betül"], ["2024-02-20", "Nurol - Fatih Özçelik", "beliz"], ["2024-02-20", "Serpil Şenyüz Mim. - Nihan Duran", "beliz"], ["2024-02-20", "Serpil Şenyüz Mim. - İpek Alinda", "beliz"], ["2024-02-20", "Ceren Akçakoç", "beliz"], ["2024-02-20", "Handan İyigün", "betül"], ["2024-02-20", "Özge Evren", "betül"], ["2024-02-20", "Serpil Kandişer", "betül"], ["2024-02-21", "Nilay Hanım- U Design", "betül"], ["2024-02-21", "Rahmi Bey", "betül"], ["2024-02-21", "Memorial Ekrem Bey", "betül"], ["2024-02-21", "Mine Şenol", "betül"], ["2024-02-21", "Serpil Şenyüz Mim. - Güngör Poslu", "beliz"], ["2024-02-21", "Serpil Şenyüz Mim. - Nihan Duran", "beliz"], ["2024-02-21", "Melike Övet-Burcu Ünal", "beliz"], ["2024-02-21", "Fatih Özçelik- Nurol", "beliz"], ["2024-02-21", "Uğur Kısakürek- U Design", "beliz"], ["2024-02-22", "Rönes Aydınlatma - Tarık Bey", "beliz"], ["2024-02-22", "Songül Güvenç - Haliç Tersane", "beliz"], ["2024-02-22", "Hamza Ermiş", "beliz"], ["2024-02-22", "Serpil Şenyüz Mim. - Güngör Poslu", "beliz"], ["2024-02-22", "Selma Seven - Jale Kulin Mimarlık", "beliz"], ["2024-02-22", "Burcu Hanım", "beliz"], ["2024-02-22", "Cenk Bakırlıoğlu", "betül"], ["2024-02-22", "Selina Kazazoğlu", "betül"], ["2024-02-22", "Esra Nur Avcılar", "betül"], ["2024-02-24", "Elif Özer", "beliz"], ["2024-02-24", "Turgay Eraslan", "beliz"], ["2024-02-24", "Mer.128 - Fatoş Hanım", "beliz"], ["2024-02-24", "Nonno Desing - Nil Gümüşboğa", "beliz"], ["2024-02-26", "Bir Bayan", "beliz - dolaştı"], ["2024-02-26", "bir bey- bir bayan", "beliz - dolaştı"], ["2024-02-26", "Serpil Şenyüz - İpek Alinda", "beliz"], ["2024-02-26", "Selma Seven - Jale Kulin Mimarlık", "beliz"], ["2024-02-26", "Nonno Desing - Nil Gümüşboğa", "beliz"], ["2024-02-27", "Yoo Mim. - Ahmet Akgün", "beliz"], ["2024-02-27", "Niso İpekel Asis. - Ülkü Özkan", "beliz"], ["2024-02-27", "Gülşen Kesim", "beliz"], ["2024-02-27", "Nonno Desing - Nil Gümüşboğa", "beliz"], ["2024-02-28", "Behiç Harmanlı", "beliz"], ["2024-02-28", "Sinem Karadeniz", "beliz"], ["2024-02-28", "Lale Taşman", "beliz"], ["2024-02-28", "Selma Seven - Jale Kulin Mimarlık", "beliz"], ["2024-02-28", "Burcu Buberci", "beliz"], ["2024-02-28", "Arzu İpek", "beliz"], ["2024-02-28", "Yoo Mim. - Ahmet Akgün", "beliz"], ["2024-02-28", "İki bey", "beliz - dolaştı"], ["2024-02-29", "Serkan Aksoy", "beliz"], ["2024-02-29", "Sinem Karadeniz", "beliz"], ["2024-02-29", "Tuana Gürkan", "beliz"], ["2024-02-29", "Naşide Nur Erdaş", "beliz"], ["2024-02-29", "Serkan Aksoy", "beliz"], ["2024-02-29", "U Design - Uğur Kısakürek", "betül"], ["2024-02-29", "Naz Hanım", "betül"], ["2024-02-29", "Elif Hanım", "betül"], ["2024-03-04", "Showroom Gelenler", ""], ["2024-03-04", "Berin Gür", "Beliz"], ["2024-03-13", "Emin Akdemir", "beliz"], ["2024-03-15", "Nuran Metin", "Beliz - Betül"], ["2024-03-22", "Baran Şerefoğlu", "Beliz"], ["2024-03-23", "Deniz Göm", "Beliz"], ["2024-03-23", "Yasemin Özgen", "Beliz"], ["2024-03-25", "Ayla Hanım", "Beliz"], ["2024-03-26", "Bir bey", "Beliz - Betül"], ["2024-04-15", "bir çift (dolaştılar)", "Betül"], ["2024-04-24", "İpek Hanım", "Beliz"], ["2024-04-29", "bir bey", "Beliz"], ["2024-05-02", "Özgür Bey", "Beliz"], ["2024-05-02", "Fatih Bey", "Beliz"], ["2024-05-02", "Baran Şerefoğlu", "Beliz"], ["2024-05-02", "Sibel Bircan", "Betül"], ["2024-05-06", "Lale Hanım", "Beliz"], ["2024-05-17", "Mine Hanım-Profit Mimarlık", "Betül"], ["2024-05-17", "Asım Yüksel-Jul Mimarlık", "Betül"], ["2024-05-21", "Zf Design- Merve Alagöz", "Betül"], ["2024-05-21", "ibrahim kılıç", "Betül"], ["2024-05-21", "Ezgi Karaca- Z partners", "Betül"], ["2024-05-23", "Suna Hanım", "Beliz"], ["2024-05-30", "Bir çift", "betül"], ["2024-06-01", "Melike Demirci", "Beliz"], ["2024-06-03", "Melike Demirci", "Betül"], ["2024-06-04", "Adnan Zengin", "Betül"], ["2024-06-12", "Baran Şerefoğlu", "betül"], ["2024-06-13", "Şule Atılgan şöförü - Gökhan Bey", "Beliz"], ["2024-06-14", "Samah Obeid Tales by design", "Betül"], ["2024-06-24", "Baran Şerefoğlu", "Betül"], ["2024-06-25", "Serhat Boyacıoğlu", "Betül"], ["2024-06-25", "Melike Demirci şoförü-", "Betül- ödeme yaptı"], ["2024-06-25", "bir çift", "Betül"], ["2024-06-28", "Tekin Arıduru", "Beliz"], ["2024-07-02", "Suna Çavuşlar", "Beliz - Betül"], ["2024-07-05", "iki bayan", "dolaştı"], ["2024-07-11", "bir bey", "beliz"], ["2024-07-11", "bir çift", "betül"], ["2024-07-17", "Baran Şerefoğlu", "beliz"], ["2024-07-24", "Baran Şerefoğlu şöförü", "Beliz"], ["2024-07-26", "Gamze Gören", "Beliz"], ["2024-08-02", "bir bayan", "Beliz"], ["2024-08-06", "Çiğdem Şükrüoğlu", "Beliz - Betül"], ["2024-08-10", "Erhan Ulusoy", "Beliz"], ["2024-08-12", "Melike Övet mim - Burcu Ünal", "Beliz"], ["2024-08-12", "Mim Yapı - Ezgi Hanım", "Beliz"], ["2024-08-12", "Hakan Demirel", "Beliz"], ["2024-08-13", "Esra Yılmaz- Studio86", "Betül"], ["2024-08-13", "Ozan Açıktan", "Betül"], ["2024-08-14", "bir bayan", "dolaştı"], ["2024-08-15", "bir bey", "betül"], ["2024-08-22", "Ali Kaya", "Beliz - Betül"], ["2024-08-22", "İki bayan", "Beliz"], ["2024-08-24", "Erhan Bey", "Beliz"], ["2024-08-28", "Deniz Bey", "Beliz"], ["2024-09-02", "Zübeyde Boysanoğlu- Bahattin Demirci", "Betül"], ["2024-09-05", "Bir bey", "Beliz"], ["2024-09-05", "Selen Saraç", "Betül-Beliz"], ["2024-09-05", "Bir çift", "Beliz"], ["2024-09-05", "Ayça Turgay", "Beliz"], ["2024-09-06", "Bir bey", "Beliz"], ["2024-09-06", "Pınar Aşan", "Beliz"], ["2024-09-13", "Özlen Hanım", "Beliz"], ["2024-09-17", "Zübeyde Boysanoğlu", "Betül"], ["2024-09-17", "Kunegonde Leys ve Bir Bayan (Belçika Büyükelçiliği)", "Betül"], ["2024-09-18", "Zübeyde Boysanoğlu", "Beliz - Betül"], ["2024-09-26", "iki bayan", "Betül - Beliz"], ["2024-09-30", "Zübeyde Boysanoğlu", "Betül"], ["2024-10-04", "Muhammed Cengiz- Erdem Coskun", "Betül"], ["2024-10-04", "Artcode Hatice Hanım(numune bıraktı)", "Betül"], ["2024-10-09", "Çiğdem Maner", "Beliz"], ["2024-10-09", "Gizem Keleş", "Beliz"], ["2024-10-09", "Bir bey", "Beliz"], ["2024-10-19", "Pınar Soyuer", "Betül"], ["2024-10-19", "Şükrü Küçüköner", "Betül"], ["2024-10-19", "Mehmet Can Küçük", "Betül"], ["2024-10-19", "Mert Bey- Cengiz İnşaat", "Betül"], ["2024-10-21", "bir çift - dolaştı", "Beliz"], ["2024-10-21", "Berna Karaoğlu", "Beliz"], ["2024-10-22", "bir bayan", "Beliz - Betül"], ["2024-10-22", "Berna Karaoğlu ve eşi", "Beliz - Betül"], ["2024-11-07", "Özgür Uğur", "Betül"], ["2024-11-15", "Eysa Hanım ve eşi", "Beliz"], ["2024-11-18", "Züleyha Akduman", "Betül"], ["2024-11-18", "Şirin genç", "Betül"], ["2024-11-19", "İclal Divrik ve eşi", "Betül"], ["2024-11-21", "Volkan Başeğmez", "Betül"], ["2024-11-27", "Duygu Cengiz ve Mimarları", "Betül"], ["2024-12-03", "İdil Kamış - Cengiz", "Betül"], ["2024-12-04", "Sena Hanım", "Beliz"], ["2024-12-10", "Arzu Çetintaş ve annesi", "Beliz - Betül"], ["2024-12-12", "Beyza Hanım - Move Mimarlık", "Beliz - Betül"], ["2024-12-12", "Yavuzhan Bey - Khan Mimarlık", "Beliz - Betül"], ["2024-12-19", "Burak Güven", "Beliz"], ["2024-12-19", "İpek Toplu Bilgiç ve müşterisi", "Beliz"], ["2024-12-24", "Serdar Erdem ve Eşi", "Beliz"], ["2024-12-25", "Yasemin Özdemir", "Beliz"], ["2025-01-07", "Selçuk Türköz", "Beliz"], ["2025-01-07", "Özgür Uğur", "Beliz"], ["2025-01-09", "Elif Demirbağ", "Beliz"], ["2025-01-13", "Merve Çetinkaya", "Betül"], ["2025-01-13", "Begüm -Takış- Tanju Apaydın", "Betül-Beliz"], ["2025-01-15", "Selen Saraç", "ürününü aldı"], ["2025-01-16", "Selçuk Türköz ve eşi", "Beliz - Betül"], ["2025-01-16", "Bir bey", "Beliz"], ["2025-01-16", "Aslıhan ulucan şöförü", "ürünü teslim aldı"], ["2025-01-17", "bir çift", "Beliz"], ["2025-01-17", "Gülşen Koloğlu", "Betül"], ["2025-01-21", "Zeynep Hanım", "Beliz"], ["2025-01-23", "Sevcan Yaşar", "Betül"], ["2025-01-23", "Selçuk Türköz- Crew group", "Betül"], ["2025-01-23", "Can Karapınar", "Betül"], ["2025-01-28", "Mehmet Çatalbaş", "Betül"], ["2025-01-29", "Selçuk Türköz", "Betül"], ["2025-01-29", "Bir çift (dolaştılar)", "Betül"], ["2025-02-05", "Selçuk Türköz", "Beliz - Betül"], ["2025-02-05", "bir bey", "dolaştı"], ["2025-02-05", "Atilla bey-Ekol", "Betül"], ["2025-02-06", "Atilla Bey", "Betül"], ["2025-02-06", "Tansel Gezmiş", "Beliz - Betül"], ["2025-02-11", "Onur Bey - Esra Hanım", "Beliz"], ["2025-02-12", "Baran Şerefoğlu", "Beliz"], ["2025-02-15", "Funda Koç", "Beliz"], ["2025-02-17", "Mina Erşekerci", "Beliz-Betül"], ["2025-02-19", "Batu Derer ve eşi - Derer&Derer Mimarlık", "Beliz - Betül"], ["2025-02-20", "Pınar Hanım", "Beliz"], ["2025-02-25", "Duygu Cengiz şöförü", "numune aldı"], ["2025-02-25", "bir çift", "Beliz - Betül"], ["2025-02-27", "bir bayan", "dolaştı"], ["2025-02-27", "bir bayan", "dolaştı"], ["2025-03-05", "Zübeyde Boysanoğlu ve Annesi", "Betül"], ["2025-03-10", "bir bayan", "dolaştı"], ["2025-03-14", "İpek Toplu Bilgiç", "Betül"], ["2025-03-14", "Murat Erkul ve Eşi", "Beliz"], ["2025-03-18", "Buse Haşemoğlu ve eşi", "Beliz"], ["2025-03-20", "Mina Erşekerci", "Beliz-Betül"], ["2025-03-20", "Berk Öztabak", "Beliz"], ["2025-03-21", "bir bey", "dolaştı"], ["2025-03-21", "Duygu Cengiz şoförü", "numune aldı"], ["2025-03-24", "Esra Yılmaz Uğur", "Beliz - Betül"], ["2025-03-26", "Barış Yılmaz", "Beliz"], ["2025-03-27", "bir bayan", "dolaştı"], ["2025-03-27", "bir bey", "dolaştı"], ["2025-04-09", "bir bayan", "dolaştı"], ["2025-04-10", "Aslıhan Ulucan-şoförü", "ödeme yaptı"], ["2025-04-10", "Gülşen Koloğlu", "Betül"], ["2025-04-10", "Yüksel Erdem", "Beliz"], ["2025-04-15", "Zübeyde Boysanoğlu", "Beliz"], ["2025-04-16", "bir bey", "dolaştı"], ["2025-04-18", "456 Design Project", "Beliz - Betül"], ["2025-04-18", "Koray Kaya", "Beliz"], ["2025-04-21", "iki bayan", "dolaştı"], ["2025-04-24", "İpek Bilgiç ve müşterisi", "Betül"], ["2025-04-24", "Umut Seyhan ve eşi", "Betül"], ["2025-04-24", "İki bayan", "Betül"], ["2025-04-25", "iki bayan", "dolaştı"], ["2025-04-26", "iki bayan", "betül"], ["2025-04-26", "Didem Aksu", "betül"], ["2025-04-26", "Orçun izmirli", "betül"], ["2025-04-26", "Bir Çift", "betül"], ["2025-05-02", "Nil Soylu ve eşi", "Beliz - Betül"], ["2025-05-05", "iki kişi", "dolaştı"], ["2025-05-06", "Belgin Koz - Arzu Çetintaş", "Betül"], ["2025-05-07", "İpek Toplu Bilgiç- Derya Hanım", "Betül"], ["2025-05-14", "Derya Hanım", "Betül"], ["2025-05-14", "Helin Güneş", "Betül-Beliz"], ["2025-05-16", "Selçuk Türköz", "Betül"], ["2025-05-16", "Bir çift", "Betül"], ["2025-05-22", "Mina Erşekerci - Hayri Bey (Elizinn)", "Beliz"], ["2025-05-22", "Aslı Kurgan", "Beliz - Betül"], ["2025-05-22", "Selçuk Türköz", "Betül"], ["2025-05-23", "Levent İleri- İleri Mimarlık", "Tanışma Toplantı-Betül"], ["2025-05-23", "Belgin Koz", "Betül"], ["2025-05-23", "Bir bayan", "Betül"], ["2025-05-23", "Elif Hanım", "Betül"], ["2025-05-24", "selcuk Türköz", "Betül"], ["2025-05-24", "Işık Karcın (Studioiki Mimarlık)", "Betül"], ["2025-05-24", "İpek Hanım (aysin sevgi mimarlık)", "Betül"], ["2025-05-26", "Selçuk Türköz", "Betül-Beliz"], ["2025-05-27", "Bora Baran Yavuz", "Beliz"], ["2025-05-27", "Belgin Koz", "Betül"], ["2025-05-28", "Belgin Koz-Arzu Çetintaş ve annesi", "Betül"], ["2025-05-28", "Selcuk Türköz", "Betül"], ["2025-05-31", "iki bayan", "dolaştı"], ["2025-06-03", "bir çift", "Beliz"], ["2025-06-03", "Işıl Soygür", "Beliz"], ["2025-06-10", "Melih Özkan", "Beliz"], ["2025-06-11", "İmran Yakın", "Beliz-Betül"], ["2025-06-16", "Çiğdem Şamlı", "Beliz"], ["2025-06-16", "bir bayan", "Beliz"], ["2025-06-17", "Fadime Yılmaz", "Betül"], ["2025-06-21", "Melike Hanım", "Beliz"], ["2025-06-21", "Sinan Bey", "Beliz"], ["2025-06-24", "Görkem Karadayı - D'Interiors", "Beliz-Betül"], ["2025-06-27", "Fadime Yılmaz", "Beliz-Betül"], ["2025-06-28", "bir bey", "Betül"], ["2025-07-01", "Fadime yılmaz", "Betül-Beliz"], ["2025-07-02", "Belgin Koz- Arzu Çetintaş ve annesi", "Betül-Beliz"], ["2025-07-04", "Burcu Tokmak", "Beliz-Betül"], ["2025-07-07", "Treso Mimarlık (Melda Hnm ve Ekibi)", "Beliz-Betül"], ["2025-07-08", "Belgin Koz", "Beliz-Betül"], ["2025-07-10", "Meltem Günaydın", "Beliz-Betül"], ["2025-07-11", "Ferhat İlter", "Beliz"], ["2025-07-14", "Kaan Berkem", "Beliz"], ["2025-07-19", "Bekir Serdar Mutlubaş", "Beliz"], ["2025-07-19", "Ebru Şenyüz", "Beliz"], ["2025-07-27", "Belgin Koz + Arzu Çetintaş", "Beliz-Betül"], ["2025-07-26", "Duygu Cengiz", "Betül"], ["2025-07-26", "Merve hanım-kamil ülker mimarlık", "Betül"], ["2025-07-26", "Emre İşlek", "Betül"], ["2025-07-26", "Zübeyde Boysanoğlu", "Betül"], ["2025-07-26", "Elif Tangil ve Eşi", "Betül"], ["2025-07-26", "Bir çift", "Betül"], ["2025-07-26", "Bir bayan", "Betül"], ["2025-07-29", "Belgin Koz", "Beliz"], ["2025-07-30", "Michela Campanelli- Fiam ıtalia", "Betül"], ["2025-07-31", "Ceyda Köse ve iki bayan", "Betül"], ["2025-08-04", "Meral Balat", "Beliz"], ["2025-08-05", "Erkin hanım ve eşi", "Betül-Beliz"], ["2025-08-07", "Erdem Bey (cengiz inşaat)", "Betül"], ["2025-08-18", "Elif Tangil Türkmen", "Beliz"], ["2025-08-18", "Aslı Günver", "Beliz"], ["2025-08-21", "Selcuk Türköz", "Betül"], ["2025-08-21", "Duygu cengiz", "Betül"], ["2025-08-21", "Banu Sağlam", "Betül"], ["2025-08-21", "Erdem Coskun", "Betül"], ["2025-08-21", "Aysenur Hanm", "Betül"], ["2025-08-22", "Selcuk Türköz", "Betül"], ["2025-08-22", "Kıvanç Öğüt-Cengiz İnşaat", "Betül"], ["2025-08-22", "Belgin Koz", "Betül"], ["2025-08-22", "Bir çift", "Betül"], ["2025-08-25", "Selcuk Türköz", "Betül"], ["2025-08-25", "Kıvanç Öğüt-Cengiz İnşaat", "Betül"], ["2025-08-25", "İpek bilgiç Toplu", "Betül"], ["2025-08-25", "Arzu Çetintaş", "Betül"], ["2025-08-25", "Bir çift", "Betül"], ["2025-08-26", "Selcuk Türköz", "Betül"], ["2025-08-26", "Duygu Cengiz", "Betül"], ["2025-08-28", "Nurol - Fatih Özçelik", "Beliz"], ["2025-09-02", "Miray tümer", "Betül"], ["2025-09-16", "Ayşegül Hanım", "Beliz"], ["2025-09-17", "Merih Çakıcı", "Beliz"], ["2025-09-17", "Özlem Şahingök", "Beliz"], ["2025-09-19", "Selçuk Şaşmaz", "Betül"], ["2025-09-19", "Cihan Akgün", "Betül-Beliz"], ["2025-09-24", "Talha Bey ve bir bayan", "Beliz"], ["2025-09-29", "Özlem Şahingök", "Beliz"], ["2025-10-01", "iki bayan", "Beliz - Betül"], ["2025-10-02", "Duygu cengiz şoforu", "Betül"], ["2025-10-04", "Deniz Erol ve eşi", "Beliz"], ["2025-10-06", "Esen Hanım", "Betül"], ["2025-10-09", "bir bey", "Beliz"], ["2025-10-14", "Tuba Bekman", "Beliz-Betül"], ["2025-10-16", "bir bayan", ""], ["2025-10-17", "bir bayan", "Betül"], ["2025-10-20", "iki bey", "Betül"], ["2025-10-23", "Derin Hanım", "Beliz"], ["2025-10-23", "iki bayan", "Beliz"], ["2025-10-23", "iki bayan", "Betül"], ["2025-10-24", "Selcuk Türköz", "Betül"], ["2025-10-25", "Bir çift", "Betül"], ["2025-10-27", "Fatos Hacımehmetoğlu", "Betül"], ["2025-10-27", "Furkan Çöloğlu- studio86 ınteriors", "Betül"], ["2025-10-27", "Betül Çöloğlu-studio86 ınteriors", "Betül"], ["2025-10-27", "Arzu Hanım - studio86 ınteriors", "Betül"], ["2025-10-27", "Ebru hanım- trt", "Betül"], ["2025-10-27", "Başak Hanım", "Betül"], ["2025-10-27", "Wangan Studio - Reyhan Evcimen", "Beliz"], ["2025-10-27", "Işık Naz Hacıömeroğlu", "Beliz"], ["2025-10-27", "Lin Design - Özge Hanım", "Beliz"], ["2025-10-27", "Cansu Tunç", "Beliz"], ["2025-10-27", "Biltek İnşaat - Mukaddes Yılmaz", "Beliz"], ["2025-10-27", "Fiva Plastik - Milver Yeşildağ", "Beliz"], ["2025-10-27", "Beyhan Hanım", "Betül"], ["2025-10-27", "Toplantı", ""], ["2025-10-27", "83 Kreatif | Yağız - Nazlı Ezer", ""], ["2025-10-28", "Mesut İrgi", "Betül"], ["2025-10-28", "başak Karaevli", "Betül"], ["2025-10-28", "Gülben Uçman", "Betül"], ["2025-10-28", "Mehtap Hanım", "Betül"], ["2025-10-28", "Hazal Yüce", "Betül"], ["2025-10-28", "Wangan - Reyhan Evcimen", "Beliz"], ["2025-10-28", "Studio86 - Esra Yılmaz", "Beliz"], ["2025-10-28", "Fiva - Firuz Vatandost", "Beliz"], ["2025-10-28", "Demet Hanım", "Beliz"], ["2025-10-30", "Demet Bozkurt", "Beliz"], ["2025-10-30", "Ferhat Altuntaş", "Beliz"], ["2025-10-30", "83 Kreatif - Yağız Ezer", "Beliz"], ["2025-10-30", "Barbomob - Aslı Ece", "Beliz"], ["2025-10-30", "Studio86 - Esra Yılmaz", "Beliz"], ["2025-10-30", "Dış Ticaret - Enver Doğan", "Beliz"], ["2025-10-30", "İpek Ayaydın Abdik", "Beliz"], ["2025-10-30", "Banu Akıncı", "Beliz"], ["2025-10-30", "Mehmet Cengiz Eker", "Betül"], ["2025-10-30", "Berrin Akar", "Betül"], ["2025-10-30", "Tuba Mira Aydar", "Betül"], ["2025-10-30", "belgin çevik-Kontra mimarlık", "Betül"], ["2025-10-30", "Mesut İrgi", "Betül"], ["2025-10-30", "Gökçe Şekeroğlı", "Betül"], ["2025-10-30", "Başak Karaevli", "Betül"], ["2025-10-30", "Zübeyde Boysanoğlu", "Betül"], ["2025-10-30", "Fatoş Hacımetmetoğlu-Pera Bulvarı", "Betül"], ["2025-10-31", "Netto - Gülten Durak", "Beliz"], ["2025-10-31", "Ses Yachts - Dilek Aras", "Beliz"], ["2025-10-31", "Omit Design - Tuna Topdemir", "Beliz"], ["2025-10-31", "Gökçe Şekeroğlu", "Betül"], ["2025-10-31", "Mesut İrgi", "Betül"], ["2025-10-31", "Fatoş Hacımetmetoğlu-Pera Bulvarı", "Betül"], ["2025-10-31", "Bir bayan", "Betül"], ["2025-11-03", "Ayşegül Şaşmaz", "Beliz"], ["2025-11-04", "Aslıhan Vardar", "Beliz"], ["2025-11-10", "bir çift", ""], ["2025-11-12", "Mine yakupoğlu", "Betül"], ["2025-11-14", "Veli-Meral Balat", "Beliz"], ["2025-11-14", "Burcu Buberci", "Beliz"], ["2025-11-14", "Bir çift", "Beliz"], ["2025-11-14", "Bir bayan", "Beliz"], ["2025-11-15", "Deren Aluç ve eşi", "Beliz"], ["2025-11-15", "Design of Luxury - Aleyna Buran", "Beliz"], ["2025-11-15", "Gamze Gören ve eşi", "Beliz"], ["2025-11-17", "Emin Bey", "Beliz"], ["2025-11-18", "3 bayan", "Beliz"], ["2025-11-19", "bir bey", "Beliz"], ["2025-11-21", "bir bayan", ""], ["2025-11-22", "Arda Bey", "Beliz"], ["2025-11-22", "Elif Tangil Türkmen", "Beliz"], ["2025-11-22", "bir bey", "Beliz"], ["2025-11-24", "Derin Yeşil - Umay Çeviker", "Beliz"], ["2025-11-25", "Aysel Börekçi", "Beliz"], ["2025-11-25", "Çağla Denizaltı ve ailesi", "Betül"], ["2025-11-26", "Şerife Hanım", "Beliz"], ["2025-12-03", "Güldal Güleryüz", "Betül-Beliz"], ["2025-12-03", "Mehmet Yılmaz", "Betül"], ["2025-12-04", "Luc Patzolt", "Beliz"], ["2025-12-04", "Aylin Var", "Beliz"], ["2025-12-05", "Luc Patzolt", "Beliz"], ["2025-12-06", "Selen Saraç", "Betül"], ["2025-12-06", "Burçin Yıldız- cephe mimarlık", "Betül"], ["2025-12-06", "Selçuk Türköz", "Betül"], ["2025-12-08", "Sinem Bulak", "Betül"], ["2025-12-08", "bir bayan", "Beliz"], ["2025-12-09", "Zübeyde Boysanoğlu - şöförü", "Beliz"], ["2025-12-12", "iki bayan", "Beliz"], ["2025-12-12", "Ali Olcay Akçay", "Beliz"], ["2025-12-12", "bir çift", "Betül"], ["2025-12-13", "Özgür - Feyzal Baykut", "Beliz"], ["2025-12-13", "İzem Çalıkkocaoğlu ve annesi", "Beliz"], ["2025-12-16", "Özgür - Feyzal Baykut", "Beliz-Betül"], ["2025-12-17", "Kutay Yardım", "Beliz"], ["2025-12-20", "Gizem Hanım ve annesi", "Betül"], ["2025-12-24", "Kamil Ülker ve müşterisi", "Betül - Beliz"], ["2025-12-29", "Sarp Bey- Rönesans Holding ve müşterisi", "Betül"], ["2025-12-29", "ahmet bey", "Betül"], ["2025-12-29", "Özgür Yakut", "Betül"], ["2025-12-30", "bir bayan", ""], ["2026-01-05", "Tuğçe Şenol", "Beliz"], ["2026-01-05", "Ahmet Bey", "Betül"], ["2026-01-06", "Özgür - Feyzal Baykut", "Beliz - Betül"], ["2026-01-08", "Zübeyde boysanoğlu ve annesi", "Betül"], ["2026-01-08", "Bir bayan", "Betül"], ["2026-01-22", "Belgin Koz", "Beliz-Betül"], ["2026-01-23", "Ezgi Sarper ve eşi", "Beliz"], ["2026-01-26", "bir çift", "Beliz"], ["2026-01-27", "Yasemin Hanım ve eşi", "Beliz"], ["2026-01-29", "Yasemin Hanım", "Betül"], ["2026-01-30", "Nisan Özbeyoğlu", "Beliz-Betül"], ["2026-01-31", "Hande Demirel", "Betül"], ["2026-01-31", "Zübeyde Boysanoğlu", "Betül"], ["2026-01-31", "Selçuk Türköz", "Betül"], ["2026-01-31", "Yasemin Göcek", "Betül"], ["2026-01-31", "sml architects simla hanım", "Betül"], ["2026-01-31", "Murat bey", "Betül"], ["2026-01-31", "bir çift", "Betül"], ["2026-02-02", "Yasemin Göçek", "Betül"], ["2026-02-04", "Salali Mimarlık - Salih Bey ve ekibi", "Beliz - Betül"], ["2026-02-04", "Baturay Bey", "Beliz - Betül"], ["2026-02-09", "Ege Kiriş", "Betül"], ["2026-02-12", "İzzet Bey", "Beliz - Betül"], ["2026-02-14", "Yasemin Göcek", "Betül"], ["2026-02-14", "İzzet Fikirlier SSFM", "Betül"], ["2026-02-14", "Selçuk Türköz", "Betül"], ["2026-02-14", "Bir bayan", "Betül"], ["2026-02-14", "Deniz Şahin", "Betül"], ["2026-02-14", "Bir bayan", "Betül"], ["2026-02-16", "izzet Fikirlier- SFFM", "Betül"], ["2026-02-16", "Bir çift", "Betül"], ["2026-02-17", "Belgin Koz", "Betül"], ["2026-02-17", "Elif Ertem Interior Studiio", "Betül"], ["2026-02-18", "Sema Hanım", "Beliz"], ["2026-02-19", "Asım Yüksel ve Eşi", "Beliz-Betül"], ["2026-02-21", "Zeynep Asu Aversano ve eşi", "Beliz"], ["2026-02-23", "Nurol - Fatih Özçelik", "Beliz - Betül"], ["2026-02-23", "Burcu Tokmak ve annesi", "Beliz"], ["2026-02-23", "Helin Erdem- Helin Erdem Mimarlık", "Beliz - Betül"], ["2026-02-25", "Belgin koz-Arzu çetintaş ve annesi", "Betül"], ["2026-02-25", "Arzu hanım", "Betül"], ["2026-02-26", "Yasemin Göcek", "Betül"], ["2026-03-03", "bir çift", "Beliz"], ["2026-03-04", "bir bayan", ""], ["2026-03-04", "Belgin Koz", "Betül"], ["2026-03-04", "Selçuk Türköz", "Beliz - Betül"], ["2026-03-05", "İpek Toplu Bilgiç", "Betül"], ["2026-03-05", "Studio86 - Esra yılmaz", "Betül"], ["2026-03-05", "Mehtap Büyükbayram", "Betül"], ["2026-03-05", "Uğur Bey", "Betül"], ["2026-03-05", "Zeynep kocan", "Betül"], ["2026-03-05", "Daka Design - Liora Danon", "Beliz"], ["2026-03-05", "Sevye Insaat - Gülizar Sevin Sarman", "Beliz"], ["2026-03-05", "Selçuk Türköz", "Beliz"], ["2026-03-05", "Ergün Mimarlık - Zeynep Hanım", "Beliz"], ["2026-03-05", "Işık Kalkavan", "Beliz"], ["2026-03-05", "Selin Hanım", "Beliz"], ["2026-03-05", "Belgin Koz+Arzu çetintaş ve annesi", "Betül"], ["2026-03-05", "Esra Karagöz", "Beliz"], ["2026-03-06", "Burcu Tokmak", "Beliz"], ["2026-03-06", "Daka Design - Liora Danon", "Beliz"], ["2026-03-06", "Studio86 - Esra Yılmaz", "Beliz"], ["2026-03-06", "Melike Övet Mimarlık - Işınsu Aygördü Bozkurt", "Beliz"], ["2026-03-06", "Emre Peker", "Beliz"], ["2026-03-09", "İpek Bilgiç Toplu", "Betül"], ["2026-03-09", "Esin Bilgin", "Betül"], ["2026-03-09", "Fatos Hacımehmetoğlu", "Betül"], ["2026-03-09", "Esra Yılmaz Studio86", "Betül"], ["2026-03-09", "Emre İşlek", "Betül"], ["2026-03-09", "Beyza Hanım- Move mimarlık", "Betül"], ["2026-03-09", "Sanayi 313 - Ayşegül Altan", "Beliz"], ["2026-03-09", "Manaz Mimarlık - Halil Ahmet Manaz", "Beliz"], ["2026-03-09", "Move Mimarlık - Beyza Hanım", "Beliz"], ["2026-03-09", "Defne Kocabıyıkoglu Baran", "Beliz"], ["2026-03-09", "DKA Group - Ayşe Doğan", "Beliz"], ["2026-03-09", "Sabancı - Ömer Kocatepe", "Beliz"], ["2026-03-09", "Sibel Ertekin", "Beliz"], ["2026-03-09", "Ozan Kılıc", "Betül"], ["2026-03-09", "Sinan Alparda ve kızı Gizem Alparda", "Beliz"], ["2026-03-14", "Metin Öğün- Decart İçmimarlık", "Betül"], ["2026-03-14", "Elif Gümrükçüoğlu", "Betül"], ["2026-03-14", "Zübeyde Boysanoğlu", "Betül"], ["2026-03-14", "Mesut İrgi", "Betül"], ["2026-03-14", "İpek Bilgiç Toplu", "Betül"], ["2026-03-16", "Filiz Ersoy ve annesi", "Beliz-Betül"], ["2026-03-16", "Mert Somcag", "Beliz-Betül"], ["2026-03-16", "Baran Yılmaz", "Beliz-Betül"], ["2026-03-17", "Levent Bey ve eşi", "Betül"], ["2026-03-17", "Rezzan Yağız", "Betül"], ["2026-03-23", "Nox Mimarlık - Nehir Gümüşlü", "Beliz"], ["2026-03-24", "Belgin Koz", "Beliz - Betül"], ["2026-03-24", "Filiz Ersoy", "Beliz"], ["2026-03-24", "Elif Yükşeker", "Beliz - Betül"], ["2026-03-24", "Luc Patzolt", "Beliz"], ["2026-03-25", "Zübeyde Boysanoğlu", "Betül"], ["2026-03-25", "Başak Hanım", "Betül"], ["2026-03-26", "Luc Stephen Patzalt", "Beliz"], ["2026-03-26", "İnanc Köse", "Betül"], ["2026-03-31", "İnanc Köse", "Betül"], ["2026-04-01", "Bayram Bey - Balkan Elektronik", "Beliz"], ["2026-04-07", "Filiz Ersoy", "Betül"], ["2026-04-07", "İpek Toplu Bilgiç", "Betül"], ["2026-04-07", "Ayse Gizem Yamankaradeniz", "Betül"], ["2026-04-07", "Eren Gündemir", "Betül"], ["2026-04-07", "Gülhan Yavuz", "Betül"], ["2026-04-07", "Zübeyde Boysanoğlu", "Betül"], ["2026-04-07", "Selçuk Türköz", "Betül"], ["2026-04-07", "Belgin Koz", "Betül"], ["2026-04-07", "Nurgül Hanım", "Betül"], ["2026-04-07", "Arzu Çetintaş", "Betül"], ["2026-04-07", "İpek Toplu Bilgiç", "Betül"], ["2026-04-09", "ZD Grup - Eda Hanım ve ekibi", "Beliz-Betül"], ["2026-04-09", "Bir bey", "Beliz"], ["2026-04-10", "Yasemin Başaran", "Beliz"], ["2026-04-13", "belgin koz- arzu çetintaş ve annesi", "Betül"], ["2026-04-14", "Nihat Önal", "Beliz-Betül"], ["2026-04-14", "Onur Bey", "Beliz"], ["2026-04-14", "Selcuk türköz", "Betül"], ["2026-04-16", "İleri Mimarlık - Levent İleri ve Eşi", "Beliz"], ["2026-04-17", "Sinan Bilgiç", "Beliz"], ["2026-04-18", "Berra Hanım- Profit İç Mimarlık", "Betül"], ["2026-04-18", "Uzay Yıldırım", "Betül"], ["2026-04-18", "Ayşe Hanım- Group T", "Betül"], ["2026-04-18", "Nihat Önal", "Betül"], ["2026-04-18", "Alev Duran", "Betül"], ["2026-04-18", "Tuğbe Bayrak", "Betül"], ["2026-04-18", "Mehmet Ali bey", "Betül"], ["2026-04-18", "Oya Lalik- Group T", "Betül"], ["2026-04-18", "Beyhan Eskiyapan", "Betül"], ["2026-04-18", "Bir çift", "Betül"], ["2026-04-20", "Omca Karabay", "Betül"], ["2026-04-27", "Meltem Yılal- Bensu Yarkın", "Betül"], ["2026-04-28", "Esra İnaloglu", "Betül"], ["2026-04-29", "Nagihan Baştürk ve eşi", "Betül"], ["2026-04-29", "Güldal Güleryüz", "Betül+Beliz"], ["2026-04-30", "Meltem Yılal- Bensu Yarkın", "Betül-Beliz"], ["2026-04-30", "Elif Türkmen", "Betül"], ["2026-05-04", "Güldal Güleryüz şöförü Ali Bey", "Beliz"], ["2026-05-05", "Mert Keyvan", "Beliz"], ["2026-05-06", "Kaan Bey ve eşi", "Betül"], ["2026-05-07", "Ayşe Yayla", "Betül-Beliz"], ["2026-05-07", "Yasemin Doğan", "Betül-Beliz"], ["2026-05-07", "Aybüke Kıraç- Studio86 Interiors", "Betül-Beliz"], ["2026-05-08", "ID Istanbul - Alper Bey", "Beliz"], ["2026-05-12", "Gözde Erdoğan", "Beliz"], ["2026-05-13", "Filiz Ersoy", "Beliz"], ["2026-05-14", "Elif Türkmen ve eşi", "Betül"], ["2026-05-15", "Elif Türkmen", "Betül"], ["2026-05-15", "Ege Çevik", "Betül"], ["2026-05-15", "beril Hanım ve annesi", "Betül"], ["2026-05-18", "Meg Mimarlık- Gizem Hanım ve Eşi", "Betül-Beliz"], ["2026-05-20", "Fatma Ulusoy şoförü", ""], ["2026-05-21", "Elif türkmen", "Betül"], ["2026-05-22", "Bedri Bey", "Betül"], ["2026-05-22", "Ali kemal bey ve eşi", "Betül"], ["2026-06-02", "Belgin Koz", "Betül"], ["2026-06-02", "Cansu Ener", "Betül"], ["2026-06-02", "Zeynep Çakmaklı", "Betül"], ["2026-06-05", "Fatma Ulusoy şoförü", ""], ["2026-06-08", "Berivan Ceylan", "Betül"], ["2026-06-09", "Fatma Ulusoy + Studio Ikki ( Işık Hanım )", "Beliz - Betül"], ["2026-06-15", "bir çift", ""], ["2026-06-16", "Yavuz Cengiz", "Beliz - Betül"], ["2026-06-19", "Şara Tonga", "Beliz"], ["2026-06-20", "Arda Karataş", "Betül"], ["2026-06-25", "Hülya Karaca", "Beliz"], ["2026-06-27", "Gelnler", ""], ["2026-06-27", "Özgür Baykut", "Betül"], ["2026-07-13", "Özgür Baykut ve Eşi", "Beliz"], ["2026-07-13", "Ferda Doğan", "Beliz"], ["2026-07-16", "bir çift", "Beliz"], ["2026-07-16", "Mette Oncel", "Beliz"], ["2026-07-17", "İrge Özkan", "Beliz"], ["2026-07-24", "Cem Kara", "Betül"], ["2026-07-28", "Oya Ünver- Suat Ünver", "Betül"], ["2026-07-28", "Beyhan Hanım", "Beliz"], ["2026-07-30", "Bahadır Eyüboğlu", "Betül"], ["2026-07-30", "Mustafa Bey", "Beliz"], ["2026-08-03", "Ayzit Şahinler", "Beliz-Betül"], ["2026-08-03", "Atagün Aksu", "Beliz"], ["2026-08-05", "Studio CLC - Melike Çulcuoğlu", "Beliz"], ["2026-08-05", "Funda Bozkaya- Kıbrıs Büyükelçiliği", "Betül"], ["2026-08-06", "Arzu ve Ayşe Çetintaş", "Betül"], ["2026-08-08", "Hasan Gültekin", "Beliz"], ["2026-08-12", "Beliz Görgül- Elif Hanım- Gözde eyüboğlu", "Betül"], ["2026-08-12", "Burçin hanım ve arkadası", "Betül"], ["2026-08-13", "Arkitektonik - Mehmet Bey ve ekibi", "Beliz"], ["2026-08-14", "Ayşe hanım", "Betül"], ["2026-08-15", "Ekrem Mert", "Betül"], ["2026-08-22", "Başak Kılıçoğlu", "Beliz"], ["2026-08-24", "Esmanur Hamdioğlu", "Betül"], ["2026-08-25", "Gizem Morkoc", "Betül"], ["2026-08-26", "arzu Çetintaş ve annesi", "Betül"], ["2026-08-26", "Elif hanım", "Betül"]];
+const STORE = 'ankara';
+const MO=['Oca','Sub','Mar','Nis','May','Haz','Tem','Agu','Eyl','Eki','Kas','Ara'];
+const DA=['Pzt','Sal','Car','Per','Cum','Cmt','Paz'];
+const G={color:'rgba(255,255,255,0.05)'};
+const REPS=['Betül','Beliz'];
+const GENERIC=['bir bayan','bir cift','bir bey','iki bayan','iki bey','bir aile','bir grup'];
+
+function fold(s){s=(s||'').toString();s=s.replace(/İ/g,'i').replace(/I/g,'ı');s=s.toLowerCase();
+  return s.replace(/ı/g,'i').replace(/ş/g,'s').replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ö/g,'o').replace(/ç/g,'c').trim();}
+function tc(s){return (s||'').split(/\s+/).filter(Boolean).map(w=>w[0].toUpperCase()+w.slice(1)).join(' ');}
+function mkey(iso){return iso.slice(0,7);}
+function mlabel(k){const [y,m]=k.split('-');return MO[+m-1]+' '+y.slice(2);}
+function monthsBetween(a,b){const out=[];let [y,m]=a.split('-').map(Number);const [ey,em]=b.split('-').map(Number);
+  while(y<ey||(y===ey&&m<=em)){out.push(y+'-'+String(m).padStart(2,'0'));m++;if(m>12){m=1;y++;}}return out;}
+
+const ALL_MONTHS = (()=>{const ks=ROWS.map(r=>mkey(r[0])).sort();return monthsBetween(ks[0],ks[ks.length-1]);})();
+const YEARS=[...new Set(ROWS.map(r=>r[0].slice(0,4)))].sort();
+let FROM=ALL_MONTHS[0], TO=ALL_MONTHS[ALL_MONTHS.length-1];
+let charts=[];
+
+function buildControls(){
+  const p=document.getElementById('presets');
+  const defs=[{k:'all',t:'Tumu'}].concat(YEARS.slice().reverse().map(y=>({k:y,t:y})))
+    .concat([{k:'l3',t:'Son 3 ay'},{k:'l6',t:'Son 6 ay'},{k:'l12',t:'Son 12 ay'}]);
+  p.innerHTML=defs.map(d=>'<button class="yr-btn" data-p="'+d.k+'">'+d.t+'</button>').join('');
+  p.querySelectorAll('button').forEach(b=>b.onclick=()=>applyPreset(b.dataset.p));
+  const f=document.getElementById('fFrom'), t=document.getElementById('fTo');
+  const opts=ALL_MONTHS.map(k=>'<option value="'+k+'">'+mlabel(k)+'</option>').join('');
+  f.innerHTML=opts; t.innerHTML=opts;
+  f.onchange=()=>{FROM=f.value; if(FROM>TO){TO=FROM;} render();};
+  t.onchange=()=>{TO=t.value; if(TO<FROM){FROM=TO;} render();};
+  document.getElementById('fReset').onclick=()=>applyPreset('all');
+}
+function applyPreset(k){
+  const last=ALL_MONTHS[ALL_MONTHS.length-1];
+  if(k==='all'){FROM=ALL_MONTHS[0];TO=last;}
+  else if(k==='l3'||k==='l6'||k==='l12'){const n=+k.slice(1);const i=Math.max(0,ALL_MONTHS.length-n);FROM=ALL_MONTHS[i];TO=last;}
+  else {const ms=ALL_MONTHS.filter(m=>m.startsWith(k));FROM=ms[0];TO=ms[ms.length-1];}
+  render(k);
+}
+function activePreset(k){
+  document.querySelectorAll('#presets button').forEach(b=>b.classList.toggle('active',b.dataset.p===k));
+}
+function guessPreset(){
+  const last=ALL_MONTHS[ALL_MONTHS.length-1];
+  if(FROM===ALL_MONTHS[0]&&TO===last) return 'all';
+  for(const y of YEARS){const ms=ALL_MONTHS.filter(m=>m.startsWith(y));if(ms.length&&FROM===ms[0]&&TO===ms[ms.length-1])return y;}
+  for(const n of [3,6,12]){const i=Math.max(0,ALL_MONTHS.length-n);if(FROM===ALL_MONTHS[i]&&TO===last)return 'l'+n;}
+  return null;
+}
+function kpi(c,l,v,n){return '<div class="kpi" style="--c:'+c+'"><div class="kpi-l">'+l+'</div><div class="kpi-v">'+v+'</div><div class="kpi-n">'+n+'</div></div>';}
+
+function render(preset){
+  document.getElementById('fFrom').value=FROM;
+  document.getElementById('fTo').value=TO;
+  activePreset(preset!==undefined?preset:guessPreset());
+  const months=monthsBetween(FROM,TO);
+  const inRange=ROWS.filter(r=>{const k=mkey(r[0]);return k>=FROM&&k<=TO;});
+  const rangeTxt=mlabel(FROM)+(FROM===TO?'':' \u2013 '+mlabel(TO));
+  document.getElementById('fltNote').textContent=rangeTxt+' \u00b7 '+inRange.length.toLocaleString('tr-TR')+' ziyaret \u00b7 '+months.length+' ay';
+  charts.forEach(c=>c.destroy()); charts=[];
+  if(!inRange.length){
+    document.getElementById('kpis').innerHTML='';
+    document.getElementById('bars').innerHTML='<div class="empty">Bu donemde kayit yok.</div>';
+    document.getElementById('topBody').innerHTML='';
+    document.getElementById('insights').innerHTML='<li>Secilen donemde ziyaret kaydi bulunmuyor.</li>';
+    ['csTrend','csDow','csBars','csTop','csYear','csRep','csSeason','csCmp'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='';});
+    return;
+  }
+  // series
+  const mc={}; months.forEach(m=>mc[m]=0);
+  const dc=[0,0,0,0,0,0,0];
+  const vis={}, raw={}, repc={};
+  REPS.forEach(r=>repc[r]=0);
+  inRange.forEach(r=>{
+    mc[mkey(r[0])]=(mc[mkey(r[0])]||0)+1;
+    const d=new Date(r[0]+'T00:00:00'); dc[(d.getDay()+6)%7]++;
+    const nm=r[1];
+    if(nm){const k=fold(nm); vis[k]=(vis[k]||0)+1; raw[k]=raw[k]||{}; raw[k][nm]=(raw[k][nm]||0)+1;}
+    const st=r[2]||'';
+    st.split(/[-,&+\/]/).forEach(tok=>{const f=fold(tok);REPS.forEach(rp=>{if(f&&f.startsWith(fold(rp).slice(0,5)))repc[rp]++;});});
+  });
+  const mVals=months.map(m=>mc[m]||0);
+  const activeMonths=mVals.filter(v=>v>0).length;
+  const total=inRange.length;
+  const peakI=mVals.indexOf(Math.max(...mVals));
+  const minI=(()=>{let bi=-1,bv=Infinity;mVals.forEach((v,i)=>{if(v>0&&v<bv){bv=v;bi=i;}});return bi;})();
+  const peakD=dc.indexOf(Math.max(...dc));
+  const uniq=Object.keys(vis).length;
+  const rep2=Object.values(vis).filter(v=>v>=2).length;
+  const avg=activeMonths?Math.round(total/activeMonths):0;
+
+  const shift=(k)=>{const [y,m]=k.split('-');return (+y-1)+'-'+m;};
+  const pFrom=shift(FROM), pTo=shift(TO);
+  const prev=ROWS.filter(r=>{const k=mkey(r[0]);return k>=pFrom&&k<=pTo;}).length;
+  const prevTxt=prev? (mlabel(pFrom)+(pFrom===pTo?'':' – '+mlabel(pTo))+': '+prev+' ('+(total>=prev?'+':'−')+Math.abs(Math.round((total/prev-1)*100))+'%)') : rangeTxt;
+  document.getElementById('kpis').innerHTML=
+    kpi('#818cf8','Toplam Ziyaret',total.toLocaleString('tr-TR'),prevTxt)+
+    kpi('#38bdf8','Aylik Ortalama',avg,activeMonths+' aktif ay')+
+    kpi('#f472b6','Pik Ay',mlabel(months[peakI]),mVals[peakI]+' ziyaret')+
+    kpi('#fb923c','Pik Gun',DA[peakD],dc[peakD]+' ziyaret (%'+Math.round(dc[peakD]/total*100)+')')+
+    kpi('#facc15','Benzersiz Ziyaretci',uniq.toLocaleString('tr-TR'),'Isimle tanimlanan')+
+    kpi('#34d399','Tekrar Eden',rep2.toLocaleString('tr-TR'),'2+ kez gelen musteri');
+
+  // trend
+  document.getElementById('csTrend').textContent=rangeTxt+' \u00b7 pik '+mlabel(months[peakI])+' ('+mVals[peakI]+')';
+  charts.push(new Chart('cTrend',{type:'line',data:{labels:months.map(mlabel),datasets:[{data:mVals,borderColor:'#818cf8',backgroundColor:'rgba(129,140,248,0.15)',fill:true,tension:.35,pointRadius:4,pointBackgroundColor:'#38bdf8',borderWidth:2}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:G,ticks:{color:'#64748b',font:{size:10},maxRotation:0,autoSkip:true}},y:{grid:G,ticks:{color:'#64748b'},beginAtZero:true}}}}));
+
+  // weekday
+  document.getElementById('csDow').textContent=DA[peakD]+' en yogun ('+dc[peakD]+' \u2014 %'+Math.round(dc[peakD]/total*100)+')';
+  charts.push(new Chart('cDow',{type:'bar',data:{labels:DA,datasets:[{data:dc,backgroundColor:dc.map((v,i)=>i===peakD?'#facc15cc':(v?'#818cf8cc':'#33415588')),borderRadius:6}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#64748b'}},y:{grid:G,ticks:{color:'#64748b'},beginAtZero:true}}}}));
+
+  if(document.getElementById('cYear')){
+    const yrs=[...new Set(months.map(m=>m.slice(0,4)))];
+    const yv=yrs.map(y=>months.reduce((s,m,i)=>s+(m.startsWith(y)?mVals[i]:0),0));
+    document.getElementById('csYear').textContent=yrs.join(' \u00b7 ')+' \u2014 secilen aylar';
+    charts.push(new Chart('cYear',{type:'line',data:{labels:yrs,datasets:[{data:yv,borderColor:'#818cf8',backgroundColor:'rgba(129,140,248,.15)',fill:true,tension:.35,pointRadius:5,pointBackgroundColor:'#38bdf8',borderWidth:2}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:G,ticks:{color:'#64748b'}},y:{grid:G,ticks:{color:'#64748b'},beginAtZero:true}}}}));
+  }
+  if(document.getElementById('cRep')){
+    const names=REPS.filter(r=>repc[r]>0);
+    document.getElementById('csRep').textContent=names.map(n=>fold(n)==='betul'?'Betul':n).map((n,i)=>n+' ('+repc[names[i]]+')').join(' \u00b7 ')+' \u2014 ortak karsilanan ziyaretler her ikisine sayilir';
+    charts.push(new Chart('cRep',{type:'doughnut',data:{labels:names.map(n=>n+' ('+repc[n]+')'),datasets:[{data:names.map(n=>repc[n]),backgroundColor:['#818cf8','#34d399','#fb923c'],borderWidth:0}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'bottom',labels:{color:'#64748b',boxWidth:10,font:{size:11}}},
+        tooltip:{callbacks:{label:c=>{const t=c.dataset.data.reduce((a,b)=>a+b,0);return ' '+c.label+' \u00b7 %'+(c.parsed/t*100).toFixed(1);}}}}}}));
+  }
+
+  // seasonality (month-of-year within range) + year-over-year comparison
+  const soy=new Array(12).fill(0);
+  months.forEach((m,i)=>{soy[+m.slice(5,7)-1]+=mVals[i];});
+  const sMax=Math.max(...soy), sPeak=soy.indexOf(sMax);
+  document.getElementById('csSeason').textContent='Secilen donemdeki tum yillar toplami · '+MO[sPeak]+' en yogun ('+sMax+')';
+  charts.push(new Chart('cSeason',{type:'bar',data:{labels:MO,datasets:[{data:soy,backgroundColor:soy.map((v,i)=>i===sPeak?'#34d399bb':(v?'#818cf899':'#33415588')),borderRadius:6}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#64748b',font:{size:10}}},y:{grid:G,ticks:{color:'#64748b'},beginAtZero:true}}}}));
+
+  const cmpYears=[...new Set(months.map(m=>m.slice(0,4)))];
+  const PALETTE=['#818cf8','#34d399','#fb923c','#f472b6','#38bdf8'];
+  const cmpSets=cmpYears.map((y,yi)=>({label:y,data:MO.map((_,mi)=>{const k=y+'-'+String(mi+1).padStart(2,'0');const idx=months.indexOf(k);return idx<0?null:mVals[idx];}),
+    borderColor:PALETTE[yi%PALETTE.length],backgroundColor:'transparent',tension:.35,pointRadius:3,borderWidth:2,spanGaps:false}));
+  document.getElementById('csCmp').textContent=cmpYears.join(' vs ')+' · ayni aylarin karsilastirmasi';
+  charts.push(new Chart('cCmp',{type:'line',data:{labels:MO,datasets:cmpSets},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#64748b',boxWidth:12,font:{size:11}}}},scales:{x:{grid:G,ticks:{color:'#64748b',font:{size:10}}},y:{grid:G,ticks:{color:'#64748b'},beginAtZero:true}}}}));
+
+  // monthly bars
+  const mx=Math.max(...mVals);
+  document.getElementById('csBars').textContent=mlabel(months[peakI])+' ('+mVals[peakI]+') zirve'+(minI>=0?', '+mlabel(months[minI])+' ('+mVals[minI]+') en sakin':'');
+  document.getElementById('bars').innerHTML=months.map((m,i)=>{
+    const v=mVals[i], w=mx?Math.round(v/mx*100):0;
+    const grad=(i===peakI)?'#34d399,#818cf8':(v<=mx*0.5?'#fb923c,#facc15':'#818cf8,#38bdf8');
+    return '<div class="hr"><div class="hr-l">'+mlabel(m)+'</div><div class="hr-bar"><div class="hr-fill" style="width:'+w+'%;background:linear-gradient(90deg,'+grad+')">'+(v||'')+'</div></div><div class="hr-n">'+v+'</div></div>';
+  }).join('');
+
+  // top visitors
+  const top=Object.entries(vis).sort((a,b)=>b[1]-a[1]).slice(0,20)
+    .map(([k,c])=>{const variants=raw[k]||{};const disp=Object.keys(variants).sort((a,b)=>variants[b]-variants[a])[0]||k;return [tc(fold(disp)),c,k];});
+  document.getElementById('csTop').textContent=uniq.toLocaleString('tr-TR')+' benzersiz isimden \u2014 isim varyasyonlari birlestirildi';
+  document.getElementById('topBody').innerHTML=top.map((t,i)=>{
+    const generic=GENERIC.includes(t[2]);
+    const badge=generic?'<span class="b bo">Genel kayit</span>':(t[1]>=Math.max(3,top[0][1]*0.4)?'<span class="b bg">VIP &#11088;</span>':'<span class="b bv">Bireysel</span>');
+    return '<tr><td class="rank">'+(i+1)+'</td><td class="big">'+t[0]+'</td><td class="num">'+t[1]+'</td><td>'+badge+'</td></tr>';
+  }).join('');
+
+  const topSum=top.reduce((s,t)=>s+t[1],0);
+  document.getElementById('insights').innerHTML=[
+    '<li><strong>'+total.toLocaleString('tr-TR')+' ziyaret</strong> '+rangeTxt+' araliginda \u2014 aylik ortalama ~'+avg+'.</li>',
+    '<li><strong>'+mlabel(months[peakI])+'</strong> en yogun ay ('+mVals[peakI]+')'+(minI>=0?', <strong>'+mlabel(months[minI])+'</strong> en sakin ('+mVals[minI]+')':'')+'.</li>',
+    '<li><strong>'+DA[peakD]+'</strong> haftanin en yogun gunu \u2014 ziyaretlerin %'+Math.round(dc[peakD]/total*100)+'\u2019i.</li>',
+    '<li><strong>'+uniq.toLocaleString('tr-TR')+' benzersiz isim</strong>, '+rep2+' tekrar eden musteri; Top 20 toplam '+topSum+' ziyaret.</li>'
+  ].join('');
+}
+buildControls();
+render('all');
 </script>
 </body>
 </html>
