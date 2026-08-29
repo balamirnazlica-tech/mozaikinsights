@@ -3,7 +3,7 @@
     "company": "Mozaik Design",
     "scope": "E-commerce (Metorik)",
     "currency": "TRY",
-    "generated": "2026-08-28",
+    "generated": "2026-08-29",
     "source": "Live via Metorik API"
   },
   "months": [
@@ -163,17 +163,17 @@
     },
     {
       "month": "2026-08",
-      "revenue": 1715000.15,
-      "net": 1421034.04,
+      "revenue": 1733274.35,
+      "net": 1374174.34,
       "orders": 54,
-      "average_order_value": 31759.3,
+      "average_order_value": 32097.7,
       "unique_customers": 51,
-      "total_refunds": 20712.11,
-      "new_customers": 38,
+      "total_refunds": 81593.81,
+      "new_customers": 39,
       "returning_customers": 3,
       "returning_customers_rate": 0.2,
-      "lost_revenue": 2212610.32,
-      "lost_orders": 29
+      "lost_revenue": 2218652.32,
+      "lost_orders": 31
     }
   ],
   "products": [
@@ -207,9 +207,9 @@
     {
       "name": "Spaghetti Tekli Koltuk",
       "sku": "",
-      "net_sales": 111540,
-      "net_orders": 4,
-      "gross_items_sold": 6,
+      "net_sales": 130806,
+      "net_orders": 5,
+      "gross_items_sold": 7,
       "in_stock": true,
       "stock_quantity": 0
     },
