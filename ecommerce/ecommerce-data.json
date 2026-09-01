@@ -3,24 +3,10 @@
     "company": "Mozaik Design",
     "scope": "E-commerce (Metorik)",
     "currency": "TRY",
-    "generated": "2026-08-31",
+    "generated": "2026-09-01",
     "source": "Live via Metorik API"
   },
   "months": [
-    {
-      "month": "2025-09",
-      "revenue": 451581.1,
-      "net": 380340,
-      "orders": 17,
-      "average_order_value": 26563.6,
-      "unique_customers": 15,
-      "total_refunds": 6000,
-      "new_customers": 7,
-      "returning_customers": 1,
-      "returning_customers_rate": 0.1,
-      "lost_revenue": 918555,
-      "lost_orders": 5
-    },
     {
       "month": "2025-10",
       "revenue": 642049.57,
@@ -163,35 +149,40 @@
     },
     {
       "month": "2026-08",
-      "revenue": 1782102.83,
-      "net": 1414826.74,
-      "orders": 57,
-      "average_order_value": 31265,
-      "unique_customers": 54,
+      "revenue": 1810155.95,
+      "net": 1439952.34,
+      "orders": 62,
+      "average_order_value": 29196.1,
+      "unique_customers": 58,
       "total_refunds": 81593.81,
-      "new_customers": 42,
-      "returning_customers": 3,
+      "new_customers": 45,
+      "returning_customers": 4,
       "returning_customers_rate": 0.2,
-      "lost_revenue": 2239252.12,
-      "lost_orders": 32
+      "lost_revenue": 2245020.52,
+      "lost_orders": 33
+    },
+    {
+      "month": "2026-09",
+      "revenue": 0,
+      "net": 0,
+      "orders": 0,
+      "average_order_value": 0,
+      "unique_customers": 0,
+      "total_refunds": 0,
+      "new_customers": 0,
+      "returning_customers": 0,
+      "returning_customers_rate": 0,
+      "lost_revenue": 0,
+      "lost_orders": 0
     }
   ],
   "products": [
     {
-      "name": "Panton Sandalye",
-      "sku": "",
-      "net_sales": 517962,
-      "net_orders": 8,
-      "gross_items_sold": 27,
-      "in_stock": true,
-      "stock_quantity": 0
-    },
-    {
       "name": "Bellhop Portatif Aydınlatma",
       "sku": "",
-      "net_sales": 344640.5,
-      "net_orders": 13,
-      "gross_items_sold": 21,
+      "net_sales": 279740.5,
+      "net_orders": 10,
+      "gross_items_sold": 17,
       "in_stock": true,
       "stock_quantity": 0
     },
@@ -205,12 +196,21 @@
       "stock_quantity": 0
     },
     {
-      "name": "Spaghetti Tekli Koltuk",
+      "name": "Panton Sandalye",
       "sku": "",
-      "net_sales": 130806,
-      "net_orders": 5,
-      "gross_items_sold": 7,
+      "net_sales": 232512,
+      "net_orders": 4,
+      "gross_items_sold": 12,
       "in_stock": true,
+      "stock_quantity": 0
+    },
+    {
+      "name": "Eames Plastic RAR Sandalye",
+      "sku": "",
+      "net_sales": 126072,
+      "net_orders": 3,
+      "gross_items_sold": 3,
+      "in_stock": false,
       "stock_quantity": 0
     },
     {
@@ -223,30 +223,12 @@
       "stock_quantity": 0
     },
     {
-      "name": "Lido Spaghetti Sandalye",
+      "name": "Spaghetti Tekli Koltuk",
       "sku": "",
-      "net_sales": 77275,
-      "net_orders": 3,
+      "net_sales": 93626,
+      "net_orders": 4,
       "gross_items_sold": 5,
       "in_stock": true,
-      "stock_quantity": 0
-    },
-    {
-      "name": "Eames Plastic RAR Sandalye",
-      "sku": "",
-      "net_sales": 76464,
-      "net_orders": 2,
-      "gross_items_sold": 3,
-      "in_stock": false,
-      "stock_quantity": 0
-    },
-    {
-      "name": "Dondolina Sandalye",
-      "sku": "",
-      "net_sales": 72600,
-      "net_orders": 4,
-      "gross_items_sold": 8,
-      "in_stock": false,
       "stock_quantity": 0
     },
     {
@@ -259,9 +241,27 @@
       "stock_quantity": 0
     },
     {
-      "name": "River Aluminium Şezlong",
+      "name": "Lido Spaghetti Sandalye",
       "sku": "",
-      "net_sales": 59400,
+      "net_sales": 61820,
+      "net_orders": 2,
+      "gross_items_sold": 4,
+      "in_stock": true,
+      "stock_quantity": 0
+    },
+    {
+      "name": "Sylvestrina Portatif Aydınlatma",
+      "sku": "SYLTA01",
+      "net_sales": 56650,
+      "net_orders": 1,
+      "gross_items_sold": 2,
+      "in_stock": true,
+      "stock_quantity": 3
+    },
+    {
+      "name": "Bon Jour Unplugged Portatif Aydınlatma",
+      "sku": "",
+      "net_sales": 46028.5,
       "net_orders": 2,
       "gross_items_sold": 3,
       "in_stock": true,
