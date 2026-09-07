@@ -3,7 +3,7 @@
     "company": "Mozaik Design",
     "scope": "E-commerce (Metorik)",
     "currency": "TRY",
-    "generated": "2026-09-06",
+    "generated": "2026-09-07",
     "source": "Live via Metorik API"
   },
   "months": [
@@ -163,17 +163,17 @@
     },
     {
       "month": "2026-09",
-      "revenue": 134064.3,
-      "net": 112461,
-      "orders": 10,
-      "average_order_value": 13406.4,
-      "unique_customers": 9,
+      "revenue": 197947.81,
+      "net": 156579,
+      "orders": 14,
+      "average_order_value": 14139.1,
+      "unique_customers": 13,
       "total_refunds": 0,
-      "new_customers": 5,
+      "new_customers": 9,
       "returning_customers": 1,
       "returning_customers_rate": 0.1,
-      "lost_revenue": 67681.8,
-      "lost_orders": 3
+      "lost_revenue": 171877.8,
+      "lost_orders": 5
     }
   ],
   "products": [
@@ -250,6 +250,15 @@
       "stock_quantity": 0
     },
     {
+      "name": "Quick Beach Sandalye",
+      "sku": "",
+      "net_sales": 57684,
+      "net_orders": 7,
+      "gross_items_sold": 11,
+      "in_stock": true,
+      "stock_quantity": 0
+    },
+    {
       "name": "Sylvestrina Portatif Aydınlatma",
       "sku": "SYLTA01",
       "net_sales": 56650,
@@ -257,15 +266,6 @@
       "gross_items_sold": 2,
       "in_stock": true,
       "stock_quantity": 3
-    },
-    {
-      "name": "Bon Jour Unplugged Portatif Aydınlatma",
-      "sku": "",
-      "net_sales": 46028.5,
-      "net_orders": 2,
-      "gross_items_sold": 3,
-      "in_stock": true,
-      "stock_quantity": 0
     }
   ],
   "subscriptions": {
