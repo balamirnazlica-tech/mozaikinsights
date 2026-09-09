@@ -3,7 +3,7 @@
     "company": "Mozaik Design",
     "scope": "E-commerce (Metorik)",
     "currency": "TRY",
-    "generated": "2026-09-08",
+    "generated": "2026-09-09",
     "source": "Live via Metorik API"
   },
   "months": [
@@ -149,11 +149,11 @@
     },
     {
       "month": "2026-08",
-      "revenue": 1809198.35,
-      "net": 1439154.34,
-      "orders": 61,
-      "average_order_value": 29659,
-      "unique_customers": 57,
+      "revenue": 1810155.95,
+      "net": 1439952.34,
+      "orders": 62,
+      "average_order_value": 29196.1,
+      "unique_customers": 58,
       "total_refunds": 81593.81,
       "new_customers": 45,
       "returning_customers": 4,
@@ -163,26 +163,26 @@
     },
     {
       "month": "2026-09",
-      "revenue": 201915.01,
-      "net": 159885,
-      "orders": 15,
-      "average_order_value": 13461,
-      "unique_customers": 14,
+      "revenue": 169151.22,
+      "net": 141462.6,
+      "orders": 12,
+      "average_order_value": 14095.9,
+      "unique_customers": 11,
       "total_refunds": 0,
-      "new_customers": 9,
+      "new_customers": 11,
       "returning_customers": 1,
       "returning_customers_rate": 0.1,
-      "lost_revenue": 192477.6,
-      "lost_orders": 6
+      "lost_revenue": 807940.8,
+      "lost_orders": 7
     }
   ],
   "products": [
     {
       "name": "Bellhop Portatif Aydınlatma",
       "sku": "",
-      "net_sales": 279740.5,
-      "net_orders": 10,
-      "gross_items_sold": 17,
+      "net_sales": 313370.5,
+      "net_orders": 11,
+      "gross_items_sold": 19,
       "in_stock": true,
       "stock_quantity": 0
     },
