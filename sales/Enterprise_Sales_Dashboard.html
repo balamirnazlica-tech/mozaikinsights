@@ -728,11 +728,18 @@
       const id = btn.dataset.tab;
       document.querySelectorAll("section[id^=tab-]").forEach(s => s.classList.add("hide"));
       document.getElementById("tab-"+id).classList.remove("hide");
-      // charts created while their tab was hidden come up 0x0 — re-fit them now
+      // Charts built while their tab was hidden come up 0x0 — rebuild them on first reveal.
       requestAnimationFrame(() => {
         document.querySelectorAll("#tab-"+id+" canvas").forEach(c => {
+          if (c.dataset.refit) return;
           const ch = (window.Chart && Chart.getChart) ? Chart.getChart(c) : null;
-          if (ch) ch.resize();
+          if (!ch || c.clientWidth > 0) return;
+          const cfg = {type: ch.config.type, data: ch.config.data, options: ch.config.options};
+          const hpx = parseInt(c.getAttribute("height"), 10) || 220;
+          ch.destroy();
+          c.removeAttribute("style"); c.width = 0; c.height = hpx;
+          new Chart(c, cfg);
+          c.dataset.refit = "1";
         });
       });
     });
