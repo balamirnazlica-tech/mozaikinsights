@@ -728,6 +728,13 @@
       const id = btn.dataset.tab;
       document.querySelectorAll("section[id^=tab-]").forEach(s => s.classList.add("hide"));
       document.getElementById("tab-"+id).classList.remove("hide");
+      // charts created while their tab was hidden come up 0x0 — re-fit them now
+      requestAnimationFrame(() => {
+        document.querySelectorAll("#tab-"+id+" canvas").forEach(c => {
+          const ch = (window.Chart && Chart.getChart) ? Chart.getChart(c) : null;
+          if (ch) ch.resize();
+        });
+      });
     });
   });
 })();
