@@ -729,19 +729,21 @@
       document.querySelectorAll("section[id^=tab-]").forEach(s => s.classList.add("hide"));
       document.getElementById("tab-"+id).classList.remove("hide");
       // Charts built while their tab was hidden come up 0x0 — rebuild them on first reveal.
-      requestAnimationFrame(() => {
+      setTimeout(() => {
         document.querySelectorAll("#tab-"+id+" canvas").forEach(c => {
-          if (c.dataset.refit) return;
-          const ch = (window.Chart && Chart.getChart) ? Chart.getChart(c) : null;
-          if (!ch || c.clientWidth > 0) return;
-          const cfg = {type: ch.config.type, data: ch.config.data, options: ch.config.options};
-          const hpx = parseInt(c.getAttribute("height"), 10) || 220;
-          ch.destroy();
-          c.removeAttribute("style"); c.width = 0; c.height = hpx;
-          new Chart(c, cfg);
-          c.dataset.refit = "1";
+          try {
+            if (c.dataset.refit === "1" || c.clientWidth > 0) return;
+            const ch = (window.Chart && Chart.getChart) ? Chart.getChart(c) : null;
+            if (!ch || !c.parentElement.clientWidth) return;
+            const cfg = {type: ch.config.type, data: ch.config.data, options: ch.config.options};
+            const hpx = parseInt(c.getAttribute("height"), 10) || 220;
+            ch.destroy();
+            c.removeAttribute("style"); c.width = 0; c.height = hpx;
+            new Chart(c, cfg);
+            c.dataset.refit = "1";
+          } catch (e) { console.warn("chart refit failed", c.id, e); }
         });
-      });
+      }, 80);
     });
   });
 })();
