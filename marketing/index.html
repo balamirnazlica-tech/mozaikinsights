@@ -9,20 +9,73 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css?v=11">
 <script src="/assets/auth.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="./data.js?v=1"></script>
 <style>
-#tabs button[data-id="ads"]{border-left:3px solid #3b82f6}
-#tabs button[data-id="ecom"]{border-left:3px solid #10b981}
-#tabs button[data-id="kpi"]{border-left:3px solid #a78bfa}
-#tabs button[data-id="google"]{border-left:3px solid #ea4335}
-#tabs button[data-id="google"].active{background:rgba(234,67,53,.15);color:#fca5a5;border-color:#ea4335}
-#tabs button[data-id="insights"]{border-left:3px solid #f59e0b}
-#tabs button[data-id="insights"].active{background:rgba(245,158,11,.15);color:#fcd34d;border-color:#f59e0b}
-#tabs button[data-id="ads"].active{background:rgba(59,130,246,.15);color:#93c5fd;border-color:#3b82f6}
-#tabs button[data-id="ecom"].active{background:rgba(16,185,129,.15);color:#6ee7b7;border-color:#10b981}
-#tabs button[data-id="kpi"].active{background:rgba(167,139,250,.15);color:#c4b5fd;border-color:#a78bfa}
+:root{--bg:#F4F5F7;--surface:#fff;--surface-2:#EEF0F3;--line:#E1E4E9;--ink:#0F172A;--ink-2:#475569;--muted:#7C8494;
+  --accent:#0F172A;--brass:#9A6B1E;--brass-soft:#F5EBD6;--good:#1E7A46;--good-soft:#E3F2E8;--warn:#A2620A;--warn-soft:#FBF0DA;--bad:#B42318;--bad-soft:#FBE4E1;
+  --meta:#2563EB;--google:#EA4335;--outlet:#F59E0B}
+*{box-sizing:border-box}
+body.mkt{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;font-size:14px;line-height:1.45;font-variant-numeric:tabular-nums}
+.mk-wrap{max-width:1280px;margin:0 auto;padding:18px 20px 56px}
+.mk-top{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;margin-bottom:12px}
+.mk-top h1{font-size:26px;font-weight:700;letter-spacing:-.01em;margin:0}
+.mk-top .sub{color:var(--muted);font-size:13px;margin:2px 0 0}
+.filter{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;transition:opacity .15s}
+.filter label{display:block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.sel{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:7px 10px;color:var(--ink);font:inherit;font-size:13px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:transparent;color:var(--ink-2);font:inherit;font-size:12px;padding:7px 11px;cursor:pointer}
+.seg button.on{background:var(--accent);color:#fff}
+.seg button:disabled{opacity:.4;cursor:not-allowed}
+.filter.dim{opacity:.4;pointer-events:none}
+.fnote{font-size:11px;color:var(--muted);align-self:center;max-width:180px}
+.upd{text-align:right}.upd .l{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}.upd .v{font-size:13px;font-weight:600}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:16px;overflow-x:auto}
+.tabs button{border:0;background:transparent;font:inherit;font-size:14px;font-weight:500;color:var(--muted);padding:10px 14px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.tabs button.on{color:var(--ink);border-bottom-color:var(--brass)}
+.tabs button:focus-visible,.seg button:focus-visible{outline:2px solid var(--brass);outline-offset:-2px}
+.panel[hidden]{display:none}
+.ph{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin:0 0 12px}
+.ph h2{font-size:15px;font-weight:600;margin:0}.ph .q{font-size:13px;color:var(--muted)}
+.tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;min-width:0}
+.tile .l{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile .v{font-size:26px;font-weight:700;line-height:1.1;margin-top:6px;letter-spacing:-.01em}
+.tile .d{font-size:12px;font-weight:600;margin-top:6px}.tile .s{font-size:11px;color:var(--muted);margin-top:3px}
+.up{color:var(--good)}.down{color:var(--bad)}.flat{color:var(--muted)}
+.grid{display:grid;gap:12px;margin-bottom:12px}.g-2{grid-template-columns:2fr 1fr}.g-3{grid-template-columns:1fr 1fr 1fr}.g-11{grid-template-columns:1fr 1fr}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px;min-width:0}
+.card h3{font-size:13px;font-weight:600;margin:0 0 2px}.card .meta{font-size:11px;color:var(--muted);margin:0 0 10px}
+.card canvas{max-height:260px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:left;font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:8px;border-bottom:1px solid var(--line);vertical-align:middle}
+td.n,th.n{text-align:right}
+tr.group td{background:var(--surface-2);font-weight:600;font-size:12px}
+tr.sub td:first-child{padding-left:22px;color:var(--ink-2)}
+.bar{height:6px;background:var(--surface-2);border-radius:3px;overflow:hidden;min-width:60px}.bar i{display:block;height:100%;background:var(--brass)}
+.chip{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.chip.scale{background:var(--good-soft);color:var(--good)}.chip.hold{background:var(--surface-2);color:var(--ink-2)}
+.chip.review{background:var(--warn-soft);color:var(--warn)}.chip.cut{background:var(--bad-soft);color:var(--bad)}
+.chip.live{background:var(--good-soft);color:var(--good)}.chip.todo{background:var(--surface-2);color:var(--ink-2)}
+.owner{color:var(--muted);font-size:12px}
+.calls{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.call{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--brass);border-radius:8px;padding:10px 12px}
+.call b{display:block;font-size:13px;margin-bottom:2px}.call span{font-size:12px;color:var(--ink-2)}
+.call.bad{border-left-color:var(--bad)}.call.good{border-left-color:var(--good)}
+details.notes{margin-top:6px}details.notes summary{font-size:12px;color:var(--muted);cursor:pointer}
+details.notes .body{font-size:12px;color:var(--ink-2);margin-top:8px;max-width:75ch}details.notes .body p{margin:0 0 6px}
+.tw{overflow-x:auto}.legend{font-size:11px;color:var(--muted);margin-top:8px}
+.oneline{font-size:14px;line-height:1.5;margin:0}
+.health{display:grid;gap:8px}.h-item{border-left:3px solid var(--warn);padding:6px 10px;background:var(--surface-2);border-radius:0 6px 6px 0;font-size:12px}
+.h-item.bad{border-left-color:var(--bad)}.h-item.info{border-left-color:var(--muted)}.h-item b{display:block;font-size:12px}
+.links{font-size:12px;color:var(--muted);margin-top:14px}.links a{color:var(--ink-2)}
+@media (max-width:980px){.tiles{grid-template-columns:repeat(3,1fr)}.g-2,.g-3,.g-11{grid-template-columns:1fr}.calls{grid-template-columns:1fr}}
+@media (max-width:560px){.tiles{grid-template-columns:1fr 1fr}.mk-top h1{font-size:22px}}
 </style>
 </head>
-<body class="viewer">
+<body class="mkt">
 <nav class="nav">
 <div class="nav-inner">
 <a class="brand" href="../"><span class="brand-mark"></span><span class="brand-name">Mozaik Insights</span><span class="brand-sub">analytics hub</span></a>
@@ -36,24 +89,393 @@
 </div>
 </nav>
 
-<main class="viewer-main">
-<div class="tabbar" id="tabs"></div>
-<div class="frame-host"><iframe id="frame" title="Marketing dashboard" loading="eager" allow="fullscreen"></iframe></div>
+<main class="mk-wrap">
+  <div class="mk-top">
+    <div><h1>Marketing</h1><p class="sub" id="subtitle">Mozaik Design</p></div>
+    <div style="display:flex;gap:18px;align-items:flex-end;flex-wrap:wrap">
+      <div class="filter" id="filter">
+        <div><label for="monthFrom">From</label><select class="sel" id="monthFrom"></select></div>
+        <div><label for="monthTo">To</label><select class="sel" id="monthTo"></select></div>
+        <div><label>Quick</label><div class="seg" id="rangeSeg"><button data-r="ytd">YTD</button><button data-r="q1">Q1</button><button data-r="q2">Q2</button><button data-r="q3">Q3</button><button data-r="l3">Last 3</button></div></div>
+        <div><label>Currency</label><div class="seg" id="ccySeg"><button class="on" data-c="TRY">₺</button><button data-c="EUR">€</button></div></div>
+        <div class="fnote" id="fnote"></div>
+      </div>
+      <div class="upd"><div class="l">Updated</div><div class="v" id="updated">—</div></div>
+    </div>
+  </div>
+
+  <div class="tabs" id="tabbar" role="tablist">
+    <button class="on" data-t="pulse" role="tab">Pulse</button>
+    <button data-t="budget" role="tab">Budget</button>
+    <button data-t="funnel" role="tab">Funnel</button>
+    <button data-t="brand" role="tab">Brand</button>
+    <button data-t="outlet" role="tab">Outlet</button>
+  </div>
+
+  <!-- PULSE -->
+  <section class="panel" data-p="pulse">
+    <div class="ph"><h2>Is marketing working?</h2><span class="q" id="pulsePeriod">—</span></div>
+    <div class="tiles" id="pulseRow"></div>
+    <div class="grid g-2">
+      <div class="card"><h3>Revenue vs ad spend</h3><p class="meta">Monthly · store revenue (Metorik), total ad spend, and return per ₺1 of ads</p><canvas id="cPulse"></canvas></div>
+      <div class="card"><h3>This month in one line</h3><p class="meta">Written from the tiles</p><p class="oneline" id="pulseLine">—</p>
+        <details class="notes"><summary>How each tile is built</summary><div class="body">
+          <p><b>Revenue</b> — total online store revenue from Metorik. The sub-line is the share Meta's pixel claims; the pixel over-credits, so read it as an upper bound.</p>
+          <p><b>Sessions</b> — GA4, mozaikdesign.com, Türkiye-only (bot traffic from other countries excluded).</p>
+          <p><b>Conversion</b> — online orders ÷ sessions from raw counts, not GA4's own rate, which is void while <code>view_item</code> is flagged as a key event. Showroom closes are not in here.</p>
+          <p><b>Meta ROAS</b> — Meta pixel revenue ÷ Meta spend. The spend beside it is Meta + Google combined.</p>
+          <p><b>Brand reach</b> — Instagram organic + paid. A leading indicator: next quarter's demand, not this one's.</p>
+          <p>The Pulse is fixed to the last complete month so the number is stable. The date filter drives the other tabs.</p>
+        </div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUDGET -->
+  <section class="panel" data-p="budget" hidden>
+    <div class="ph"><h2>Where should the money go?</h2><span class="q" id="budgetPeriod">—</span></div>
+    <div class="calls" id="calls"></div>
+    <div class="card" style="margin-bottom:12px">
+      <h3>Allocation</h3><p class="meta">Every row you can move money between. Verdict is rule-based (rules below). Owner: Tuana Başak.</p>
+      <div class="tw"><table id="alloc"><thead><tr><th>Channel / campaign</th><th class="n">Spend</th><th>Share</th><th class="n">Tracked rev.</th><th class="n">ROAS</th><th class="n">Spend vs prior</th><th>Verdict</th></tr></thead><tbody></tbody></table></div>
+      <p class="legend">Google campaign rows show no revenue or ROAS: Google's imported conversion value over-counts. The Google channel line uses GA4 paid-search revenue instead. Meta rows use pixel revenue. Traffic and awareness campaigns are judged on the Outlet tab, not on ROAS.</p>
+    </div>
+    <div class="grid g-11">
+      <div class="card"><h3>Spend vs return, by campaign</h3><p class="meta">Meta campaigns · x: spend · y: ROAS · bubble: tracked revenue</p><canvas id="cScatter"></canvas></div>
+      <div class="card"><h3>Spend mix over time</h3><p class="meta">Monthly · stacked by channel · shows drift you didn't decide</p><canvas id="cMix"></canvas></div>
+    </div>
+    <details class="notes"><summary>Verdict rules</summary><div class="body">
+      <p><b>Scale</b> ROAS ≥ 4x and under 30% of spend. <b>Hold</b> 2–4x. <b>Cut</b> under 1x with more than ₺20k spend in each of the last two months. <b>Review</b> traffic / awareness campaigns (judged on hand-offs, not ROAS) and any row with ₺0 tracked revenue against real spend — usually a tagging problem, not a performance one.</p>
+    </div></details>
+  </section>
+
+  <!-- FUNNEL -->
+  <section class="panel" data-p="funnel" hidden>
+    <div class="ph"><h2>Where is demand leaking?</h2><span class="q" id="funnelPeriod">—</span></div>
+    <div class="tiles" id="funnelRow"></div>
+    <div class="grid g-3">
+      <div class="card"><h3>Sessions by channel</h3><p class="meta">GA4 · monthly</p><canvas id="cSess"></canvas></div>
+      <div class="card"><h3>Revenue by channel</h3><p class="meta">GA4 last-click · monthly</p><canvas id="cRevCh"></canvas></div>
+      <div class="card"><h3>Branded vs non-branded search</h3><p class="meta">Search Console · clicks</p><canvas id="cSearch"></canvas></div>
+    </div>
+    <div class="card"><h3>Conversion &amp; order value</h3><p class="meta">Monthly · the two numbers that turn traffic into revenue</p><canvas id="cCvr" style="max-height:200px"></canvas></div>
+    <details class="notes"><summary>Sources &amp; caveats</summary><div class="body">
+      <p>Sessions and conversion: GA4 property 369077286, Türkiye-only. Revenue by channel: GA4 last-click, China/Singapore excluded; GA4 credits the last click, so paid social reads lower here than in Meta's pixel. Known gaps: organic-search revenue is zero in May and paid-search in June against real sessions — attribution gaps, not collapses. Order value and orders: Metorik. Branded / non-branded: Google Search Console.</p>
+    </div></details>
+    <p class="links">Subscriptions, MRR and top products live on the <a href="../ecommerce/ecommerce-dashboard.html">E-commerce page</a>.</p>
+  </section>
+
+  <!-- BRAND -->
+  <section class="panel" data-p="brand" hidden>
+    <div class="ph"><h2>Is the brand growing?</h2><span class="q" id="brandPeriod">—</span></div>
+    <div class="tiles" id="brandRow"></div>
+    <div class="grid g-2">
+      <div class="card"><h3>Instagram reach</h3><p class="meta">Monthly · organic (Instagram Insights) + paid (Meta Ads)</p><canvas id="cIg"></canvas></div>
+      <div class="card"><h3>Measurement roadmap</h3><p class="meta">What is live and what still needs a source</p><div class="tw"><table id="kpiTbl"><thead><tr><th>KPI</th><th>Source</th><th>Status</th></tr></thead><tbody></tbody></table></div></div>
+    </div>
+    <div class="grid g-11">
+      <div class="card"><h3>Facebook Page — unique viewers</h3><p class="meta" id="fbMeta">Monthly</p><canvas id="cFb" style="max-height:200px"></canvas></div>
+      <div class="card"><h3>LinkedIn Page — impressions &amp; new followers</h3><p class="meta" id="liMeta">Monthly</p><canvas id="cLi" style="max-height:200px"></canvas></div>
+    </div>
+    <details class="notes"><summary>Sources &amp; caveats</summary><div class="body"><p>Instagram organic and paid reach overlap (the same person may see both), so the stacked total is slightly above true unique reach. Facebook and LinkedIn are frozen at their last successful pull under the current Supermetrics licence. Branded search is Search Console clicks on brand terms.</p></div></details>
+  </section>
+
+  <!-- OUTLET -->
+  <section class="panel" data-p="outlet" hidden>
+    <div class="ph"><h2>Is the catalogue handing people to sales?</h2><span class="q" id="outletPeriod">—</span></div>
+    <div class="tiles" id="outletRow"></div>
+    <div class="grid g-3">
+      <div class="card"><h3>Visits vs ad spend</h3><p class="meta">Monthly</p><canvas id="cOutSpend"></canvas></div>
+      <div class="card"><h3>How people arrive</h3><p class="meta">GA4 channels · monthly</p><canvas id="cOutCh"></canvas></div>
+      <div class="card"><h3>How far they get</h3><p class="meta">Scroll-through and hand-offs</p><canvas id="cOutEng"></canvas></div>
+    </div>
+    <div class="grid g-11">
+      <div class="card"><h3>Outlet campaigns</h3><p class="meta">2026 YTD · spend, clicks, cost per click</p><div class="tw"><table id="outCamp"><thead><tr><th>Campaign</th><th class="n">Spend</th><th class="n">Clicks</th><th class="n">CPC</th></tr></thead><tbody></tbody></table></div></div>
+      <div class="card"><h3>Measurement health</h3><p class="meta">What can and cannot be trusted on this tab</p><div class="health" id="outHealth"></div></div>
+    </div>
+    <details class="notes"><summary>What this tab measures</summary><div class="body"><p id="outletNote"></p></div></details>
+  </section>
 </main>
 
 <script>
-const DASHBOARDS=[
-{id:'ads',label:'Ads & Brand',url:'./marketing-dashboard.html'},
-{id:'ecom',label:'E-commerce',url:'../ecommerce/ecommerce-dashboard.html'},
-{id:'google',label:'Google',url:'./google-dashboard.html'},
-{id:'kpi',label:'KPI Tracker',url:'./kpi-tracker.html'},
-{id:'insights',label:'💡 Insights & Actions',url:'./marketing-dashboard.html?tab=insights'}
-];
-const frame=document.getElementById('frame'),tabs=document.getElementById('tabs');
-function activate(id){const d=DASHBOARDS.find(x=>x.id===id)||DASHBOARDS[0];frame.src=d.url;tabs.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.id===d.id))}
-DASHBOARDS.forEach(d=>{const b=document.createElement('button');b.textContent=d.label;b.dataset.id=d.id;b.onclick=()=>activate(d.id);tabs.appendChild(b)});
-activate(new URLSearchParams(location.search).get('tab')||'ads');
-window.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){const i=DASHBOARDS.findIndex(d=>d.id===(tabs.querySelector('.active')||{}).dataset?.id);const n=e.key==='ArrowRight'?(i+1)%DASHBOARDS.length:(i-1+DASHBOARDS.length)%DASHBOARDS.length;activate(DASHBOARDS[n].id)}});
+(function(){
+'use strict';
+const M=window.MKT, DATA=M.DATA, OUTLET=M.OUTLET, G=M.GOOGLE, SITE=M.SITE_TRAFFIC;
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const PMON={'01':'Jan','02':'Feb','03':'Mar','04':'Apr','05':'May','06':'Jun','07':'Jul','08':'Aug','09':'Sep','10':'Oct','11':'Nov','12':'Dec'};
+const monShort=m=>{if(!m)return '—';const p=String(m).split('-');return PMON[p[1]]||m;};
+const mLabel=m=>m?monShort(m)+' '+m.slice(0,4):'—';
+const prevMonth=m=>{let y=+m.slice(0,4),n=+m.slice(5,7)-1;if(n<1){n=12;y--;}return y+'-'+String(n).padStart(2,'0');};
+const lastCompleteMonth=()=>{const d=new Date();let y=d.getFullYear(),n=d.getMonth();if(n<1){n=12;y--;}return y+'-'+String(n).padStart(2,'0');};
+const sum=(a,k)=>a.reduce((s,r)=>s+(r[k]||0),0);
+const num=n=>n==null?'—':Math.round(n).toLocaleString('en-US');
+const compact=v=>v==null?'—':v>=1e6?(v/1e6).toFixed(2)+'M':v>=1e3?Math.round(v/1e3)+'k':num(v);
+const pct=n=>n==null?'—':(n*100).toFixed(1)+'%';
+
+/* currency */
+let ccy='TRY', EUR_RATE=null;
+const conv=n=>(ccy==='EUR'&&EUR_RATE)?n*EUR_RATE:n, sym=()=>ccy==='EUR'?'€':'₺';
+const TL=n=>n==null?'—':sym()+Math.round(conv(n)).toLocaleString('en-US');
+const TL2=n=>n==null?'—':sym()+conv(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const TLk=n=>{if(n==null)return '—';n=conv(n);const a=Math.abs(n);return a>=1e6?sym()+(n/1e6).toFixed(2)+'M':a>=1e3?sym()+Math.round(n/1e3)+'k':sym()+Math.round(n);};
+fetch('https://api.frankfurter.dev/v1/latest?from=TRY&to=EUR',{cache:'no-store'}).then(r=>r.ok?r.json():null)
+  .then(j=>{if(j&&j.rates&&j.rates.EUR)EUR_RATE=j.rates.EUR;else disableEur();}).catch(disableEur);
+function disableEur(){const b=$('#ccySeg button[data-c="EUR"]');if(b){b.disabled=true;b.title='Rate unavailable';}}
+
+/* e-commerce (Metorik) — live JSON, else baked snapshot */
+let ECOM=null, ECOM_SNAP=false;
+fetch('../ecommerce/ecommerce-data.json',{cache:'no-store'}).then(r=>r.ok?r.json():null)
+  .then(j=>{if(j&&j.months){ECOM=j;ECOM_SNAP=false;}else useSnap();render();}).catch(()=>{useSnap();render();});
+function useSnap(){ECOM={months:M.ECOM_FALLBACK};ECOM_SNAP=true;}
+const ecomRow=m=>ECOM&&(ECOM.months||[]).find(x=>x.month===m)||null;
+const ecomLast=()=>{const ms=(ECOM&&ECOM.months||[]).map(r=>r.month).sort();return ms.length?ms[ms.length-1]:null;};
+
+/* state */
+const LCM=lastCompleteMonth();
+const ALL=DATA.meta.months.slice();
+const CMONTHS=ALL.filter(m=>m<=LCM);               // complete months only
+const state={from:CMONTHS[Math.max(0,CMONTHS.length-3)], to:CMONTHS[CMONTHS.length-1], tab:'pulse'};
+const inRange=m=>m>=state.from&&m<=state.to;
+const months=()=>CMONTHS.filter(inRange);
+const priorMonths=()=>{const c=months();if(!c.length)return [];const p=[];let x=c[0];for(let i=0;i<c.length;i++){x=prevMonth(x);p.unshift(x);}return p;};
+const rangeLabel=a=>!a.length?'—':a.length===1?mLabel(a[0]):monShort(a[0])+'–'+monShort(a[a.length-1])+' '+a[a.length-1].slice(0,4);
+
+/* paid helpers */
+const paid=(ms,f)=>DATA.paid.filter(r=>ms.includes(r.month)&&(!f||f(r)));
+const isMeta=r=>r.channel==='Meta Ads', isGoogle=r=>r.channel==='Google Ads';
+const isTraffic=c=>/traffic|trafik|reach|erişim|engagement|etkileşim|awareness|bilinirlik|consideration|görüntülenme|video/i.test(c);
+const tr=m=>SITE.find(r=>r.month===m)||null;
+const trSum=(ms,k)=>ms.reduce((s,m)=>{const r=tr(m);return s+(r?(r[k]||0):0);},0);
+const trHas=ms=>ms.some(m=>tr(m));
+const igRow=m=>(DATA.ig_reach||[]).find(r=>r.month===m)||null;
+
+function delta(cur,prev,invert){
+  if(cur==null||prev==null||!(prev>0))return {txt:'no baseline',cls:'flat',d:null};
+  const d=(cur-prev)/prev*100, good=invert?d<=0:d>=0;
+  return {txt:(d>=0?'▲ ':'▼ ')+Math.abs(d).toFixed(0)+'%',cls:good?'up':'down',d};
+}
+const tile=(label,val,ch,sub,tip)=>'<div class="tile"'+(tip?' title="'+tip.replace(/"/g,'&quot;')+'"':'')+'><div class="l">'+label+'</div><div class="v">'+val+'</div><div class="d '+(ch?ch.cls:'flat')+'">'+(ch?ch.txt:'')+'</div>'+(sub?'<div class="s">'+sub+'</div>':'')+'</div>';
+
+/* charts */
+const charts={};
+function chart(id,cfg){if(typeof Chart==='undefined')return;if(charts[id])charts[id].destroy();const el=document.getElementById(id);if(!el)return;
+  cfg.options=Object.assign({responsive:true,maintainAspectRatio:true,plugins:{}},cfg.options||{});
+  cfg.options.plugins=Object.assign({legend:{position:'bottom',labels:{boxWidth:10,font:{size:11}}}},cfg.options.plugins||{});
+  charts[id]=new Chart(el,cfg);}
+const C={meta:'#2563EB',google:'#EA4335',outlet:'#F59E0B',ink:'#0F172A',soft:'#CBD5E1',brass:'#9A6B1E',good:'#1E7A46',bad:'#B42318',pink:'#DB2777',pinkSoft:'#F9A8D4',
+  ch:{'Direct':'#0F172A','Organic Search':'#1E7A46','Paid Search':'#EA4335','Paid Social':'#2563EB','Organic Social':'#7C3AED','Cross-network':'#F59E0B','Referral':'#0891B2','Other':'#94A3B8','Unassigned':'#CBD5E1','other_organic':'#7C3AED'}};
+const money=v=>TLk(v);
+
+/* ============ PULSE ============ */
+function renderPulse(){
+  const Mn=LCM, P=prevMonth(Mn);
+  $('#pulsePeriod').textContent=mLabel(Mn)+' vs '+mLabel(P);
+  const el=ecomLast(); const rm=(el&&el<Mn)?el:Mn;
+  const rev=ecomRow(rm)?ecomRow(rm).revenue:null, revP=ecomRow(prevMonth(rm))?ecomRow(prevMonth(rm)).revenue:null;
+  const metaRev=sum(paid([rm],isMeta),'revenue'); const share=(rev>0)?metaRev/rev*100:null;
+  const a=tr(Mn), b=tr(P);
+  const cvr=a&&a.sessions?a.transactions/a.sessions*100:null, cvrP=b&&b.sessions?b.transactions/b.sessions*100:null;
+  const sp=sum(paid([Mn]),'spend'), spP=sum(paid([P]),'spend');
+  const ms=sum(paid([Mn],isMeta),'spend'), mr=sum(paid([Mn],isMeta),'revenue'), msP=sum(paid([P],isMeta),'spend'), mrP=sum(paid([P],isMeta),'revenue');
+  const roas=ms?mr/ms:null, roasP=msP?mrP/msP:null;
+  const igC=(DATA.ig_reach||[]).filter(r=>r.organic!=null); const igL=igC[igC.length-1], igQ=igC[igC.length-2];
+  const reach=igL?igL.organic+(igL.paid||0):null, reachP=igQ?igQ.organic+(igQ.paid||0):null;
+  const dS=delta(sp,spP);
+  $('#pulseRow').innerHTML=
+    tile('Revenue'+(rm!==Mn?' · '+monShort(rm):''), TLk(rev), delta(rev,revP), (share!=null?share.toFixed(0)+'% paid-influenced':'')+(ECOM_SNAP?' · snapshot':''), 'Total online store revenue (Metorik). '+TLk(metaRev)+' of it is Meta pixel-tracked — an upper bound.'+(ECOM_SNAP?' Live Metorik feed not reachable from this copy; showing the baked snapshot.':''))+
+    tile('Sessions', compact(a&&a.sessions), delta(a&&a.sessions,b&&b.sessions), 'Türkiye only', 'GA4 sessions, mozaikdesign.com, Türkiye-only.')+
+    tile('Conversion', cvr!=null?cvr.toFixed(3)+'%':'—', delta(cvr,cvrP), a?num(a.transactions)+' orders':'', 'Online orders ÷ sessions from raw counts. Not GA4’s conversion rate, which is void while view_item is a key event.')+
+    tile('Meta ROAS', roas!=null?roas.toFixed(2)+'x':'—', delta(roas,roasP), 'spend '+TLk(sp)+' <span class="'+dS.cls+'">'+dS.txt+'</span>', 'Meta pixel revenue ÷ Meta spend. Spend shown is Meta + Google.')+
+    tile('Brand reach'+(igL&&igL.month<Mn?' · '+monShort(igL.month):''), compact(reach), delta(reach,reachP), 'Instagram', 'Instagram organic + paid reach. Leading indicator.');
+  /* one line */
+  const parts=[];
+  if(dS.d!=null&&rev!=null&&revP){const dr=delta(rev,revP).d; parts.push('Spend '+(dS.d>=0?'rose':'fell')+' '+Math.abs(dS.d).toFixed(0)+'% and revenue '+(dr>=0?'rose':'fell')+' '+Math.abs(dr).toFixed(0)+'%.');}
+  if(roas!=null&&roasP!=null){const d=delta(roas,roasP).d; parts.push('Return per lira '+(d<=-25?'fell hard':d<0?'slipped':d>=25?'improved strongly':'held')+' ('+roasP.toFixed(1)+'x → '+roas.toFixed(1)+'x).');}
+  if(cvr!=null&&cvrP!=null){const d=delta(cvr,cvrP).d; parts.push('Conversion '+(d>=0?'improved':'weakened')+', so this is '+(d>=0?'a media-buying question, not a website one.':'a website question as much as a media one.'));}
+  $('#pulseLine').textContent=parts.join(' ')||'—';
+  /* chart: 12 months rev vs spend + MER */
+  const ms12=CMONTHS.slice(-12);
+  const revs=ms12.map(m=>ecomRow(m)?ecomRow(m).revenue:null), spends=ms12.map(m=>sum(paid([m]),'spend'));
+  chart('cPulse',{data:{labels:ms12.map(monShort),datasets:[
+    {type:'bar',label:'Store revenue',data:revs.map(v=>v==null?null:conv(v)),backgroundColor:C.ink,borderRadius:4,order:2,yAxisID:'y'},
+    {type:'bar',label:'Ad spend',data:spends.map(conv),backgroundColor:C.soft,borderRadius:4,order:3,yAxisID:'y'},
+    {type:'line',label:'Return per ₺1',data:ms12.map((m,i)=>revs[i]!=null&&spends[i]?revs[i]/spends[i]:null),borderColor:C.brass,backgroundColor:C.brass,borderWidth:2,pointRadius:3,tension:.3,order:1,yAxisID:'y2'}]},
+    options:{scales:{y:{ticks:{callback:v=>TLk(v)}},y2:{position:'right',grid:{display:false},ticks:{callback:v=>v+'x'}}},plugins:{tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.dataset.yAxisID==='y2'?c.parsed.y.toFixed(1)+'x':TL(c.parsed.y))}}}}});
+}
+
+/* ============ BUDGET ============ */
+function verdict(row){
+  if(row.traffic) return ['review','Review'];
+  if(row.google&&!row.group) return ['hold','Hold'];
+  if(row.google&&row.group) return row.roas==null?['hold','Hold']:row.roas<1?['review','Review']:row.roas>=4?['scale','Scale']:['hold','Hold'];
+  if(row.rev===0&&row.spend>5000) return ['review','Review'];
+  const r=row.roas;
+  if(r==null) return ['hold','Hold'];
+  if(r>=4&&row.share<30) return ['scale','Scale'];
+  if(r<1&&row.spend>20000&&row.prevSpend>20000) return ['cut','Cut'];
+  if(r<1) return ['review','Review'];
+  return ['hold','Hold'];
+}
+function renderBudget(){
+  const cur=months(), pri=priorMonths();
+  $('#budgetPeriod').textContent=rangeLabel(cur)+' · '+TLk(sum(paid(cur),'spend'))+' across Meta + Google';
+  const total=sum(paid(cur),'spend')||1;
+  const gaPaidSearch=ms=>ms.reduce((s,m)=>{const r=(DATA.ga_rev||[]).find(x=>x.month===m);return s+(r?(r.paid_search||0):0);},0);
+  const rows=[];
+  function channel(name,f,google){
+    const p=paid(cur,f), pp=paid(pri,f);
+    const spend=sum(p,'spend'), prevSpend=sum(pp,'spend');
+    const rev=google?gaPaidSearch(cur):sum(p,'revenue');
+    const roas=spend&&rev!=null?rev/spend:null;
+    rows.push({group:true,name,spend,prevSpend,share:spend/total*100,rev,roas,google,revNote:google?'GA4':''});
+    const camps={}; p.forEach(r=>{camps[r.campaign]=camps[r.campaign]||{spend:0,rev:0};camps[r.campaign].spend+=r.spend||0;camps[r.campaign].rev+=r.revenue||0;});
+    const prev={}; pp.forEach(r=>{prev[r.campaign]=(prev[r.campaign]||0)+(r.spend||0);});
+    Object.entries(camps).filter(([,v])=>v.spend>0).sort((a,b)=>b[1].spend-a[1].spend).slice(0,6).forEach(([c,v])=>{
+      const traffic=isTraffic(c);
+      rows.push({name:c.replace(/^G: /,''),spend:v.spend,prevSpend:prev[c]||0,share:v.spend/total*100,rev:google?null:v.rev,roas:(!google&&v.spend&&!traffic)?v.rev/v.spend:null,google,traffic});
+    });
+  }
+  channel('Meta Ads',isMeta,false); channel('Google Ads',isGoogle,true);
+  $('#alloc tbody').innerHTML=rows.map(r=>{
+    const d=delta(r.spend,r.prevSpend); const v=verdict(r);
+    return '<tr class="'+(r.group?'group':'sub')+'"><td>'+r.name+'</td><td class="n">'+TLk(r.spend)+'</td><td><div class="bar"><i style="width:'+Math.min(100,r.share).toFixed(0)+'%"></i></div></td>'
+      +'<td class="n">'+(r.rev==null?'—':TLk(r.rev))+(r.revNote?' <span class="owner">'+r.revNote+'</span>':'')+'</td><td class="n">'+(r.roas==null?(r.traffic?'n/a':'—'):r.roas.toFixed(2)+'x')+'</td>'
+      +'<td class="n '+d.cls+'">'+d.txt+'</td><td><span class="chip '+v[0]+'">'+v[1]+'</span></td></tr>';}).join('');
+  /* calls */
+  const calls=[];
+  const mC=rows[0], gC=rows.find(r=>r.group&&r.google);
+  if(mC&&mC.prevSpend>0){const d=mC.spend/mC.prevSpend; if(d>=1.5||d<=0.6){const top=rows.find(r=>!r.group&&!r.google);calls.push({cls:d>=1.5?'':'bad',t:'Meta spend went '+(d>=1?d.toFixed(1)+'×':'down '+Math.round((1-d)*100)+'%'),s:TLk(mC.prevSpend)+' → '+TLk(mC.spend)+(top?'. “'+top.name+'” took '+TLk(top.spend)+' at '+(top.roas!=null?top.roas.toFixed(1)+'x':'n/a')+'.':'')+' Decide whether that is the new run-rate.'});}}
+  const zero=rows.filter(r=>!r.group&&!r.google&&!r.traffic&&r.spend>10000&&r.rev===0);
+  if(zero.length){const s=sum(zero,'spend');calls.push({cls:'bad',t:TLk(s)+' with nothing tracked',s:zero.slice(0,2).map(r=>r.name).join(', ')+(zero.length>2?' +'+(zero.length-2):'')+' — check the pixel before judging the spend.'});}
+  if(gC&&gC.roas!=null&&gC.roas<1.5&&gC.spend>50000){calls.push({cls:'bad',t:'Google returns '+gC.roas.toFixed(1)+'x on GA4 revenue',s:TLk(gC.spend)+' spend against '+TLk(gC.rev)+' GA4 paid-search revenue. Google’s own conversion value over-counts, so this is the honest number.'});}
+  const sc=rows.filter(r=>!r.group&&verdict(r)[0]==='scale');
+  if(sc.length){calls.push({cls:'good',t:'Room to scale: '+sc[0].name,s:sc[0].roas.toFixed(1)+'x on '+TLk(sc[0].spend)+' ('+sc[0].share.toFixed(0)+'% of spend). Move budget here before adding new campaigns.'});}
+  const tf=rows.filter(r=>!r.group&&r.traffic); if(tf.length&&calls.length<3){calls.push({cls:'',t:'Traffic campaigns buy visits, not orders',s:TLk(sum(tf,'spend'))+' on '+tf.length+' campaign'+(tf.length>1?'s':'')+'. Judge them on the Outlet tab: catalogue hand-offs, not ROAS.'});}
+  $('#calls').innerHTML=calls.slice(0,3).map(c=>'<div class="call '+c.cls+'"><b>'+c.t+'</b><span>'+c.s+'</span></div>').join('')||'<div class="call"><b>No calls this period</b><span>Nothing crossed a threshold.</span></div>';
+  /* scatter: Meta campaigns */
+  const pts=rows.filter(r=>!r.group&&!r.google&&!r.traffic&&r.roas!=null).map(r=>({x:conv(r.spend),y:r.roas,r:Math.max(4,Math.min(22,Math.sqrt(r.rev/1000))),name:r.name,rev:r.rev}));
+  chart('cScatter',{type:'bubble',data:{datasets:[{label:'Meta campaigns',data:pts,backgroundColor:'rgba(37,99,235,.55)',borderColor:C.meta}]},
+    options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.raw.name+': '+TLk(c.raw.x/(ccy==='EUR'&&EUR_RATE?EUR_RATE:1))+' spend · '+c.raw.y.toFixed(2)+'x · '+TLk(c.raw.rev)}}},scales:{x:{title:{display:true,text:'Spend'},ticks:{callback:v=>TLk(v/(ccy==='EUR'&&EUR_RATE?EUR_RATE:1))}},y:{title:{display:true,text:'ROAS'},ticks:{callback:v=>v+'x'}}}}});
+  /* mix over time */
+  const ms=CMONTHS; const outletSpend=m=>{const r=(OUTLET.spend||[]).find(x=>x.month===m);return r?(r.meta||0)+(r.google||0):0;};
+  chart('cMix',{type:'bar',data:{labels:ms.map(monShort),datasets:[
+    {label:'Meta (excl. Outlet)',data:ms.map(m=>conv(sum(paid([m],isMeta),'spend')-((OUTLET.spend||[]).find(x=>x.month===m)||{}).meta||0)),backgroundColor:C.meta,borderRadius:3},
+    {label:'Google (excl. Outlet)',data:ms.map(m=>conv(sum(paid([m],isGoogle),'spend')-((OUTLET.spend||[]).find(x=>x.month===m)||{}).google||0)),backgroundColor:C.google,borderRadius:3},
+    {label:'Outlet',data:ms.map(m=>conv(outletSpend(m))),backgroundColor:C.outlet,borderRadius:3}]},
+    options:{scales:{x:{stacked:true},y:{stacked:true,ticks:{callback:v=>TLk(v/(ccy==='EUR'&&EUR_RATE?EUR_RATE:1))}}},plugins:{tooltip:{callbacks:{label:c=>c.dataset.label+': '+sym()+Math.round(c.parsed.y).toLocaleString('en-US')}}}}});
+}
+
+/* ============ FUNNEL ============ */
+function renderFunnel(){
+  const cur=months(), pri=priorMonths();
+  $('#funnelPeriod').textContent=rangeLabel(cur)+' vs '+rangeLabel(pri);
+  const s=trSum(cur,'sessions'), sP=trSum(pri,'sessions'), t=trSum(cur,'transactions'), tP=trSum(pri,'transactions');
+  const cvr=s?t/s*100:null, cvrP=sP?tP/sP*100:null;
+  const gs=ms=>ms.reduce((a,m)=>{const r=(G.search||[]).find(x=>x.month===m);return a+(r?(r.branded_clicks||0):0);},0);
+  const gsn=ms=>ms.reduce((a,m)=>{const r=(G.search||[]).find(x=>x.month===m);return a+(r?(r.nonbranded_clicks||0):0);},0);
+  const eSum=(ms,k)=>{const f=ms.filter(m=>ecomRow(m));return f.length?f.reduce((a,m)=>a+(ecomRow(m)[k]||0),0):null;};
+  const rev=eSum(cur,'revenue'), ord=eSum(cur,'orders'), revP=eSum(pri,'revenue'), ordP=eSum(pri,'orders');
+  const aov=rev&&ord?rev/ord:null, aovP=revP&&ordP?revP/ordP:null;
+  const ret=ms=>{const f=ms.filter(m=>ecomRow(m)&&ecomRow(m).returning_customers!=null);if(!f.length)return null;const r=f.reduce((a,m)=>a+ecomRow(m).returning_customers,0),n=f.reduce((a,m)=>a+(ecomRow(m).new_customers||0),0);return (r+n)?r/(r+n):null;};
+  const bs=gs(cur), bsP=gs(pri), nb=gsn(cur);
+  $('#funnelRow').innerHTML=
+    tile('Sessions', trHas(cur)?compact(s):'—', delta(trHas(cur)?s:null,trHas(pri)?sP:null), 'Türkiye', 'GA4, Türkiye-only.')+
+    tile('Branded search', bs?compact(bs):'—', delta(bs||null,bsP||null), nb?'vs '+compact(nb)+' non-branded':'clicks', 'Search Console clicks on brand terms. Brand demand proxy.')+
+    tile('Conversion', cvr!=null?cvr.toFixed(3)+'%':'—', delta(cvr,cvrP), t?num(t)+' orders':'', 'Online orders ÷ sessions, raw counts.')+
+    tile('Avg order', aov?TLk(aov):'—', delta(aov,aovP), 'Metarik'.replace('Metarik','Metorik')+(ECOM_SNAP?' · snapshot':''), 'Revenue ÷ orders (Metorik).')+
+    tile('Returning', ret(cur)!=null?pct(ret(cur)):'—', delta(ret(cur),ret(pri)), 'share of customers', 'Returning ÷ (new + returning) customers (Metorik). Needs the live feed.');
+  /* charts */
+  const ms=CMONTHS.filter(m=>(G.channels||[]).some(r=>r.month===m));
+  const chKeys=['Direct','Organic Search','Paid Search','Paid Social','Organic Social','Cross-network','Other'];
+  chart('cSess',{type:'bar',data:{labels:ms.map(monShort),datasets:chKeys.map(k=>({label:k,data:ms.map(m=>{const r=(G.channels||[]).find(x=>x.month===m);return r?(r[k]||0):0;}),backgroundColor:C.ch[k],borderRadius:2}))},options:{scales:{x:{stacked:true},y:{stacked:true,ticks:{callback:v=>compact(v)}}}}});
+  const gm=CMONTHS.filter(m=>(DATA.ga_rev||[]).some(r=>r.month===m));
+  const rk=[['direct','Direct'],['organic_search','Organic Search'],['paid_search','Paid Search'],['paid_social','Paid Social'],['cross_network','Cross-network'],['referral','Referral'],['other_organic','Other organic'],['unassigned','Unassigned']];
+  chart('cRevCh',{type:'bar',data:{labels:gm.map(monShort),datasets:rk.map(([k,l])=>({label:l,data:gm.map(m=>{const r=(DATA.ga_rev||[]).find(x=>x.month===m);return conv(r?(r[k]||0):0);}),backgroundColor:C.ch[l]||C.ch[k]||C.soft,borderRadius:2}))},options:{scales:{x:{stacked:true},y:{stacked:true,ticks:{callback:v=>TLk(v/(ccy==='EUR'&&EUR_RATE?EUR_RATE:1))}}},plugins:{tooltip:{callbacks:{label:c=>c.dataset.label+': '+sym()+Math.round(c.parsed.y).toLocaleString('en-US')}}}}});
+  const sm=CMONTHS.filter(m=>(G.search||[]).some(r=>r.month===m));
+  chart('cSearch',{type:'line',data:{labels:sm.map(monShort),datasets:[
+    {label:'Branded clicks',data:sm.map(m=>((G.search||[]).find(x=>x.month===m)||{}).branded_clicks||0),borderColor:C.ink,backgroundColor:C.ink,tension:.3,pointRadius:3},
+    {label:'Non-branded clicks',data:sm.map(m=>((G.search||[]).find(x=>x.month===m)||{}).nonbranded_clicks||0),borderColor:C.google,backgroundColor:C.google,tension:.3,pointRadius:3}]},options:{scales:{y:{ticks:{callback:v=>compact(v)}}}}});
+  const cm=CMONTHS.filter(m=>tr(m));
+  chart('cCvr',{data:{labels:cm.map(monShort),datasets:[
+    {type:'bar',label:'Avg order value',data:cm.map(m=>{const r=ecomRow(m);return r&&r.orders?conv(r.revenue/r.orders):null;}),backgroundColor:C.soft,borderRadius:3,yAxisID:'y',order:2},
+    {type:'line',label:'Conversion rate',data:cm.map(m=>{const r=tr(m);return r&&r.sessions?r.transactions/r.sessions*100:null;}),borderColor:C.brass,backgroundColor:C.brass,tension:.3,pointRadius:3,yAxisID:'y2',order:1}]},
+    options:{scales:{y:{ticks:{callback:v=>TLk(v/(ccy==='EUR'&&EUR_RATE?EUR_RATE:1))}},y2:{position:'right',grid:{display:false},ticks:{callback:v=>v.toFixed(2)+'%'}}},plugins:{tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.dataset.yAxisID==='y2'?c.parsed.y.toFixed(3)+'%':sym()+Math.round(c.parsed.y).toLocaleString('en-US'))}}}}});
+}
+
+/* ============ BRAND ============ */
+function renderBrand(){
+  const cur=months(), pri=priorMonths();
+  $('#brandPeriod').textContent=rangeLabel(cur)+' vs '+rangeLabel(pri);
+  const igAvg=ms=>{const f=ms.map(igRow).filter(r=>r&&r.organic!=null);return f.length?f.reduce((s,r)=>s+r.organic+(r.paid||0),0)/f.length:null;};
+  const igLast=[...(DATA.ig_reach||[])].filter(r=>r.organic!=null&&cur.includes(r.month)).pop();
+  const fb=(DATA.fb_page||[]), li=(DATA.li_page||[]);
+  const fbCur=fb.filter(r=>cur.includes(r.month)), fbPri=fb.filter(r=>pri.includes(r.month));
+  const liCur=li.filter(r=>cur.includes(r.month)), liPri=li.filter(r=>pri.includes(r.month));
+  const gs=ms=>ms.reduce((a,m)=>{const r=(G.search||[]).find(x=>x.month===m);return a+(r?(r.branded_clicks||0):0);},0);
+  const multi=cur.length>1;
+  $('#brandRow').innerHTML=
+    tile('IG reach'+(multi?' · avg/mo':''), compact(igAvg(cur)!=null?Math.round(igAvg(cur)):null), delta(igAvg(cur),igAvg(pri)), igLast?'organic '+compact(igLast.organic)+' · paid '+compact(igLast.paid||0)+' ('+monShort(igLast.month)+')':'Instagram', 'Instagram organic + paid reach. Multi-month periods show the monthly average — reach is not additive.')+
+    tile('IG followers', '54.8k', {txt:'Sep snapshot',cls:'flat'}, 'Instagram', 'Follower count from Instagram Insights, September 2026 snapshot.')+
+    tile('FB viewers'+(multi?' · avg/mo':''), fbCur.length?compact(sum(fbCur,'viewers')/fbCur.length):'—', delta(fbCur.length?sum(fbCur,'viewers')/fbCur.length:null,fbPri.length?sum(fbPri,'viewers')/fbPri.length:null), fb.length?'to '+monShort(fb[fb.length-1].month)+' · licence-frozen':'', 'Facebook Page unique viewers. Frozen at the last successful pull under the current licence.')+
+    tile('LinkedIn impr.'+(multi?' · avg/mo':''), liCur.length?compact(sum(liCur,'impressions')/liCur.length):'—', delta(liCur.length?sum(liCur,'impressions')/liCur.length:null,liPri.length?sum(liPri,'impressions')/liPri.length:null), li.length?'to '+monShort(li[li.length-1].month)+' · licence-frozen':'', 'LinkedIn Page impressions. Frozen at the last successful pull under the current licence.')+
+    tile('Branded search', gs(cur)?compact(gs(cur)):'—', delta(gs(cur)||null,gs(pri)||null), 'clicks · Search Console', 'Clicks on brand terms — the cleanest brand-demand proxy you have.');
+  const ig=(DATA.ig_reach||[]).filter(r=>CMONTHS.includes(r.month));
+  chart('cIg',{type:'bar',data:{labels:ig.map(r=>monShort(r.month)),datasets:[{label:'Organic',data:ig.map(r=>r.organic||0),backgroundColor:C.pinkSoft,borderRadius:3},{label:'Paid',data:ig.map(r=>r.paid||0),backgroundColor:C.pink,borderRadius:3}]},options:{scales:{x:{stacked:true},y:{stacked:true,ticks:{callback:v=>compact(v)}}}}});
+  chart('cFb',{type:'bar',data:{labels:fb.map(r=>monShort(r.month)),datasets:[{label:'Unique viewers',data:fb.map(r=>r.viewers||0),backgroundColor:'#1877F2',borderRadius:3}]},options:{plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>compact(v)}}}}});
+  $('#fbMeta').textContent='Monthly · '+(fb.length?monShort(fb[0].month)+'–'+monShort(fb[fb.length-1].month)+' '+fb[fb.length-1].month.slice(0,4):'')+' · frozen under current licence';
+  chart('cLi',{data:{labels:li.map(r=>monShort(r.month)),datasets:[{type:'bar',label:'Impressions',data:li.map(r=>r.impressions||0),backgroundColor:'#0A66C2',borderRadius:3,yAxisID:'y'},{type:'line',label:'New followers',data:li.map(r=>r.new_followers||0),borderColor:C.ink,backgroundColor:C.ink,tension:.3,pointRadius:3,yAxisID:'y2'}]},options:{scales:{y:{ticks:{callback:v=>compact(v)}},y2:{position:'right',grid:{display:false}}}}});
+  $('#liMeta').textContent='Monthly · '+(li.length?monShort(li[0].month)+'–'+monShort(li[li.length-1].month)+' '+li[li.length-1].month.slice(0,4):'')+' · frozen under current licence';
+  const st={live:'live',connect:'todo',manual:'todo',tbd:'todo'};
+  $('#kpiTbl tbody').innerHTML=(DATA.brand_kpis||[]).map(k=>{const s=String(k.status||'').toLowerCase();const cls=/live/.test(s)?'live':'todo';return '<tr><td>'+k.kpi+' <span class="owner">· '+k.channel+'</span></td><td class="owner">'+k.source+'</td><td><span class="chip '+cls+'">'+k.status+'</span></td></tr>';}).join('');
+}
+
+/* ============ OUTLET ============ */
+function renderOutlet(){
+  const om=OUTLET.months||[]; const cur=om.filter(m=>inRange(m)&&m<=LCM); const use=cur.length?cur:om.slice(-1);
+  const i0=om.indexOf(use[0]); const priorWin=i0>=use.length?om.slice(i0-use.length,i0):null;   // like-for-like only
+  const prev=priorWin?priorWin[priorWin.length-1]:null;
+  $('#outletPeriod').textContent=rangeLabel(use)+(priorWin?' vs '+rangeLabel(priorWin):' · launched May 2026');
+  const T=m=>(OUTLET.traffic||[]).find(r=>r.month===m)||{}, E=m=>(OUTLET.engagement||[]).find(r=>r.month===m)||{}, S=m=>{const r=(OUTLET.spend||[]).find(x=>x.month===m)||{};return (r.meta||0)+(r.google||0);};
+  const sess=use.reduce((a,m)=>a+(T(m).sessions||0),0), users=use.reduce((a,m)=>a+(T(m).users||0),0), spend=use.reduce((a,m)=>a+S(m),0);
+  const scroll=use.reduce((a,m)=>a+(E(m).scroll_users||0),0), contact=use.reduce((a,m)=>a+((E(m).contact_users||0)+(E(m).form_starts||0)),0), hasContact=use.some(m=>E(m).contact_users!=null);
+  const sessP=priorWin?priorWin.reduce((a,m)=>a+(T(m).sessions||0),0):null, spendP=priorWin?priorWin.reduce((a,m)=>a+S(m),0):null, cpv=sess?spend/sess:null, cpvP=(sessP&&spendP)?spendP/sessP:null;
+  $('#outletRow').innerHTML=
+    tile('Catalogue visits', compact(sess), delta(sess,sessP), num(users)+' people', 'GA4 sessions on mozaikoutlet.com.')+
+    tile('Ad spend', TLk(spend), delta(spend,spendP), 'Outlet campaigns only', 'Meta + Google spend on Outlet campaigns.')+
+    tile('Cost per visit', cpv!=null?TL2(cpv):'—', delta(cpv,cpvP,true), 'spend ÷ visits', 'What one catalogue view costs.')+
+    tile('Scroll-through', users?pct(scroll/users):'—', null, num(scroll)+' of '+num(users), 'People who scrolled the catalogue — the honest engagement number while the reserve CTA is mis-firing.')+
+    tile('Sales hand-offs', hasContact?num(contact):'—', null, hasContact?(contact&&spend?TL(spend/contact)+' each':'contact clicks + form starts'):'not tracked before Aug 2026', 'Contact clicks + form starts. The number this catalogue exists to produce.');
+  chart('cOutSpend',{data:{labels:om.map(monShort),datasets:[{type:'bar',label:'Visits',data:om.map(m=>T(m).sessions||0),backgroundColor:C.outlet,borderRadius:3,yAxisID:'y'},{type:'line',label:'Ad spend',data:om.map(m=>conv(S(m))),borderColor:C.ink,backgroundColor:C.ink,tension:.3,pointRadius:3,yAxisID:'y2'}]},options:{scales:{y:{ticks:{callback:v=>compact(v)}},y2:{position:'right',grid:{display:false},ticks:{callback:v=>TLk(v/(ccy==='EUR'&&EUR_RATE?EUR_RATE:1))}}}}});
+  const ck=['Cross-network','Paid Social','Paid Search','Direct','Organic Social','Organic Search','Other'];
+  chart('cOutCh',{type:'bar',data:{labels:om.map(monShort),datasets:ck.map(k=>({label:k,data:om.map(m=>((OUTLET.channels||[]).find(x=>x.month===m)||{})[k]||0),backgroundColor:C.ch[k],borderRadius:2}))},options:{scales:{x:{stacked:true},y:{stacked:true,ticks:{callback:v=>compact(v)}}}}});
+  chart('cOutEng',{type:'bar',data:{labels:om.map(monShort),datasets:[{label:'Scrolled',data:om.map(m=>E(m).scroll_users||0),backgroundColor:C.outlet,borderRadius:3,yAxisID:'y'},{label:'Hand-offs',data:om.map(m=>(E(m).contact_users||0)+(E(m).form_starts||0)),backgroundColor:C.ink,borderRadius:3,yAxisID:'y2'}]},options:{scales:{y:{ticks:{callback:v=>compact(v)}},y2:{position:'right',grid:{display:false}}}}});
+  $('#outCamp tbody').innerHTML=(OUTLET.campaigns||[]).map(c=>'<tr><td>'+c.campaign.replace(/^G: /,'')+' <span class="owner">· '+(c.channel==='Google Ads'?'Google':'Meta')+'</span></td><td class="n">'+TLk(c.spend)+'</td><td class="n">'+num(c.clicks)+'</td><td class="n">'+(c.clicks?TL(c.spend/c.clicks):'—')+'</td></tr>').join('');
+  $('#outHealth').innerHTML=(OUTLET.quality||[]).map(q=>'<div class="h-item '+(q.sev==='bad'?'bad':q.sev==='info'?'info':'')+'"><b>'+q.head+'</b>'+q.body+'</div>').join('');
+  $('#outletNote').textContent='Mozaik Outlet is a catalogue, not a shop. Its job is to put the range in front of people and hand warm interest to the sales team, so there is deliberately no basket, no checkout and no revenue on this tab. '+(OUTLET.meta&&OUTLET.meta.live||'');
+}
+
+/* ============ shell ============ */
+function render(){({pulse:renderPulse,budget:renderBudget,funnel:renderFunnel,brand:renderBrand,outlet:renderOutlet}[state.tab])();}
+function show(t){state.tab=t;$$('#tabbar button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));$$('.panel').forEach(p=>p.hidden=p.dataset.p!==t);
+  const pulse=t==='pulse';$('#filter').classList.toggle('dim',pulse);$('#fnote').textContent=pulse?'Pulse is fixed to the last full month':'';
+  try{history.replaceState(null,'','?tab='+t)}catch(e){} render();}
+function init(){
+  const g=String(DATA.meta.generated||''),p=g.split('-'); $('#updated').textContent=p.length===3?(+p[2])+' '+monShort(g)+' '+p[0]:g;
+  $('#subtitle').textContent='Mozaik Design · '+mLabel(CMONTHS[0])+' – '+mLabel(CMONTHS[CMONTHS.length-1])+' · complete months only';
+  const opts=CMONTHS.map(m=>'<option value="'+m+'">'+mLabel(m)+'</option>').join(''); $('#monthFrom').innerHTML=opts;$('#monthTo').innerHTML=opts;
+  $('#monthFrom').value=state.from;$('#monthTo').value=state.to;
+  $('#monthFrom').onchange=e=>{state.from=e.target.value;if(state.from>state.to){state.to=state.from;$('#monthTo').value=state.to;}clearSeg();render();};
+  $('#monthTo').onchange=e=>{state.to=e.target.value;if(state.to<state.from){state.from=state.to;$('#monthFrom').value=state.from;}clearSeg();render();};
+  function clearSeg(){$$('#rangeSeg button').forEach(b=>b.classList.remove('on'));}
+  $$('#rangeSeg button').forEach(b=>b.onclick=()=>{const y=LCM.slice(0,4);const R={ytd:[y+'-01',LCM],q1:[y+'-01',y+'-03'],q2:[y+'-04',y+'-06'],q3:[y+'-07',y+'-09'],l3:[CMONTHS[Math.max(0,CMONTHS.length-3)],LCM]}[b.dataset.r];
+    state.from=R[0]<CMONTHS[0]?CMONTHS[0]:R[0];state.to=R[1]>LCM?LCM:R[1];$('#monthFrom').value=state.from;$('#monthTo').value=state.to;clearSeg();b.classList.add('on');render();});
+  $$('#ccySeg button').forEach(b=>b.onclick=()=>{ccy=b.dataset.c;$$('#ccySeg button').forEach(x=>x.classList.toggle('on',x===b));render();});
+  $$('#tabbar button').forEach(b=>b.onclick=()=>show(b.dataset.t));
+  const l3=$('#rangeSeg button[data-r="l3"]'); if(l3) l3.classList.add('on');
+  const t=new URLSearchParams(location.search).get('tab'); show(['pulse','budget','funnel','brand','outlet'].includes(t)?t:'pulse');
+}
+init();
+})();
 </script>
 </body>
 </html>
