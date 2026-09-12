@@ -16,8 +16,8 @@
   --accent:#0F172A;--brass:#9A6B1E;--brass-soft:#F5EBD6;--good:#1E7A46;--good-soft:#E3F2E8;--warn:#A2620A;--warn-soft:#FBF0DA;--bad:#B42318;--bad-soft:#FBE4E1;
   --meta:#2563EB;--google:#EA4335;--outlet:#F59E0B}
 *{box-sizing:border-box}
-body.mkt{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;font-size:14px;line-height:1.45;font-variant-numeric:tabular-nums}
-.mk-wrap{max-width:1280px;margin:0 auto;padding:18px 20px 56px}
+body.mkt{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;font-size:14px;line-height:1.45;font-variant-numeric:tabular-nums}
+.mk-wrap{max-width:1280px;margin:0 auto;padding:18px 20px 56px;color:var(--ink)}
 .mk-top{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;margin-bottom:12px}
 .mk-top h1{font-size:26px;font-weight:700;letter-spacing:-.01em;margin:0}
 .mk-top .sub{color:var(--muted);font-size:13px;margin:2px 0 0}
@@ -34,7 +34,7 @@ body.mkt{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system
 .tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:16px;overflow-x:auto}
 .tabs button{border:0;background:transparent;font:inherit;font-size:14px;font-weight:500;color:var(--muted);padding:10px 14px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
 .tabs button.on{color:var(--ink);border-bottom-color:var(--brass)}
-.tabs button:focus-visible,.seg button:focus-visible{outline:2px solid var(--brass);outline-offset:-2px}
+.tabs button:focus{outline:none}.tabs button:focus-visible{box-shadow:inset 0 -2px 0 var(--brass)}.seg button:focus-visible{outline:2px solid var(--brass);outline-offset:-2px}
 .panel[hidden]{display:none}
 .ph{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin:0 0 12px}
 .ph h2{font-size:15px;font-weight:600;margin:0}.ph .q{font-size:13px;color:var(--muted)}
@@ -45,6 +45,8 @@ body.mkt{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system
 .tile .d{font-size:12px;font-weight:600;margin-top:6px}.tile .s{font-size:11px;color:var(--muted);margin-top:3px}
 .up{color:var(--good)}.down{color:var(--bad)}.flat{color:var(--muted)}
 .grid{display:grid;gap:12px;margin-bottom:12px}.g-2{grid-template-columns:2fr 1fr}.g-3{grid-template-columns:1fr 1fr 1fr}.g-11{grid-template-columns:1fr 1fr}
+.mk-wrap .card,.mk-wrap .tile,.mk-wrap .call{background:var(--surface)!important;background-image:none!important;box-shadow:none!important;backdrop-filter:none!important}
+.mk-wrap .card::before,.mk-wrap .card::after,.mk-wrap .tile::before,.mk-wrap .tile::after{display:none!important;content:none!important}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px;min-width:0}
 .card h3{font-size:13px;font-weight:600;margin:0 0 2px}.card .meta{font-size:11px;color:var(--muted);margin:0 0 10px}
 .card canvas{max-height:260px}
@@ -66,7 +68,14 @@ tr.sub td:first-child{padding-left:22px;color:var(--ink-2)}
 .call.bad{border-left-color:var(--bad)}.call.good{border-left-color:var(--good)}
 details.notes{margin-top:6px}details.notes summary{font-size:12px;color:var(--muted);cursor:pointer}
 details.notes .body{font-size:12px;color:var(--ink-2);margin-top:8px;max-width:75ch}details.notes .body p{margin:0 0 6px}
-.tw{overflow-x:auto}.legend{font-size:11px;color:var(--muted);margin-top:8px}
+.tw{overflow-x:auto}
+.mk-wrap .card{position:relative;resize:vertical;overflow:auto;min-height:120px}
+.mk-wrap .card.expanded{grid-column:1 / -1}
+.mk-wrap .card.expanded canvas{max-height:520px}
+.xp{position:absolute;top:8px;right:8px;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:6px;width:26px;height:26px;font-size:14px;line-height:1;cursor:pointer;opacity:.55}
+.xp:hover,.xp:focus-visible{opacity:1;color:var(--ink);outline:none}
+.mk-wrap .card h3{padding-right:32px}
+.card canvas{max-height:260px;transition:max-height .15s}.legend{font-size:11px;color:var(--muted);margin-top:8px}
 .oneline{font-size:14px;line-height:1.5;margin:0}
 .health{display:grid;gap:8px}.h-item{border-left:3px solid var(--warn);padding:6px 10px;background:var(--surface-2);border-radius:0 6px 6px 0;font-size:12px}
 .h-item.bad{border-left-color:var(--bad)}.h-item.info{border-left-color:var(--muted)}.h-item b{display:block;font-size:12px}
@@ -259,7 +268,9 @@ const tile=(label,val,ch,sub,tip)=>'<div class="tile"'+(tip?' title="'+tip.repla
 /* charts */
 const charts={};
 function chart(id,cfg){if(typeof Chart==='undefined')return;if(charts[id])charts[id].destroy();const el=document.getElementById(id);if(!el)return;
-  cfg.options=Object.assign({responsive:true,maintainAspectRatio:true,plugins:{}},cfg.options||{});
+  const exp=el.closest('.card')&&el.closest('.card').classList.contains('expanded');
+  cfg.options=Object.assign({responsive:true,maintainAspectRatio:!exp,plugins:{}},cfg.options||{});
+  if(exp){el.style.height='480px';} else {el.style.height='';}
   cfg.options.plugins=Object.assign({legend:{position:'bottom',labels:{boxWidth:10,font:{size:11}}}},cfg.options.plugins||{});
   charts[id]=new Chart(el,cfg);}
 const C={meta:'#2563EB',google:'#EA4335',outlet:'#F59E0B',ink:'#0F172A',soft:'#CBD5E1',brass:'#9A6B1E',good:'#1E7A46',bad:'#B42318',pink:'#DB2777',pinkSoft:'#F9A8D4',
@@ -459,9 +470,23 @@ function render(){({pulse:renderPulse,budget:renderBudget,funnel:renderFunnel,br
 function show(t){state.tab=t;$$('#tabbar button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));$$('.panel').forEach(p=>p.hidden=p.dataset.p!==t);
   const pulse=t==='pulse';$('#filter').classList.toggle('dim',pulse);$('#fnote').textContent=pulse?'Pulse is fixed to the last full month':'';
   try{history.replaceState(null,'','?tab='+t)}catch(e){} render();}
+function setupCards(){
+  let saved={}; try{saved=JSON.parse(localStorage.getItem('mkt_expanded')||'{}')}catch(e){}
+  $$('.mk-wrap .card').forEach((c,i)=>{
+    const h=c.querySelector('h3'); if(!h) return;
+    const id='card-'+(c.dataset.p||'')+'-'+h.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,40);
+    c.dataset.card=id;
+    const b=document.createElement('button'); b.className='xp'; b.type='button'; b.title='Expand / collapse'; b.textContent='⤢';
+    b.onclick=()=>{c.classList.toggle('expanded'); saved[id]=c.classList.contains('expanded'); try{localStorage.setItem('mkt_expanded',JSON.stringify(saved))}catch(e){} b.textContent=c.classList.contains('expanded')?'⤡':'⤢'; render();};
+    c.appendChild(b);
+    if(saved[id]){c.classList.add('expanded'); b.textContent='⤡';}
+  });
+  // chart.js needs a resize nudge when the user drags a card taller
+  let t=null; new ResizeObserver(()=>{clearTimeout(t); t=setTimeout(()=>{for(const k in charts){try{charts[k].resize()}catch(e){}}},120);}).observe(document.body);
+}
 function init(){
   const g=String(DATA.meta.generated||''),p=g.split('-'); $('#updated').textContent=p.length===3?(+p[2])+' '+monShort(g)+' '+p[0]:g;
-  $('#subtitle').textContent='Mozaik Design · '+mLabel(CMONTHS[0])+' – '+mLabel(CMONTHS[CMONTHS.length-1])+' · complete months only';
+  $('#subtitle').textContent='Mozaik Design · complete months only';
   const opts=CMONTHS.map(m=>'<option value="'+m+'">'+mLabel(m)+'</option>').join(''); $('#monthFrom').innerHTML=opts;$('#monthTo').innerHTML=opts;
   $('#monthFrom').value=state.from;$('#monthTo').value=state.to;
   $('#monthFrom').onchange=e=>{state.from=e.target.value;if(state.from>state.to){state.to=state.from;$('#monthTo').value=state.to;}clearSeg();render();};
@@ -471,6 +496,7 @@ function init(){
     state.from=R[0]<CMONTHS[0]?CMONTHS[0]:R[0];state.to=R[1]>LCM?LCM:R[1];$('#monthFrom').value=state.from;$('#monthTo').value=state.to;clearSeg();b.classList.add('on');render();});
   $$('#ccySeg button').forEach(b=>b.onclick=()=>{ccy=b.dataset.c;$$('#ccySeg button').forEach(x=>x.classList.toggle('on',x===b));render();});
   $$('#tabbar button').forEach(b=>b.onclick=()=>show(b.dataset.t));
+  setupCards();
   const l3=$('#rangeSeg button[data-r="l3"]'); if(l3) l3.classList.add('on');
   const t=new URLSearchParams(location.search).get('tab'); show(['pulse','budget','funnel','brand','outlet'].includes(t)?t:'pulse');
 }
