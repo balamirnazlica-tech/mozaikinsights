@@ -3,7 +3,7 @@
     "company": "Mozaik Design",
     "scope": "E-commerce (Metorik)",
     "currency": "TRY",
-    "generated": "2026-09-11",
+    "generated": "2026-09-12",
     "source": "Live via Metorik API"
   },
   "months": [
@@ -163,17 +163,17 @@
     },
     {
       "month": "2026-09",
-      "revenue": 279270.68,
-      "net": 219937.92,
-      "orders": 20,
-      "average_order_value": 13963.5,
-      "unique_customers": 19,
+      "revenue": 318341.71,
+      "net": 250957.32,
+      "orders": 24,
+      "average_order_value": 13264.2,
+      "unique_customers": 23,
       "total_refunds": 3775.68,
-      "new_customers": 15,
+      "new_customers": 19,
       "returning_customers": 1,
       "returning_customers_rate": 0.1,
-      "lost_revenue": 1368792.3,
-      "lost_orders": 9
+      "lost_revenue": 1393336.5,
+      "lost_orders": 10
     }
   ],
   "products": [
@@ -189,9 +189,9 @@
     {
       "name": "Panton Sandalye",
       "sku": "",
-      "net_sales": 271956,
-      "net_orders": 5,
-      "gross_items_sold": 14,
+      "net_sales": 291678,
+      "net_orders": 6,
+      "gross_items_sold": 15,
       "in_stock": true,
       "stock_quantity": 0
     },
@@ -241,20 +241,20 @@
       "stock_quantity": 0
     },
     {
+      "name": "Quick Beach Sandalye",
+      "sku": "",
+      "net_sales": 62928,
+      "net_orders": 8,
+      "gross_items_sold": 12,
+      "in_stock": true,
+      "stock_quantity": 0
+    },
+    {
       "name": "Lido Spaghetti Sandalye",
       "sku": "",
       "net_sales": 61820,
       "net_orders": 2,
       "gross_items_sold": 4,
-      "in_stock": true,
-      "stock_quantity": 0
-    },
-    {
-      "name": "Quick Beach Sandalye",
-      "sku": "",
-      "net_sales": 57684,
-      "net_orders": 7,
-      "gross_items_sold": 11,
       "in_stock": true,
       "stock_quantity": 0
     },
