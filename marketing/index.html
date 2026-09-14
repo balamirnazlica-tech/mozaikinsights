@@ -96,11 +96,11 @@ details.notes{margin-top:6px}details.notes summary{font-size:12px;color:var(--mk
 details.notes .body{font-size:12px;color:var(--mk-ink-2);margin-top:8px;max-width:75ch}details.notes .body p{margin:0 0 6px}
 .tw{overflow-x:auto}
 .mk-wrap .card{position:relative}
-.mk-wrap .card:has(canvas),.mk-wrap .card:has(table){resize:vertical;overflow:hidden auto;min-height:140px}
-.mk-wrap .card.expanded{grid-column:1 / -1}
-.mk-wrap .card.expanded canvas{max-height:520px}
-.xp{position:absolute;top:8px;right:8px;border:1px solid var(--mk-line);background:var(--mk-surface);color:var(--mk-muted);border-radius:6px;width:26px;height:26px;font-size:14px;line-height:1;cursor:pointer;opacity:.55}
-.xp:hover,.xp:focus-visible{opacity:1;color:var(--mk-ink);outline:none}
+.mk-wrap .card[data-w="2"]{grid-column:span 2}
+.mk-wrap .card[data-w="3"]{grid-column:1 / -1}
+.xp{position:absolute;top:8px;right:8px;display:inline-flex;align-items:center;gap:5px;border:1px solid var(--mk-line);background:var(--mk-surface);color:var(--mk-muted);border-radius:6px;height:26px;padding:0 9px;font:inherit;font-size:11px;font-weight:600;cursor:pointer;opacity:.6}
+.xp:hover,.xp:focus-visible{opacity:1;color:var(--mk-ink);border-color:var(--mk-brass);outline:none}
+@media (max-width:980px){.mk-wrap .card[data-w]{grid-column:auto}}
 .mk-wrap .card h3{padding-right:32px}
 .card canvas{max-height:260px;transition:max-height .15s}.legend{font-size:11px;color:var(--mk-muted);margin-top:8px}
 .insight{background:linear-gradient(0deg,var(--mk-brass-soft),var(--mk-brass-soft));border:1px solid #E8D9BC;border-left:4px solid var(--mk-brass);border-radius:10px;padding:14px 18px;margin-bottom:12px}
@@ -301,9 +301,7 @@ const tile=(label,val,ch,sub,tip)=>'<div class="tile"'+(tip?' title="'+tip.repla
 /* charts */
 const charts={};
 function chart(id,cfg){if(typeof Chart==='undefined')return;if(charts[id])charts[id].destroy();const el=document.getElementById(id);if(!el)return;
-  const exp=el.closest('.card')&&el.closest('.card').classList.contains('expanded');
-  cfg.options=Object.assign({responsive:true,maintainAspectRatio:!exp,plugins:{}},cfg.options||{});
-  if(exp){el.style.height='480px';} else {el.style.height='';}
+  cfg.options=Object.assign({responsive:true,maintainAspectRatio:true,plugins:{}},cfg.options||{});
   cfg.options.plugins=Object.assign({legend:{position:'bottom',labels:{boxWidth:10,font:{size:11}}}},cfg.options.plugins||{});
   charts[id]=new Chart(el,cfg);}
 const C={meta:'#2563EB',google:'#EA4335',outlet:'#F59E0B',ink:'#0F172A',soft:'#CBD5E1',brass:'#9A6B1E',good:'#1E7A46',bad:'#B42318',pink:'#DB2777',pinkSoft:'#F9A8D4',
@@ -507,19 +505,34 @@ function show(t){state.tab=t;$$('#tabbar button').forEach(b=>b.classList.toggle(
   const CTX={pulse:'Is marketing working?',budget:'Where should the money go?',funnel:'Where is demand leaking?',brand:'Is the brand growing?',outlet:'Is the catalogue handing people to sales?'};
   $('#mkCtx').innerHTML=CTX[t]+' <span id="mkCtxPer"></span>';
   try{history.replaceState(null,'','?tab='+t)}catch(e){} render();}
+function gridCols(card){const g=card.parentElement; if(!g||!g.classList.contains('grid'))return 1;
+  return g.classList.contains('g-3')?3:(g.classList.contains('g-11')||g.classList.contains('g-2'))?2:1;}
+function applyWidth(card,w){
+  const max=gridCols(card);
+  if(max<2||w<=1){card.removeAttribute('data-w');}
+  else{card.setAttribute('data-w', String(Math.min(w,max)===max?3:2));}
+  const cv=card.querySelector('canvas');
+  if(cv) cv.style.maxHeight=(w>=3?'420px':w===2?'340px':'');
+  const btn=card.querySelector('.xp');
+  if(btn){const label=w>=3?'Full':w===2?'Wide':'Wide'; btn.innerHTML='<span aria-hidden="true">⇔</span>'+label;
+    btn.title=w>=3?'Full width — click to reset':w===2?'Two columns — click for full width':'Click to widen this chart';}
+}
 function setupCards(){
-  let saved={}; try{saved=JSON.parse(localStorage.getItem('mkt_expanded')||'{}')}catch(e){}
-  $$('.mk-wrap .card').forEach((c,i)=>{
-    const h=c.querySelector('h3'); if(!h) return;
-    const id='card-'+(c.dataset.p||'')+'-'+h.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,40);
+  let saved={}; try{saved=JSON.parse(localStorage.getItem('mkt_width')||'{}')}catch(e){}
+  $$('.mk-wrap .card').forEach(c=>{
+    const h=c.querySelector('h3'); if(!h||gridCols(c)<2) return;
+    const id=(c.closest('[data-p]')?.dataset.p||'')+'-'+h.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,32);
     c.dataset.card=id;
-    const b=document.createElement('button'); b.className='xp'; b.type='button'; b.title='Expand / collapse'; b.textContent='⤢';
-    b.onclick=()=>{c.classList.toggle('expanded'); saved[id]=c.classList.contains('expanded'); try{localStorage.setItem('mkt_expanded',JSON.stringify(saved))}catch(e){} b.textContent=c.classList.contains('expanded')?'⤡':'⤢'; render();};
-    c.appendChild(b);
-    if(saved[id]){c.classList.add('expanded'); b.textContent='⤡';}
+    const max=gridCols(c);
+    const steps=max>=3?[1,2,3]:[1,3];
+    let i=Math.max(0,steps.indexOf(saved[id]||1)); if(i<0)i=0;
+    const b=document.createElement('button'); b.className='xp'; b.type='button'; c.appendChild(b);
+    b.onclick=()=>{ i=(i+1)%steps.length; const w=steps[i]; applyWidth(c,w);
+      saved[id]=w; try{localStorage.setItem('mkt_width',JSON.stringify(saved))}catch(e){}
+      setTimeout(()=>{for(const k in charts){try{charts[k].resize()}catch(e){}}},60); };
+    applyWidth(c,steps[i]);
   });
-  // chart.js needs a resize nudge when the user drags a card taller
-  let t=null; new ResizeObserver(()=>{clearTimeout(t); t=setTimeout(()=>{for(const k in charts){try{charts[k].resize()}catch(e){}}},120);}).observe(document.body);
+  let t=null; new ResizeObserver(()=>{clearTimeout(t);t=setTimeout(()=>{for(const k in charts){try{charts[k].resize()}catch(e){}}},120);}).observe(document.body);
 }
 function init(){
   const g=String(DATA.meta.generated||''),p=g.split('-'); $('#updated').textContent=p.length===3?(+p[2])+' '+monShort(g)+' '+p[0]:g;
