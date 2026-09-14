@@ -97,6 +97,16 @@
   .guide-body .g-checklist li::before{content:"☐";position:absolute;left:0;top:6px;color:var(--accent);font-size:15px}
   .guide-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   @media(max-width:980px){.guide-cols{grid-template-columns:1fr}}
+
+  /* last-updated stamp — visible on every tab */
+  .stamp{position:sticky;top:0;z-index:30;display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;
+    background:#101a33;border:1px solid #273258;border-radius:8px;padding:9px 14px;margin:0 0 14px;font-size:13px}
+  .stamp .dot{width:8px;height:8px;border-radius:50%;background:#29d398;flex:none}
+  .stamp b{color:#e6ebf7}
+  .stamp .age{color:#a4adc9}
+  .stamp .src{color:#7f8aa8;font-size:12px}
+  .stamp.stale{border-color:#7a4a1a;background:#1c1710}
+  .stamp.stale .dot{background:#f5a524}
 </style>
 </head>
 <body>
@@ -173,6 +183,11 @@
   </div>
 </div>
 
+<div class="stamp" id="stamp">
+  <span class="dot"></span>
+  <span><b>Veri son güncelleme:</b> <span id="stamp-date">—</span> <span class="age" id="stamp-age"></span></span>
+  <span class="src" id="stamp-src"></span>
+</div>
 <div class="tabs">
   <button class="tab active" data-tab="overview">Overview</button>
   <button class="tab" data-tab="funnel">Funnel definitions</button>
@@ -719,6 +734,21 @@
         <td>${(d.close_date||"").slice(0,10)||"<span class='muted'>—</span>"}</td>
         <td class="small">${(d.lost_reason||"<span class='muted'>not captured</span>")}</td></tr>`);
     });
+  })();
+
+  // -------- last-updated stamp --------
+  (function(){
+    const el=document.getElementById("stamp"); if(!el) return;
+    const iso=DATA.as_of;
+    const d=new Date(iso+"T00:00:00");
+    const AY=["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+    document.getElementById("stamp-date").textContent = d.getDate()+" "+AY[d.getMonth()]+" "+d.getFullYear();
+    const days=Math.max(0,Math.floor((new Date(new Date().toDateString())-d)/86400000));
+    const age=document.getElementById("stamp-age");
+    age.textContent = days===0 ? "· bugün" : days===1 ? "· 1 gün önce" : "· "+days+" gün önce";
+    if(days>7){ el.classList.add("stale"); age.textContent += " — yeni bir aktarım gerekiyor"; }
+    document.getElementById("stamp-src").textContent =
+      "Kaynak: Enterprise Sales Funnel xlsx · "+ALL.length+" kayıt ("+deals.length+" açık · "+wonDeals.length+" kazanılan · "+lostDeals.length+" kaybedilen)";
   })();
 
   // -------- tabs --------
