@@ -64,7 +64,7 @@ td.num{text-align:right;color:#a5b4fc;font-variant-numeric:tabular-nums}
 .ins li{color:#cbd5e1;font-size:14px;padding:7px 0;padding-left:22px;position:relative;line-height:1.55}
 .ins li:before{content:"\25B8";color:#818cf8;position:absolute;left:4px;font-weight:900}
 .empty{text-align:center;padding:40px;color:#64748b;font-size:14px}
-</style></head><body><div class="page">
+</style><style>.upd{display:inline-block;margin:0 0 16px;padding:5px 12px;border-radius:999px;font-size:11.5px;font-weight:600;letter-spacing:.4px;color:#64748b;background:rgba(129,140,248,.08);border:1px solid rgba(129,140,248,.18)}@media(max-width:680px){.upd{font-size:9.5px;padding:4px 9px;margin-bottom:10px}}</style></head><body><div class="page">
 
 <div class="store-nav">
   <button class="store-btn active" onclick="switchStore('ortakoy',this)">
@@ -111,6 +111,7 @@ td.num{text-align:right;color:#a5b4fc;font-variant-numeric:tabular-nums}
 </div>
 
 <div class="pnl on" id="p-ov">
+<div class="upd" data-upd>Son g&uuml;ncelleme: 15 Eyl&uuml;l 2026</div>
   <div class="kpis" id="ovKpis"></div>
   <div class="r2">
     <div class="cd"><div class="ct">Y&#305;ll&#305;k Trafik</div><div class="cs" id="ovYSub"></div><div class="h260"><canvas id="cOvY"></canvas></div></div>
@@ -123,6 +124,7 @@ td.num{text-align:right;color:#a5b4fc;font-variant-numeric:tabular-nums}
 </div>
 
 <div class="pnl" id="p-tr">
+<div class="upd" data-upd>Son g&uuml;ncelleme: 15 Eyl&uuml;l 2026</div>
   <div class="kpis" id="trKpis"></div>
   <div class="cd"><div class="ct">Y&#305;ll&#305;k Trend</div><div class="cs" id="trYSub">2012&#8211;2026</div><div class="h320"><canvas id="cTrY"></canvas></div></div>
   <div class="r2">
@@ -132,6 +134,7 @@ td.num{text-align:right;color:#a5b4fc;font-variant-numeric:tabular-nums}
 </div>
 
 <div class="pnl" id="p-tp">
+<div class="upd" data-upd>Son g&uuml;ncelleme: 15 Eyl&uuml;l 2026</div>
   <div class="kpis" id="tpKpis"></div>
   <div class="r2">
     <div class="cd"><div class="ct">Ula&#351;&#305;m T&#252;r&#252;</div><div class="cs">Da&#287;&#305;l&#305;m</div><div class="h260"><canvas id="cTpU"></canvas></div></div>
@@ -143,6 +146,7 @@ td.num{text-align:right;color:#a5b4fc;font-variant-numeric:tabular-nums}
 </div>
 
 <div class="pnl" id="p-vi">
+<div class="upd" data-upd>Son g&uuml;ncelleme: 15 Eyl&uuml;l 2026</div>
   <div class="kpis" id="viKpis"></div>
   <div class="cd"><div class="ct">Top 20 Ziyaret&#231;i</div><div class="cs">En sad&#305;k m&#252;&#351;teriler &#8212; tekrar ziyaret say&#305;s&#305;</div>
     <div style="overflow-x:auto"><table><thead><tr><th>#</th><th>&#304;sim</th><th style="text-align:right">Ziyaret</th><th>Profil</th></tr></thead><tbody id="viTbl"></tbody></table></div>
@@ -150,6 +154,7 @@ td.num{text-align:right;color:#a5b4fc;font-variant-numeric:tabular-nums}
 </div>
 
 <div class="pnl" id="p-in">
+<div class="upd" data-upd>Son g&uuml;ncelleme: 15 Eyl&uuml;l 2026</div>
   <div class="ins"><h3>&#214;ng&#246;r&#252;ler</h3><ul id="insList"></ul></div>
   <div class="r2">
     <div class="cd"><div class="ct">B&#252;y&#252;me E&#287;risi</div><div class="cs" id="inGSub">Y&#305;ll&#305;k trend</div><div class="h260"><canvas id="cInG"></canvas></div></div>
@@ -192,7 +197,9 @@ function switchStore(store,btn){
   if(!STORE_FILES[store]){dash.style.display='none';soon.style.display='flex';document.getElementById('soonName').textContent=STORE_TITLES[store]||store;return;}
   soon.style.display='none';dash.style.display='block';
   var t=document.getElementById('storeTitle');if(t)t.textContent='MOZAIK SHOWROOM — '+(STORE_TITLES[store]||store);
-  function go(d){DATA=d;YR=d.YR;init();render('');}
+  function go(d){
+  try{document.querySelectorAll('[data-upd]').forEach(function(e){e.innerHTML='Son g\u00fcncelleme: '+((d&&d.cutoff_label)||'15 Eyl\u00fcl')+' 2026';});}catch(_){}
+DATA=d;YR=d.YR;init();render('');}
   if(STORE_CACHE[store])return go(STORE_CACHE[store]);
   // version-tag the data fetch so a CDN-cached JSON can never pair with newer HTML
   fetch(STORE_FILES[store]+'?v='+DATA_VER).then(function(r){return r.json();}).then(function(d){STORE_CACHE[store]=d;go(d);});
@@ -353,6 +360,7 @@ function render(repKey){
 
 switchStore('ortakoy', document.querySelector('.store-btn'));
 </script><div class="pnl" id="p-pr">
+<div class="upd" data-upd>Son g&uuml;ncelleme: 15 Eyl&uuml;l 2026</div>
   <iframe id="repsFrame" data-src="footfall-reps.html" title="Personel / Per Rep" style="width:100%;height:2400px;border:0;border-radius:12px;background:#0b1020"></iframe>
 </div>
 <script>function loadReps(){var f=document.getElementById("repsFrame");if(f&&!f.getAttribute("src")){f.src=f.dataset.src;}}</script>
