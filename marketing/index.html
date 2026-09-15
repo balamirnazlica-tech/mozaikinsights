@@ -69,7 +69,7 @@ body.mkt{margin:0;background:var(--mk-bg);font-family:Inter,system-ui,-apple-sys
 .mktile .v{font-size:26px;font-weight:700;line-height:1.1;margin-top:6px;letter-spacing:-.01em}
 .mktile .d{font-size:12px;font-weight:600;margin-top:6px}.mktile .s{font-size:11px;color:var(--mk-muted);margin-top:3px}
 .up{color:var(--mk-good)}.down{color:var(--mk-bad)}.flat{color:var(--mk-muted)}
-.mk-wrap .grid{display:grid;gap:12px;margin-bottom:12px}.g-2{grid-template-columns:2fr 1fr}.g-3{grid-template-columns:1fr 1fr 1fr}.g-11{grid-template-columns:1fr 1fr}
+.mk-wrap .grid{display:grid;gap:12px;margin-bottom:12px;align-items:start}.g-2{grid-template-columns:2fr 1fr}.g-3{grid-template-columns:1fr 1fr 1fr}.g-11{grid-template-columns:1fr 1fr}
 .mkcard{background:var(--mk-surface);border:1px solid var(--mk-line);border-radius:8px;padding:14px;min-width:0}
 .mkcard h3{font-size:13px;font-weight:600;margin:0 0 2px}.mkcard .meta{font-size:11px;color:var(--mk-muted);margin:0 0 10px}
 .mkcard canvas{max-height:260px}
@@ -214,14 +214,14 @@ body.col-resizing{cursor:col-resize;user-select:none}
   <section class="panel" data-p="brand" hidden>
     <div class="tiles" id="brandRow"></div>
     <div class="grid g-2">
-      <div class="mkcard"><h3>Instagram reach</h3><p class="meta">Monthly · organic (Instagram Insights) + paid (Meta Ads)</p><canvas id="cIg"></canvas></div>
+      <div class="mkcard"><h3>Instagram reach</h3><p class="meta">Monthly · total unique accounts reached (Instagram Insights). Paid is a subset, shown as the line.</p><canvas id="cIg"></canvas></div>
       <div class="mkcard"><h3>Measurement roadmap</h3><p class="meta">What is live and what still needs a source</p><div class="tw"><table id="kpiTbl"><thead><tr><th>KPI</th><th>Source</th><th>Status</th></tr></thead><tbody></tbody></table></div></div>
     </div>
     <div class="grid g-11">
       <div class="mkcard"><h3>Facebook Page — unique viewers</h3><p class="meta" id="fbMeta">Monthly</p><canvas id="cFb" style="max-height:200px"></canvas></div>
       <div class="mkcard"><h3>LinkedIn Page — impressions &amp; new followers</h3><p class="meta" id="liMeta">Monthly</p><canvas id="cLi" style="max-height:200px"></canvas></div>
     </div>
-    <details class="notes"><summary>Sources &amp; caveats</summary><div class="body"><p>Instagram organic and paid reach overlap (the same person may see both), so the stacked total is slightly above true unique reach. Facebook and LinkedIn are frozen at their last successful pull under the current Supermetrics licence. Branded search is Search Console clicks on brand terms.</p></div></details>
+    <details class="notes"><summary>Sources &amp; caveats</summary><div class="body"><p>Instagram's reach metric already includes promoted posts, so paid reach is a <b>subset</b> of the total, not something to add to it. Meta only computes reach over 1-, 7- and 28-day windows, so a calendar-month figure is Meta's own approximation. Facebook and LinkedIn are frozen at their last successful pull under the current Supermetrics licence. Branded search is Search Console clicks on brand terms.</p></div></details>
   </section>
 
   <!-- OUTLET -->
@@ -322,15 +322,16 @@ function renderPulse(){
   const sp=sum(paid([Mn]),'spend'), spP=sum(paid([P]),'spend');
   const ms=sum(paid([Mn],isMeta),'spend'), mr=sum(paid([Mn],isMeta),'revenue'), msP=sum(paid([P],isMeta),'spend'), mrP=sum(paid([P],isMeta),'revenue');
   const roas=ms?mr/ms:null, roasP=msP?mrP/msP:null;
+  // NOTE: Instagram Insights `reach` ALREADY INCLUDES paid. Never add r.paid to it.
   const igC=(DATA.ig_reach||[]).filter(r=>r.organic!=null); const igL=igC[igC.length-1], igQ=igC[igC.length-2];
-  const reach=igL?igL.organic+(igL.paid||0):null, reachP=igQ?igQ.organic+(igQ.paid||0):null;
+  const reach=igL?igL.organic:null, reachP=igQ?igQ.organic:null;
   const dS=delta(sp,spP);
   $('#pulseRow').innerHTML=
     tile('Revenue'+(rm!==Mn?' · '+monShort(rm):''), TLk(rev), delta(rev,revP), (share!=null?share.toFixed(0)+'% paid-influenced':'')+(ECOM_SNAP?' · snapshot':''), 'Total online store revenue (Metorik). '+TLk(metaRev)+' of it is Meta pixel-tracked — an upper bound.'+(ECOM_SNAP?' Live Metorik feed not reachable from this copy; showing the baked snapshot.':''))+
     tile('Sessions', compact(a&&a.sessions), delta(a&&a.sessions,b&&b.sessions), 'Türkiye only', 'GA4 sessions, mozaikdesign.com, Türkiye-only.')+
     tile('Conversion', cvr!=null?cvr.toFixed(3)+'%':'—', delta(cvr,cvrP), a?num(a.transactions)+' orders':'', 'Online orders ÷ sessions from raw counts. Not GA4’s conversion rate, which is void while view_item is a key event.')+
     tile('Meta ROAS', roas!=null?roas.toFixed(2)+'x':'—', delta(roas,roasP), 'spend '+TLk(sp)+' <span class="'+dS.cls+'">'+dS.txt+'</span>', 'Meta pixel revenue ÷ Meta spend. Spend shown is Meta + Google.')+
-    tile('Brand reach'+(igL&&igL.month<Mn?' · '+monShort(igL.month):''), compact(reach), delta(reach,reachP), 'Instagram', 'Instagram organic + paid reach. Leading indicator.');
+    tile('Brand reach'+(igL&&igL.month<Mn?' · '+monShort(igL.month):''), compact(reach), delta(reach,reachP), igL&&igL.paid?'incl. '+compact(igL.paid)+' paid':'Instagram', 'Instagram total reach — unique accounts that saw any of the profile\u2019s content. Meta\u2019s figure already includes promoted posts, so paid is a subset, not an addition.');
   /* one line */
   const parts=[];
   if(dS.d!=null&&rev!=null&&revP){const dr=delta(rev,revP).d; parts.push('Spend '+(dS.d>=0?'rose':'fell')+' '+Math.abs(dS.d).toFixed(0)+'% and revenue '+(dr>=0?'rose':'fell')+' '+Math.abs(dr).toFixed(0)+'%.');}
@@ -450,7 +451,7 @@ function renderFunnel(){
 function renderBrand(){
   const cur=months(), pri=priorMonths();
   setPeriod(rangeLabel(cur)+' vs '+rangeLabel(pri));
-  const igAvg=ms=>{const f=ms.map(igRow).filter(r=>r&&r.organic!=null);return f.length?f.reduce((s,r)=>s+r.organic+(r.paid||0),0)/f.length:null;};
+  const igAvg=ms=>{const f=ms.map(igRow).filter(r=>r&&r.organic!=null);return f.length?f.reduce((s,r)=>s+r.organic,0)/f.length:null;};
   const igLast=[...(DATA.ig_reach||[])].filter(r=>r.organic!=null&&cur.includes(r.month)).pop();
   const fb=(DATA.fb_page||[]), li=(DATA.li_page||[]);
   const fbCur=fb.filter(r=>cur.includes(r.month)), fbPri=fb.filter(r=>pri.includes(r.month));
@@ -458,13 +459,16 @@ function renderBrand(){
   const gs=ms=>ms.reduce((a,m)=>{const r=(G.search||[]).find(x=>x.month===m);return a+(r?(r.branded_clicks||0):0);},0);
   const multi=cur.length>1;
   $('#brandRow').innerHTML=
-    tile('IG reach'+(multi?' · avg/mo':''), compact(igAvg(cur)!=null?Math.round(igAvg(cur)):null), delta(igAvg(cur),igAvg(pri)), igLast?'organic '+compact(igLast.organic)+' · paid '+compact(igLast.paid||0)+' ('+monShort(igLast.month)+')':'Instagram', 'Instagram organic + paid reach. Multi-month periods show the monthly average — reach is not additive.')+
+    tile('IG reach'+(multi?' · avg/mo':''), compact(igAvg(cur)!=null?Math.round(igAvg(cur)):null), delta(igAvg(cur),igAvg(pri)), igLast?'incl. '+compact(igLast.paid||0)+' paid ('+monShort(igLast.month)+')':'Instagram', 'Total unique accounts reached. Meta\u2019s reach figure already includes promoted posts, so paid is a subset of this number, never added to it. Multi-month periods show the monthly average \u2014 reach is not additive.')+
     tile('IG followers', '54.8k', {txt:'Sep snapshot',cls:'flat'}, 'Instagram', 'Follower count from Instagram Insights, September 2026 snapshot.')+
     tile('FB viewers'+(multi?' · avg/mo':''), fbCur.length?compact(sum(fbCur,'viewers')/fbCur.length):'—', delta(fbCur.length?sum(fbCur,'viewers')/fbCur.length:null,fbPri.length?sum(fbPri,'viewers')/fbPri.length:null), fb.length?'to '+monShort(fb[fb.length-1].month)+' · licence-frozen':'', 'Facebook Page unique viewers. Frozen at the last successful pull under the current licence.')+
     tile('LinkedIn impr.'+(multi?' · avg/mo':''), liCur.length?compact(sum(liCur,'impressions')/liCur.length):'—', delta(liCur.length?sum(liCur,'impressions')/liCur.length:null,liPri.length?sum(liPri,'impressions')/liPri.length:null), li.length?'to '+monShort(li[li.length-1].month)+' · licence-frozen':'', 'LinkedIn Page impressions. Frozen at the last successful pull under the current licence.')+
     tile('Branded search', gs(cur)?compact(gs(cur)):'—', delta(gs(cur)||null,gs(pri)||null), 'clicks · Search Console', 'Clicks on brand terms — the cleanest brand-demand proxy you have.');
   const ig=(DATA.ig_reach||[]).filter(r=>CMONTHS.includes(r.month));
-  chart('cIg',{type:'bar',data:{labels:ig.map(r=>monShort(r.month)),datasets:[{label:'Organic',data:ig.map(r=>r.organic||0),backgroundColor:C.pinkSoft,borderRadius:3},{label:'Paid',data:ig.map(r=>r.paid||0),backgroundColor:C.pink,borderRadius:3}]},options:{scales:{x:{stacked:true},y:{stacked:true,ticks:{callback:v=>compact(v)}}}}});
+  chart('cIg',{data:{labels:ig.map(r=>monShort(r.month)),datasets:[
+    {type:'bar',label:'Total reach (incl. paid)',data:ig.map(r=>r.organic||0),backgroundColor:C.pinkSoft,borderRadius:3,order:2},
+    {type:'line',label:'of which paid (Meta Ads)',data:ig.map(r=>r.paid||0),borderColor:C.pink,backgroundColor:C.pink,borderWidth:2,pointRadius:3,tension:.3,order:1}]},
+    options:{scales:{y:{ticks:{callback:v=>compact(v)}}},plugins:{tooltip:{callbacks:{label:c=>c.dataset.label+': '+num(c.parsed.y)}}}}});
   chart('cFb',{type:'bar',data:{labels:fb.map(r=>monShort(r.month)),datasets:[{label:'Unique viewers',data:fb.map(r=>r.viewers||0),backgroundColor:'#1877F2',borderRadius:3}]},options:{plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>compact(v)}}}}});
   $('#fbMeta').textContent='Monthly · '+(fb.length?monShort(fb[0].month)+'–'+monShort(fb[fb.length-1].month)+' '+fb[fb.length-1].month.slice(0,4):'')+' · frozen under current licence';
   chart('cLi',{data:{labels:li.map(r=>monShort(r.month)),datasets:[{type:'bar',label:'Impressions',data:li.map(r=>r.impressions||0),backgroundColor:'#0A66C2',borderRadius:3,yAxisID:'y'},{type:'line',label:'New followers',data:li.map(r=>r.new_followers||0),borderColor:C.ink,backgroundColor:C.ink,tension:.3,pointRadius:3,yAxisID:'y2'}]},options:{scales:{y:{ticks:{callback:v=>compact(v)}},y2:{position:'right',grid:{display:false}}}}});
