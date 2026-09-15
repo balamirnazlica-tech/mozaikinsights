@@ -92,7 +92,7 @@ td.num{text-align:right;color:#a5b4fc;font-variant-numeric:tabular-nums}
 <div id="dashboard">
 
 <div class="hdr">
-  <div><h1 id="storeTitle">MOZAIK SHOWROOM &#8212; ORTAK&#214;Y</h1><p>Trafik &amp; Personel Analizi &#183; 15 Y&#305;ll&#305;k Veri &#183; 2012&#8211;2026</p></div>
+  <div><h1 id="storeTitle">MOZAIK SHOWROOM &#8212; ORTAK&#214;Y</h1><p id="storeSub">Trafik &amp; Personel Analizi &#183; 15 Y&#305;ll&#305;k Veri &#183; 2012&#8211;2026</p></div>
   <div class="hdr-right">
     <span class="pill">Toplam <span id="hdrTotal">&#8212;</span></span>
     <select id="yearSel" class="sel" style="min-width:150px"></select>
@@ -198,6 +198,48 @@ function switchStore(store,btn){
   soon.style.display='none';dash.style.display='block';
   var t=document.getElementById('storeTitle');if(t)t.textContent='MOZAIK SHOWROOM — '+(STORE_TITLES[store]||store);
   function go(d){
+  try{
+    var MOTR=['Ocak','\u015eubat','Mart','Nisan','May\u0131s','Haziran','Temmuz','A\u011fustos','Eyl\u00fcl','Ekim','Kas\u0131m','Aral\u0131k'];
+    var st=(d&&d.store)||'ortakoy';
+    var yrs=(d&&d.YR)||[];
+    var span = st==='ortakoy' ? '15 Y\u0131ll\u0131k Veri \u00b7 2012\u20132026'
+             : (yrs.length? (yrs.length+' y\u0131ll\u0131k veri \u00b7 '+yrs[0]+(yrs.length>1?('\u2013'+yrs[yrs.length-1]):'')) : '');
+    var sub=document.getElementById('storeSub');
+    if(sub) sub.textContent='Trafik & Personel Analizi'+(span?(' \u00b7 '+span):'')+
+      (d&&d.all?(' \u00b7 '+d.all.total.toLocaleString('tr-TR')+' ziyaret'):'');
+
+    var fr=document.getElementById('repsFrame'), nat=document.getElementById('repsNative');
+    if(fr&&nat){
+      if(st==='ortakoy'){ fr.style.display=''; nat.style.display='none'; }
+      else{
+        fr.style.display='none'; nat.style.display='';
+        var order=(d&&d.rep_order)||[], reps=(d&&d.reps)||{};
+        if(!order.length){
+          nat.innerHTML='<div class="cd" style="padding:22px"><div class="ct">Personel</div>'+
+            '<div class="cs">Bu ma\u011fazan\u0131n kay\u0131t defterinde hen\u00fcz personel (temsilci) alan\u0131 doldurulmuyor \u2014 '+
+            'temsilci bilgisi girilmeye ba\u015flad\u0131\u011f\u0131nda bu sekme otomatik dolacak.</div></div>';
+        }else{
+          var tot=(d.all&&d.all.total)||0;
+          var rows=order.map(function(r,i){
+            var v=reps[r]||{}; var n=v.total||0;
+            var pct=tot?Math.round(n/tot*100):0;
+            return '<tr><td class="rank">'+(i+1)+'</td><td class="big">'+r+'</td>'+
+              '<td class="num">'+n.toLocaleString('tr-TR')+'</td>'+
+              '<td class="num">%'+pct+'</td>'+
+              '<td class="num">'+((v.ytd_2026||0).toLocaleString('tr-TR'))+'</td>'+
+              '<td class="num">'+((v.unique_visitors||0).toLocaleString('tr-TR'))+'</td></tr>';
+          }).join('');
+          nat.innerHTML='<div class="cd" style="padding:22px">'+
+            '<div class="ct">Personel Da\u011f\u0131l\u0131m\u0131</div>'+
+            '<div class="cs">'+order.length+' temsilci \u00b7 ortak kar\u015f\u0131lanan ziyaretler her ikisine say\u0131l\u0131r</div>'+
+            '<div style="overflow-x:auto"><table><thead><tr><th>#</th><th>Personel</th><th class="num">Ziyaret</th>'+
+            '<th class="num">Pay</th><th class="num">2026</th><th class="num">Benzersiz</th></tr></thead>'+
+            '<tbody>'+rows+'</tbody></table></div></div>';
+        }
+      }
+    }
+  }catch(_){}
+
   try{document.querySelectorAll('[data-upd]').forEach(function(e){e.innerHTML='Son g\u00fcncelleme: '+((d&&d.cutoff_label)||'15 Eyl\u00fcl')+' 2026';});}catch(_){}
 DATA=d;YR=d.YR;init();render('');}
   if(STORE_CACHE[store])return go(STORE_CACHE[store]);
@@ -361,6 +403,7 @@ function render(repKey){
 switchStore('ortakoy', document.querySelector('.store-btn'));
 </script><div class="pnl" id="p-pr">
 <div class="upd" data-upd>Son g&uuml;ncelleme: 15 Eyl&uuml;l 2026</div>
+  <div id="repsNative" style="display:none"></div>
   <iframe id="repsFrame" data-src="footfall-reps.html" title="Personel / Per Rep" style="width:100%;height:2400px;border:0;border-radius:12px;background:#0b1020"></iframe>
 </div>
 <script>function loadReps(){var f=document.getElementById("repsFrame");if(f&&!f.getAttribute("src")){f.src=f.dataset.src;}}</script>
