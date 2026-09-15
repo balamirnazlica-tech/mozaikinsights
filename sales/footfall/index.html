@@ -82,6 +82,11 @@ td.num{text-align:right;color:#a5b4fc;font-variant-numeric:tabular-nums}
     <span>Outlet Ma&#287;azas&#305;</span>
     <span class="store-tag tag-active">Aktif</span>
   </button>
+  <button class="store-btn" onclick="switchStore('designshop',this)">
+    <span class="store-icon">&#127976;</span>
+    <span>Design Shop</span>
+    <span class="store-tag tag-active">Yeni</span>
+  </button>
 </div>
 
 <div id="dashboard">
@@ -176,9 +181,9 @@ const fmt=n=>n.toLocaleString('tr-TR');
 const charts={};
 function mk(id,cfg){if(charts[id])charts[id].destroy();charts[id]=new Chart(id,cfg)}
 
-const DATA_VER='20260827-reps';
-const STORE_FILES={ortakoy:'data.json',ankara:'data-ankara.json',outlet:'data-outlet.json'};
-const STORE_TITLES={ortakoy:'ORTAKÖY',ankara:'ANKARA',outlet:'OUTLET'};
+const DATA_VER='20260915-refresh';
+const STORE_FILES={ortakoy:'data.json',ankara:'data-ankara.json',outlet:'data-outlet.json',designshop:'data-designshop.json'};
+const STORE_TITLES={ortakoy:'ORTAKÖY',ankara:'ANKARA',outlet:'OUTLET',designshop:'DESIGN SHOP'};
 const STORE_CACHE={};
 function switchStore(store,btn){
   document.querySelectorAll('.store-btn').forEach(function(b){b.classList.remove('active');});
