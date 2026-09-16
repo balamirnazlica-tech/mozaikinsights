@@ -388,7 +388,12 @@ function render(repKey){
 
   var peakMo = MO[d.peak_mo_idx];
   var peakDay = DA[d.peak_day_idx];
-  var growth = d.YC[0]>0 ? Math.round((d.YC[d.YC.length-2]-d.YC[0])/d.YC[0]*100) : null;
+  var gExcl = (DATA&&DATA.ytd_excluded)||[];
+  var gFromI = 0, gToI = d.YC.length-2;                      // last COMPLETE year
+  // first year that has records AND is a full year (skips Ankara 2023, Outlet 2025 stubs)
+  while(gFromI<gToI && (!(d.YC[gFromI]>0) || gExcl.indexOf(YR[gFromI])>=0)) gFromI++;
+  var growth = (gToI>gFromI && d.YC[gFromI]>0 && gExcl.indexOf(YR[gToI])<0)
+    ? Math.round((d.YC[gToI]-d.YC[gFromI])/d.YC[gFromI]*100) : null;
   var topBrand = tb[0]?tb[0][0]:'\u2014';
   var topVisitor = tv[0]?tv[0][0]:'\u2014';
   document.getElementById('insList').innerHTML =
@@ -397,9 +402,11 @@ function render(repKey){
     (ytdArr&&ytdArr[curI-1]>0?'<li>Ayn\u0131 d\u00f6nem (1 Oca&ndash;'+cutL+'): '+(curY-1)+' <strong>'+fmt(ytdArr[curI-1])+'</strong> &rarr; '+curY+' <strong>'+fmt(ytdArr[curI])+'</strong> ('+(ytdArr[curI]>=ytdArr[curI-1]?'+':'')+((ytdArr[curI]-ytdArr[curI-1])/ytdArr[curI-1]*100).toFixed(1).replace('.',',')+'%).</li>':'')+
     (projV?'<li>Bu tempoyla '+curY+' y\u0131l sonu tahmini: <strong>'+fmt(projV)+'</strong> ziyaret (son 3 y\u0131l\u0131n mevsimsel da\u011f\u0131l\u0131m\u0131na g\u00f6re).</li>':'')+
     '<li>En yo\u011Fun ay: <strong>'+peakMo+'</strong> \u2014 en yo\u011Fun g\u00FCn: <strong>'+peakDay+'</strong>.</li>'+
-    '<li>Ula\u015F\u0131m profili: %'+araPct+' ara\u00E7la ('+fmt(tr.arac)+' kay\u0131t). '+(topBrand!=='\u2014'?'En pop\u00FCler marka: <strong>'+topBrand+'</strong>.':'')+'</li>'+
+    (tr.arac>0
+      ? '<li>Ula\u015F\u0131m profili: %'+araPct+' ara\u00E7la ('+fmt(tr.arac)+' kay\u0131t). '+(topBrand!=='\u2014'?'En pop\u00FCler marka: <strong>'+topBrand+'</strong>.':'')+'</li>'
+      : '<li>Bu ma\u011Fazan\u0131n kay\u0131t defterinde ara\u00E7/plaka alan\u0131 yok \u2014 ula\u015F\u0131m ve marka analizi yap\u0131lam\u0131yor.</li>')+
     (topVisitor!=='\u2014'?'<li>#1 VIP: <strong>'+topVisitor+'</strong> ('+fmt(tv[0][1])+' ziyaret).</li>':'')+
-    (growth!==null?'<li>2012\u21922025 b\u00FCy\u00FCme: <strong>'+growth+'%</strong>.</li>':'');
+    (growth!==null?'<li>'+YR[gFromI]+'\u2192'+YR[gToI]+' b\u00FCy\u00FCme: <strong>'+(growth>0?'+':'')+growth+'%</strong>.</li>':'');
   mk('cInG',{type:'line',data:{labels:YR,datasets:yearLine()},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:LEG},scales:{x:{grid:G},y:{grid:G}}}});
   mk('cInP',{type:'bar',data:{labels:MO,datasets:[{label:'Ay',data:d.MC,backgroundColor:d.MC.map(function(v,i){return i===d.peak_mo_idx?'#facc15cc':'#818cf866';}),borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:G}}}});
 }
