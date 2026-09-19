@@ -3,7 +3,7 @@
     "company": "Mozaik Design",
     "scope": "E-commerce (Metorik)",
     "currency": "TRY",
-    "generated": "2026-09-18",
+    "generated": "2026-09-19",
     "source": "Live via Metorik API"
   },
   "months": [
@@ -163,17 +163,17 @@
     },
     {
       "month": "2026-09",
-      "revenue": 470290.03,
-      "net": 377343.42,
-      "orders": 32,
-      "average_order_value": 14696.6,
-      "unique_customers": 31,
+      "revenue": 525071.59,
+      "net": 428495.22,
+      "orders": 30,
+      "average_order_value": 17502.4,
+      "unique_customers": 28,
       "total_refunds": 3775.68,
-      "new_customers": 25,
-      "returning_customers": 1,
+      "new_customers": 26,
+      "returning_customers": 2,
       "returning_customers_rate": 0.1,
-      "lost_revenue": 1720160.82,
-      "lost_orders": 15
+      "lost_revenue": 1935221.82,
+      "lost_orders": 17
     }
   ],
   "products": [
@@ -232,6 +232,15 @@
       "stock_quantity": 0
     },
     {
+      "name": "1900 Dış Mekan Bank",
+      "sku": "",
+      "net_sales": 80256,
+      "net_orders": 2,
+      "gross_items_sold": 2,
+      "in_stock": false,
+      "stock_quantity": 0
+    },
+    {
       "name": "Wiggle Stool Tabure",
       "sku": "21022601",
       "net_sales": 63612,
@@ -257,15 +266,6 @@
       "gross_items_sold": 4,
       "in_stock": true,
       "stock_quantity": 0
-    },
-    {
-      "name": "Sylvestrina Portatif Aydınlatma",
-      "sku": "SYLTA01",
-      "net_sales": 56650,
-      "net_orders": 1,
-      "gross_items_sold": 2,
-      "in_stock": true,
-      "stock_quantity": 3
     }
   ],
   "subscriptions": {
