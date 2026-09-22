@@ -356,13 +356,47 @@ function hiredOf(n){
   const s=(LEAVE[n]&&LEAVE[n].hired)||EXTRA_HIRED[n]||null;
   return {raw:s, p:parseHired(s)};
 }
-// Months a rep was employed inside a window of `cap` months of 2026 (8 = YTD, 12 = full year).
-function activeMonths(n,cap){
+// Ramp for new joiners. Balamir, 18 Sep 26: the month someone starts carries NO
+// revenue expectation at all; the number then phases in — 50% of a month in their
+// second month, 75% in the third, full from the fourth. Day of the month is
+// deliberately ignored: a 2 May and a 30 May start both get May free.
+const RAMP=[0,0.5,0.75];            // weight for tenure months 1, 2, 3 — 1 thereafter
+const RAMP_LEN=RAMP.length;         // months before the full monthly number applies
+function rampWeight(t){ return t<1?0:(t<=RAMP_LEN?RAMP[t-1]:1); }   // t = 1-based tenure month
+// Quota-weighted months inside the first `cap` months of 2026 (8 = YTD, 12 = full year).
+// Replaces the old raw "months employed" count, which charged a brand-new rep a full
+// target from day one.
+function quotaMonths(n,cap){
   const h=hiredOf(n).p;
-  if(!h||h.y<2026) return cap;
-  if(h.y>2026) return 0;
-  return Math.max(0, cap-(h.m-1)-(h.d-1)/30);
+  if(!h||hireConflict(n)) return cap;                  // unknown or contradicted -> assume full year
+  let s=0;
+  for(let m=1;m<=cap;m++) s+=rampWeight((2026-h.y)*12+(m-h.m)+1);
+  return s;
 }
+// Integrity guard. A ramp is only as good as the start date behind it, and the HR
+// register records contract dates that are sometimes NOT the day the person started
+// selling (Artun: registered 22 May 26 but has revenue from January). Where the sales
+// data contradicts the recorded date, the date is treated as unusable and the rep keeps
+// a full-year target until Balamir confirms the real one — never a guessed date.
+function hireConflict(n){
+  const h=hiredOf(n).p; if(!h||h.y!==2026) return null;
+  const r=DATA.reps.find(x=>x.name===n); if(!r) return null;
+  for(let m=1;m<h.m;m++) if((r.revenue[12+m-1]||0)>0) return {from:_MONNAME[m-1], raw:hiredOf(n).raw};
+  return null;
+}
+// Tenure in months at the end of month `cap` of 2026. 1 = still in their joining month.
+function tenureAt(n,cap){
+  const h=hiredOf(n).p; if(!h||hireConflict(n)) return 99;
+  return (2026-h.y)*12+(cap-h.m)+1;
+}
+const _MONNAME=["January","February","March","April","May","June","July","August","September","October","November","December"];
+// The first month a rep actually carries a number.
+function rampStartLabel(n){
+  const h=hiredOf(n).p; if(!h) return "their second month";
+  let m=h.m+1,y=h.y; if(m>12){m=1;y++;}
+  return _MONNAME[m-1]+" "+y;
+}
+const RAMP_PHRASE=RAMP.slice(1).map(r=>Math.round(r*100)+"%").join(", then ")+", then full";
 function ytdRev(n){
   const r=DATA.reps.find(x=>x.name===n);
   return r?r.revenue.slice(12,12+MONTHS_YTD).reduce((a,b)=>a+(b||0),0):0;
@@ -382,7 +416,7 @@ function quotaOf(n){
   if(T.goalOnly) return {state:"goal", tier:tk, T};
   if(T.teamQ){
     const team=HEAD_TEAM[n]||[];
-    const aY=activeMonths(n,MONTHS_YTD);
+    const aY=quotaMonths(n,MONTHS_YTD);
     // Published FY2026 team target (JD site). Their own book is part of the team number.
     const annual=T.teamQ;
     const pace=annual*MONTHS_YTD/12;
@@ -394,10 +428,13 @@ function quotaOf(n){
   }
   const store=orgStore(n);
   const mult=STORE_MULT[store]!==undefined?STORE_MULT[store]:1;
-  const annual=T.q*mult;
-  const aYtd=activeMonths(n,MONTHS_YTD), aFull=activeMonths(n,12);
-  return {state:"ok", tier:tk, T, annual, pace:annual*aYtd/12, rev:ytdRev(n),
-          mult, store, aYtd, aFull, prorated:aFull<12};
+  const fullQ=T.q*mult;                                  // the tier's full-year number
+  const aYtd=quotaMonths(n,MONTHS_YTD), aFull=quotaMonths(n,12);
+  const annual=fullQ*aFull/12;                           // what this rep actually carries in 2026
+  const ten=tenureAt(n,MONTHS_YTD);
+  return {state:"ok", tier:tk, T, annual, fullQ, pace:fullQ*aYtd/12, rev:ytdRev(n),
+          mult, store, aYtd, aFull, prorated:aFull<12,
+          ramping:ten<=RAMP_LEN, tenure:ten, hired:hiredOf(n).raw, conflict:hireConflict(n)};
 }
 
 function attColor(p){ return p>=100?'#10b981':p>=80?'#fbbf24':p>=50?'#fb923c':'#f87171'; }
@@ -450,28 +487,49 @@ function kpiBlock(n){
 
   // ---- the normal case ----
   const partial = false;   // team targets are published per Head, so no partial state
-  const pct = (q.pace>0 && !partial) ? q.rev/q.pace*100 : null;
-  const col = pct===null?'#6b7280':attColor(pct);
-  const runrate = (q.aYtd&&q.aYtd>0) ? q.rev/q.aYtd*Math.max(q.aFull,q.aYtd) : (q.rollup? q.rev/MONTHS_YTD*12 : 0);
-  const gap = runrate-q.annual;
   const who = q.rollup?`The team`:disp(n);
 
   const lead = q.rollup
     ? `Team target for the year: <b>${moneyK(conv(q.annual))}</b>${q.teamSize?` <span class="kpi-dim">(${disp(n)} plus ${listJoin(q.team)})</span>`:''}`+(q.T.teamNote?`<div class="kpi-dim" style="margin-top:4px">${q.T.teamNote}</div>`:'')
-    : `Target for the year: <b>${moneyK(conv(q.annual))}</b>${q.mult!==1?` <span class="kpi-dim">(half an Ortaköy target, because ${q.store})</span>`:''}${q.prorated?` <span class="kpi-dim">(reduced — started ${hiredOf(n).raw})</span>`:''}`;
+    : `Target for the year: <b>${moneyK(conv(q.annual))}</b>${q.mult!==1?` <span class="kpi-dim">(half an Ortaköy target, because ${q.store})</span>`:''}${q.prorated?` <span class="kpi-dim">(reduced from ${moneyK(conv(q.fullQ))} — started ${q.hired}, ${RAMP_LEN}-month ramp)</span>`:''}`;
+
+  // Still inside the joining month: no number was ever theirs, so say that instead of
+  // scoring them 0% and calling it 100% behind.
+  if(!q.rollup && !(q.pace>0)){
+    return wrap(
+      `<div class="kpi-lead">${lead}</div>`+
+      tiles([{v:'—',l:'of target so far',c:'#94a3b8'},
+             {v:moneyK(conv(q.rev)),l:'Sold Jan–Aug'},
+             {v:'—',l:'Should have sold'}])+
+      note(`<b>No target yet — still in the starting month.</b> ${disp(n)} started ${q.hired}, and the month someone joins carries no revenue expectation. The target phases in from ${rampStartLabel(n)} (${RAMP_PHRASE}), so there is nothing to be behind on.`)+
+      (HIRE_UNKNOWN[n]?warn(HIRE_UNKNOWN[n]):'')
+    );
+  }
+
+  const pct = (q.pace>0 && !partial) ? q.rev/q.pace*100 : null;
+  const col = pct===null?'#6b7280':attColor(pct);
+  const runrate = (q.aYtd&&q.aYtd>0) ? q.rev/q.aYtd*Math.max(q.aFull,q.aYtd) : (q.rollup? q.rev/MONTHS_YTD*12 : 0);
+  const gap = runrate-q.annual;
 
   const verdict = pct===null ? 'No target to compare against.'
     : pct>=100 ? `<b style="color:#10b981">Ahead of target.</b> ${who} has sold ${moneyK(conv(q.rev-q.pace))} more than expected by the end of August.`
-    : `<b style="color:${col}">${Math.round(100-pct)}% behind.</b> ${moneyK(conv(q.pace-q.rev))} short of where ${q.rollup?'it':'she'} should be by the end of August.`;
+    : `<b style="color:${col}">${Math.round(100-pct)}% behind.</b> ${moneyK(conv(q.pace-q.rev))} short of where ${q.rollup?'it':'they'} should be by the end of August.`;
 
-  const forecast = (runrate>0 && !partial)
+  // Months 2 and 3 are scored at a reduced weight — spell that out rather than leaving
+  // the reader to wonder why the pace looks low.
+  const rampNote = (!q.rollup&&q.ramping)
+    ? note(`Still ramping — month ${q.tenure} of ${RAMP_LEN+1}. August counts at ${Math.round(rampWeight(q.tenure)*100)}% of a full month's target; the full monthly number starts in month ${RAMP_LEN+1}.`)
+    : '';
+
+  // A run-rate built on one or two ramp months says nothing useful, so hold it back.
+  const forecast = (runrate>0 && !partial && !(!q.rollup&&q.ramping))
     ? `At this rate the year finishes at <b>${moneyK(conv(runrate))}</b> — ${Math.abs(gap)<q.annual*0.02?'right on target':(gap>0?`${moneyK(conv(gap))} above target`:`${moneyK(conv(-gap))} short of target`)}.`
     : '';
 
   const aovOK = ytdUnits(n)&&q.rev/ytdUnits(n)>=q.T.aov;
   const aovLine = (!q.rollup&&q.T.aov)
     ? (()=>{const u=ytdUnits(n), a=u?q.rev/u:0, d=q.T.aov?Math.round((a-q.T.aov)/q.T.aov*100):0;
-        return `<div class="kpi-sub">Average order size</div><div class="kpi-line">${u?moneyK(conv(a)):'—'} per order against a ${moneyK(conv(q.T.aov))} target — <b style="color:${aovOK?'#10b981':'#f87171'}">${!u?'no orders yet':aovOK?`${d}% above`:`${Math.abs(d)}% below`}</b></div>`;})()
+        return `<div class="kpi-sub">Average order size</div><div class="kpi-line">${u?moneyK(conv(a)):'—'} per order against a ${moneyK(conv(q.T.aov))} target — <b style="color:${!u?'#94a3b8':aovOK?'#10b981':'#f87171'}">${!u?'no orders yet':aovOK?`${d}% above`:`${Math.abs(d)}% below`}</b></div>`;})()
     : '';
 
   return wrap(
@@ -481,8 +539,10 @@ function kpiBlock(n){
            {v:moneyK(conv(q.pace)),l:'Should have sold'}])+
     bar(pct,col)+
     `<div class="kpi-line">${verdict}</div>`+
+    rampNote+
     (forecast?`<div class="kpi-line">${forecast}</div>`:'')+
     aovLine+
+    (q.conflict?warn(`Start date needs checking. HR records ${disp(n)} as starting <b>${q.conflict.raw}</b>, but the sales file shows revenue from <b>${q.conflict.from}</b>. No ramp has been applied and the full-year target stands — confirm the real start date and this corrects itself.`):'')+
     (q.rollup&&q.ownQ?(()=>{
       const op=q.ownPace>0?q.ownRev/q.ownPace*100:null, oc=op===null?'#6b7280':attColor(op);
       return `<div class="kpi-sub">${disp(n)}'s own sales</div>`+
@@ -500,6 +560,8 @@ function kpiBlock(n){
 function attCell(n){
   const q=quotaOf(n);
   if(q.state==="goal") return `<span class="text-gray-600" title="Goal tracked on kitchens sold, not revenue">goal</span>`;
+  if(q.state==="ok"&&!q.rollup&&!(q.pace>0)&&hiredOf(n).p)
+    return `<span class="text-gray-500" title="Joining month carries no target — ${RAMP_LEN}-month ramp">ramp</span>`;
   // A roll-up missing part of its team cannot be scored — see kpiBlock's `partial`.
   if(q.state!=="ok"||!(q.pace>0)) return `<span class="text-gray-600">—</span>`;
   const p=q.rev/q.pace*100;
