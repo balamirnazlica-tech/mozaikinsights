@@ -3,7 +3,7 @@
     "company": "Mozaik Design",
     "scope": "E-commerce (Metorik)",
     "currency": "TRY",
-    "generated": "2026-09-26",
+    "generated": "2026-09-27",
     "source": "Live via Metorik API"
   },
   "months": [
@@ -163,35 +163,35 @@
     },
     {
       "month": "2026-09",
-      "revenue": 1241188.29,
-      "net": 1058521.92,
-      "orders": 54,
-      "average_order_value": 22985,
-      "unique_customers": 51,
+      "revenue": 1571266.17,
+      "net": 1342900.62,
+      "orders": 64,
+      "average_order_value": 24551,
+      "unique_customers": 61,
       "total_refunds": 9544.08,
-      "new_customers": 46,
+      "new_customers": 52,
       "returning_customers": 3,
       "returning_customers_rate": 0.2,
-      "lost_revenue": 3031815.18,
-      "lost_orders": 35
+      "lost_revenue": 3062933.76,
+      "lost_orders": 36
     }
   ],
   "products": [
     {
       "name": "Bellhop Portatif Aydınlatma",
       "sku": "",
-      "net_sales": 341956,
-      "net_orders": 13,
-      "gross_items_sold": 21,
+      "net_sales": 377267.5,
+      "net_orders": 16,
+      "gross_items_sold": 24,
       "in_stock": true,
       "stock_quantity": 0
     },
     {
       "name": "Panton Sandalye",
       "sku": "",
-      "net_sales": 311400,
-      "net_orders": 7,
-      "gross_items_sold": 16,
+      "net_sales": 331122,
+      "net_orders": 8,
+      "gross_items_sold": 17,
       "in_stock": true,
       "stock_quantity": 0
     },
@@ -210,6 +210,15 @@
       "net_sales": 170772,
       "net_orders": 1,
       "gross_items_sold": 1,
+      "in_stock": true,
+      "stock_quantity": 0
+    },
+    {
+      "name": "Eames DAW Sandalye",
+      "sku": "",
+      "net_sales": 139536,
+      "net_orders": 1,
+      "gross_items_sold": 4,
       "in_stock": true,
       "stock_quantity": 0
     },
@@ -252,19 +261,10 @@
     {
       "name": "Quick Beach Sandalye",
       "sku": "",
-      "net_sales": 83904,
-      "net_orders": 10,
-      "gross_items_sold": 17,
+      "net_sales": 89148,
+      "net_orders": 11,
+      "gross_items_sold": 18,
       "in_stock": true,
-      "stock_quantity": 0
-    },
-    {
-      "name": "Frank Sehpa",
-      "sku": "",
-      "net_sales": 82992,
-      "net_orders": 1,
-      "gross_items_sold": 2,
-      "in_stock": false,
       "stock_quantity": 0
     }
   ],
