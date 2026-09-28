@@ -24,7 +24,7 @@
 <link rel="stylesheet" href="../assets/style.css?v=11">
 <script src="/assets/auth.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-<script src="./data.js?v=20260928b"></script>
+<script src="./data.js?v=20260928c"></script>
 <style>
 :root{--mk-bg:#F4F5F7;--mk-surface:#fff;--mk-surface-2:#EEF0F3;--mk-line:#E1E4E9;--mk-ink:#0F172A;--mk-ink-2:#475569;--mk-muted:#7C8494;
   --mk-accent:#0F172A;--mk-brass:#9A6B1E;--mk-brass-soft:#F5EBD6;--mk-good:#1E7A46;--mk-good-soft:#E3F2E8;--mk-warn:#A2620A;--mk-warn-soft:#FBF0DA;--mk-bad:#B42318;--mk-bad-soft:#FBE4E1;
@@ -235,6 +235,7 @@ body.col-resizing{cursor:col-resize;user-select:none}
       <div class="mkcard"><h3>Instagram reach</h3><p class="meta">Monthly · total unique accounts reached (Instagram Insights). Paid is a subset, shown as the line.</p><canvas id="cIg"></canvas></div>
       <div class="mkcard"><h3>Measurement roadmap</h3><p class="meta">What is live and what still needs a source</p><div class="tw"><table id="kpiTbl"><thead><tr><th>KPI</th><th>Source</th><th>Status</th></tr></thead><tbody></tbody></table></div></div>
     </div>
+<div class="mkcard" style="margin-bottom:12px"><h3>Instagram organic reach</h3><p class="meta">Monthly · people reached without paid support, read from Meta Business Suite. Shown on its own scale because the chart above is dominated by ads. Orange line = organic as a share of total reach.</p><canvas id="cIgOrg" style="max-height:300px"></canvas></div>
     <div class="grid g-11">
       <div class="mkcard"><h3>Facebook Page — unique viewers</h3><p class="meta" id="fbMeta">Monthly</p><canvas id="cFb" style="max-height:200px"></canvas></div>
       <div class="mkcard"><h3>LinkedIn Page — impressions &amp; new followers</h3><p class="meta" id="liMeta">Monthly</p><canvas id="cLi" style="max-height:200px"></canvas></div>
@@ -523,6 +524,7 @@ function renderBrand(){
   const cur=months(), pri=priorMonths();
   setPeriod(rangeLabel(cur)+' vs '+rangeLabel(pri));
   const igAvg=ms=>{const f=ms.map(igRow).filter(r=>r&&r.total!=null);return f.length?f.reduce((s,r)=>s+r.total,0)/f.length:null;};
+  const igOrgAvg=ms=>{const f=ms.map(igRow).filter(r=>r&&r.organic!=null);return f.length?f.reduce((s,r)=>s+r.organic,0)/f.length:null;};
   const igLast=[...(DATA.ig_reach||[])].filter(r=>r.total!=null&&cur.includes(r.month)).pop();
   const fb=(DATA.fb_page||[]), li=(DATA.li_page||[]);
   const fbCur=fb.filter(r=>cur.includes(r.month)), fbPri=fb.filter(r=>pri.includes(r.month));
@@ -531,6 +533,7 @@ function renderBrand(){
   const multi=cur.length>1;
   $('#brandRow').innerHTML=
     tile('IG reach'+(multi?' · avg/mo':''), compact(igAvg(cur)!=null?Math.round(igAvg(cur)):null), delta(igAvg(cur),igAvg(pri)), igLast?'incl. '+compact(igLast.paid||0)+' paid ('+monShort(igLast.month)+')':'Instagram', 'Total unique accounts reached. Meta\u2019s reach figure already includes promoted posts, so paid is a subset of this number, never added to it. Multi-month periods show the monthly average \u2014 reach is not additive.')+
+    tile('IG organic reach'+(multi?' \u00b7 avg/mo':''), compact(igOrgAvg(cur)!=null?Math.round(igOrgAvg(cur)):null), delta(igOrgAvg(cur),igOrgAvg(pri)), igLast&&igLast.total?(100*(igLast.organic||0)/igLast.total).toFixed(1)+'% of reach ('+monShort(igLast.month)+')':'Instagram', 'Reach earned without paying for it, from Meta Business Suite \u2014 the only place Meta splits organic from ads. Small next to paid, but it is the part that compounds.')+
     tile('IG followers', '54.8k', {txt:'Sep snapshot',cls:'flat'}, 'Instagram', 'Follower count from Instagram Insights, September 2026 snapshot.')+
     tile('FB viewers'+(multi?' · avg/mo':''), fbCur.length?compact(sum(fbCur,'viewers')/fbCur.length):'—', delta(fbCur.length?sum(fbCur,'viewers')/fbCur.length:null,fbPri.length?sum(fbPri,'viewers')/fbPri.length:null), fb.length?'to '+monShort(fb[fb.length-1].month)+' · licence-frozen':'', 'Facebook Page unique viewers. Frozen at the last successful pull under the current licence.')+
     tile('LinkedIn impr.'+(multi?' · avg/mo':''), liCur.length?compact(sum(liCur,'impressions')/liCur.length):'—', delta(liCur.length?sum(liCur,'impressions')/liCur.length:null,liPri.length?sum(liPri,'impressions')/liPri.length:null), li.length?'to '+monShort(li[li.length-1].month)+' · licence-frozen':'', 'LinkedIn Page impressions. Frozen at the last successful pull under the current licence.')+
@@ -538,9 +541,12 @@ function renderBrand(){
   const ig=(DATA.ig_reach||[]).filter(r=>CMONTHS.includes(r.month));
   chart('cIg',{data:{labels:ig.map(r=>monShort(r.month)),datasets:[
     {type:'bar',label:'Total reach (incl. paid)',data:ig.map(r=>r.total||0),backgroundColor:C.pinkSoft,borderRadius:3,order:2},
-    {type:'line',label:'of which paid (Meta Ads)',data:ig.map(r=>r.paid||0),borderColor:C.pink,backgroundColor:C.pink,borderWidth:2,pointRadius:3,tension:.3,order:1},
-    {type:'line',label:'Organic reach (Business Suite)',data:ig.map(r=>r.organic||0),borderColor:'#16a34a',backgroundColor:'#16a34a',borderWidth:2,pointRadius:3,tension:.3,order:0}]},
+    {type:'line',label:'of which paid (Meta Ads)',data:ig.map(r=>r.paid||0),borderColor:C.pink,backgroundColor:C.pink,borderWidth:2,pointRadius:3,tension:.3,order:1}]},
     options:{scales:{y:{ticks:{callback:v=>compact(v)}}},plugins:{tooltip:{callbacks:{label:c=>c.dataset.label+': '+num(c.parsed.y)}}}}});
+  chart('cIgOrg',{data:{labels:ig.map(r=>monShort(r.month)),datasets:[
+    {type:'bar',label:'Organic reach',data:ig.map(r=>r.organic||0),backgroundColor:'#16a34a',borderRadius:3,order:2,yAxisID:'y'},
+    {type:'line',label:'Share of total reach',data:ig.map(r=>r.total?+(100*(r.organic||0)/r.total).toFixed(2):null),borderColor:'#f59e0b',backgroundColor:'#f59e0b',borderWidth:2,pointRadius:3,tension:.3,order:1,yAxisID:'y1'}]},
+    options:{scales:{y:{position:'left',beginAtZero:true,ticks:{callback:v=>compact(v)},title:{display:true,text:'Organic reach'}},y1:{position:'right',beginAtZero:true,grid:{drawOnChartArea:false},ticks:{callback:v=>v+'%'},title:{display:true,text:'Share of total'}}},plugins:{tooltip:{callbacks:{label:c=>c.dataset.yAxisID==='y1'?'Share of total: '+c.parsed.y+'%':'Organic reach: '+num(c.parsed.y)}}}}});
   chart('cFb',{type:'bar',data:{labels:fb.map(r=>monShort(r.month)),datasets:[{label:'Unique viewers',data:fb.map(r=>r.viewers||0),backgroundColor:'#1877F2',borderRadius:3}]},options:{plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>compact(v)}}}}});
   $('#fbMeta').textContent='Monthly · '+(fb.length?monShort(fb[0].month)+'–'+monShort(fb[fb.length-1].month)+' '+fb[fb.length-1].month.slice(0,4):'')+' · frozen under current licence';
   chart('cLi',{data:{labels:li.map(r=>monShort(r.month)),datasets:[{type:'bar',label:'Impressions',data:li.map(r=>r.impressions||0),backgroundColor:'#0A66C2',borderRadius:3,yAxisID:'y'},{type:'line',label:'New followers',data:li.map(r=>r.new_followers||0),borderColor:C.ink,backgroundColor:C.ink,tension:.3,pointRadius:3,yAxisID:'y2'}]},options:{scales:{y:{ticks:{callback:v=>compact(v)}},y2:{position:'right',grid:{display:false}}}}});
