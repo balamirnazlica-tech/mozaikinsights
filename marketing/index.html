@@ -24,7 +24,7 @@
 <link rel="stylesheet" href="../assets/style.css?v=11">
 <script src="/assets/auth.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-<script src="./data.js?v=20260928c"></script>
+<script src="./data.js?v=20260929"></script>
 <style>
 :root{--mk-bg:#F4F5F7;--mk-surface:#fff;--mk-surface-2:#EEF0F3;--mk-line:#E1E4E9;--mk-ink:#0F172A;--mk-ink-2:#475569;--mk-muted:#7C8494;
   --mk-accent:#0F172A;--mk-brass:#9A6B1E;--mk-brass-soft:#F5EBD6;--mk-good:#1E7A46;--mk-good-soft:#E3F2E8;--mk-warn:#A2620A;--mk-warn-soft:#FBF0DA;--mk-bad:#B42318;--mk-bad-soft:#FBE4E1;
@@ -233,9 +233,9 @@ body.col-resizing{cursor:col-resize;user-select:none}
     <div class="tiles" id="brandRow"></div>
     <div class="grid g-2">
       <div class="mkcard"><h3>Instagram reach</h3><p class="meta">Monthly · total unique accounts reached (Instagram Insights). Paid is a subset, shown as the line.</p><canvas id="cIg"></canvas></div>
-      <div class="mkcard"><h3>Measurement roadmap</h3><p class="meta">What is live and what still needs a source</p><div class="tw"><table id="kpiTbl"><thead><tr><th>KPI</th><th>Source</th><th>Status</th></tr></thead><tbody></tbody></table></div></div>
+<div class="mkcard"><h3>Instagram organic reach</h3><p class="meta">Monthly · people reached without paid support, read from Meta Business Suite. Shown on its own scale because the chart above is dominated by ads. Orange line = organic as a share of total reach.</p><canvas id="cIgOrg" style="max-height:300px"></canvas></div>
     </div>
-<div class="mkcard" style="margin-bottom:12px"><h3>Instagram organic reach</h3><p class="meta">Monthly · people reached without paid support, read from Meta Business Suite. Shown on its own scale because the chart above is dominated by ads. Orange line = organic as a share of total reach.</p><canvas id="cIgOrg" style="max-height:300px"></canvas></div>
+      <div class="mkcard"><h3>Measurement roadmap</h3><p class="meta">What is live and what still needs a source</p><div class="tw"><table id="kpiTbl"><thead><tr><th>KPI</th><th>Source</th><th>Status</th></tr></thead><tbody></tbody></table></div></div>
     <div class="grid g-11">
       <div class="mkcard"><h3>Facebook Page — unique viewers</h3><p class="meta" id="fbMeta">Monthly</p><canvas id="cFb" style="max-height:200px"></canvas></div>
       <div class="mkcard"><h3>LinkedIn Page — impressions &amp; new followers</h3><p class="meta" id="liMeta">Monthly</p><canvas id="cLi" style="max-height:200px"></canvas></div>
