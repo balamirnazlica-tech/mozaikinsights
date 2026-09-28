@@ -403,6 +403,9 @@ function renderBudget(){
   const gaPaidSearch=ms=>ms.reduce((s,m)=>{const r=(DATA.ga_rev||[]).find(x=>x.month===m);return s+(r?(r.paid_search||0):0);},0);
   const scale=W?Math.max(0.25,cur.length/4.345):1;
   const lastKey=cur[cur.length-1];
+  const allKeys=W?CWEEKS:CMONTHS;
+  const beforeKeys=allKeys.slice(0,allKeys.indexOf(cur[0]));
+  const ranBefore=new Set(DATA.paid.filter(r=>beforeKeys.indexOf(W?r.week:r.month)>=0&&(r.spend||0)>0).map(r=>r.campaign));
   function spark(series){
     if(!series||series.length<2) return '';
     const w=84,h=22,n=series.length,bw=Math.max(2,(w-(n-1)*2)/n);
@@ -438,7 +441,7 @@ function renderBudget(){
       rows.push({name:c.replace(/^G: /,''),spend:v.spend,prevSpend:prev[c]||0,share:v.spend/total*100,
         rev:google?null:v.rev,
         roas:(!google&&v.spend&&!traffic)?v.rev/v.spend:null,
-        google:google,traffic:traffic,series:series,
+        google:google,traffic:traffic,series:series,ranBefore:ranBefore.has(c),
         live:!!(ser[c]&&ser[c][lastKey]&&ser[c][lastKey].s>0)});
     });
   }
@@ -451,7 +454,7 @@ function renderBudget(){
       +'<td>'+(r.group?'':spark(r.series))+'</td>'
       +'<td class="n">'+(r.rev==null?'—':TLk(r.rev))+(r.revNote?' <span class="owner">'+r.revNote+'</span>':'')+'</td>'
       +'<td class="n">'+(r.roas==null?(r.traffic?'n/a':'—'):r.roas.toFixed(2)+'x')+'</td>'
-      +'<td class="n '+d.cls+'">'+d.txt+'</td><td><span class="mkchip '+v[0]+'">'+v[1]+'</span></td></tr>';}).join('');
+      +'<td class="n '+d.cls+'">'+((d.d===null&&!r.group)?(r.ranBefore?'<span class="mkstat idle">Restarted</span>':'<span class="mkstat live">New</span>'):d.txt)+'</td><td><span class="mkchip '+v[0]+'">'+v[1]+'</span></td></tr>';}).join('');
   /* calls */
   const unit=W?'week':'month', units=W?(cur.length+'-week'):(cur.length+'-month');
   const calls=[];
