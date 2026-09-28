@@ -172,7 +172,7 @@ body.col-resizing{cursor:col-resize;user-select:none}
         <p><b>Sessions</b> — GA4, mozaikdesign.com, Türkiye-only (bot traffic from other countries excluded).</p>
         <p><b>Conversion</b> — online orders ÷ sessions from raw counts, not GA4's own rate, which is void while <code>view_item</code> is flagged as a key event. Showroom closes are not in here.</p>
         <p><b>Meta ROAS</b> — Meta pixel revenue ÷ Meta spend. The spend beside it is Meta + Google combined.</p>
-        <p><b>Brand reach</b> — Instagram organic + paid. A leading indicator: next quarter's demand, not this one's.</p>
+<p><b>Brand reach</b> — Instagram <b>total</b> reach, which includes paid: Meta’s Profile reach counts anyone who saw the account’s content by any route, so the paid line is a subset of it, not a separate audience. Instagram Insights exposes no organic-only reach. It is also a <b>28-day</b> figure, not a calendar month — Meta computes profile reach over 1, 7 or 28 days only and clamps longer requests — so it sits on a different window from the paid line, which is a true calendar month. Read it as a leading indicator of next quarter’s demand, and do not read total minus paid as organic.</p>
         <p>The Pulse is fixed to the last complete month so the number is stable. The date filter drives the other tabs.</p>
       </div></details>
     </div>
@@ -223,7 +223,7 @@ body.col-resizing{cursor:col-resize;user-select:none}
     </div>
     <div class="mkcard"><h3>Conversion &amp; order value</h3><p class="meta">Monthly · the two numbers that turn traffic into revenue</p><canvas id="cCvr" style="max-height:200px"></canvas></div>
     <details class="notes"><summary>Sources &amp; caveats</summary><div class="body">
-      <p>Sessions and conversion: GA4 property 369077286, Türkiye-only. Revenue by channel: GA4 last-click, China/Singapore excluded; GA4 credits the last click, so paid social reads lower here than in Meta's pixel. Known gaps: organic-search revenue is zero in May and paid-search in June against real sessions — attribution gaps, not collapses. Order value and orders: Metorik. Branded / non-branded: Google Search Console.</p>
+      <p>Sessions and conversion: GA4 property 369077286, Türkiye-only. Revenue by channel: GA4 last-click, China/Singapore excluded; GA4 credits the last click, so paid social reads lower here than in Meta's pixel. Earlier gaps (zero organic-search revenue in May, zero paid-search in June) have since been backfilled by GA4 and now read ₺128,812 and ₺97,413 respectively. Order value and orders: Metorik. Branded / non-branded: Google Search Console.</p>
     </div></details>
     <p class="links">Subscriptions, MRR and top products live on the <a href="../ecommerce/ecommerce-dashboard.html">E-commerce page</a>.</p>
   </section>
