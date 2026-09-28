@@ -24,7 +24,7 @@
 <link rel="stylesheet" href="../assets/style.css?v=11">
 <script src="/assets/auth.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-<script src="./data.js?v=20260928"></script>
+<script src="./data.js?v=20260928b"></script>
 <style>
 :root{--mk-bg:#F4F5F7;--mk-surface:#fff;--mk-surface-2:#EEF0F3;--mk-line:#E1E4E9;--mk-ink:#0F172A;--mk-ink-2:#475569;--mk-muted:#7C8494;
   --mk-accent:#0F172A;--mk-brass:#9A6B1E;--mk-brass-soft:#F5EBD6;--mk-good:#1E7A46;--mk-good-soft:#E3F2E8;--mk-warn:#A2620A;--mk-warn-soft:#FBF0DA;--mk-bad:#B42318;--mk-bad-soft:#FBE4E1;
@@ -172,7 +172,7 @@ body.col-resizing{cursor:col-resize;user-select:none}
         <p><b>Sessions</b> — GA4, mozaikdesign.com, Türkiye-only (bot traffic from other countries excluded).</p>
         <p><b>Conversion</b> — online orders ÷ sessions from raw counts, not GA4's own rate, which is void while <code>view_item</code> is flagged as a key event. Showroom closes are not in here.</p>
         <p><b>Meta ROAS</b> — Meta pixel revenue ÷ Meta spend. The spend beside it is Meta + Google combined.</p>
-<p><b>Brand reach</b> — Instagram <b>total</b> reach, which includes paid: Meta’s Profile reach counts anyone who saw the account’s content by any route, so the paid line is a subset of it, not a separate audience. Instagram Insights exposes no organic-only reach. It is also a <b>28-day</b> figure, not a calendar month — Meta computes profile reach over 1, 7 or 28 days only and clamps longer requests — so it sits on a different window from the paid line, which is a true calendar month. Read it as a leading indicator of next quarter’s demand, and do not read total minus paid as organic.</p>
+<p><b>Brand reach</b> — Instagram <b>total</b> reach, which includes paid: Meta’s Profile reach counts anyone who saw the account’s content by any route, so the paid line is a subset of it, not a separate audience. True organic reach is read from Meta Business Suite, which is the only place Meta splits it — the data connection returns the combined figure only. It is also a <b>28-day</b> figure, not a calendar month — Meta computes profile reach over 1, 7 or 28 days only and clamps longer requests — so it sits on a different window from the paid line, which is a true calendar month. Read it as a leading indicator of next quarter’s demand, and do not read total minus paid as organic.</p>
         <p>The Pulse is fixed to the last complete month so the number is stable. The date filter drives the other tabs.</p>
       </div></details>
     </div>
@@ -263,8 +263,7 @@ body.col-resizing{cursor:col-resize;user-select:none}
 'use strict';
 function setPeriod(t){const e=document.getElementById('mkCtxPer'); if(e) e.textContent=t?'\u00b7 '+t:'';}
 const M=window.MKT, DATA=M.DATA, OUTLET=M.OUTLET, G=M.GOOGLE, SITE=M.SITE_TRAFFIC;
-/* ig_reach: accept either key. 'organic' was a misnomer (it is total reach incl. paid); 'total_reach' replaces it. */
-(DATA.ig_reach||[]).forEach(r=>{if(r.total_reach!==undefined&&r.organic===undefined)r.organic=r.total_reach;if(r.organic!==undefined&&r.total_reach===undefined)r.total_reach=r.organic;});
+/* ig_reach rows: paid (Meta Ads) · ads/total/organic (Business Suite). organic is TRUE organic. */
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const PMON={'01':'Jan','02':'Feb','03':'Mar','04':'Apr','05':'May','06':'Jun','07':'Jul','08':'Aug','09':'Sep','10':'Oct','11':'Nov','12':'Dec'};
 const monShort=m=>{if(!m)return '—';const p=String(m).split('-');return PMON[p[1]]||m;};
@@ -352,8 +351,8 @@ function renderPulse(){
   const ms=sum(paid([Mn],isMeta),'spend'), mr=sum(paid([Mn],isMeta),'revenue'), msP=sum(paid([P],isMeta),'spend'), mrP=sum(paid([P],isMeta),'revenue');
   const roas=ms?mr/ms:null, roasP=msP?mrP/msP:null;
   // NOTE: Instagram Insights `reach` ALREADY INCLUDES paid. Never add r.paid to it.
-  const igC=(DATA.ig_reach||[]).filter(r=>r.organic!=null); const igL=igC[igC.length-1], igQ=igC[igC.length-2];
-  const reach=igL?igL.organic:null, reachP=igQ?igQ.organic:null;
+  const igC=(DATA.ig_reach||[]).filter(r=>r.total!=null); const igL=igC[igC.length-1], igQ=igC[igC.length-2];
+  const reach=igL?igL.total:null, reachP=igQ?igQ.total:null;
   const dS=delta(sp,spP);
   $('#pulseRow').innerHTML=
     tile('Revenue'+(rm!==Mn?' · '+monShort(rm):''), TLk(rev), delta(rev,revP), (share!=null?share.toFixed(0)+'% paid-influenced':'')+(ECOM_SNAP?' · snapshot':''), 'Total online store revenue (Metorik). '+TLk(metaRev)+' of it is Meta pixel-tracked — an upper bound.'+(ECOM_SNAP?' Live Metorik feed not reachable from this copy; showing the baked snapshot.':''))+
@@ -523,8 +522,8 @@ function renderFunnel(){
 function renderBrand(){
   const cur=months(), pri=priorMonths();
   setPeriod(rangeLabel(cur)+' vs '+rangeLabel(pri));
-  const igAvg=ms=>{const f=ms.map(igRow).filter(r=>r&&r.organic!=null);return f.length?f.reduce((s,r)=>s+r.organic,0)/f.length:null;};
-  const igLast=[...(DATA.ig_reach||[])].filter(r=>r.organic!=null&&cur.includes(r.month)).pop();
+  const igAvg=ms=>{const f=ms.map(igRow).filter(r=>r&&r.total!=null);return f.length?f.reduce((s,r)=>s+r.total,0)/f.length:null;};
+  const igLast=[...(DATA.ig_reach||[])].filter(r=>r.total!=null&&cur.includes(r.month)).pop();
   const fb=(DATA.fb_page||[]), li=(DATA.li_page||[]);
   const fbCur=fb.filter(r=>cur.includes(r.month)), fbPri=fb.filter(r=>pri.includes(r.month));
   const liCur=li.filter(r=>cur.includes(r.month)), liPri=li.filter(r=>pri.includes(r.month));
@@ -538,8 +537,9 @@ function renderBrand(){
     tile('Branded search', gs(cur)?compact(gs(cur)):'—', delta(gs(cur)||null,gs(pri)||null), 'clicks · Search Console', 'Clicks on brand terms — the cleanest brand-demand proxy you have.');
   const ig=(DATA.ig_reach||[]).filter(r=>CMONTHS.includes(r.month));
   chart('cIg',{data:{labels:ig.map(r=>monShort(r.month)),datasets:[
-    {type:'bar',label:'Total reach (incl. paid)',data:ig.map(r=>r.organic||0),backgroundColor:C.pinkSoft,borderRadius:3,order:2},
-    {type:'line',label:'of which paid (Meta Ads)',data:ig.map(r=>r.paid||0),borderColor:C.pink,backgroundColor:C.pink,borderWidth:2,pointRadius:3,tension:.3,order:1}]},
+    {type:'bar',label:'Total reach (incl. paid)',data:ig.map(r=>r.total||0),backgroundColor:C.pinkSoft,borderRadius:3,order:2},
+    {type:'line',label:'of which paid (Meta Ads)',data:ig.map(r=>r.paid||0),borderColor:C.pink,backgroundColor:C.pink,borderWidth:2,pointRadius:3,tension:.3,order:1},
+    {type:'line',label:'Organic reach (Business Suite)',data:ig.map(r=>r.organic||0),borderColor:'#16a34a',backgroundColor:'#16a34a',borderWidth:2,pointRadius:3,tension:.3,order:0}]},
     options:{scales:{y:{ticks:{callback:v=>compact(v)}}},plugins:{tooltip:{callbacks:{label:c=>c.dataset.label+': '+num(c.parsed.y)}}}}});
   chart('cFb',{type:'bar',data:{labels:fb.map(r=>monShort(r.month)),datasets:[{label:'Unique viewers',data:fb.map(r=>r.viewers||0),backgroundColor:'#1877F2',borderRadius:3}]},options:{plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>compact(v)}}}}});
   $('#fbMeta').textContent='Monthly · '+(fb.length?monShort(fb[0].month)+'–'+monShort(fb[fb.length-1].month)+' '+fb[fb.length-1].month.slice(0,4):'')+' · frozen under current licence';

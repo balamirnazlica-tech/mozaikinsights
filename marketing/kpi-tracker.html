@@ -80,10 +80,16 @@ footer{color:#475569;font-size:12px;text-align:center;margin-top:20px}
 // 841 (Jun) -> 22,554 (Jul) -> 190,788 (Aug MTD). The Facebook|Paid Reach range below predates this shift and
 // is now far too low; it needs recalibrating against the new placement mix before it means anything.
 const ACTUALS = {
-  "Instagram|Total Reach": {
-    "value": 761702,
+  "Instagram|Organic Reach": {
+    "value": 37850,
     "period": "Aug 2026",
-    "note": "NOT organic — corrected 28 Sep 2026. This is Meta's Profile reach, which by its own definition includes promoted and paid activity as well as organic, so the Paid Reach KPI below is a subset of this number, not a separate audience. It is also a 28-day figure, not a calendar month: Meta only computes profile reach over 1, 7 or 28 days and silently clamps any longer request, so 1-3 August are excluded from the 761,702. Instagram Insights exposes no organic-only reach, so an organic figure is not available from this source. Targets below were set against a supposed organic number and need recalibrating."
+    "note": "TRUE organic reach, read from Meta Business Suite on 28 Sep 2026 (Insights > Overview > Reach breakdown), the only place Meta splits organic from ads. August organic 37,850 against 742,350 from ads \u2014 organic is about 5% of Instagram reach. Rising steadily: 20,468 in January to 65,587 in September. Not available from the data connection, so this is entered by hand each month.",
+    "manual": true
+  },
+  "Instagram|Total Reach": {
+    "value": 772480,
+    "period": "Aug 2026",
+    "note": "NOT organic — corrected 28 Sep 2026. Total Instagram reach, organic and paid combined, for the full calendar month \u2014 read from Meta Business Suite on 28 Sep 2026. The earlier 761,702 came from the data connection, which silently clamps reach to 28 days and so dropped 1-3 August. The Paid Reach KPI below is a subset of this number, not a separate audience, and Total will not equal Organic plus Paid because Meta deduplicates people across both. Targets below were set against what was wrongly believed to be an organic figure and still need recalibrating."
   },
   "Instagram|Paid Reach": {
     "value": 744080,
@@ -130,6 +136,7 @@ const RANGES = {
 };
 
 const KPIS = [
+{"channel":"Instagram","kpi":"Organic Reach","source":"Meta Business Suite (manual)","status":"Live"},
 {"channel":"Instagram","kpi":"Total Reach","source":"Instagram Insights (Supermetrics)","status":"Live"},
 {"channel":"Instagram","kpi":"Paid Reach","source":"Meta Ads (Supermetrics)","status":"Live"},
 {"channel":"Facebook","kpi":"Organic Reach","source":"Facebook Insights (Supermetrics)","status":"Live"},
