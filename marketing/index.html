@@ -263,6 +263,8 @@ body.col-resizing{cursor:col-resize;user-select:none}
 'use strict';
 function setPeriod(t){const e=document.getElementById('mkCtxPer'); if(e) e.textContent=t?'\u00b7 '+t:'';}
 const M=window.MKT, DATA=M.DATA, OUTLET=M.OUTLET, G=M.GOOGLE, SITE=M.SITE_TRAFFIC;
+/* ig_reach: accept either key. 'organic' was a misnomer (it is total reach incl. paid); 'total_reach' replaces it. */
+(DATA.ig_reach||[]).forEach(r=>{if(r.total_reach!==undefined&&r.organic===undefined)r.organic=r.total_reach;if(r.organic!==undefined&&r.total_reach===undefined)r.total_reach=r.organic;});
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const PMON={'01':'Jan','02':'Feb','03':'Mar','04':'Apr','05':'May','06':'Jun','07':'Jul','08':'Aug','09':'Sep','10':'Oct','11':'Nov','12':'Dec'};
 const monShort=m=>{if(!m)return '—';const p=String(m).split('-');return PMON[p[1]]||m;};
