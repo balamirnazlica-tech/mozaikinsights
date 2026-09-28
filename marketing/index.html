@@ -180,18 +180,36 @@ body.col-resizing{cursor:col-resize;user-select:none}
 
   <!-- BUDGET -->
   <section class="panel" data-p="budget" hidden>
+<style>
+.mkgran{display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px;margin:0 0 12px;padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px;background:#fff}
+.mkgran .datectl{display:flex;flex-direction:column;gap:4px}
+.mkgran label{font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:#6b7280}
+.mkgran.month-mode .wkonly{display:none}
+.mkgran .fnote{font-size:11px;color:#6b7280;align-self:center}
+.mkspark{display:block}
+.mkstat{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.03em;padding:2px 6px;border-radius:999px;border:1px solid}
+.mkstat.live{color:#166534;border-color:#bbf7d0;background:#f0fdf4}
+.mkstat.idle{color:#92400e;border-color:#fde68a;background:#fffbeb}
+</style>
+<div class="mkgran" id="budgetCtl">
+<div class="datectl"><label>Grain</label><div class="seg" id="granSeg"><button class="on" data-g="week">Week</button><button data-g="month">Month</button></div></div>
+<div class="datectl wkonly"><label for="weekFrom">From week</label><select class="sel" id="weekFrom"></select></div>
+<div class="datectl wkonly"><label for="weekTo">To week</label><select class="sel" id="weekTo"></select></div>
+<div class="datectl wkonly"><label>Quick</label><div class="seg" id="weekSeg"><button class="on" data-w="4">Last 4</button><button data-w="8">Last 8</button><button data-w="13">Last 13</button><button data-w="0">YTD</button></div></div>
+<span class="fnote" id="bfnote"></span>
+</div>
     <div class="mkcalls" id="calls"></div>
     <div class="mkcard" style="margin-bottom:12px">
       <h3>Allocation</h3><p class="meta">Every row you can move money between. Verdict is rule-based (rules below). Owner: Tuana Başak.</p>
-      <div class="tw"><table id="alloc"><thead><tr><th>Channel / campaign</th><th class="n">Spend</th><th>Share</th><th class="n">Tracked rev.</th><th class="n">ROAS</th><th class="n">Spend vs prior</th><th>Verdict</th></tr></thead><tbody></tbody></table></div>
-      <p class="legend">Google campaign rows show no revenue or ROAS: Google's imported conversion value over-counts. The Google channel line uses GA4 paid-search revenue instead. Meta rows use pixel revenue. Traffic and awareness campaigns are judged on the Outlet tab, not on ROAS.</p>
+<div class="tw"><table id="alloc"><thead><tr><th>Channel / campaign</th><th>Status</th><th class="n">Spend</th><th>Share</th><th>Trend</th><th class="n">Tracked rev.</th><th class="n">ROAS</th><th class="n">Spend vs prior</th><th>Verdict</th></tr></thead><tbody></tbody></table></div>
+<p class="legend">Every campaign with spend in the window is listed — no top-N cut. <b>Status</b> is delivery-based: <i>Live</i> spent in the most recent selected week, <i>Idle</i> did not. <b>Trend</b> bars are weekly spend, the blue line is ROAS. Google campaign rows show no revenue or ROAS: Google’s imported conversion value over-counts. GA4 revenue exists only at month grain, so the Google channel line shows ROAS in <b>Month</b> grain only — switch grain to judge Google. Meta rows use pixel revenue throughout. Traffic and awareness campaigns are judged on the Outlet tab, not on ROAS.</p>
     </div>
     <div class="grid g-11">
       <div class="mkcard"><h3>Spend vs return, by campaign</h3><p class="meta">Meta campaigns · x: spend · y: ROAS · bubble: tracked revenue</p><canvas id="cScatter"></canvas></div>
       <div class="mkcard"><h3>Spend mix over time</h3><p class="meta">Monthly · stacked by channel · shows drift you didn't decide</p><canvas id="cMix"></canvas></div>
     </div>
     <details class="notes"><summary>Verdict rules</summary><div class="body">
-      <p><b>Scale</b> ROAS ≥ 4x and under 30% of spend. <b>Hold</b> 2–4x. <b>Cut</b> under 1x with more than ₺20k spend in each of the last two months. <b>Review</b> traffic / awareness campaigns (judged on hand-offs, not ROAS) and any row with ₺0 tracked revenue against real spend — usually a tagging problem, not a performance one.</p>
+<p><b>Scale</b> ROAS ≥ 4x and under 30% of spend. <b>Hold</b> 2–4x. <b>Cut</b> under 1x with sustained spend above the window threshold. <b>Review</b> traffic / awareness campaigns (judged on hand-offs, not ROAS) and any row with ₺0 tracked revenue against real spend — usually a tagging problem, not a performance one. In Week grain the ₺ thresholds scale with the window length, so a 4-week window behaves like a month and a single week is judged on roughly a quarter of the spend.</p>
     </div></details>
   </section>
 
@@ -288,6 +306,15 @@ const rangeLabel=a=>!a.length?'—':a.length===1?mLabel(a[0]):monShort(a[0])+'�
 const paid=(ms,f)=>DATA.paid.filter(r=>ms.includes(r.month)&&(!f||f(r)));
 const isMeta=r=>r.channel==='Meta Ads', isGoogle=r=>r.channel==='Google Ads';
 const isTraffic=c=>/traffic|trafik|reach|erişim|engagement|etkileşim|awareness|bilinirlik|consideration|görüntülenme|video/i.test(c);
+/* ---- weekly budget state ---- */
+const CWEEKS=(DATA.meta.weeks||[]).slice();
+const wIdx=w=>CWEEKS.indexOf(w);
+const bstate={mode:'week',wFrom:CWEEKS[Math.max(0,CWEEKS.length-4)],wTo:CWEEKS[CWEEKS.length-1]};
+const isWeek=()=>bstate.mode==='week';
+const weeksSel=()=>{let a=wIdx(bstate.wFrom),b=wIdx(bstate.wTo);if(a<0)a=0;if(b<0)b=CWEEKS.length-1;if(a>b){const t=a;a=b;b=t;}return CWEEKS.slice(a,b+1);};
+const priorWeeks=()=>{const c=weeksSel();const i=wIdx(c[0]);return CWEEKS.slice(Math.max(0,i-c.length),i);};
+const paidW=(ws,f)=>DATA.paid.filter(r=>ws.indexOf(r.week)>=0&&(!f||f(r)));
+const wRangeLabel=ws=>!ws.length?'—':(ws.length===1?ws[0]:ws[0]+' – '+ws[ws.length-1])+' · '+ws.length+' week'+(ws.length>1?'s':'');
 const tr=m=>SITE.find(r=>r.month===m)||null;
 const trSum=(ms,k)=>ms.reduce((s,m)=>{const r=tr(m);return s+(r?(r[k]||0):0);},0);
 const trHas=ms=>ms.some(m=>tr(m));
@@ -349,51 +376,91 @@ function renderPulse(){
 }
 
 /* ============ BUDGET ============ */
-function verdict(row){
+function verdict(row,scale){
+  scale=scale||1;
   if(row.traffic) return ['review','Review'];
   if(row.google&&!row.group) return ['hold','Hold'];
   if(row.google&&row.group) return row.roas==null?['hold','Hold']:row.roas<1?['review','Review']:row.roas>=4?['scale','Scale']:['hold','Hold'];
-  if(row.rev===0&&row.spend>5000) return ['review','Review'];
+  if(row.rev===0&&row.spend>5000*scale) return ['review','Review'];
   const r=row.roas;
   if(r==null) return ['hold','Hold'];
   if(r>=4&&row.share<30) return ['scale','Scale'];
-  if(r<1&&row.spend>20000&&row.prevSpend>20000) return ['cut','Cut'];
+  if(r<1&&row.spend>20000*scale&&row.prevSpend>20000*scale) return ['cut','Cut'];
   if(r<1) return ['review','Review'];
   return ['hold','Hold'];
 }
 function renderBudget(){
-  const cur=months(), pri=priorMonths();
-  setPeriod(rangeLabel(cur)+' · '+TLk(sum(paid(cur),'spend'))+' across Meta + Google');
-  const total=sum(paid(cur),'spend')||1;
+  const W=isWeek();
+  const cur=W?weeksSel():months();
+  const pri=W?priorWeeks():priorMonths();
+  const pick=(ks,f)=>W?paidW(ks,f):paid(ks,f);
+  setPeriod((W?wRangeLabel(cur):rangeLabel(cur))+' · '+TLk(sum(pick(cur),'spend'))+' across Meta + Google');
+  const bf=$('#bfnote');
+  if(bf) bf.textContent=W?('Complete ISO weeks only · baseline = prior '+pri.length+' week'+(pri.length===1?'':'s')+' · GA4 revenue is monthly, so Google ROAS needs Month grain'):('Complete months only · baseline = prior '+pri.length+' month'+(pri.length===1?'':'s'));
+  const total=sum(pick(cur),'spend')||1;
   const gaPaidSearch=ms=>ms.reduce((s,m)=>{const r=(DATA.ga_rev||[]).find(x=>x.month===m);return s+(r?(r.paid_search||0):0);},0);
+  const scale=W?Math.max(0.25,cur.length/4.345):1;
+  const lastKey=cur[cur.length-1];
+  function spark(series){
+    if(!series||series.length<2) return '';
+    const w=84,h=22,n=series.length,bw=Math.max(2,(w-(n-1)*2)/n);
+    const maxS=Math.max.apply(null,series.map(d=>d.s))||1;
+    const rl=series.map(d=>d.roas).filter(v=>v!==null&&isFinite(v));
+    const maxR=rl.length?(Math.max.apply(null,rl)||0):0;
+    let bars='',pts=[];
+    series.forEach((d,i)=>{
+      const x=i*(bw+2),bh=Math.max(1,(d.s/maxS)*(h-6));
+      bars+='<rect x="'+x.toFixed(1)+'" y="'+(h-bh).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+bh.toFixed(1)+'" rx="1" fill="#c7d2fe"/>';
+      if(maxR>0&&d.roas!==null&&isFinite(d.roas)) pts.push((x+bw/2).toFixed(1)+','+(h-6-(Math.min(d.roas,maxR)/maxR)*(h-8)).toFixed(1));
+    });
+    const line=pts.length>1?'<polyline fill="none" stroke="#2563eb" stroke-width="1.5" points="'+pts.join(' ')+'"/>':'';
+    return '<svg class="mkspark" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><title>spend bars, ROAS line</title>'+bars+line+'</svg>';
+  }
   const rows=[];
   function channel(name,f,google){
-    const p=paid(cur,f), pp=paid(pri,f);
+    const p=pick(cur,f), pp=pick(pri,f);
     const spend=sum(p,'spend'), prevSpend=sum(pp,'spend');
-    const rev=google?gaPaidSearch(cur):sum(p,'revenue');
-    const roas=spend&&rev!=null?rev/spend:null;
-    rows.push({group:true,name,spend,prevSpend,share:spend/total*100,rev,roas,google,revNote:google?'GA4':''});
-    const camps={}; p.forEach(r=>{camps[r.campaign]=camps[r.campaign]||{spend:0,rev:0};camps[r.campaign].spend+=r.spend||0;camps[r.campaign].rev+=r.revenue||0;});
-    const prev={}; pp.forEach(r=>{prev[r.campaign]=(prev[r.campaign]||0)+(r.spend||0);});
-    Object.entries(camps).filter(([,v])=>v.spend>0).sort((a,b)=>b[1].spend-a[1].spend).slice(0,6).forEach(([c,v])=>{
+    const rev=google?(W?null:gaPaidSearch(cur)):sum(p,'revenue');
+    const roas=(spend&&rev!==null)?rev/spend:null;
+    rows.push({group:true,name,spend,prevSpend,share:spend/total*100,rev,roas,google,revNote:google?(W?'month grain only':'GA4'):''});
+    const camps={},prev={},ser={};
+    p.forEach(r=>{const c=r.campaign;
+      camps[c]=camps[c]||{spend:0,rev:0};
+      camps[c].spend+=r.spend||0; camps[c].rev+=r.revenue||0;
+      const k=W?r.week:r.month; ser[c]=ser[c]||{};
+      ser[c][k]=ser[c][k]||{s:0,r:0}; ser[c][k].s+=r.spend||0; ser[c][k].r+=r.revenue||0;});
+    pp.forEach(r=>{prev[r.campaign]=(prev[r.campaign]||0)+(r.spend||0);});
+    Object.entries(camps).filter(([,v])=>v.spend>0).sort((a,b)=>b[1].spend-a[1].spend).forEach(([c,v])=>{
       const traffic=isTraffic(c);
-      rows.push({name:c.replace(/^G: /,''),spend:v.spend,prevSpend:prev[c]||0,share:v.spend/total*100,rev:google?null:v.rev,roas:(!google&&v.spend&&!traffic)?v.rev/v.spend:null,google,traffic});
+      const series=cur.map(k=>{const e=ser[c]&&ser[c][k];const s=e?e.s:0;const rv=e?e.r:0;return {s:s,roas:(!google&&s&&!traffic)?rv/s:null};});
+      rows.push({name:c.replace(/^G: /,''),spend:v.spend,prevSpend:prev[c]||0,share:v.spend/total*100,
+        rev:google?null:v.rev,
+        roas:(!google&&v.spend&&!traffic)?v.rev/v.spend:null,
+        google:google,traffic:traffic,series:series,
+        live:!!(ser[c]&&ser[c][lastKey]&&ser[c][lastKey].s>0)});
     });
   }
   channel('Meta Ads',isMeta,false); channel('Google Ads',isGoogle,true);
   $('#alloc tbody').innerHTML=rows.map(r=>{
-    const d=delta(r.spend,r.prevSpend); const v=verdict(r);
-    return '<tr class="'+(r.group?'group':'sub')+'"><td>'+r.name+'</td><td class="n">'+TLk(r.spend)+'</td><td><div class="mkbar"><i style="width:'+Math.min(100,r.share).toFixed(0)+'%"></i></div></td>'
-      +'<td class="n">'+(r.rev==null?'—':TLk(r.rev))+(r.revNote?' <span class="owner">'+r.revNote+'</span>':'')+'</td><td class="n">'+(r.roas==null?(r.traffic?'n/a':'—'):r.roas.toFixed(2)+'x')+'</td>'
+    const d=delta(r.spend,r.prevSpend); const v=verdict(r,scale);
+    const st=r.group?'':'<span class="mkstat '+(r.live?'live':'idle')+'">'+(r.live?'Live':'Idle')+'</span>';
+    return '<tr class="'+(r.group?'group':'sub')+'"><td>'+r.name+'</td><td>'+st+'</td><td class="n">'+TLk(r.spend)+'</td>'
+      +'<td><div class="mkbar"><i style="width:'+Math.min(100,r.share).toFixed(0)+'%"></i></div></td>'
+      +'<td>'+(r.group?'':spark(r.series))+'</td>'
+      +'<td class="n">'+(r.rev==null?'—':TLk(r.rev))+(r.revNote?' <span class="owner">'+r.revNote+'</span>':'')+'</td>'
+      +'<td class="n">'+(r.roas==null?(r.traffic?'n/a':'—'):r.roas.toFixed(2)+'x')+'</td>'
       +'<td class="n '+d.cls+'">'+d.txt+'</td><td><span class="mkchip '+v[0]+'">'+v[1]+'</span></td></tr>';}).join('');
   /* calls */
+  const unit=W?'week':'month', units=W?(cur.length+'-week'):(cur.length+'-month');
   const calls=[];
   const mC=rows[0], gC=rows.find(r=>r.group&&r.google);
-  if(mC&&mC.prevSpend>0){const d=mC.spend/mC.prevSpend; if(d>=1.5||d<=0.6){const top=rows.find(r=>!r.group&&!r.google);calls.push({cls:d>=1.5?'':'bad',t:'Meta spend went '+(d>=1?d.toFixed(1)+'×':'down '+Math.round((1-d)*100)+'%'),s:TLk(mC.prevSpend)+' → '+TLk(mC.spend)+(top?'. “'+top.name+'” took '+TLk(top.spend)+' at '+(top.roas!=null?top.roas.toFixed(1)+'x':'n/a')+'.':'')+' Decide whether that is the new run-rate.'});}}
-  const zero=rows.filter(r=>!r.group&&!r.google&&!r.traffic&&r.spend>10000&&r.rev===0);
+  if(mC&&mC.prevSpend>0){const d=mC.spend/mC.prevSpend; if(d>=1.5||d<=0.6){const top=rows.find(r=>!r.group&&!r.google);calls.push({cls:d>=1.5?'':'bad',t:'Meta spend went '+(d>=1?d.toFixed(1)+'×':'down '+Math.round((1-d)*100)+'%')+' vs the prior '+units,s:TLk(mC.prevSpend)+' → '+TLk(mC.spend)+(top?'. “'+top.name+'” took '+TLk(top.spend)+' at '+(top.roas!=null?top.roas.toFixed(1)+'x':'n/a')+'.':'')+' Decide whether that is the new run-rate.'});}}
+  const zero=rows.filter(r=>!r.group&&!r.google&&!r.traffic&&r.spend>10000*scale&&r.rev===0);
   if(zero.length){const s=sum(zero,'spend');calls.push({cls:'bad',t:TLk(s)+' with nothing tracked',s:zero.slice(0,2).map(r=>r.name).join(', ')+(zero.length>2?' +'+(zero.length-2):'')+' — check the pixel before judging the spend.'});}
+  const idle=rows.filter(r=>!r.group&&!r.live&&r.spend>0);
+  if(W&&idle.length){calls.push({cls:'',t:idle.length+' campaign'+(idle.length>1?'s':'')+' spent in the window but not in '+lastKey,s:idle.slice(0,3).map(r=>r.name).join(', ')+(idle.length>3?' +'+(idle.length-3):'')+' — paused, budget-capped, or ended. Confirm that was intentional.'});}
   if(gC&&gC.roas!=null&&gC.roas<1.5&&gC.spend>50000){calls.push({cls:'bad',t:'Google returns '+gC.roas.toFixed(1)+'x on GA4 revenue',s:TLk(gC.spend)+' spend against '+TLk(gC.rev)+' GA4 paid-search revenue. Google’s own conversion value over-counts, so this is the honest number.'});}
-  const sc=rows.filter(r=>!r.group&&verdict(r)[0]==='scale');
+  const sc=rows.filter(r=>!r.group&&verdict(r,scale)[0]==='scale');
   if(sc.length){calls.push({cls:'good',t:'Room to scale: '+sc[0].name,s:sc[0].roas.toFixed(1)+'x on '+TLk(sc[0].spend)+' ('+sc[0].share.toFixed(0)+'% of spend). Move budget here before adding new campaigns.'});}
   const tf=rows.filter(r=>!r.group&&r.traffic); if(tf.length&&calls.length<3){calls.push({cls:'',t:'Traffic campaigns buy visits, not orders',s:TLk(sum(tf,'spend'))+' on '+tf.length+' campaign'+(tf.length>1?'s':'')+'. Judge them on the Outlet tab: catalogue hand-offs, not ROAS.'});}
   $('#calls').innerHTML=calls.slice(0,3).map(c=>'<div class="mkcall '+c.cls+'"><b>'+c.t+'</b><span>'+c.s+'</span></div>').join('')||'<div class="mkcall"><b>No calls this period</b><span>Nothing crossed a threshold.</span></div>';
@@ -505,7 +572,7 @@ function renderOutlet(){
 /* ============ shell ============ */
 function render(){({pulse:renderPulse,budget:renderBudget,funnel:renderFunnel,brand:renderBrand,outlet:renderOutlet}[state.tab])();}
 function show(t){state.tab=t;$$('#tabbar button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));$$('.panel').forEach(p=>p.hidden=p.dataset.p!==t);
-  const pulse=t==='pulse';$('#filter').classList.toggle('dates-off',pulse);$('#fnote').textContent='';
+  const pulse=t==='pulse';$('#filter').classList.toggle('dates-off',pulse||(t==='budget'&&isWeek()));$('#fnote').textContent='';
   const CTX={pulse:'Is marketing working?',budget:'Where should the money go?',funnel:'Where is demand leaking?',brand:'Is the brand growing?',outlet:'Is the catalogue handing people to sales?'};
   $('#mkCtx').innerHTML=CTX[t]+' <span id="mkCtxPer"></span>';
   try{history.replaceState(null,'','?tab='+t)}catch(e){} render();}
@@ -575,6 +642,17 @@ function init(){
   function clearSeg(){$$('#rangeSeg button').forEach(b=>b.classList.remove('on'));}
   $$('#rangeSeg button').forEach(b=>b.onclick=()=>{const y=LCM.slice(0,4);const R={ytd:[y+'-01',LCM],q1:[y+'-01',y+'-03'],q2:[y+'-04',y+'-06'],q3:[y+'-07',y+'-09'],l3:[CMONTHS[Math.max(0,CMONTHS.length-3)],LCM]}[b.dataset.r];
     state.from=R[0]<CMONTHS[0]?CMONTHS[0]:R[0];state.to=R[1]>LCM?LCM:R[1];$('#monthFrom').value=state.from;$('#monthTo').value=state.to;clearSeg();b.classList.add('on');render();});
+  /* weekly budget controls */
+  const wopts=CWEEKS.map(w=>'<option value="'+w+'">'+w+'</option>').join('');
+  $('#weekFrom').innerHTML=wopts; $('#weekTo').innerHTML=wopts;
+  $('#weekFrom').value=bstate.wFrom; $('#weekTo').value=bstate.wTo;
+  function syncGran(){$('#budgetCtl').classList.toggle('month-mode',bstate.mode!=='week');$('#filter').classList.toggle('dates-off',state.tab==='budget'&&bstate.mode==='week');}
+  function clearWSeg(){$$('#weekSeg button').forEach(b=>b.classList.remove('on'));}
+  $('#weekFrom').onchange=e=>{bstate.wFrom=e.target.value;if(wIdx(bstate.wFrom)>wIdx(bstate.wTo)){bstate.wTo=bstate.wFrom;$('#weekTo').value=bstate.wTo;}clearWSeg();render();};
+  $('#weekTo').onchange=e=>{bstate.wTo=e.target.value;if(wIdx(bstate.wTo)<wIdx(bstate.wFrom)){bstate.wFrom=bstate.wTo;$('#weekFrom').value=bstate.wFrom;}clearWSeg();render();};
+  $$('#weekSeg button').forEach(b=>b.onclick=()=>{const n=+b.dataset.w;bstate.wFrom=n>0?CWEEKS[Math.max(0,CWEEKS.length-n)]:CWEEKS[0];bstate.wTo=CWEEKS[CWEEKS.length-1];$('#weekFrom').value=bstate.wFrom;$('#weekTo').value=bstate.wTo;clearWSeg();b.classList.add('on');render();});
+  $$('#granSeg button').forEach(b=>b.onclick=()=>{bstate.mode=b.dataset.g;$$('#granSeg button').forEach(x=>x.classList.toggle('on',x===b));syncGran();render();});
+  syncGran();
   $$('#ccySeg button').forEach(b=>b.onclick=()=>{ccy=b.dataset.c;$$('#ccySeg button').forEach(x=>x.classList.toggle('on',x===b));render();});
   $$('#tabbar button').forEach(b=>b.onclick=()=>show(b.dataset.t));
   setupCards();
