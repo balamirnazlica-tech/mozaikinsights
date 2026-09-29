@@ -24,7 +24,7 @@
 <link rel="stylesheet" href="../assets/style.css?v=11">
 <script src="/assets/auth.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-<script src="./data.js?v=20260929"></script>
+<script src="./data.js?v=20260929b"></script>
 <style>
 :root{--mk-bg:#F4F5F7;--mk-surface:#fff;--mk-surface-2:#EEF0F3;--mk-line:#E1E4E9;--mk-ink:#0F172A;--mk-ink-2:#475569;--mk-muted:#7C8494;
   --mk-accent:#0F172A;--mk-brass:#9A6B1E;--mk-brass-soft:#F5EBD6;--mk-good:#1E7A46;--mk-good-soft:#E3F2E8;--mk-warn:#A2620A;--mk-warn-soft:#FBF0DA;--mk-bad:#B42318;--mk-bad-soft:#FBE4E1;
@@ -336,7 +336,7 @@ function chart(id,cfg){if(typeof Chart==='undefined')return;if(charts[id])charts
   cfg.options.plugins=Object.assign({legend:{position:'bottom',labels:{boxWidth:10,font:{size:11}}}},cfg.options.plugins||{});
   charts[id]=new Chart(el,cfg);}
 const C={meta:'#2563EB',google:'#EA4335',outlet:'#F59E0B',ink:'#0F172A',soft:'#CBD5E1',brass:'#9A6B1E',good:'#1E7A46',bad:'#B42318',pink:'#DB2777',pinkSoft:'#F9A8D4',
-  ch:{'Direct':'#0F172A','Organic Search':'#1E7A46','Paid Search':'#EA4335','Paid Social':'#2563EB','Organic Social':'#7C3AED','Cross-network':'#F59E0B','Referral':'#0891B2','Other':'#94A3B8','Unassigned':'#CBD5E1','other_organic':'#7C3AED'}};
+  ch:{'Direct':'#0F172A','Organic Search':'#1E7A46','Paid Search':'#EA4335','Paid Social':'#2563EB','Organic Social':'#7C3AED','Cross-network':'#F59E0B','Referral':'#0891B2','Other':'#94A3B8','Unassigned':'#BE123C','other_organic':'#7C3AED'}};
 const money=v=>TLk(v);
 
 /* ============ PULSE ============ */
@@ -503,7 +503,7 @@ function renderFunnel(){
     tile('Returning', ret(cur)!=null?pct(ret(cur)):'—', delta(ret(cur),ret(pri)), 'share of customers', 'Returning ÷ (new + returning) customers (Metorik). Needs the live feed.');
   /* charts */
   const ms=CMONTHS.filter(m=>(G.channels||[]).some(r=>r.month===m));
-  const chKeys=['Direct','Organic Search','Paid Search','Paid Social','Organic Social','Cross-network','Other'];
+  const chKeys=['Direct','Organic Search','Paid Search','Paid Social','Organic Social','Cross-network','Unassigned','Other'];
   chart('cSess',{type:'bar',data:{labels:ms.map(monShort),datasets:chKeys.map(k=>({label:k,data:ms.map(m=>{const r=(G.channels||[]).find(x=>x.month===m);return r?(r[k]||0):0;}),backgroundColor:C.ch[k],borderRadius:2}))},options:{scales:{x:{stacked:true},y:{stacked:true,ticks:{callback:v=>compact(v)}}}}});
   const gm=CMONTHS.filter(m=>(DATA.ga_rev||[]).some(r=>r.month===m));
   const rk=[['direct','Direct'],['organic_search','Organic Search'],['paid_search','Paid Search'],['paid_social','Paid Social'],['cross_network','Cross-network'],['referral','Referral'],['other_organic','Other organic'],['unassigned','Unassigned']];
