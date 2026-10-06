@@ -81,25 +81,25 @@ footer{color:#475569;font-size:12px;text-align:center;margin-top:20px}
 // is now far too low; it needs recalibrating against the new placement mix before it means anything.
 const ACTUALS = {
   "Instagram|Organic Reach": {
-    "value": 37850,
-    "period": "Aug 2026",
-    "note": "TRUE organic reach, read from Meta Business Suite on 28 Sep 2026 (Insights > Overview > Reach breakdown), the only place Meta splits organic from ads. August organic 37,850 against 742,350 from ads \u2014 organic is about 5% of Instagram reach. Rising steadily: 20,468 in January to 65,587 in September. Not available from the data connection, so this is entered by hand each month.",
+    "value": 67489,
+    "period": "Sep 2026",
+    "note": "TRUE organic reach, read by hand from Meta Business Suite on 5 Oct 2026 (Insights > Overview > Reach breakdown), the only place Meta splits organic from ads. September organic 67,489 against 814,506 from ads — organic is 7.8% of Instagram reach, up from 4.9% in August. The climb through the year is the point of this metric: 20,468 in January to 67,489 in September. Not available from the data connection, so it is entered by hand each month.",
     "manual": true
   },
   "Instagram|Total Reach": {
-    "value": 772480,
-    "period": "Aug 2026",
-    "note": "NOT organic — corrected 28 Sep 2026. Total Instagram reach, organic and paid combined, for the full calendar month \u2014 read from Meta Business Suite on 28 Sep 2026. The earlier 761,702 came from the data connection, which silently clamps reach to 28 days and so dropped 1-3 August. The Paid Reach KPI below is a subset of this number, not a separate audience, and Total will not equal Organic plus Paid because Meta deduplicates people across both. Targets below were set against what was wrongly believed to be an organic figure and still need recalibrating."
+    "value": 862466,
+    "period": "Sep 2026",
+    "note": "NOT organic — corrected 28 Sep 2026. Total Instagram reach, organic and paid combined, for the full calendar month, read from Meta Business Suite on 5 Oct 2026. The data connection cannot be used for this: it silently clamps reach to a 28-day window. Its September figure was 831,534 against the true 862,466. The range below was set when this number was wrongly believed to be organic and is far above the real level — it needs recalibrating."
   },
   "Instagram|Paid Reach": {
-    "value": 744080,
-    "period": "Aug 2026",
-    "note": "LIVE via Meta Ads. Full August 744,080. Instagram is 70.2% of Meta paid reach (Sep-to-date 70.7%), down from 95.5% in July — the \"ROI -\" restructure moved budget into Facebook, Threads and WhatsApp placements."
+    "value": 838927,
+    "period": "Sep 2026",
+    "note": "Instagram share of Meta paid reach, from Meta Ads. Instagram is now 65.5% of Meta paid reach (95.5% in July, 70.2% in August) as the 'ROI -' restructure moved budget into Facebook, Threads and WhatsApp. Reach is deduplicated across platforms, so these shares are indicative, not additive."
   },
   "Facebook|Paid Reach": {
-    "value": 263927,
-    "period": "Aug 2026",
-    "note": "LIVE via Meta Ads (Facebook Insights remains blocked; this is paid placement reach, not page reach). 263,927 in August vs 22,554 in July, an 11.7x jump from the \"ROI -\" restructure. The goal range below is obsolete and needs recalibrating."
+    "value": 370365,
+    "period": "Sep 2026",
+    "note": "Facebook share of Meta paid reach, from Meta Ads. Still rising fast since the 'ROI -' restructure: 22,554 in July, 263,927 in August, 370,365 in September."
   },
   "Facebook|Organic Reach": {
     "value": 305819,
@@ -112,14 +112,14 @@ const ACTUALS = {
     "note": "FROZEN at June — LinkedIn Pages is NOT_AUTHENTICATED as of 22 Sep 2026, same as Facebook Insights. Now an expired OAuth token rather than the trial-subscription block, so a free reconnect should restore it."
   },
   "Google|Branded Search Volume": {
-    "value": 22141,
-    "period": "Aug 2026",
-    "note": "LIVE again — Google Search Console access was restored. August branded impressions 22,141 vs 20,393 in July."
+    "value": 25155,
+    "period": "Sep 2026",
+    "note": "Branded impressions in Search Console, brand keywords mozaik / mozaik design / mozaikdesign / mozaik istanbul. The '(unknown)' bucket is discarded."
   },
   "Google|Direct Traffic": {
-    "value": 4096,
-    "period": "Aug 2026",
-    "note": "LIVE via GA4, country == Türkiye only. 4,096 sessions in August vs 3,496 in July (both restated slightly by GA4 since the last refresh). Türkiye-only filtering stays on: sessions-per-user is 1.32–1.34 in Aug–Sep, consistent with genuine traffic, and the filter keeps history comparable."
+    "value": 6558,
+    "period": "Sep 2026",
+    "note": "GA4 Direct sessions, filtered to country Turkiye on every month to keep automated traffic out. Up sharply from 4,096 in August."
   }
 };
 
