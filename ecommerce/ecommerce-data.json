@@ -3,7 +3,7 @@
     "company": "Mozaik Design",
     "scope": "E-commerce (Metorik)",
     "currency": "TRY",
-    "generated": "2026-10-10",
+    "generated": "2026-10-11",
     "source": "Live via Metorik API"
   },
   "months": [
@@ -149,11 +149,11 @@
     },
     {
       "month": "2026-09",
-      "revenue": 2390151.08,
-      "net": 1861007.82,
-      "orders": 87,
-      "average_order_value": 27473,
-      "unique_customers": 84,
+      "revenue": 2392285.16,
+      "net": 1862786.22,
+      "orders": 88,
+      "average_order_value": 27185.1,
+      "unique_customers": 85,
       "total_refunds": 182732.88,
       "new_customers": 69,
       "returning_customers": 3,
@@ -163,13 +163,13 @@
     },
     {
       "month": "2026-10",
-      "revenue": 755773.34,
-      "net": 649976.7,
-      "orders": 29,
-      "average_order_value": 26061.1,
-      "unique_customers": 26,
+      "revenue": 845237.4,
+      "net": 724504.2,
+      "orders": 33,
+      "average_order_value": 25613.3,
+      "unique_customers": 30,
       "total_refunds": 0,
-      "new_customers": 24,
+      "new_customers": 27,
       "returning_customers": 1,
       "returning_customers_rate": 0.1,
       "lost_revenue": 670658.58,
@@ -178,20 +178,20 @@
   ],
   "products": [
     {
+      "name": "Panton Sandalye",
+      "sku": "",
+      "net_sales": 450146,
+      "net_orders": 12,
+      "gross_items_sold": 23,
+      "in_stock": true,
+      "stock_quantity": 0
+    },
+    {
       "name": "PH 5 Sarkıt Aydınlatma",
       "sku": "",
       "net_sales": 406560,
       "net_orders": 3,
       "gross_items_sold": 6,
-      "in_stock": true,
-      "stock_quantity": 0
-    },
-    {
-      "name": "Panton Sandalye",
-      "sku": "",
-      "net_sales": 390980,
-      "net_orders": 10,
-      "gross_items_sold": 20,
       "in_stock": true,
       "stock_quantity": 0
     },
