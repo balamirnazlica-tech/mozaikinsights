@@ -3,7 +3,7 @@
     "company": "Mozaik Design",
     "scope": "E-commerce (Metorik)",
     "currency": "TRY",
-    "generated": "2026-10-20",
+    "generated": "2026-10-21",
     "source": "Live via Metorik API"
   },
   "months": [
@@ -163,15 +163,15 @@
     },
     {
       "month": "2026-10",
-      "revenue": 1476680.64,
-      "net": 1178254.98,
-      "orders": 67,
-      "average_order_value": 22040,
-      "unique_customers": 62,
+      "revenue": 1600428.5,
+      "net": 1278244.38,
+      "orders": 68,
+      "average_order_value": 23535.7,
+      "unique_customers": 61,
       "total_refunds": 75328.92,
-      "new_customers": 50,
-      "returning_customers": 3,
-      "returning_customers_rate": 0.1,
+      "new_customers": 52,
+      "returning_customers": 5,
+      "returning_customers_rate": 0.2,
       "lost_revenue": 966611.7,
       "lost_orders": 22
     }
@@ -180,9 +180,9 @@
     {
       "name": "Panton Sandalye",
       "sku": "",
-      "net_sales": 509312,
-      "net_orders": 14,
-      "gross_items_sold": 26,
+      "net_sales": 529034,
+      "net_orders": 15,
+      "gross_items_sold": 27,
       "in_stock": true,
       "stock_quantity": 0
     },
@@ -205,21 +205,21 @@
       "stock_quantity": 0
     },
     {
+      "name": "Atollo 238 Masa Lambası",
+      "sku": "",
+      "net_sales": 235410,
+      "net_orders": 3,
+      "gross_items_sold": 5,
+      "in_stock": true,
+      "stock_quantity": 0
+    },
+    {
       "name": "Xilos Sehpa",
       "sku": "",
       "net_sales": 170772,
       "net_orders": 1,
       "gross_items_sold": 1,
       "in_stock": false,
-      "stock_quantity": 0
-    },
-    {
-      "name": "Atollo 238 Masa Lambası",
-      "sku": "",
-      "net_sales": 159600,
-      "net_orders": 2,
-      "gross_items_sold": 3,
-      "in_stock": true,
       "stock_quantity": 0
     },
     {
