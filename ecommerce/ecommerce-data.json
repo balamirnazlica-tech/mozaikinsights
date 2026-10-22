@@ -3,7 +3,7 @@
     "company": "Mozaik Design",
     "scope": "E-commerce (Metorik)",
     "currency": "TRY",
-    "generated": "2026-10-21",
+    "generated": "2026-10-22",
     "source": "Live via Metorik API"
   },
   "months": [
@@ -163,25 +163,25 @@
     },
     {
       "month": "2026-10",
-      "revenue": 1600428.5,
-      "net": 1278244.38,
-      "orders": 68,
-      "average_order_value": 23535.7,
-      "unique_customers": 61,
-      "total_refunds": 75328.92,
-      "new_customers": 52,
+      "revenue": 1719589.28,
+      "net": 1360076.43,
+      "orders": 70,
+      "average_order_value": 24565.6,
+      "unique_customers": 65,
+      "total_refunds": 97023.12,
+      "new_customers": 55,
       "returning_customers": 5,
       "returning_customers_rate": 0.2,
-      "lost_revenue": 966611.7,
-      "lost_orders": 22
+      "lost_revenue": 1123829.1,
+      "lost_orders": 25
     }
   ],
   "products": [
     {
       "name": "Panton Sandalye",
       "sku": "",
-      "net_sales": 529034,
-      "net_orders": 15,
+      "net_sales": 509312,
+      "net_orders": 14,
       "gross_items_sold": 27,
       "in_stock": true,
       "stock_quantity": 0
@@ -223,6 +223,15 @@
       "stock_quantity": 0
     },
     {
+      "name": "Hang It All Askılık",
+      "sku": "",
+      "net_sales": 117909,
+      "net_orders": 5,
+      "gross_items_sold": 8,
+      "in_stock": true,
+      "stock_quantity": 0
+    },
+    {
       "name": "Luxembourg Dış Mekan Servis Arabası",
       "sku": "",
       "net_sales": 110694,
@@ -255,15 +264,6 @@
       "net_sales": 99636,
       "net_orders": 12,
       "gross_items_sold": 20,
-      "in_stock": true,
-      "stock_quantity": 0
-    },
-    {
-      "name": "Fat Fat Dış Mekan Yan Sehpa",
-      "sku": "",
-      "net_sales": 92055,
-      "net_orders": 2,
-      "gross_items_sold": 2,
       "in_stock": true,
       "stock_quantity": 0
     }
