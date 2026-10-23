@@ -3,7 +3,7 @@
     "company": "Mozaik Design",
     "scope": "E-commerce (Metorik)",
     "currency": "TRY",
-    "generated": "2026-10-22",
+    "generated": "2026-10-23",
     "source": "Live via Metorik API"
   },
   "months": [
@@ -163,17 +163,17 @@
     },
     {
       "month": "2026-10",
-      "revenue": 1719589.28,
-      "net": 1360076.43,
-      "orders": 70,
-      "average_order_value": 24565.6,
-      "unique_customers": 65,
+      "revenue": 2795040.24,
+      "net": 2284528.08,
+      "orders": 83,
+      "average_order_value": 33675.2,
+      "unique_customers": 76,
       "total_refunds": 97023.12,
-      "new_customers": 55,
+      "new_customers": 58,
       "returning_customers": 5,
       "returning_customers_rate": 0.2,
-      "lost_revenue": 1123829.1,
-      "lost_orders": 25
+      "lost_revenue": 1180806.3,
+      "lost_orders": 26
     }
   ],
   "products": [
@@ -183,6 +183,15 @@
       "net_sales": 509312,
       "net_orders": 14,
       "gross_items_sold": 27,
+      "in_stock": true,
+      "stock_quantity": 0
+    },
+    {
+      "name": "Eames Tekli Koltuk & Puf",
+      "sku": "",
+      "net_sales": 490143,
+      "net_orders": 1,
+      "gross_items_sold": 1,
       "in_stock": true,
       "stock_quantity": 0
     },
@@ -201,6 +210,15 @@
       "net_sales": 385245,
       "net_orders": 18,
       "gross_items_sold": 26,
+      "in_stock": true,
+      "stock_quantity": 0
+    },
+    {
+      "name": "Pathos Sehpa",
+      "sku": "",
+      "net_sales": 280725,
+      "net_orders": 1,
+      "gross_items_sold": 1,
       "in_stock": true,
       "stock_quantity": 0
     },
@@ -247,24 +265,6 @@
       "net_orders": 3,
       "gross_items_sold": 3,
       "in_stock": false,
-      "stock_quantity": 0
-    },
-    {
-      "name": "Elios Sehpa",
-      "sku": "",
-      "net_sales": 103740,
-      "net_orders": 1,
-      "gross_items_sold": 2,
-      "in_stock": true,
-      "stock_quantity": 0
-    },
-    {
-      "name": "Quick Beach Sandalye",
-      "sku": "",
-      "net_sales": 99636,
-      "net_orders": 12,
-      "gross_items_sold": 20,
-      "in_stock": true,
       "stock_quantity": 0
     }
   ],
