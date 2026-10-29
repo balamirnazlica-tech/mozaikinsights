@@ -63,6 +63,11 @@ body.mkt{margin:0;background:var(--mk-bg);font-family:Inter,system-ui,-apple-sys
 .mk-wrap .panel[hidden]{display:none}
 
 .mk-wrap .tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px}
+#outCamp th.oc-s{cursor:pointer;user-select:none;white-space:nowrap}
+#outCamp th.oc-s:hover{color:var(--mk-ink,#0F172A)}
+#outCamp th.oc-s[aria-sort=descending]::after{content:" \25BC";font-size:9px;opacity:.75}
+#outCamp th.oc-s[aria-sort=ascending]::after{content:" \25B2";font-size:9px;opacity:.75}
+#outCamp tfoot .oc-tot td{border-top:2px solid var(--mk-line);font-weight:700;background:rgba(15,23,42,.025)}
 .mktile{background:var(--mk-surface);border:1px solid var(--mk-line);border-left:3px solid var(--mk-soft-accent,var(--mk-line));border-radius:8px;padding:12px 14px;min-width:0}
 .mk-wrap .tiles .mktile:nth-child(1){--mk-soft-accent:#0F172A}.tiles .mktile:nth-child(2){--mk-soft-accent:#2563EB}.tiles .mktile:nth-child(3){--mk-soft-accent:#9A6B1E}.tiles .mktile:nth-child(4){--mk-soft-accent:#1E7A46}.tiles .mktile:nth-child(5){--mk-soft-accent:#DB2777}
 .mktile .l{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--mk-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -252,7 +257,7 @@ body.col-resizing{cursor:col-resize;user-select:none}
       <div class="mkcard"><h3>How far they get</h3><p class="meta">Scroll-through and hand-off rate</p><canvas id="cOutEng"></canvas></div>
     </div>
     <div class="grid g-11">
-      <div class="mkcard"><h3>Outlet campaigns</h3><p class="meta">2026 YTD · spend, clicks, cost per click</p><div class="tw"><table id="outCamp"><thead><tr><th>Campaign</th><th class="n">Spend</th><th class="n">Clicks</th><th class="n">CPC</th></tr></thead><tbody></tbody></table></div></div>
+      <div class="mkcard"><h3>Outlet campaigns</h3><p class="meta">2026 YTD · spend, clicks, cost per click · click a column to sort</p><div class="tw"><table id="outCamp"><thead><tr><th class="oc-s" data-k="campaign">Campaign</th><th class="n oc-s" data-k="spend">Spend</th><th class="n oc-s" data-k="clicks">Clicks</th><th class="n oc-s" data-k="cpc">CPC</th></tr></thead><tbody></tbody><tfoot></tfoot></table></div></div>
       <div class="mkcard"><h3>Measurement health</h3><p class="meta">What can and cannot be trusted on this tab</p><div class="health" id="outHealth"></div></div>
     </div>
     <details class="notes"><summary>What this tab measures</summary><div class="body"><p id="outletNote"></p></div></details>
@@ -556,6 +561,17 @@ function renderBrand(){
 }
 
 /* ============ OUTLET ============ */
+let OCSORT={k:'spend',d:-1};
+function drawOutCamp(){
+  const rows=(OUTLET.campaigns||[]).slice();
+  const val=(c,k)=>k==='campaign'?c.campaign.toLowerCase():k==='cpc'?(c.clicks?c.spend/c.clicks:-1):(c[k]||0);
+  rows.sort((a,b)=>{const x=val(a,OCSORT.k),y=val(b,OCSORT.k);return (x<y?-1:x>y?1:0)*OCSORT.d;});
+  $('#outCamp tbody').innerHTML=rows.map(c=>'<tr><td>'+c.campaign.replace(/^G: /,'')+' <span class="owner">· '+(c.channel==='Google Ads'?'Google':'Meta')+'</span></td><td class="n">'+TLk(c.spend)+'</td><td class="n">'+num(c.clicks)+'</td><td class="n">'+(c.clicks?TL(c.spend/c.clicks):'—')+'</td></tr>').join('');
+  const ts=rows.reduce((a,c)=>a+(c.spend||0),0), tc=rows.reduce((a,c)=>a+(c.clicks||0),0);
+  $('#outCamp tfoot').innerHTML='<tr class="oc-tot"><td>Total · '+rows.length+' campaigns</td><td class="n">'+TLk(ts)+'</td><td class="n">'+num(tc)+'</td><td class="n">'+(tc?TL(ts/tc):'—')+'</td></tr>';
+  $('#outCamp thead').querySelectorAll('th').forEach(th=>{const k=th.dataset.k;th.setAttribute('aria-sort',k===OCSORT.k?(OCSORT.d<0?'descending':'ascending'):'none');});
+}
+document.addEventListener('click',e=>{const th=e.target.closest('#outCamp thead th.oc-s');if(!th)return;const k=th.dataset.k;OCSORT.d=(OCSORT.k===k)?-OCSORT.d:(k==='campaign'?1:-1);OCSORT.k=k;drawOutCamp();});
 function renderOutlet(){
   const om=OUTLET.months||[]; const cur=om.filter(m=>inRange(m)&&m<=LCM); const use=cur.length?cur:om.slice(-1);
   const i0=om.indexOf(use[0]); const priorWin=i0>=use.length?om.slice(i0-use.length,i0):null;   // like-for-like only
@@ -577,7 +593,7 @@ function renderOutlet(){
   const ck=['Cross-network','Paid Social','Paid Search','Direct','Organic Social','Organic Search','Other'];
   chart('cOutCh',{type:'bar',data:{labels:om.map(monShort),datasets:ck.map(k=>({label:k,data:om.map(m=>((OUTLET.channels||[]).find(x=>x.month===m)||{})[k]||0),backgroundColor:C.ch[k],borderRadius:2}))},options:{scales:{x:{stacked:true},y:{stacked:true,ticks:{callback:v=>compact(v)}}}}});
   chart('cOutEng',{data:{labels:om.map(monShort),datasets:[{type:'bar',label:'Scrolled',data:om.map(m=>E(m).scroll_users||0),backgroundColor:C.outlet,borderRadius:3,yAxisID:'y'},{type:'line',label:'Hand-offs per 1,000 scrolled',data:om.map(m=>{const sc=E(m).scroll_users||0,h=(E(m).cta_clicks||0)+(E(m).contact_users||0)+(E(m).form_starts||0);return sc?+(h/sc*1000).toFixed(2):null;}),borderColor:C.ink,backgroundColor:C.ink,tension:.3,pointRadius:3,yAxisID:'y2'}]},options:{scales:{y:{ticks:{callback:v=>compact(v)}},y2:{position:'right',grid:{display:false},title:{display:true,text:'per 1,000'}}}}});
-  $('#outCamp tbody').innerHTML=(OUTLET.campaigns||[]).map(c=>'<tr><td>'+c.campaign.replace(/^G: /,'')+' <span class="owner">· '+(c.channel==='Google Ads'?'Google':'Meta')+'</span></td><td class="n">'+TLk(c.spend)+'</td><td class="n">'+num(c.clicks)+'</td><td class="n">'+(c.clicks?TL(c.spend/c.clicks):'—')+'</td></tr>').join('');
+  drawOutCamp();
   $('#outHealth').innerHTML=(OUTLET.quality||[]).map(q=>'<div class="h-item '+(q.sev==='bad'?'bad':q.sev==='info'?'info':'')+'"><b>'+q.head+'</b>'+q.body+'</div>').join('');
   $('#outletNote').textContent='Mozaik Outlet is a catalogue, not a shop. Its job is to put the range in front of people and hand warm interest to the sales team, so there is deliberately no basket, no checkout and no revenue on this tab. '+(OUTLET.meta&&OUTLET.meta.live||'');
 }
