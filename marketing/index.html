@@ -68,6 +68,9 @@ body.mkt{margin:0;background:var(--mk-bg);font-family:Inter,system-ui,-apple-sys
 #outCamp th.oc-s[aria-sort=descending]::after{content:" \25BC";font-size:9px;opacity:.75}
 #outCamp th.oc-s[aria-sort=ascending]::after{content:" \25B2";font-size:9px;opacity:.75}
 #outCamp tfoot .oc-tot td{border-top:2px solid var(--mk-line);font-weight:700;background:rgba(15,23,42,.025)}
+.oc-seg{margin-left:8px;vertical-align:middle}
+.oc-seg button{padding:4px 9px;font-size:11px}
+#outCamp td,#outCamp th{white-space:nowrap}
 .mktile{background:var(--mk-surface);border:1px solid var(--mk-line);border-left:3px solid var(--mk-soft-accent,var(--mk-line));border-radius:8px;padding:12px 14px;min-width:0}
 .mk-wrap .tiles .mktile:nth-child(1){--mk-soft-accent:#0F172A}.tiles .mktile:nth-child(2){--mk-soft-accent:#2563EB}.tiles .mktile:nth-child(3){--mk-soft-accent:#9A6B1E}.tiles .mktile:nth-child(4){--mk-soft-accent:#1E7A46}.tiles .mktile:nth-child(5){--mk-soft-accent:#DB2777}
 .mktile .l{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--mk-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -257,7 +260,7 @@ body.col-resizing{cursor:col-resize;user-select:none}
       <div class="mkcard"><h3>How far they get</h3><p class="meta">Scroll-through and hand-off rate</p><canvas id="cOutEng"></canvas></div>
     </div>
     <div class="grid g-11">
-      <div class="mkcard"><h3>Outlet campaigns</h3><p class="meta">2026 YTD · spend, clicks, cost per click · click a column to sort</p><div class="tw"><table id="outCamp"><thead><tr><th class="oc-s" data-k="campaign">Campaign</th><th class="n oc-s" data-k="spend">Spend</th><th class="n oc-s" data-k="clicks">Clicks</th><th class="n oc-s" data-k="cpc">CPC</th></tr></thead><tbody></tbody><tfoot></tfoot></table></div></div>
+      <div class="mkcard"><h3>Outlet campaigns</h3><p class="meta">2026 YTD · click a column to sort <span class="seg oc-seg" id="ocModeSeg"><button class="on" data-m="ytd">Total</button><button data-m="mom">By month</button></span></p><div class="tw"><table id="outCamp"><thead></thead><tbody></tbody><tfoot></tfoot></table></div></div>
       <div class="mkcard"><h3>Measurement health</h3><p class="meta">What can and cannot be trusted on this tab</p><div class="health" id="outHealth"></div></div>
     </div>
     <details class="notes"><summary>What this tab measures</summary><div class="body"><p id="outletNote"></p></div></details>
@@ -561,17 +564,32 @@ function renderBrand(){
 }
 
 /* ============ OUTLET ============ */
-let OCSORT={k:'spend',d:-1};
+let OCSORT={k:'spend',d:-1}, OCMODE='ytd';
+function ocMonths(){const t=new Set();(OUTLET.campaigns||[]).forEach(c=>Object.keys(c.monthly||{}).forEach(m=>t.add(m)));return [...t].sort();}
 function drawOutCamp(){
-  const rows=(OUTLET.campaigns||[]).slice();
-  const val=(c,k)=>k==='campaign'?c.campaign.toLowerCase():k==='cpc'?(c.clicks?c.spend/c.clicks:-1):(c[k]||0);
+  const rows=(OUTLET.campaigns||[]).slice(), MS=ocMonths(), MM=OCMODE==='mom';
+  const val=(c,k)=>k==='campaign'?c.campaign.toLowerCase():k==='cpc'?(c.clicks?c.spend/c.clicks:-1):k.slice(0,2)==='m:'?((c.monthly||{})[k.slice(2)]||0):(c[k]||0);
   rows.sort((a,b)=>{const x=val(a,OCSORT.k),y=val(b,OCSORT.k);return (x<y?-1:x>y?1:0)*OCSORT.d;});
-  $('#outCamp tbody').innerHTML=rows.map(c=>'<tr><td>'+c.campaign.replace(/^G: /,'')+' <span class="owner">· '+(c.channel==='Google Ads'?'Google':'Meta')+'</span></td><td class="n">'+TLk(c.spend)+'</td><td class="n">'+num(c.clicks)+'</td><td class="n">'+(c.clicks?TL(c.spend/c.clicks):'—')+'</td></tr>').join('');
+  const nameTh='<th class="oc-s" data-k="campaign">Campaign</th>';
+  $('#outCamp thead').innerHTML='<tr>'+nameTh+(MM
+    ? MS.map(m=>'<th class="n oc-s" data-k="m:'+m+'">'+monShort(m)+'</th>').join('')+'<th class="n oc-s" data-k="spend">Total</th>'
+    : '<th class="n oc-s" data-k="spend">Spend</th><th class="n oc-s" data-k="clicks">Clicks</th><th class="n oc-s" data-k="cpc">CPC</th>')+'</tr>';
+  $('#outCamp tbody').innerHTML=rows.map(c=>{
+    const nm='<td>'+c.campaign.replace(/^G: /,'')+' <span class="owner">· '+(c.channel==='Google Ads'?'Google':'Meta')+'</span></td>';
+    return '<tr>'+nm+(MM
+      ? MS.map(m=>'<td class="n">'+((c.monthly||{})[m]?TLk(c.monthly[m]):'<span class="owner">—</span>')+'</td>').join('')+'<td class="n">'+TLk(c.spend)+'</td>'
+      : '<td class="n">'+TLk(c.spend)+'</td><td class="n">'+num(c.clicks)+'</td><td class="n">'+(c.clicks?TL(c.spend/c.clicks):'—')+'</td>')+'</tr>';}).join('');
   const ts=rows.reduce((a,c)=>a+(c.spend||0),0), tc=rows.reduce((a,c)=>a+(c.clicks||0),0);
-  $('#outCamp tfoot').innerHTML='<tr class="oc-tot"><td>Total · '+rows.length+' campaigns</td><td class="n">'+TLk(ts)+'</td><td class="n">'+num(tc)+'</td><td class="n">'+(tc?TL(ts/tc):'—')+'</td></tr>';
+  $('#outCamp tfoot').innerHTML='<tr class="oc-tot"><td>Total · '+rows.length+' campaigns</td>'+(MM
+    ? MS.map(m=>'<td class="n">'+TLk(rows.reduce((a,c)=>a+((c.monthly||{})[m]||0),0))+'</td>').join('')+'<td class="n">'+TLk(ts)+'</td>'
+    : '<td class="n">'+TLk(ts)+'</td><td class="n">'+num(tc)+'</td><td class="n">'+(tc?TL(ts/tc):'—')+'</td>')+'</tr>';
   $('#outCamp thead').querySelectorAll('th').forEach(th=>{const k=th.dataset.k;th.setAttribute('aria-sort',k===OCSORT.k?(OCSORT.d<0?'descending':'ascending'):'none');});
 }
-document.addEventListener('click',e=>{const th=e.target.closest('#outCamp thead th.oc-s');if(!th)return;const k=th.dataset.k;OCSORT.d=(OCSORT.k===k)?-OCSORT.d:(k==='campaign'?1:-1);OCSORT.k=k;drawOutCamp();});
+document.addEventListener('click',e=>{
+  const sg=e.target.closest('#ocModeSeg button');
+  if(sg){OCMODE=sg.dataset.m;[...sg.parentNode.children].forEach(b=>b.classList.toggle('on',b===sg));if(OCSORT.k.slice(0,2)==='m:'||(OCMODE==='mom'&&(OCSORT.k==='clicks'||OCSORT.k==='cpc')))OCSORT={k:'spend',d:-1};drawOutCamp();return;}
+  const th=e.target.closest('#outCamp thead th.oc-s');if(!th)return;
+  const k=th.dataset.k;OCSORT.d=(OCSORT.k===k)?-OCSORT.d:(k==='campaign'?1:-1);OCSORT.k=k;drawOutCamp();});
 function renderOutlet(){
   const om=OUTLET.months||[]; const cur=om.filter(m=>inRange(m)&&m<=LCM); const use=cur.length?cur:om.slice(-1);
   const i0=om.indexOf(use[0]); const priorWin=i0>=use.length?om.slice(i0-use.length,i0):null;   // like-for-like only
