@@ -3,7 +3,7 @@
     "company": "Mozaik Design",
     "scope": "E-commerce (Metorik)",
     "currency": "TRY",
-    "generated": "2026-10-29",
+    "generated": "2026-10-30",
     "source": "Live via Metorik API"
   },
   "months": [
@@ -163,17 +163,17 @@
     },
     {
       "month": "2026-10",
-      "revenue": 3163786.35,
-      "net": 2606039.43,
-      "orders": 98,
-      "average_order_value": 32283.5,
-      "unique_customers": 87,
+      "revenue": 3257101.75,
+      "net": 2688398.73,
+      "orders": 104,
+      "average_order_value": 31318.3,
+      "unique_customers": 92,
       "total_refunds": 98254.32,
-      "new_customers": 70,
-      "returning_customers": 7,
-      "returning_customers_rate": 0.3,
-      "lost_revenue": 2082841.56,
-      "lost_orders": 33
+      "new_customers": 73,
+      "returning_customers": 8,
+      "returning_customers_rate": 0.4,
+      "lost_revenue": 2068135.56,
+      "lost_orders": 31
     }
   ],
   "products": [
@@ -241,6 +241,15 @@
       "stock_quantity": 0
     },
     {
+      "name": "Quick Beach Sandalye",
+      "sku": "",
+      "net_sales": 125856,
+      "net_orders": 14,
+      "gross_items_sold": 25,
+      "in_stock": true,
+      "stock_quantity": 0
+    },
+    {
       "name": "Fat Fat Dış Mekan Sehpa",
       "sku": "",
       "net_sales": 121809,
@@ -256,15 +265,6 @@
       "net_orders": 5,
       "gross_items_sold": 8,
       "in_stock": true,
-      "stock_quantity": 0
-    },
-    {
-      "name": "Bilboquet Masa Lambası",
-      "sku": "",
-      "net_sales": 116707.5,
-      "net_orders": 7,
-      "gross_items_sold": 9,
-      "in_stock": false,
       "stock_quantity": 0
     }
   ],
