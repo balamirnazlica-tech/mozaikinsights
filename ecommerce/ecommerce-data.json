@@ -3,7 +3,7 @@
     "company": "Mozaik Design",
     "scope": "E-commerce (Metorik)",
     "currency": "TRY",
-    "generated": "2026-10-30",
+    "generated": "2026-10-31",
     "source": "Live via Metorik API"
   },
   "months": [
@@ -163,17 +163,17 @@
     },
     {
       "month": "2026-10",
-      "revenue": 3257101.75,
-      "net": 2688398.73,
-      "orders": 104,
-      "average_order_value": 31318.3,
-      "unique_customers": 92,
+      "revenue": 3543693.16,
+      "net": 2927183.13,
+      "orders": 114,
+      "average_order_value": 31085,
+      "unique_customers": 102,
       "total_refunds": 98254.32,
-      "new_customers": 73,
+      "new_customers": 75,
       "returning_customers": 8,
       "returning_customers_rate": 0.4,
-      "lost_revenue": 2068135.56,
-      "lost_orders": 31
+      "lost_revenue": 2166289.56,
+      "lost_orders": 33
     }
   ],
   "products": [
@@ -241,6 +241,15 @@
       "stock_quantity": 0
     },
     {
+      "name": "PH 3½-2½ Lambader",
+      "sku": "",
+      "net_sales": 143925,
+      "net_orders": 1,
+      "gross_items_sold": 1,
+      "in_stock": true,
+      "stock_quantity": 0
+    },
+    {
       "name": "Quick Beach Sandalye",
       "sku": "",
       "net_sales": 125856,
@@ -256,15 +265,6 @@
       "net_orders": 3,
       "gross_items_sold": 4,
       "in_stock": false,
-      "stock_quantity": 0
-    },
-    {
-      "name": "Hang It All Askılık",
-      "sku": "",
-      "net_sales": 117909,
-      "net_orders": 5,
-      "gross_items_sold": 8,
-      "in_stock": true,
       "stock_quantity": 0
     }
   ],
