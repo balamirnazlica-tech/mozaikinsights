@@ -3,7 +3,7 @@
     "company": "Mozaik Design",
     "scope": "E-commerce (Metorik)",
     "currency": "TRY",
-    "generated": "2026-11-01",
+    "generated": "2026-11-02",
     "source": "Live via Metorik API"
   },
   "months": [
@@ -163,17 +163,17 @@
     },
     {
       "month": "2026-11",
-      "revenue": 48098.88,
-      "net": 40082.4,
-      "orders": 3,
-      "average_order_value": 16033,
-      "unique_customers": 3,
+      "revenue": 270117.58,
+      "net": 226820.1,
+      "orders": 10,
+      "average_order_value": 27011.8,
+      "unique_customers": 10,
       "total_refunds": 0,
-      "new_customers": 3,
+      "new_customers": 9,
       "returning_customers": 0,
       "returning_customers_rate": 0,
-      "lost_revenue": 43830.72,
-      "lost_orders": 1
+      "lost_revenue": 677554.44,
+      "lost_orders": 3
     }
   ],
   "products": [
