@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instagram Content Performance — Marketing — Mozaik Insights</title>
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;background:linear-gradient(180deg,rgba(167,139,250,.16),rgba(167,139,250,0) 360px),#070b17;color:#e5e7eb;margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 24px 80px}
+a.back{color:#94a3b8;font-size:12.5px;text-decoration:none}
+a.back:hover{color:#e2e8f0}
+.head h1{font-size:1.6rem;font-weight:700;color:#fff;margin:10px 0 6px}
+.head p{color:#94a3b8;margin:0;font-size:14px}
+.banner{background:#0c1426;border:1px solid #1f2a44;border-left:3px solid #a78bfa;border-radius:10px;padding:12px 16px;font-size:13px;color:#cbd5e1;margin:18px 0 0;line-height:1.55}
+.banner b{color:#fff}
+h2{font-size:14px;font-weight:700;color:#e2e8f0;margin:30px 0 10px}
+p.note{color:#64748b;font-size:12.5px;margin:0 0 12px;line-height:1.5}
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:20px 0 10px}
+.sum-card{background:linear-gradient(180deg,#0f1830,#0c1426);border:1px solid #1f2a44;border-radius:14px;padding:16px 18px}
+.sum-card .n{font-size:24px;font-weight:700;color:#fff;font-variant-numeric:tabular-nums}
+.sum-card .l{color:#94a3b8;font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.03em;margin-top:2px}
+.sum-card .s{color:#64748b;font-size:11px;margin-top:5px;line-height:1.4}
+.sum-card.good{border-color:#10b98155}.sum-card.bad{border-color:#ef444455}.sum-card.warn{border-color:#f59e0b55}
+table{width:100%;border-collapse:collapse;background:linear-gradient(180deg,#0f1830,#0c1426);border:1px solid #1f2a44;border-radius:14px;overflow:hidden}
+th{text-align:left;color:#64748b;font-weight:600;padding:10px 14px;border-bottom:1px solid #1f2a44;font-size:11px;text-transform:uppercase;letter-spacing:.03em;background:#0c1426}
+th.r,td.r{text-align:right}
+td{padding:10px 14px;border-bottom:1px solid #16203a;font-size:13px;color:#cbd5e1;vertical-align:middle;font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:none}
+.name{color:#fff;font-weight:600;font-variant-numeric:normal}
+.muted{color:#64748b;font-size:11.5px}
+.bar{height:7px;border-radius:999px;background:#16203a;width:160px;position:relative;display:inline-block;vertical-align:middle}
+.bar div{height:100%;border-radius:999px}
+.chip{display:inline-block;padding:2px 9px;border-radius:999px;font-size:10.5px;font-weight:700;white-space:nowrap}
+.c-project{background:#065f46;color:#a7f3d0}
+.c-retail{background:#1e3a8a;color:#bfdbfe}
+.c-editorial{background:#4c1d95;color:#ddd6fe}
+.c-event{background:#78350f;color:#fed7aa}
+.c-product{background:#7f1d1d;color:#fecaca}
+.c-commerce{background:#334155;color:#cbd5e1}
+.c-holiday{background:#1e293b;color:#94a3b8}
+ol.recs{margin:0;padding-left:20px}
+ol.recs li{margin-bottom:14px;font-size:13.5px;line-height:1.6;color:#cbd5e1}
+ol.recs li b{color:#fff}
+.caveat{background:#0c1426;border:1px solid #1f2a44;border-left:3px solid #f59e0b;border-radius:10px;padding:12px 16px;font-size:12.5px;color:#94a3b8;margin:24px 0 0;line-height:1.55}
+.caveat b{color:#cbd5e1}
+footer{color:#475569;font-size:12px;text-align:center;margin-top:34px;line-height:1.6}
+@media (max-width:820px){.summary{grid-template-columns:repeat(2,1fr)}.bar{width:90px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="./">&larr; Marketing</a>
+<div class="head">
+<h1>Instagram Content Performance</h1>
+<p>Every post from 1 August to 31 October 2026 — 81 posts, classified by what kind of content it is. Built to answer one question: what actually drives reach?</p>
+</div>
+
+<div class="banner" id="headline"></div>
+
+<h2>The month that confused everyone</h2>
+<p class="note">September's organic reach (67,489) looked like a breakthrough and October's (35,393) looked like a collapse. Neither is true. One post made September, and the content mix changed underneath it.</p>
+<div class="summary" id="cards"></div>
+
+<h2>Reach by content type</h2>
+<p class="note">Mean reach per post. Project posts — a finished interior, crediting the architecture studio and tagging the brands — are the strongest category in all three months. Single-product design-history posts are the weakest, in both months they ran.</p>
+<div id="typeTable"></div>
+
+<h2>What each month was made of</h2>
+<p class="note">Share of posts published, by type. September is the only month with no product-education posts — that alone lifts its average.</p>
+<div id="mixTable"></div>
+
+<h2>Posting more did not buy more reach</h2>
+<p class="note">October published 55% more posts than September for 7% less total post reach, and unique organic reach fell. Meanwhile reach to your own followers rose 37%. The extra posts were shown to the same people.</p>
+<div id="volTable"></div>
+
+<h2>Format matters less than content</h2>
+<p class="note">Carousels out-reach Reels on average, but the best Reel of October was a project post (Fiko Etiler, 6,676). Content type beats format — a project post works in any format.</p>
+<div id="fmtTable"></div>
+
+<h2>Top 12 posts</h2>
+<div id="topTable"></div>
+
+<h2>Weakest 8 posts</h2>
+<div id="botTable"></div>
+
+<h2>What to do</h2>
+<ol class="recs">
+<li><b>Make project posts the backbone — two or three a week.</b> Best category in August, September and October. You published six in October. You have the archive and they cost nothing to produce. This is the biggest single lever.</li>
+<li><b>Cut the single-product design-history posts, or stop counting them as reach.</b> 13 in August, 14 in October, averaging 3,623 and 3,068. They are roughly 40% of output for the weakest return. Keep them for brand depth if you want — just don't let them fill the calendar.</li>
+<li><b>Start using Instagram Collab.</b> Checked all 81 posts: <b>zero</b> used the Collab field. When an influencer or partner posts on their own account you get none of that audience. A Collab post sits natively in both feeds. For the next shoot this is free distribution you are currently throwing away.</li>
+<li><b>Tag harder on project posts.</b> The best ones credit the studio and tag six to eight brands. LEGASEA (2 Oct) tagged one brand and reached 2,424 — the weakest project post of the quarter.</li>
+<li><b>Judge the editorial campaign on something other than reach.</b> The Büyükada production — models, agencies, full crew — averaged 5,541 across five September posts and 4,739 across three in October. Respectable, not exceptional, and far more expensive than a project post.</li>
+</ol>
+
+<div class="caveat">
+<b>Read this before quoting the numbers.</b> Post-level reach includes paid delivery when a post was boosted, so these figures measure total reach, not organic only. Comparisons between months, content types and formats hold; the absolute values are not organic reach. They also do not sum to the monthly organic figure on the KPI tracker — Meta de-duplicates people across posts, so summing post reach counts the same person many times. The monthly organic/paid split comes from Meta Business Suite, which is the only place Meta reports it, and is entered by hand.
+</div>
+
+<footer>
+Mozaik Insights · Marketing · Instagram content analysis<br>
+Source: Instagram Insights via Supermetrics (post level) and Meta Business Suite (monthly organic split). Generated 3 November 2026.
+</footer>
+</div>
+
+<script>
+// [date, format, type, reach, views, interactions, saves, shares]
+const POSTS = [
+["2026-08-01","CAROUSEL","product",2310,5358,81,8,2],
+["2026-08-03","IMAGE","product",2431,4367,35,1,1],
+["2026-08-04","IMAGE","product",3900,6834,77,13,2],
+["2026-08-05","CAROUSEL","project",11334,26474,270,40,36],
+["2026-08-06","CAROUSEL","project",12277,28489,680,130,111],
+["2026-08-07","REELS","retail",4754,6789,78,9,6],
+["2026-08-08","CAROUSEL","project",2971,7172,72,6,5],
+["2026-08-10","CAROUSEL","project",5221,11086,151,27,9],
+["2026-08-11","CAROUSEL","product",2847,6391,62,16,4],
+["2026-08-12","CAROUSEL","product",2264,5359,64,5,2],
+["2026-08-13","IMAGE","product",2066,3813,36,3,0],
+["2026-08-14","REELS","retail",3847,5327,69,1,13],
+["2026-08-15","CAROUSEL","product",3090,7020,79,16,5],
+["2026-08-16","REELS","retail",3708,5311,71,2,8],
+["2026-08-17","CAROUSEL","product",5417,12139,198,49,32],
+["2026-08-17","REELS","commerce",2497,3508,40,3,3],
+["2026-08-18","CAROUSEL","product",4097,9022,120,13,28],
+["2026-08-19","IMAGE","product",4694,8082,53,11,3],
+["2026-08-20","REELS","product",2867,3766,38,2,2],
+["2026-08-21","REELS","product",3334,4413,69,9,5],
+["2026-08-22","CAROUSEL","product",7779,19595,456,53,83],
+["2026-08-24","CAROUSEL","commerce",2696,6130,52,6,0],
+["2026-08-25","CAROUSEL","project",7868,15975,221,26,35],
+["2026-08-26","CAROUSEL","project",11696,25456,310,45,42],
+["2026-08-27","CAROUSEL","commerce",2525,5835,68,21,4],
+["2026-09-02","IMAGE","retail",7595,15387,262,19,41],
+["2026-09-03","REELS","retail",3211,5274,227,10,88],
+["2026-09-04","IMAGE","retail",5208,9817,146,4,37],
+["2026-09-07","IMAGE","retail",6723,12737,232,25,31],
+["2026-09-08","IMAGE","retail",5601,10131,130,11,12],
+["2026-09-09","REELS","retail",3299,4699,123,9,16],
+["2026-09-10","CAROUSEL","project",8728,20793,366,69,47],
+["2026-09-11","CAROUSEL","project",9021,22249,336,67,49],
+["2026-09-12","CAROUSEL","project",7810,18630,307,58,58],
+["2026-09-14","IMAGE","editorial",12146,19430,131,5,3],
+["2026-09-15","REELS","editorial",3032,4300,89,3,6],
+["2026-09-16","IMAGE","editorial",3504,6104,53,0,1],
+["2026-09-18","IMAGE","editorial",5506,9332,86,1,2],
+["2026-09-18","REELS","editorial",3521,4903,72,0,4],
+["2026-09-21","REELS","event",2745,3692,90,11,17],
+["2026-09-22","REELS","commerce",2528,2884,35,8,4],
+["2026-09-23","CAROUSEL","project",41108,76588,1170,424,265],
+["2026-09-24","CAROUSEL","event",4307,10153,157,17,46],
+["2026-09-25","IMAGE","event",4616,8778,94,14,21],
+["2026-09-25","REELS","commerce",2216,2589,36,4,4],
+["2026-09-28","CAROUSEL","project",5386,12151,187,25,13],
+["2026-09-29","CAROUSEL","event",4578,11498,113,11,18],
+["2026-10-01","CAROUSEL","product",2800,6644,120,14,16],
+["2026-10-02","REELS","event",5401,8085,329,23,64],
+["2026-10-02","CAROUSEL","project",2424,5995,67,4,5],
+["2026-10-03","REELS","event",3776,5785,159,5,17],
+["2026-10-04","REELS","event",2115,2860,58,1,4],
+["2026-10-05","CAROUSEL","retail",5760,13619,198,17,16],
+["2026-10-06","REELS","product",2207,3003,75,15,5],
+["2026-10-07","IMAGE","retail",6437,12480,197,19,16],
+["2026-10-08","CAROUSEL","project",8817,24990,384,80,78],
+["2026-10-09","CAROUSEL","product",3113,7511,89,10,4],
+["2026-10-10","CAROUSEL","product",2681,6099,71,11,7],
+["2026-10-12","CAROUSEL","product",3499,9267,88,9,8],
+["2026-10-13","IMAGE","product",7279,12235,105,16,8],
+["2026-10-14","CAROUSEL","product",3131,7090,85,10,4],
+["2026-10-15","REELS","project",6676,10053,231,24,89],
+["2026-10-16","CAROUSEL","product",1855,4277,54,9,7],
+["2026-10-17","CAROUSEL","product",3450,7843,96,9,2],
+["2026-10-18","CAROUSEL","product",4053,8854,82,5,5],
+["2026-10-19","CAROUSEL","project",6650,15317,271,43,37],
+["2026-10-20","CAROUSEL","project",8512,21639,420,85,78],
+["2026-10-21","IMAGE","editorial",4434,7550,63,0,0],
+["2026-10-22","REELS","editorial",5049,7235,92,7,4],
+["2026-10-22","CAROUSEL","product",2063,5047,55,6,2],
+["2026-10-23","IMAGE","retail",7078,15099,238,6,70],
+["2026-10-23","IMAGE","editorial",4734,8911,79,2,1],
+["2026-10-23","IMAGE","product",3948,6976,79,11,1],
+["2026-10-24","CAROUSEL","product",1907,4666,71,8,6],
+["2026-10-25","REELS","event",2823,4135,111,6,13],
+["2026-10-26","REELS","event",1474,2222,33,1,2],
+["2026-10-27","CAROUSEL","project",3867,9371,114,30,14],
+["2026-10-28","IMAGE","retail",6216,11552,78,9,15],
+["2026-10-29","IMAGE","holiday",2101,4226,70,0,4],
+["2026-10-30","REELS","product",966,1464,26,4,2],
+["2026-10-31","CAROUSEL","event",4173,11495,169,2,8]
+];
+
+const LABEL = {project:"Project",retail:"Retail / shop",editorial:"Editorial campaign",event:"Event",product:"Product education",commerce:"Discount / offer",holiday:"Holiday"};
+const DESC = {
+  project:"A finished interior, crediting the architecture studio and tagging the brands used",
+  retail:"Design Shop, showroom and store news",
+  editorial:"The Büyükada produced shoot",
+  event:"Eames Roadshow, Gallotti&Radice workshop, İnşa Eden Kadınlar",
+  product:"A single product or designer, told as design history",
+  commerce:"Price-led posts: discounts, stock, online store",
+  holiday:"National day and seasonal greetings"
+};
+const MONTHS = ["2026-08","2026-09","2026-10"];
+const MNAME = {"2026-08":"August","2026-09":"September","2026-10":"October"};
+// Monthly organic / paid split — Meta Business Suite, entered by hand
+const BS = {"2026-08":{total:772480,organic:37850,ads:742350},"2026-09":{total:862466,organic:67489,ads:814506},"2026-10":{total:581051,organic:35393,ads:560876}};
+// Follower vs non-follower reach — Instagram Insights
+const FOLLOW = {"2026-09":{f:25762,nf:844608},"2026-10":{f:35211,nf:595617}};
+
+const P = POSTS.map(r=>({date:r[0],month:r[0].slice(0,7),fmt:r[1],type:r[2],reach:r[3],views:r[4],inter:r[5],saves:r[6],shares:r[7]}));
+const n = a=>a.toLocaleString('en-US');
+const mean = a=>a.length? Math.round(a.reduce((x,y)=>x+y,0)/a.length):0;
+const sum = a=>a.reduce((x,y)=>x+y,0);
+
+function tbl(head,rows){
+  return '<table><thead><tr>'+head.map(h=>'<th'+(h[1]?' class="r"':'')+'>'+h[0]+'</th>').join('')+'</tr></thead><tbody>'+
+    rows.map(r=>'<tr>'+r.map(c=>'<td'+(c&&c.r?' class="r"':'')+'>'+(c&&c.r!==undefined?c.v:c)+'</td>').join('')+'</tr>').join('')+'</tbody></table>';
+}
+const R = v=>({r:true,v:v});
+
+// headline
+const stb = P.find(p=>p.reach===41108);
+const gap = BS["2026-09"].organic - BS["2026-10"].organic;
+document.getElementById('headline').innerHTML =
+ '<b>September was one post.</b> STB House, published 23 September, reached '+n(stb.reach)+' people — 3.4× the next best post of the quarter. '+
+ 'The entire organic gap between September and October is '+n(gap)+'. That single post reached more people than the whole gap. '+
+ 'It was not the Eames event (4,616 / 4,307 / 2,745) and it was not the influencer shoot (5,541 average across five posts). '+
+ 'It was a finished-project post crediting an architecture studio and tagging eight brands — the format that wins every month.';
+
+// cards
+const cards = MONTHS.map(m=>{
+  const g = P.filter(p=>p.month===m);
+  const cls = m==="2026-09"?"good":(m==="2026-10"?"warn":"");
+  return '<div class="sum-card '+cls+'"><div class="n">'+n(BS[m].organic)+'</div><div class="l">'+MNAME[m]+' organic reach</div>'+
+    '<div class="s">'+g.length+' posts · '+n(sum(g.map(p=>p.reach)))+' total post reach · '+n(mean(g.map(p=>p.reach)))+' mean</div></div>';
+}).join('');
+const sepNoStb = P.filter(p=>p.month==="2026-09"&&p.reach!==41108);
+document.getElementById('cards').innerHTML = cards +
+ '<div class="sum-card bad"><div class="n">'+n(mean(sepNoStb.map(p=>p.reach)))+'</div><div class="l">Sept mean, minus STB House</div>'+
+ '<div class="s">Against October’s '+n(mean(P.filter(p=>p.month==="2026-10").map(p=>p.reach)))+'. Take one post out and the two months are ordinary.</div></div>';
+
+// type table
+const types = Object.keys(LABEL).filter(t=>P.some(p=>p.type===t));
+types.sort((a,b)=>mean(P.filter(p=>p.type===b).map(p=>p.reach))-mean(P.filter(p=>p.type===a).map(p=>p.reach)));
+const maxType = Math.max(...types.map(t=>mean(P.filter(p=>p.type===t).map(p=>p.reach))));
+document.getElementById('typeTable').innerHTML = tbl(
+ [["Content type"],["Posts",1],["Mean reach",1],["Aug",1],["Sep",1],["Oct",1],["Mean saves",1],["Mean shares",1],["Reach profile"]],
+ types.map(t=>{
+  const g=P.filter(p=>p.type===t), mv=mean(g.map(p=>p.reach));
+  const per=m=>{const x=g.filter(p=>p.month===m);return x.length?n(mean(x.map(p=>p.reach))):'<span class="muted">—</span>';};
+  const col = t==='project'?'#10b981':(t==='product'?'#ef4444':'#64748b');
+  return ['<span class="chip c-'+t+'">'+LABEL[t]+'</span><div class="muted" style="margin-top:4px">'+DESC[t]+'</div>',
+   R(g.length),R('<b class="name">'+n(mv)+'</b>'),R(per("2026-08")),R(per("2026-09")),R(per("2026-10")),
+   R(mean(g.map(p=>p.saves))),R(mean(g.map(p=>p.shares))),
+   '<span class="bar"><div style="width:'+(100*mv/maxType)+'%;background:'+col+'"></div></span>'];
+ }));
+
+// mix table
+document.getElementById('mixTable').innerHTML = tbl(
+ [["Month"],["Posts",1]].concat(types.map(t=>[LABEL[t],1])),
+ MONTHS.map(m=>{
+  const g=P.filter(p=>p.month===m);
+  return ['<span class="name">'+MNAME[m]+'</span>',R(g.length)].concat(types.map(t=>{
+    const c=g.filter(p=>p.type===t).length;
+    return R(c? c+' <span class="muted">('+Math.round(100*c/g.length)+'%)</span>' : '<span class="muted">—</span>');
+  }));
+ }));
+
+// volume table
+document.getElementById('volTable').innerHTML = tbl(
+ [["Month"],["Posts",1],["Total post reach",1],["Mean per post",1],["Unique organic reach",1],["Reach to followers",1],["Reach to non-followers",1]],
+ MONTHS.map(m=>{
+  const g=P.filter(p=>p.month===m), f=FOLLOW[m];
+  return ['<span class="name">'+MNAME[m]+'</span>',R(g.length),R(n(sum(g.map(p=>p.reach)))),R(n(mean(g.map(p=>p.reach)))),
+   R('<b class="name">'+n(BS[m].organic)+'</b>'),
+   R(f?n(f.f):'<span class="muted">—</span>'),R(f?n(f.nf):'<span class="muted">—</span>')];
+ }).concat([['<span class="muted">Sept → Oct</span>',R('<span class="muted">+55%</span>'),R('<span class="muted">−7%</span>'),R('<span class="muted">−40%</span>'),
+   R('<span class="muted">−48%</span>'),R('<span style="color:#34d399">+37%</span>'),R('<span style="color:#f87171">−29%</span>')]]));
+
+// format table
+const fmts=["CAROUSEL","IMAGE","REELS"];
+const maxF=Math.max(...fmts.map(f=>mean(P.filter(p=>p.fmt===f).map(p=>p.reach))));
+document.getElementById('fmtTable').innerHTML = tbl(
+ [["Format"],["Posts",1],["Mean reach",1],["Median",1],["Mean saves",1],["Mean shares",1],["Best post",1],["Reach profile"]],
+ fmts.map(f=>{
+  const g=P.filter(p=>p.fmt===f), mv=mean(g.map(p=>p.reach));
+  const best=g.slice().sort((a,b)=>b.reach-a.reach)[0];
+  return ['<span class="name">'+(f==="CAROUSEL"?"Carousel":f==="IMAGE"?"Single image":"Reel")+'</span>',
+   R(g.length),R('<b class="name">'+n(mv)+'</b>'),R(n(g.map(p=>p.reach).sort((a,b)=>a-b)[Math.floor(g.length/2)])),
+   R(mean(g.map(p=>p.saves))),R(mean(g.map(p=>p.shares))),
+   R(n(best.reach)+' <span class="chip c-'+best.type+'">'+LABEL[best.type]+'</span>'),
+   '<span class="bar"><div style="width:'+(100*mv/maxF)+'%;background:#a78bfa"></div></span>'];
+ }));
+
+function postRows(list){
+  const mx=Math.max(...list.map(p=>p.reach));
+  return tbl([["Date"],["Type"],["Format"],["Reach",1],["Saves",1],["Shares",1],["Reach profile"]],
+   list.map(p=>[p.date,'<span class="chip c-'+p.type+'">'+LABEL[p.type]+'</span>',
+    '<span class="muted">'+(p.fmt==="CAROUSEL"?"Carousel":p.fmt==="IMAGE"?"Image":"Reel")+'</span>',
+    R('<b class="name">'+n(p.reach)+'</b>'),R(p.saves),R(p.shares),
+    '<span class="bar"><div style="width:'+(100*p.reach/mx)+'%;background:'+(p.type==='project'?'#10b981':p.type==='product'?'#ef4444':'#64748b')+'"></div></span>']));
+}
+const sorted=P.slice().sort((a,b)=>b.reach-a.reach);
+document.getElementById('topTable').innerHTML=postRows(sorted.slice(0,12));
+document.getElementById('botTable').innerHTML=postRows(sorted.slice(-8).reverse());
+</script>
+</body>
+</html>

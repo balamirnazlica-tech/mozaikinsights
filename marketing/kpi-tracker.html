@@ -68,58 +68,62 @@ footer{color:#475569;font-size:12px;text-align:center;margin-top:20px}
 </div>
 
 <script>
-// Real actuals wired from marketing-dashboard.html's live Supermetrics data (July 2026 = latest COMPLETE month).
+// Actuals wired from the live Supermetrics pulls (October 2026 = latest COMPLETE month, refreshed 2 Nov 2026).
 // Facebook Organic = unique media viewers (Meta retired the old "page reach" metric — this is its successor).
 // LinkedIn Organic = impressions (LinkedIn doesn't report unique reach for company pages).
-// LICENSING: only Facebook Insights and LinkedIn Pages (ORGANIC page stats) are blocked by the Supermetrics
-// Starter license, so those two rows are frozen. Facebook PAID Reach comes from Meta Ads, which is NOT
-// blocked — it is live and refreshes every run.
+// SOURCE STATUS: Facebook Insights and LinkedIn Pages (ORGANIC page stats) both report NOT_AUTHENTICATED —
+// an expired OAuth token, NOT the old Starter-licence entitlement block, so a free reconnect restores them.
+// Those two rows stay frozen until then. Facebook PAID Reach comes from Meta Ads, which is live and refreshes
+// every run.
 // PLACEMENT SHIFT (Jul 2026 onward): Meta paid reach used to be ~99% Instagram, which is why FB paid reach sat
 // near zero. The "ROI -" campaign restructure moved heavily into Facebook/Threads/WhatsApp placements —
-// Instagram was 95.5% of Meta paid reach in July but only 68.8% in August, and FB paid reach went
-// 841 (Jun) -> 22,554 (Jul) -> 190,788 (Aug MTD). The Facebook|Paid Reach range below predates this shift and
-// is now far too low; it needs recalibrating against the new placement mix before it means anything.
+// Instagram was 95.5% of Meta paid reach in July, 70.2% in August, 65.5% in September and just 50.1% in
+// October, while FB paid reach went 841 (Jun) -> 22,554 (Jul) -> 263,927 (Aug) -> 370,365 (Sep) -> 461,663 (Oct).
+// THREE RANGES ARE NOW STALE and must not have actuals fitted to them: Instagram|Total Reach (floor 1.2M was
+// calibrated when the figure was wrongly believed to be organic), Instagram|Paid Reach (floor 1.3M, not met
+// since June) and Facebook|Paid Reach (stretch 3,500, now off by two orders of magnitude). Recalibrate before
+// reading the chips on those three rows. Instagram|Organic Reach deliberately has no range yet.
 const ACTUALS = {
   "Instagram|Organic Reach": {
-    "value": 67489,
-    "period": "Sep 2026",
-    "note": "TRUE organic reach, read by hand from Meta Business Suite on 5 Oct 2026 (Insights > Overview > Reach breakdown), the only place Meta splits organic from ads. September organic 67,489 against 814,506 from ads — organic is 7.8% of Instagram reach, up from 4.9% in August. The climb through the year is the point of this metric: 20,468 in January to 67,489 in September. Not available from the data connection, so it is entered by hand each month.",
+    "value": 35393,
+    "period": "Oct 2026",
+    "note": "TRUE organic reach, read by hand from Meta Business Suite on 2 Nov 2026 (Insights > Content > Reach breakdown), the only place Meta splits organic from ads. October organic 35,393 against 560,876 from ads - 6.1% of Instagram reach, down from 7.8% in September. This is the first fall of the year and it breaks the steady climb from 20,468 in January to 67,489 in September, so it is worth understanding before any target is set. Not available from the data connection; entered by hand each month.",
     "manual": true
   },
   "Instagram|Total Reach": {
-    "value": 862466,
-    "period": "Sep 2026",
-    "note": "NOT organic — corrected 28 Sep 2026. Total Instagram reach, organic and paid combined, for the full calendar month, read from Meta Business Suite on 5 Oct 2026. The data connection cannot be used for this: it silently clamps reach to a 28-day window. Its September figure was 831,534 against the true 862,466. The range below was set when this number was wrongly believed to be organic and is far above the real level — it needs recalibrating."
+    "value": 581051,
+    "period": "Oct 2026",
+    "note": "NOT organic. Total Instagram profile reach for the full calendar month, read from Meta Business Suite - it includes paid. Do not use the Instagram Insights 'reach' field for this: that is a 28-day rolling window and returned 542,554 for October against the true 581,051. RANGES for this KPI (floor 1.2M) was calibrated when the figure was wrongly believed to be organic and is roughly double the real level - it needs recalibrating and no actual should be fitted to it."
   },
   "Instagram|Paid Reach": {
-    "value": 838927,
-    "period": "Sep 2026",
-    "note": "Instagram share of Meta paid reach, from Meta Ads. Instagram is now 65.5% of Meta paid reach (95.5% in July, 70.2% in August) as the 'ROI -' restructure moved budget into Facebook, Threads and WhatsApp. Reach is deduplicated across platforms, so these shares are indicative, not additive."
+    "value": 543997,
+    "period": "Oct 2026",
+    "note": "Instagram share of Meta paid reach, from Meta Ads. Instagram's share of total Meta paid reach keeps falling as budget moves to Facebook, Threads and WhatsApp: 95.5% in July, 70.2% in August, 65.5% in September, 50.1% in October. RANGES (floor 1.3M) has not been met since June and needs recalibrating against the new placement mix."
   },
   "Facebook|Paid Reach": {
-    "value": 370365,
-    "period": "Sep 2026",
-    "note": "Facebook share of Meta paid reach, from Meta Ads. Still rising fast since the 'ROI -' restructure: 22,554 in July, 263,927 in August, 370,365 in September."
+    "value": 461663,
+    "period": "Oct 2026",
+    "note": "Facebook share of Meta paid reach, from Meta Ads. Still climbing since the 'ROI -' restructure: 22,554 in July, 263,927 in August, 370,365 in September, 461,663 in October. RANGES (floor 1,000, stretch 3,500) was set when this was a few thousand a month and is now off by more than two orders of magnitude - it needs recalibrating."
   },
   "Facebook|Organic Reach": {
     "value": 305819,
     "period": "Jun 2026",
-    "note": "FROZEN at June — Facebook Insights is NOT_AUTHENTICATED as of 22 Sep 2026. This is now an expired OAuth token, not the old trial-subscription block (ID 1850660), so a free reconnect in Supermetrics should restore it — no purchase needed. Unique media viewers."
+    "note": "FROZEN at June - Facebook Insights still reports NOT_AUTHENTICATED as of 2 Nov 2026. This is an expired OAuth token, not the old trial-subscription block (ID 1850660), so a free reconnect in Supermetrics restores it - no purchase needed. Unique media viewers."
   },
   "LinkedIn|Organic Reach": {
     "value": 5782,
     "period": "Jun 2026",
-    "note": "FROZEN at June — LinkedIn Pages is NOT_AUTHENTICATED as of 22 Sep 2026, same as Facebook Insights. Now an expired OAuth token rather than the trial-subscription block, so a free reconnect should restore it."
+    "note": "FROZEN at June - LinkedIn Pages still reports NOT_AUTHENTICATED as of 2 Nov 2026, same as Facebook Insights. An expired OAuth token rather than a licence block, so a free reconnect restores it."
   },
   "Google|Branded Search Volume": {
-    "value": 25155,
-    "period": "Sep 2026",
-    "note": "Branded impressions in Search Console, brand keywords mozaik / mozaik design / mozaikdesign / mozaik istanbul. The '(unknown)' bucket is discarded."
+    "value": 30762,
+    "period": "Oct 2026",
+    "note": "Branded impressions in Search Console, brand keywords mozaik / mozaik design / mozaikdesign / mozaik istanbul. The '(unknown)' bucket is discarded. Up from 25,155 in September. Note that non-branded impressions jumped 3.6x in October to 765,433 on clicks up only 22%, which is not reflected here."
   },
   "Google|Direct Traffic": {
-    "value": 6558,
-    "period": "Sep 2026",
-    "note": "GA4 Direct sessions, filtered to country Turkiye on every month to keep automated traffic out. Up sharply from 4,096 in August."
+    "value": 4713,
+    "period": "Oct 2026",
+    "note": "GA4 Direct sessions, filtered to country Turkiye on every month to keep automated traffic out. Down from 6,558 in September."
   }
 };
 
