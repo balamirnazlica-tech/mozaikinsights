@@ -3,7 +3,7 @@
     "company": "Mozaik Design",
     "scope": "E-commerce (Metorik)",
     "currency": "TRY",
-    "generated": "2026-11-04",
+    "generated": "2026-11-05",
     "source": "Live via Metorik API"
   },
   "months": [
@@ -149,12 +149,12 @@
     },
     {
       "month": "2026-10",
-      "revenue": 3615705.98,
-      "net": 2981489.88,
-      "orders": 116,
-      "average_order_value": 31169.9,
-      "unique_customers": 104,
-      "total_refunds": 108514.32,
+      "revenue": 3646954.49,
+      "net": 2995132.83,
+      "orders": 118,
+      "average_order_value": 30906.4,
+      "unique_customers": 106,
+      "total_refunds": 120803.52,
       "new_customers": 78,
       "returning_customers": 8,
       "returning_customers_rate": 0.4,
@@ -163,13 +163,13 @@
     },
     {
       "month": "2026-11",
-      "revenue": 634295.71,
-      "net": 541728,
-      "orders": 24,
-      "average_order_value": 26429,
-      "unique_customers": 24,
+      "revenue": 865765.87,
+      "net": 736804.8,
+      "orders": 35,
+      "average_order_value": 24736.2,
+      "unique_customers": 35,
       "total_refunds": 0,
-      "new_customers": 19,
+      "new_customers": 25,
       "returning_customers": 0,
       "returning_customers_rate": 0,
       "lost_revenue": 742785.24,
@@ -189,10 +189,19 @@
     {
       "name": "Panton Sandalye",
       "sku": "",
-      "net_sales": 335274,
-      "net_orders": 13,
-      "gross_items_sold": 18,
+      "net_sales": 354996,
+      "net_orders": 14,
+      "gross_items_sold": 19,
       "in_stock": true,
+      "stock_quantity": 0
+    },
+    {
+      "name": "Atollo 238 Masa Lambası",
+      "sku": "",
+      "net_sales": 296257.5,
+      "net_orders": 4,
+      "gross_items_sold": 6,
+      "in_stock": false,
       "stock_quantity": 0
     },
     {
@@ -205,11 +214,11 @@
       "stock_quantity": 0
     },
     {
-      "name": "Atollo 238 Masa Lambası",
+      "name": "PH 5 Sarkıt Aydınlatma",
       "sku": "",
-      "net_sales": 235410,
-      "net_orders": 3,
-      "gross_items_sold": 5,
+      "net_sales": 206910,
+      "net_orders": 2,
+      "gross_items_sold": 3,
       "in_stock": true,
       "stock_quantity": 0
     },
@@ -241,20 +250,11 @@
       "stock_quantity": 0
     },
     {
-      "name": "PH 5 Sarkıt Aydınlatma",
-      "sku": "",
-      "net_sales": 137940,
-      "net_orders": 1,
-      "gross_items_sold": 2,
-      "in_stock": true,
-      "stock_quantity": 0
-    },
-    {
       "name": "Bilboquet Masa Lambası",
       "sku": "",
-      "net_sales": 129675,
-      "net_orders": 8,
-      "gross_items_sold": 10,
+      "net_sales": 142642.5,
+      "net_orders": 9,
+      "gross_items_sold": 11,
       "in_stock": true,
       "stock_quantity": 0
     },
