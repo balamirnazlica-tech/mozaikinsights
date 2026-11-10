@@ -3,7 +3,7 @@
     "company": "Mozaik Design",
     "scope": "E-commerce (Metorik)",
     "currency": "TRY",
-    "generated": "2026-11-09",
+    "generated": "2026-11-10",
     "source": "Live via Metorik API"
   },
   "months": [
@@ -255,7 +255,7 @@
       "net_sales": 142642.5,
       "net_orders": 9,
       "gross_items_sold": 11,
-      "in_stock": true,
+      "in_stock": false,
       "stock_quantity": 0
     },
     {
