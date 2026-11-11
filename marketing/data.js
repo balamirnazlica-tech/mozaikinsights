@@ -1,4 +1,4 @@
-// Mozaik Insights — Marketing data bundle. Generated 2026-11-02.
+// Mozaik Insights — Marketing data bundle. Generated 2026-11-09.
 // One file feeds marketing/index.html. The weekly refresh should rewrite the DATA / OUTLET / GOOGLE lines here
 // (same JSON it already produces for marketing-dashboard.html and google-dashboard.html).
 // SITE_TRAFFIC = GA4 369077286, Türkiye-only monthly (Supermetrics GAWA). ECOM_FALLBACK = Metorik snapshot used only when
@@ -9,7 +9,7 @@ DATA: {
       "company": "Mozaik Design",
       "scope": "Marketing",
       "currency": "TL",
-      "generated": "2026-11-02",
+      "generated": "2026-11-09",
       "note": "LIVE DATA ONLY — Meta Ads + Instagram + Facebook + LinkedIn via Supermetrics. No sample data.",
       "weeks": [
         "01 Jan",
@@ -55,7 +55,8 @@ DATA: {
         "05 Oct",
         "12 Oct",
         "19 Oct",
-        "26 Oct"
+        "26 Oct",
+        "02 Nov"
       ],
       "months": [
         "2026-01",
@@ -67,9 +68,10 @@ DATA: {
         "2026-07",
         "2026-08",
         "2026-09",
-        "2026-10"
+        "2026-10",
+        "2026-11"
       ],
-      "live": "Weekly paid data is cut at the last complete ISO week: week 44, 26 Oct - 1 Nov 2026. Monthly-grain data runs through 31 October 2026, so October is now a COMPLETE month and is the latest complete month - there is no partial month in this build. Weekly bars are labelled by their Monday, so the week of 26 Oct sits in October. October's Instagram row was finally refreshed from Meta Business Suite this run, after being stuck on a 1 - 4 Oct read since 18 October: total 581,051, of which 35,393 organic and 560,876 from ads, with Meta Ads reporting 543,997 Instagram paid reach for the same month. October organic reach FELL 48% against September's 67,489 - the first decline in a series that had risen every month from 20,468 in January, and the thing to look at on this tab. GA4 session figures are filtered to country Turkiye on every month to keep automated traffic out; every October channel has a human sessions-per-user ratio (Direct 1.23, Paid Social 1.29, Cross-network 1.32). GA4 revenue still excludes China and Singapore only, which still does not match where the automated traffic sits, and still needs a decision - it changes no money. The Meta UTM break is now confirmed fixed on a full month: Turkiye-only Unassigned sessions fell from 27,719 in September to 1,668 in October while Paid Social rose from 3,981 to 49,266, the highest of the year. A new Meta campaign, ROI - Conversion - Mozaik Design - Design Shop, started in week 44. Search Console non-branded impressions reached 765,433 in October against 212,043 in September on roughly flat clicks (3,396 against 2,785) - taken as reported, not adjusted. Facebook Insights and LinkedIn Pages are still disconnected (expired token, free reconnect - not a licence block), so their organic figures stay frozen at June 2026."
+      "live": "Weekly paid data is cut at the last complete ISO week: week 45, 2 - 8 Nov 2026. Monthly-grain data runs through 8 November 2026, so November is a PARTIAL month (8 of 30 days) and October is still the latest COMPLETE month - the month-on-month chips compare September with October, never a full month against a partial one. Weekly bars are labelled by their Monday, so the week of 2 Nov sits in November. GA4 session figures are filtered to country Turkiye on every month; GA4 revenue keeps the older filter that excludes China and Singapore. That revenue filter no longer points at the actual bots: across full October the United States ran 21,464 sessions against 21,297 users, a sessions-per-user ratio of 1.01 that only automated traffic produces, while China (1.48) and Singapore (1.39) now look like real visitors. The filter needs a decision before it is changed. The Meta UTM break has RESOLVED - Turkiye-only Unassigned sessions fell from 27,719 in September to 1,668 in October and 508 so far in November, while Paid Social rose from 3,981 to 49,266 and then 17,149, so the 'ROI -' campaigns are carrying their URL parameters again. Instagram reach was NOT refreshed this run: Meta Business Suite asked for a login that an unattended run cannot complete, so ig_reach still ends at October (total 581,051, of which 35,393 organic and 560,876 from ads) and no November row was written, because the chart reads a missing organic figure as zero and that would show a collapse that did not happen. Google Ads 'revenue' is conversion value rather than purchases, and in week 45 it became unusable: 213,284,441 TL reported against 92,439 TL of spend, almost all of it from ROI - DGEN - Mozaik Design - New User (118,428,734) and ROI - DGEN - Mozaik Design - Remarketing (94,443,258). Treat every Google ROAS number on this page as broken until that is fixed; Meta's pixel revenue is unaffected. Facebook Insights and LinkedIn Pages are still disconnected on an expired token (a free reconnect, not a licence problem), so those rows stay frozen at June and July."
     },
     "paid": [
       {
@@ -7727,6 +7729,314 @@ DATA: {
         "clicks": 17,
         "leads": 0,
         "revenue": 0
+      },
+      {
+        "week": "02 Nov",
+        "month": "2026-11",
+        "channel": "Meta Ads",
+        "campaign": "ROI - Adv+ Satış Kampanyası",
+        "spend": 18540.42,
+        "impressions": 51002,
+        "clicks": 2449,
+        "leads": 0,
+        "revenue": 120983.92
+      },
+      {
+        "week": "02 Nov",
+        "month": "2026-11",
+        "channel": "Meta Ads",
+        "campaign": "ROI - Conversion - Mozaik Design - Akari",
+        "spend": 16587.96,
+        "impressions": 364854,
+        "clicks": 9247,
+        "leads": 0,
+        "revenue": 0
+      },
+      {
+        "week": "02 Nov",
+        "month": "2026-11",
+        "channel": "Meta Ads",
+        "campaign": "ROI - Conversion - Mozaik Design - Arclinea",
+        "spend": 4279.03,
+        "impressions": 22181,
+        "clicks": 682,
+        "leads": 0,
+        "revenue": 68126.4
+      },
+      {
+        "week": "02 Nov",
+        "month": "2026-11",
+        "channel": "Meta Ads",
+        "campaign": "ROI - Conversion - Mozaik Design - Aydınlatma Faz2 Kampanyası",
+        "spend": 15240.51,
+        "impressions": 139617,
+        "clicks": 4175,
+        "leads": 0,
+        "revenue": 115675.8
+      },
+      {
+        "week": "02 Nov",
+        "month": "2026-11",
+        "channel": "Meta Ads",
+        "campaign": "ROI - Conversion - Mozaik Design - Design Shop",
+        "spend": 4682.46,
+        "impressions": 15864,
+        "clicks": 705,
+        "leads": 0,
+        "revenue": 31409.28
+      },
+      {
+        "week": "02 Nov",
+        "month": "2026-11",
+        "channel": "Meta Ads",
+        "campaign": "ROI - Conversion - Mozaik Design - Flos",
+        "spend": 4154.93,
+        "impressions": 15311,
+        "clicks": 279,
+        "leads": 0,
+        "revenue": 36252
+      },
+      {
+        "week": "02 Nov",
+        "month": "2026-11",
+        "channel": "Meta Ads",
+        "campaign": "ROI - Conversion - Mozaik Design - Maxalto - B&B Italia",
+        "spend": 23310.6,
+        "impressions": 80603,
+        "clicks": 2462,
+        "leads": 0,
+        "revenue": 41162.55
+      },
+      {
+        "week": "02 Nov",
+        "month": "2026-11",
+        "channel": "Meta Ads",
+        "campaign": "ROI - Conversion - Mozaik Design - Satış",
+        "spend": 26400.04,
+        "impressions": 120412,
+        "clicks": 10075,
+        "leads": 0,
+        "revenue": 178109.63
+      },
+      {
+        "week": "02 Nov",
+        "month": "2026-11",
+        "channel": "Meta Ads",
+        "campaign": "ROI - Conversion - Mozaik Design - Zanat",
+        "spend": 2281.86,
+        "impressions": 15799,
+        "clicks": 222,
+        "leads": 0,
+        "revenue": 0
+      },
+      {
+        "week": "02 Nov",
+        "month": "2026-11",
+        "channel": "Meta Ads",
+        "campaign": "ROI - Engagement - Mozaik Design ve Outlet",
+        "spend": 2120.9,
+        "impressions": 27674,
+        "clicks": 335,
+        "leads": 0,
+        "revenue": 0
+      },
+      {
+        "week": "02 Nov",
+        "month": "2026-11",
+        "channel": "Meta Ads",
+        "campaign": "ROI - Traffic - Mozaik Design - Arclinea",
+        "spend": 3414.78,
+        "impressions": 34627,
+        "clicks": 1288,
+        "leads": 0,
+        "revenue": 0
+      },
+      {
+        "week": "02 Nov",
+        "month": "2026-11",
+        "channel": "Meta Ads",
+        "campaign": "ROI - Traffic - Mozaik Design - Generic",
+        "spend": 3474.01,
+        "impressions": 66960,
+        "clicks": 1394,
+        "leads": 0,
+        "revenue": 0
+      },
+      {
+        "week": "02 Nov",
+        "month": "2026-11",
+        "channel": "Meta Ads",
+        "campaign": "ROI - Traffic - Mozaik Outlet",
+        "spend": 9534.62,
+        "impressions": 235027,
+        "clicks": 4932,
+        "leads": 0,
+        "revenue": 0
+      },
+      {
+        "week": "02 Nov",
+        "month": "2026-11",
+        "channel": "Google Ads",
+        "campaign": "G: ROI - DGEN - Mozaik Design - New User",
+        "spend": 12473.1807,
+        "impressions": 199292,
+        "clicks": 8281,
+        "leads": 0,
+        "revenue": 118428733.83
+      },
+      {
+        "week": "02 Nov",
+        "month": "2026-11",
+        "channel": "Google Ads",
+        "campaign": "G: ROI - DGEN - Mozaik Design - New User - Arclinea Mutfak",
+        "spend": 4069.0511,
+        "impressions": 38579,
+        "clicks": 1469,
+        "leads": 0,
+        "revenue": 275104.01
+      },
+      {
+        "week": "02 Nov",
+        "month": "2026-11",
+        "channel": "Google Ads",
+        "campaign": "G: ROI - DGEN - Mozaik Design - Remarketing",
+        "spend": 7067.7897,
+        "impressions": 26180,
+        "clicks": 1657,
+        "leads": 0,
+        "revenue": 94443257.72
+      },
+      {
+        "week": "02 Nov",
+        "month": "2026-11",
+        "channel": "Google Ads",
+        "campaign": "G: ROI - DGEN - Mozaik Design - Rmt - Arclinea Mutfak",
+        "spend": 5163.3913,
+        "impressions": 31426,
+        "clicks": 1080,
+        "leads": 0,
+        "revenue": 0
+      },
+      {
+        "week": "02 Nov",
+        "month": "2026-11",
+        "channel": "Google Ads",
+        "campaign": "G: ROI - DGEN - Mozaik Outlet",
+        "spend": 7459.5031,
+        "impressions": 232646,
+        "clicks": 9210,
+        "leads": 0,
+        "revenue": 26254.94
+      },
+      {
+        "week": "02 Nov",
+        "month": "2026-11",
+        "channel": "Google Ads",
+        "campaign": "G: ROI - PMAX - Mozaik - Design Shop Online",
+        "spend": 3725.2084,
+        "impressions": 14679,
+        "clicks": 519,
+        "leads": 0,
+        "revenue": 0
+      },
+      {
+        "week": "02 Nov",
+        "month": "2026-11",
+        "channel": "Google Ads",
+        "campaign": "G: ROI - PMAX - Mozaik - Generic",
+        "spend": 9061.7411,
+        "impressions": 32172,
+        "clicks": 911,
+        "leads": 0,
+        "revenue": 0
+      },
+      {
+        "week": "02 Nov",
+        "month": "2026-11",
+        "channel": "Google Ads",
+        "campaign": "G: ROI - PMAX - Mozaik - Generic - Akari",
+        "spend": 385.8248,
+        "impressions": 1730,
+        "clicks": 31,
+        "leads": 0,
+        "revenue": 0
+      },
+      {
+        "week": "02 Nov",
+        "month": "2026-11",
+        "channel": "Google Ads",
+        "campaign": "G: ROI - PMAX - Mozaik - Generic - Aydınlatma",
+        "spend": 18064.1144,
+        "impressions": 177375,
+        "clicks": 3024,
+        "leads": 0,
+        "revenue": 14637.6
+      },
+      {
+        "week": "02 Nov",
+        "month": "2026-11",
+        "channel": "Google Ads",
+        "campaign": "G: ROI - PMAX - Mozaik - Generic - Yüksek Değerli",
+        "spend": 5949.8443,
+        "impressions": 37387,
+        "clicks": 720,
+        "leads": 0,
+        "revenue": 0
+      },
+      {
+        "week": "02 Nov",
+        "month": "2026-11",
+        "channel": "Google Ads",
+        "campaign": "G: ROI - SRC - Brand - Aydınlatma",
+        "spend": 1785.34,
+        "impressions": 704,
+        "clicks": 32,
+        "leads": 0,
+        "revenue": 0
+      },
+      {
+        "week": "02 Nov",
+        "month": "2026-11",
+        "channel": "Google Ads",
+        "campaign": "G: ROI - SRC - Brand - Herman Miller",
+        "spend": 2739.68,
+        "impressions": 1434,
+        "clicks": 263,
+        "leads": 0,
+        "revenue": 0
+      },
+      {
+        "week": "02 Nov",
+        "month": "2026-11",
+        "channel": "Google Ads",
+        "campaign": "G: ROI - SRC - Brand - Mozaik Design",
+        "spend": 7146.1711,
+        "impressions": 1852,
+        "clicks": 567,
+        "leads": 0,
+        "revenue": 96450.84
+      },
+      {
+        "week": "02 Nov",
+        "month": "2026-11",
+        "channel": "Google Ads",
+        "campaign": "G: ROI - SRC - Brand - Mozaik Outlet",
+        "spend": 1595.02,
+        "impressions": 388,
+        "clicks": 181,
+        "leads": 0,
+        "revenue": 2
+      },
+      {
+        "week": "02 Nov",
+        "month": "2026-11",
+        "channel": "Google Ads",
+        "campaign": "G: ROI - SRC - Generic - Herman Miller",
+        "spend": 5753.3095,
+        "impressions": 2066,
+        "clicks": 325,
+        "leads": 0,
+        "revenue": 0
       }
     ],
     "ig_reach": [
@@ -8104,6 +8414,17 @@ DATA: {
         "referral": 0,
         "other_organic": 63425,
         "unassigned": -160994
+      },
+      {
+        "month": "2026-11",
+        "direct": 132083,
+        "organic_search": 115158,
+        "paid_search": 101670,
+        "cross_network": 97752,
+        "paid_social": 325742,
+        "referral": 0,
+        "other_organic": 80532,
+        "unassigned": 102383
       }
     ]
   },
@@ -8111,7 +8432,7 @@ OUTLET: {"meta":{"property":"537316032","site":"mozaikoutlet.com","generated":"2
 GOOGLE: {
     "meta": {
       "company": "Mozaik Design",
-      "generated": "2026-11-02",
+      "generated": "2026-11-09",
       "months": [
         "2026-01",
         "2026-02",
@@ -8122,10 +8443,11 @@ GOOGLE: {
         "2026-07",
         "2026-08",
         "2026-09",
-        "2026-10"
+        "2026-10",
+        "2026-11"
       ],
-      "partial": null,
-      "live": "GA4 sessions and Search Console pulled through 31 Oct 2026 - October is complete, with no partial month in this build. GA4 sessions filtered to country Turkiye. Unassigned is its own column. \"Other\" bundles AI Assistant, Email, Organic Shopping, Organic Video, Referral, Display, Paid Other and Paid Shopping. Unassigned dominated from August through September because of the Meta UTM break and has now collapsed to 1,668 on a full month, with Paid Social at 49,266 - the break is fixed. Search Console non-branded impressions reached 765,433 in October against 212,043 for September, on roughly flat clicks - taken as reported, not adjusted. Branded impressions recovered to 30,762 from 25,155 in September."
+      "partial": "2026-11",
+      "live": "GA4 sessions are filtered to country Turkiye on every month. November 2026 is partial: 1 - 8 November only, 8 of 30 days, so do not read it against a full month. October is the latest complete month. Channel columns plus Other reconcile to the month total. Paid Shopping is a new channel that first appeared in October 2026 alongside the Demand Gen campaigns and is counted inside Other, as Display and Paid Other already are. The Unassigned spike caused by the Meta UTM break has cleared: 27,719 sessions in September, 1,668 in October, 508 in the first eight days of November."
     },
     "search": [
       {
@@ -8197,6 +8519,13 @@ GOOGLE: {
         "branded_clicks": 2675,
         "nonbranded_impr": 765433,
         "nonbranded_clicks": 3396
+      },
+      {
+        "month": "2026-11",
+        "branded_impr": 6516,
+        "branded_clicks": 579,
+        "nonbranded_impr": 76372,
+        "nonbranded_clicks": 862
       }
     ],
     "direct": [
@@ -8249,6 +8578,11 @@ GOOGLE: {
         "month": "2026-10",
         "sessions": 4713,
         "users": 3829
+      },
+      {
+        "month": "2026-11",
+        "sessions": 1080,
+        "users": 892
       }
     ],
     "channels": [
@@ -8361,6 +8695,17 @@ GOOGLE: {
         "Cross-network": 34048,
         "Unassigned": 1668,
         "Other": 1975
+      },
+      {
+        "month": "2026-11",
+        "Direct": 1080,
+        "Organic Search": 2908,
+        "Paid Search": 1421,
+        "Paid Social": 17149,
+        "Organic Social": 320,
+        "Cross-network": 11051,
+        "Unassigned": 508,
+        "Other": 662
       }
     ]
   },
@@ -8476,6 +8821,14 @@ SITE_TRAFFIC: [
       "transactions": 118,
       "revenue": 2852161.57,
       "views": 262289
+    },
+    {
+      "month": "2026-11",
+      "sessions": 34822,
+      "users": 28697,
+      "transactions": 38,
+      "revenue": 747623.7,
+      "views": 67612
     }
   ],
 ECOM_FALLBACK: [{"month":"2025-10","revenue":642050,"orders":29},{"month":"2025-11","revenue":596702,"orders":29},{"month":"2025-12","revenue":3530452,"orders":89},{"month":"2026-01","revenue":1872773,"orders":86},{"month":"2026-02","revenue":1471507,"orders":41},{"month":"2026-03","revenue":2081477,"orders":49},{"month":"2026-04","revenue":2248719,"orders":64},{"month":"2026-05","revenue":1038416,"orders":44},{"month":"2026-06","revenue":1319089,"orders":52},{"month":"2026-07","revenue":719538,"orders":44},{"month":"2026-08","revenue":1810156,"orders":62},{"month":"2026-09","revenue":279271,"orders":20}]
