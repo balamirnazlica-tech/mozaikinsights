@@ -126,6 +126,29 @@ body.col-resizing{cursor:col-resize;user-select:none}
 @media (max-width:980px){.tiles{grid-template-columns:repeat(3,1fr)}.g-2,.g-3,.g-11{grid-template-columns:1fr}.mkcalls{grid-template-columns:1fr}}
 @media (max-width:560px){.tiles{grid-template-columns:1fr 1fr}.mk-top h1{font-size:22px}}
 </style>
+<style>
+.mkpartial{border:1px solid #e5e7eb;border-left:3px solid #9A6B1E;border-radius:10px;background:#fffdf7;padding:10px 14px;margin:0 0 14px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 26px}
+.mkpartial .pl{display:flex;align-items:center;gap:8px;font-size:12px;color:#6b7280}
+.mkpartial .pl b{color:#0F172A;font-size:12px;letter-spacing:.03em;text-transform:uppercase}
+.mkpartial .dot{width:7px;height:7px;border-radius:50%;background:#9A6B1E;display:inline-block}
+.mkpartial .pv{display:flex;flex-wrap:wrap;gap:8px 26px}
+.mkpartial .pi{display:flex;flex-direction:column;line-height:1.25}
+.mkpartial .pi .k{font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:#6b7280}
+.mkpartial .pi .n{font-size:15px;font-weight:650;color:#0F172A}
+.sahaband{border:1px solid #e5e7eb;border-radius:12px;background:#fff;padding:14px 16px;margin:0 0 14px}
+.sahaband h2{margin:0 0 4px;font-size:16px}
+.sahaband p{margin:0;font-size:13px;color:#4b5563;line-height:1.55}
+.sahalist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.sahalist li{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.5;color:#1f2937}
+.sahalist li .b{flex:0 0 7px;height:7px;border-radius:50%;background:#9A6B1E;margin-top:7px}
+.brandrow{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f1f5f9}
+.brandrow:last-child{border-bottom:0}
+.brandrow .nm{flex:1 1 auto;font-size:13px;font-weight:600;color:#0F172A}
+.brandrow .meta2{font-size:11px;color:#6b7280;font-weight:400;display:block;margin-top:1px}
+.brandrow .bar{flex:0 0 110px;height:7px;border-radius:4px;background:#f1f5f9;overflow:hidden}
+.brandrow .bar i{display:block;height:100%;background:#9A6B1E}
+.brandrow .pc{flex:0 0 46px;text-align:right;font-size:12px;color:#334155;font-variant-numeric:tabular-nums}
+</style>
 </head>
 <body class="mkt">
 <nav class="nav">
@@ -153,6 +176,7 @@ body.col-resizing{cursor:col-resize;user-select:none}
       <button data-t="funnel" role="tab">Funnel</button>
       <button data-t="brand" role="tab">Brand</button>
       <button data-t="outlet" role="tab">Outlet</button>
+      <button data-t="saha" role="tab">Saha</button>
     </div>
   </header>
 
@@ -163,8 +187,13 @@ body.col-resizing{cursor:col-resize;user-select:none}
       <div class="datectl"><label for="monthTo">To</label><select class="sel" id="monthTo"></select></div>
       <div class="datectl"><label>Quick</label><div class="seg" id="rangeSeg"><button data-r="ytd">YTD</button><button data-r="q1">Q1</button><button data-r="q2">Q2</button><button data-r="q3">Q3</button><button data-r="l3">Last 3</button></div></div>
       <div><label>Currency</label><div class="seg" id="ccySeg"><button class="on" data-c="TRY">₺</button><button data-c="EUR">€</button></div></div>
-      <span class="fnote-pill">Pulse · last full month</span><span class="fnote" id="fnote"></span>
+      <span class="fnote-pill" id="fpill">Pulse · last full month</span><span class="fnote" id="fnote"></span>
     </div>
+  </div>
+
+  <div class="mkpartial" id="mkPartial" hidden>
+    <div class="pl"><span class="dot"></span><b id="mkPartialHead">—</b><span id="mkPartialSub"></span></div>
+    <div class="pv" id="mkPartialRow"></div>
   </div>
 
   <!-- PULSE -->
@@ -266,6 +295,44 @@ body.col-resizing{cursor:col-resize;user-select:none}
     </div>
     <details class="notes"><summary>What this tab measures</summary><div class="body"><p id="outletNote"></p></div></details>
   </section>
+
+  <!-- SAHA (sales-facing, Turkish) -->
+  <section class="panel" data-p="saha" hidden>
+    <div class="sahaband">
+      <h2 id="sahaTitle">Pazarlama bu hafta ne yapıyor?</h2>
+      <p id="sahaIntro">—</p>
+    </div>
+    <div class="tiles" id="sahaRow"></div>
+    <div class="grid g-11">
+      <div class="mkcard"><h3>Bu hafta hangi markaları konuşuyoruz</h3>
+        <p class="meta" id="sahaBrandMeta">—</p>
+        <div id="sahaBrands"></div>
+      </div>
+      <div class="mkcard"><h3>Sahada ne beklemelisin</h3>
+        <p class="meta">Rakamların mağaza ve showroom için anlamı</p>
+        <ul class="sahalist" id="sahaExpect"></ul>
+      </div>
+    </div>
+    <div class="grid g-2">
+      <div class="mkcard"><h3>Müşteri bize nereden geliyor</h3>
+        <p class="meta" id="sahaChMeta">—</p>
+        <canvas id="cSahaCh" style="max-height:280px"></canvas>
+      </div>
+      <div class="mkcard"><h3>Siteye gelen kişi ve online sipariş</h3>
+        <p class="meta">Son 12 tam ay · mozaikdesign.com, Türkiye</p>
+        <canvas id="cSahaTrend" style="max-height:280px"></canvas>
+      </div>
+    </div>
+    <details class="notes"><summary>Bu sayfadaki rakamlar nereden geliyor</summary><div class="body">
+      <p><b>Siteye gelen kişi</b> — Google Analytics, mozaikdesign.com, yalnızca Türkiye. Showroom ziyaretçisi değildir; internet sitesine giren kişidir.</p>
+      <p><b>Online sipariş</b> — internet sitesinden verilen sipariş sayısı. Mağazada kapanan satışlar bu sayının içinde <b>yoktur</b>.</p>
+      <p><b>Reklam yatırımı</b> — Meta (Instagram + Facebook) ve Google reklamlarına o hafta harcanan tutar.</p>
+      <p><b>Katalog ziyareti</b> — mozaikoutlet.com katalog sitesine giren kişi. Katalogda sepet ve ödeme yoktur; işi ilgiyi size yönlendirmektir.</p>
+      <p><b>Instagram erişimi</b> — markanın içeriğini gören tekil hesap sayısı. Reklamla görenler bu sayının <b>içindedir</b>, ayrı değildir.</p>
+      <p>Markalar kampanya isimlerinden çıkarılır. İsminde marka geçmeyen kampanyalar "Genel Mozaik" altında toplanır.</p>
+      <p>Google tarafındaki ciro/ROAS rakamları şu anda bozuktur ve bu sekmede hiç gösterilmez.</p>
+    </div></details>
+  </section>
 </main>
 
 <script>
@@ -288,6 +355,7 @@ const pct=n=>n==null?'—':(n*100).toFixed(1)+'%';
 /* currency */
 let ccy='TRY', EUR_RATE=null;
 const conv=n=>(ccy==='EUR'&&EUR_RATE)?n*EUR_RATE:n, sym=()=>ccy==='EUR'?'€':'₺';
+const unconv=n=>(ccy==='EUR'&&EUR_RATE)?n/EUR_RATE:n;   /* chart data is pre-converted; undo before TL*() */
 const TL=n=>n==null?'—':sym()+Math.round(conv(n)).toLocaleString('en-US');
 const TL2=n=>n==null?'—':sym()+conv(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
 const TLk=n=>{if(n==null)return '—';n=conv(n);const a=Math.abs(n);return a>=1e6?sym()+(n/1e6).toFixed(2)+'M':a>=1e3?sym()+Math.round(n/1e3)+'k':sym()+Math.round(n);};
@@ -345,7 +413,7 @@ function chart(id,cfg){if(typeof Chart==='undefined')return;if(charts[id])charts
   cfg.options.plugins=Object.assign({legend:{position:'bottom',labels:{boxWidth:10,font:{size:11}}}},cfg.options.plugins||{});
   charts[id]=new Chart(el,cfg);}
 const C={meta:'#2563EB',google:'#EA4335',outlet:'#F59E0B',ink:'#0F172A',soft:'#CBD5E1',brass:'#9A6B1E',good:'#1E7A46',bad:'#B42318',pink:'#DB2777',pinkSoft:'#F9A8D4',
-  ch:{'Direct':'#0F172A','Organic Search':'#1E7A46','Paid Search':'#EA4335','Paid Social':'#2563EB','Organic Social':'#7C3AED','Cross-network':'#F59E0B','Referral':'#0891B2','Other':'#94A3B8','Unassigned':'#BE123C','other_organic':'#7C3AED'}};
+  ch:{'Direct':'#0F172A','Organic Search':'#1E7A46','Paid Search':'#EA4335','Paid Social':'#2563EB','Organic Social':'#7C3AED','Cross-network':'#F59E0B','Referral':'#0891B2','Other':'#94A3B8','Unassigned':'#BE123C','other_organic':'#7C3AED','Email':'#0D9488','Paid Shopping':'#C2410C'}};
 const money=v=>TLk(v);
 
 /* ============ PULSE ============ */
@@ -383,7 +451,7 @@ function renderPulse(){
     {type:'bar',label:'Store revenue',data:revs.map(v=>v==null?null:conv(v)),backgroundColor:C.ink,borderRadius:4,order:2,yAxisID:'y'},
     {type:'bar',label:'Ad spend',data:spends.map(conv),backgroundColor:C.soft,borderRadius:4,order:3,yAxisID:'y'},
     {type:'line',label:'Return per ₺1',data:ms12.map((m,i)=>revs[i]!=null&&spends[i]?revs[i]/spends[i]:null),borderColor:C.brass,backgroundColor:C.brass,borderWidth:2,pointRadius:3,tension:.3,order:1,yAxisID:'y2'}]},
-    options:{scales:{y:{ticks:{callback:v=>TLk(v)}},y2:{position:'right',grid:{display:false},ticks:{callback:v=>v+'x'}}},plugins:{tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.dataset.yAxisID==='y2'?c.parsed.y.toFixed(1)+'x':TL(c.parsed.y))}}}}});
+    options:{scales:{y:{ticks:{callback:v=>TLk(unconv(v))}},y2:{position:'right',grid:{display:false},ticks:{callback:v=>v+'x'}}},plugins:{tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.dataset.yAxisID==='y2'?c.parsed.y.toFixed(1)+'x':TL(unconv(c.parsed.y)))}}}}});
 }
 
 /* ============ BUDGET ============ */
@@ -515,7 +583,7 @@ function renderFunnel(){
   const chKeys=['Direct','Organic Search','Paid Search','Paid Social','Organic Social','Cross-network','Unassigned','Other'];
   chart('cSess',{type:'bar',data:{labels:ms.map(monShort),datasets:chKeys.map(k=>({label:k,data:ms.map(m=>{const r=(G.channels||[]).find(x=>x.month===m);return r?(r[k]||0):0;}),backgroundColor:C.ch[k],borderRadius:2}))},options:{scales:{x:{stacked:true},y:{stacked:true,ticks:{callback:v=>compact(v)}}}}});
   const gm=CMONTHS.filter(m=>(DATA.ga_rev||[]).some(r=>r.month===m));
-  const rk=[['direct','Direct'],['organic_search','Organic Search'],['paid_search','Paid Search'],['paid_social','Paid Social'],['cross_network','Cross-network'],['referral','Referral'],['other_organic','Other organic'],['unassigned','Unassigned']];
+  const rk=[['direct','Direct'],['organic_search','Organic Search'],['paid_search','Paid Search'],['paid_social','Paid Social'],['cross_network','Cross-network'],['referral','Referral'],['other_organic','Other organic'],['email','Email'],['paid_shopping','Paid Shopping'],['unassigned','Unassigned']];
   chart('cRevCh',{type:'bar',data:{labels:gm.map(monShort),datasets:rk.map(([k,l])=>({label:l,data:gm.map(m=>{const r=(DATA.ga_rev||[]).find(x=>x.month===m);return conv(r?(r[k]||0):0);}),backgroundColor:C.ch[l]||C.ch[k]||C.soft,borderRadius:2}))},options:{scales:{x:{stacked:true},y:{stacked:true,ticks:{callback:v=>TLk(v/(ccy==='EUR'&&EUR_RATE?EUR_RATE:1))}}},plugins:{tooltip:{callbacks:{label:c=>c.dataset.label+': '+sym()+Math.round(c.parsed.y).toLocaleString('en-US')}}}}});
   const sm=CMONTHS.filter(m=>(G.search||[]).some(r=>r.month===m));
   chart('cSearch',{type:'line',data:{labels:sm.map(monShort),datasets:[
@@ -617,13 +685,110 @@ function renderOutlet(){
   $('#outletNote').textContent='Mozaik Outlet is a catalogue, not a shop. Its job is to put the range in front of people and hand warm interest to the sales team, so there is deliberately no basket, no checkout and no revenue on this tab. '+(OUTLET.meta&&OUTLET.meta.live||'');
 }
 
+/* ============ PARTIAL MONTH STRIP ============ */
+/* The whole page is built on complete months. This strip is the one place a
+   month in progress is shown, labelled as partial and never compared. */
+const PMONTH=(DATA.meta.months||[]).filter(m=>m>LCM).sort().pop()||null;
+const PDAYS=(()=>{const g=String(DATA.meta.generated||'');return g.slice(0,7)===PMONTH?+g.slice(8,10):null;})();
+const PMONTH_TR={'01':'Ocak','02':'Şubat','03':'Mart','04':'Nisan','05':'Mayıs','06':'Haziran','07':'Temmuz','08':'Ağustos','09':'Eylül','10':'Ekim','11':'Kasım','12':'Aralık'};
+function renderPartial(){
+  const box=$('#mkPartial'); if(!box) return;
+  if(!PMONTH||!PDAYS){box.hidden=true;return;}
+  const a=tr(PMONTH); const o=(OUTLET.traffic||[]).find(r=>r.month===PMONTH);
+  const sp=sum(DATA.paid.filter(r=>r.month===PMONTH),'spend');
+  if(!a&&!o&&!sp){box.hidden=true;return;}
+  const dim=new Date(+PMONTH.slice(0,4),+PMONTH.slice(5,7),0).getDate();
+  const tr_=(PMONTH_TR[PMONTH.slice(5,7)]||monShort(PMONTH));
+  box.hidden=false;
+  $('#mkPartialHead').textContent=monShort(PMONTH)+' so far · 1–'+PDAYS+' '+tr_;
+  $('#mkPartialSub').textContent=PDAYS+' of '+dim+' days — month still running, so nothing below is compared against it.';
+  const it=(k,n)=>'<div class="pi"><span class="k">'+k+'</span><span class="n">'+n+'</span></div>';
+  $('#mkPartialRow').innerHTML=
+    (a?it('Sessions',compact(a.sessions)):'')+
+    (a?it('Online orders',num(a.transactions)):'')+
+    (a?it('Online revenue',TLk(a.revenue)):'')+
+    (sp?it('Ad spend',TLk(sp)):'')+
+    (o?it('Catalogue visits',compact(o.sessions)):'');
+}
+
+/* ============ SAHA (sales-facing, Turkish) ============ */
+const BRANDS=[[/maxalto|b&b ?ital/i,'Maxalto · B&B Italia'],[/arclinea/i,'Arclinea'],
+  [/herman miller/i,'Herman Miller'],[/flos/i,'Flos'],[/akari/i,'Akari'],[/zanat/i,'Zanat'],
+  [/ayd[ıi]nlatma/i,'Aydınlatma'],[/design shop/i,'Design Shop'],[/outlet/i,'Mozaik Outlet']];
+const brandOf=c=>{for(let i=0;i<BRANDS.length;i++){if(BRANDS[i][0].test(c))return BRANDS[i][1];}return 'Genel Mozaik';};
+const trNum=n=>n==null?'—':Math.round(n).toLocaleString('tr-TR');
+const trK=n=>{if(n==null)return '—';const a=Math.abs(n);return a>=1e6?(n/1e6).toFixed(1).replace('.',',')+'M':a>=1e3?Math.round(n/1e3)+'b':String(Math.round(n));};
+function renderSaha(){
+  const W=CWEEKS[CWEEKS.length-1], WP=CWEEKS[CWEEKS.length-2];
+  const Mn=LCM;
+  setPeriod(W+' haftası');
+  const rows=paidW([W]), prev=paidW([WP]);
+  const spend=sum(rows,'spend'), spendP=sum(prev,'spend');
+  const impr=sum(rows,'impressions'), clicks=sum(rows,'clicks');
+  const a=tr(Mn), pm=PMONTH?tr(PMONTH):null;
+  const o=(OUTLET.traffic||[]).find(r=>r.month===(PMONTH||Mn));
+  const igC=(DATA.ig_reach||[]).filter(r=>r.total!=null); const igL=igC[igC.length-1];
+  $('#sahaTitle').textContent='Pazarlama bu hafta ne yapıyor? · '+W+' haftası';
+  const dS=delta(spend,spendP);
+  $('#sahaIntro').textContent=
+    'Bu hafta Meta ve Google reklamlarına '+TLk(spend)+' harcandı ('+(dS.d==null?'geçen haftayla karşılaştırma yok':'geçen haftaya göre %'+Math.abs(dS.d).toFixed(0)+' '+(dS.d>=0?'daha fazla':'daha az'))+'). '+
+    'Reklamlar '+trK(impr)+' kez gösterildi, '+trNum(clicks)+' tıklama aldı. '+
+    'Aşağıdaki liste, bu hafta parayı hangi markalara koyduğumuzu gösteriyor — showroom’a gelen müşterinin aklında büyük ihtimalle bunlar var.';
+  $('#sahaRow').innerHTML=
+    tile('Reklam yatırımı', TLk(spend), dS, W+' haftası', 'Meta (Instagram + Facebook) ve Google reklam harcaması, bu hafta.')+
+    tile('Siteye gelen kişi', compact(pm?pm.sessions:(a&&a.sessions)), null, (PMONTH&&pm?'1–'+PDAYS+' '+(PMONTH_TR[PMONTH.slice(5,7)]||''):mLabel(Mn))+' · Türkiye', 'Google Analytics oturum sayısı. Showroom ziyaretçisi değil, internet sitesine giren kişi.')+
+    tile('Online sipariş', num(pm?pm.transactions:(a&&a.transactions)), null, 'mağaza satışları hariç', 'İnternet sitesinden verilen sipariş sayısı. Mağazada kapanan satışlar buraya girmez.')+
+    tile('Katalog ziyareti', compact(o?o.sessions:null), null, 'mozaikoutlet.com', 'Outlet katalog sitesine giren kişi sayısı.')+
+    tile('Instagram erişimi', compact(igL?igL.total:null), null, igL?mLabel(igL.month)+' · reklam dahil':'—', 'Markanın içeriğini gören tekil hesap sayısı. Reklamla görenler bu sayının içindedir.');
+  /* brands */
+  const bm={};
+  rows.forEach(r=>{const b=brandOf(r.campaign);(bm[b]=bm[b]||{spend:0,clicks:0,n:0}).spend+=r.spend||0;bm[b].clicks+=r.clicks||0;bm[b].n++;});
+  const bp={}; prev.forEach(r=>{const b=brandOf(r.campaign);bp[b]=(bp[b]||0)+(r.spend||0);});
+  const list=Object.keys(bm).map(k=>({name:k,spend:bm[k].spend,clicks:bm[k].clicks,n:bm[k].n,prev:bp[k]||0}))
+    .filter(x=>x.spend>0).sort((x,y)=>y.spend-x.spend);
+  const tot=list.reduce((s,x)=>s+x.spend,0)||1;
+  $('#sahaBrandMeta').textContent=W+' haftası · '+list.length+' marka · toplam '+TLk(tot)+' · kampanya adlarından çıkarıldı';
+  $('#sahaBrands').innerHTML=list.map(x=>{
+    const sh=x.spend/tot*100, d=delta(x.spend,x.prev);
+    return '<div class="brandrow"><span class="nm">'+x.name+
+      '<span class="meta2">'+TLk(x.spend)+' · '+trNum(x.clicks)+' tıklama · '+x.n+' kampanya · '+
+      (x.prev>0?(Math.abs(d.d)<1?'geçen haftayla aynı':'geçen hafta '+(d.d>=0?'▲':'▼')+' %'+Math.abs(d.d).toFixed(0)):'geçen hafta yoktu')+'</span></span>'+
+      '<span class="bar"><i style="width:'+Math.max(2,sh).toFixed(1)+'%"></i></span>'+
+      '<span class="pc">%'+sh.toFixed(0)+'</span></div>';
+  }).join('')||'<p class="meta">Bu hafta hiçbir kampanyada harcama yok.</p>';
+  /* what to expect */
+  const ex=[];
+  if(list.length) ex.push('Bu haftanın en çok yatırım yapılan başlığı <b>'+list[0].name+'</b> — toplam reklam bütçesinin %'+(list[0].spend/tot*100).toFixed(0)+' kadarı buraya gitti. Bu markayı soran müşteri sayısının artmasını bekleyin.');
+  const newB=list.filter(x=>x.prev===0); if(newB.length) ex.push('Bu hafta ilk kez yayına giren: <b>'+newB.map(x=>x.name).join(', ')+'</b>.');
+  const gone=Object.keys(bp).filter(k=>!bm[k]); if(gone.length) ex.push('Geçen hafta yayında olup bu hafta durdurulan: <b>'+gone.join(', ')+'</b>. Bu markalarda gelen ilgi azalabilir.');
+  if(a&&a.sessions) ex.push((PMONTH_TR[Mn.slice(5,7)]||monShort(Mn))+' ayında siteye '+trK(a.sessions)+' ziyaret geldi ve '+trNum(a.transactions)+' online sipariş verildi. Yani siteye gelenlerin çok büyük bölümü satın almadan çıkıyor — <b>bu kişiler showroom’a geliyor</b>, telefonla arıyor ya da hiç dönmüyor. Müşteriye "siteden baktınız mı?" diye sormak, sohbeti açmanın en kolay yolu.');
+  if(o) ex.push('Outlet kataloğunu '+(PMONTH&&o.month===PMONTH?('1–'+PDAYS+' '+(PMONTH_TR[PMONTH.slice(5,7)]||'')+' arasında'):(mLabel(o.month)+' ayında'))+' '+trK(o.sessions)+' kişi gezdi. Katalogda satış yok; amacı ilgiyi size getirmek. Katalogdan gelen müşteri genelde ürünü görmüş ve fiyat bekliyor olur.');
+  if(igL) ex.push('Instagram’da '+(PMONTH_TR[igL.month.slice(5,7)]||monShort(igL.month))+' ayında '+trK(igL.total)+' kişi markanın içeriğini gördü. Showroom’a gelen müşterinin sizi oradan tanıyor olma ihtimali yüksek.');
+  $('#sahaExpect').innerHTML=ex.map(t=>'<li><span class="b"></span><span>'+t+'</span></li>').join('');
+  /* channels */
+  const cm=(G.channels||[]).find(r=>r.month===Mn);
+  const TRCH={'Paid Social':'Instagram / Facebook reklamı','Cross-network':'Google reklam ağı','Organic Search':'Google’da arayıp bulan','Paid Search':'Google reklamı (arama)','Direct':'Doğrudan adresi yazan','Organic Social':'Sosyal medya (reklamsız)','Unassigned':'Kaynağı belirsiz','Other':'Diğer'};
+  if(cm){
+    const ks=Object.keys(cm).filter(k=>k!=='month'&&cm[k]>0).sort((x,y)=>cm[y]-cm[x]);
+    $('#sahaChMeta').textContent=mLabel(Mn)+' · siteye gelen '+trK(ks.reduce((s,k)=>s+cm[k],0))+' ziyaretin kaynağı';
+    chart('cSahaCh',{type:'bar',data:{labels:ks.map(k=>TRCH[k]||k),datasets:[{label:'Ziyaret',data:ks.map(k=>cm[k]),backgroundColor:ks.map(k=>C.ch[k]||C.soft),borderRadius:3}]},
+      options:{indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>trNum(c.parsed.x)+' ziyaret'}}},scales:{x:{ticks:{callback:v=>compact(v)}}}}});
+  }
+  const ms12=CMONTHS.slice(-12);
+  chart('cSahaTrend',{data:{labels:ms12.map(monShort),datasets:[
+    {type:'bar',label:'Siteye gelen',data:ms12.map(m=>{const r=tr(m);return r?r.sessions:null;}),backgroundColor:C.soft,borderRadius:3,yAxisID:'y'},
+    {type:'line',label:'Online sipariş',data:ms12.map(m=>{const r=tr(m);return r?r.transactions:null;}),borderColor:C.brass,backgroundColor:C.brass,borderWidth:2,pointRadius:3,tension:.3,yAxisID:'y2'}]},
+    options:{scales:{y:{ticks:{callback:v=>compact(v)}},y2:{position:'right',grid:{display:false}}},
+      plugins:{tooltip:{callbacks:{label:c=>c.dataset.label+': '+trNum(c.parsed.y)}}}}});
+}
+
 /* ============ shell ============ */
-function render(){({pulse:renderPulse,budget:renderBudget,funnel:renderFunnel,brand:renderBrand,outlet:renderOutlet}[state.tab])();}
+function render(){renderPartial();({pulse:renderPulse,budget:renderBudget,funnel:renderFunnel,brand:renderBrand,outlet:renderOutlet,saha:renderSaha}[state.tab])();}
 function show(t){state.tab=t;$$('#tabbar button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));$$('.panel').forEach(p=>p.hidden=p.dataset.p!==t);
-  const pulse=t==='pulse';$('#filter').classList.toggle('dates-off',pulse||(t==='budget'&&isWeek()));$('#fnote').textContent='';
-  const CTX={pulse:'Is marketing working?',budget:'Where should the money go?',funnel:'Where is demand leaking?',brand:'Is the brand growing?',outlet:'Is the catalogue handing people to sales?'};
+  const pulse=t==='pulse'||t==='saha';$('#filter').classList.toggle('dates-off',pulse||(t==='budget'&&isWeek()));$('#fnote').textContent='';
+  const CTX={pulse:'Is marketing working?',budget:'Where should the money go?',funnel:'Where is demand leaking?',brand:'Is the brand growing?',outlet:'Is the catalogue handing people to sales?',saha:'Pazarlama sahaya ne gönderiyor?'};
   $('#mkCtx').innerHTML=CTX[t]+' <span id="mkCtxPer"></span>';
-  try{history.replaceState(null,'','?tab='+t)}catch(e){} render();}
+  const PILL={pulse:'Pulse · last full month',saha:'Saha · son tam hafta'};const fp=$('#fpill'); if(fp){const x=PILL[t]; fp.hidden=!x; if(x)fp.textContent=x;}try{history.replaceState(null,'','?tab='+t)}catch(e){} render();}
 function gridCols(card){const g=card.parentElement; if(!g||!g.classList.contains('grid'))return 1;
   return g.classList.contains('g-3')?3:(g.classList.contains('g-11')||g.classList.contains('g-2'))?2:1;}
 function applyWidth(card,w){
@@ -705,7 +870,7 @@ function init(){
   $$('#tabbar button').forEach(b=>b.onclick=()=>show(b.dataset.t));
   setupCards();
   const l3=$('#rangeSeg button[data-r="l3"]'); if(l3) l3.classList.add('on');
-  const t=new URLSearchParams(location.search).get('tab'); show(['pulse','budget','funnel','brand','outlet'].includes(t)?t:'pulse');
+  const t=new URLSearchParams(location.search).get('tab'); show(['pulse','budget','funnel','brand','outlet','saha'].includes(t)?t:'pulse');
 }
 init();
 })();
