@@ -105,10 +105,10 @@ const ACTUALS = {
     "period": "Oct 2026",
     "note": "Facebook share of Meta paid reach, from Meta Ads. Still climbing since the 'ROI -' restructure: 22,554 in July, 263,927 in August, 370,365 in September, 461,663 in October. RANGES (floor 1,000, stretch 3,500) was set when this was a few thousand a month and is now off by more than two orders of magnitude - it needs recalibrating."
   },
-  "Facebook|Organic Reach": {
-    "value": 305819,
-    "period": "Jun 2026",
-    "note": "FROZEN at June - Facebook Insights still reports NOT_AUTHENTICATED as of 23 Nov 2026. This is an expired OAuth token, not the old trial-subscription block (ID 1850660), so a free reconnect in Supermetrics restores it - no purchase needed. Unique media viewers."
+  "Facebook|Total Reach": {
+    "value": 501241,
+    "period": "Oct 2026",
+    "note": "RENAMED from 'Organic Reach' on 23 Nov 2026 - it never was organic. The field is page_total_media_view_unique, TOTAL unique media viewers, which INCLUDES PAID. Harmless until June, when Facebook paid reach was under 3,400 a month; now October's 501,241 sits against 461,663 of Facebook paid reach from Meta Ads, so it is almost entirely ads. True Facebook organic reach is no longer measurable anywhere: Meta removed Reach from the Facebook Business Suite screen in favour of Views, and the API has no page-level organic-unique field. Series: Jul 58,474 - Aug 467,069 - Sep 691,086 - Oct 501,241. RANGES (floor 430,000) was calibrated against Jan-Jun, when the figure really was organic, so it is now measuring a different thing and needs recalibrating."
   },
   "LinkedIn|Organic Reach": {
     "value": 5782,
@@ -132,7 +132,7 @@ const ACTUALS = {
 const RANGES = {
   "Instagram|Total Reach": {floor: 1200000, target: 1400000, stretch: 1500000},
   "Instagram|Paid Reach":    {floor: 1300000, target: 1500000, stretch: 1700000},
-  "Facebook|Organic Reach":  {floor: 430000,  target: 500000,  stretch: 560000},
+  "Facebook|Total Reach":  {floor: 430000,  target: 500000,  stretch: 560000},
   "Facebook|Paid Reach":     {floor: 1000,    target: 2500,    stretch: 3500},
   "LinkedIn|Organic Reach":  {floor: 10000,   target: 12000,   stretch: 16000},
   "Google|Branded Search Volume": {floor: 25000, target: 29000, stretch: 32000},
