@@ -24,7 +24,7 @@
 <link rel="stylesheet" href="../assets/style.css?v=11">
 <script src="/assets/auth.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-<script src="./data.js?v=202611234"></script>
+<script src="./data.js?v=202611235"></script>
 <style>
 :root{--mk-bg:#F4F5F7;--mk-surface:#fff;--mk-surface-2:#EEF0F3;--mk-line:#E1E4E9;--mk-ink:#0F172A;--mk-ink-2:#475569;--mk-muted:#7C8494;
   --mk-accent:#0F172A;--mk-brass:#9A6B1E;--mk-brass-soft:#F5EBD6;--mk-good:#1E7A46;--mk-good-soft:#E3F2E8;--mk-warn:#A2620A;--mk-warn-soft:#FBF0DA;--mk-bad:#B42318;--mk-bad-soft:#FBE4E1;
@@ -191,13 +191,12 @@ body.col-resizing{cursor:col-resize;user-select:none}
     </div>
   </div>
 
-  <div class="mkpartial" id="mkPartial" hidden>
+  <!-- PULSE -->
+  <section class="panel" data-p="pulse">
+    <div class="mkpartial" id="mkPartial" hidden>
     <div class="pl"><span class="dot"></span><b id="mkPartialHead">—</b><span id="mkPartialSub"></span></div>
     <div class="pv" id="mkPartialRow"></div>
   </div>
-
-  <!-- PULSE -->
-  <section class="panel" data-p="pulse">
     <div class="tiles" id="pulseRow"></div>
     <div class="insight">
       <div class="l">This month in one line</div>
@@ -689,7 +688,7 @@ function renderOutlet(){
 /* The whole page is built on complete months. This strip is the one place a
    month in progress is shown, labelled as partial and never compared. */
 const PMONTH=(DATA.meta.months||[]).filter(m=>m>LCM).sort().pop()||null;
-const PDAYS=(()=>{const g=String(DATA.meta.generated||'');return g.slice(0,7)===PMONTH?+g.slice(8,10):null;})();
+const PDAYS=(()=>{const c=String(DATA.meta.monthly_cutoff||DATA.meta.generated||'');return c.slice(0,7)===PMONTH?+c.slice(8,10):null;})();
 const PMONTH_TR={'01':'Ocak','02':'Şubat','03':'Mart','04':'Nisan','05':'Mayıs','06':'Haziran','07':'Temmuz','08':'Ağustos','09':'Eylül','10':'Ekim','11':'Kasım','12':'Aralık'};
 function renderPartial(){
   const box=$('#mkPartial'); if(!box) return;
